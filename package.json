@@ -1,0 +1,32 @@
+{
+  "name": "jsartoolkit",
+  "version": "0.0.0",
+  "main": "js/index",
+  "description": "Emscripten port of ARToolKit to JavaScript",
+  "keywords": [
+    "ARToolKit",
+    "AR",
+    "Augmented Reality",
+    "WebAR",
+    "JavaScript",
+    "NFT",
+    "markerless"
+  ],
+  "author": "Walter Perdan (@kalwalt https://github.com/kalwalt/)",
+  "repository": "git://https://github.com/kalwalt/jsartoolkitNFT.git",
+  "homepage": "https://github.com/kalwalt/jsartoolkitNFT",
+  "contributors": [
+    "Github Contributors (https://github.com/kalwalt/jsartoolkitNFT/graphs/contributors)"
+  ],
+  "bugs": {
+    "url": "https://github.com/kalwalt/jsartoolkitNFT/issues"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "build-local": "node tools/makem.js; echo Built at `date`",
+    "build-local-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
+    "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
+  },
+  "license": "LGPL-3.0"
+}
