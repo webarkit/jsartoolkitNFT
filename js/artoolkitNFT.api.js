@@ -558,26 +558,6 @@
     };
 
 	/**
-		Set marker vertices to the given vertexData[4][2] array.
-
-		Sets the marker pos to the center of the vertices.
-
-		Useful for building custom markers for getTransMatSquare.
-
-		A markerIndex of -1 is used to access the global custom marker.
-
-		@param {number} markerIndex The index of the marker to edit.
-	 	@param {*} vertexData
-	*/
-    ARController.prototype.setMarkerInfoVertex = function (markerIndex, vertexData) {
-        for (var i = 0; i < vertexData.length; i++) {
-            this.marker_transform_mat[i * 2 + 0] = vertexData[i][0];
-            this.marker_transform_mat[i * 2 + 1] = vertexData[i][1];
-        }
-        return artoolkit.setMarkerInfoVertex(this.id, markerIndex);
-    };
-
-	/**
 		Makes a deep copy of the given marker info.
 
 		@param {Object} markerInfo The marker info object to copy.
@@ -665,20 +645,6 @@
   */
     ARController.prototype.getLogLevel = function () {
         return artoolkit.getLogLevel();
-    };
-
-  /**
-    Sets the dir (direction) of the marker. Direction that tells about the rotation
-    about the marker (possible values are 0, 1, 2 or 3).
-    This parameter makes it possible to tell about the line order of the detected marker
-     (so which line is the first one) and so find the first vertex.
-    This is important to compute the transformation matrix in arGetTransMat().
-    @param {number} markerIndex the index of the marker
-    @param {number} dir direction of the marker (possible values are 0, 1, 2 or 3).
-    @return {number}  0 (void)
-  */
-    ARController.prototype.setMarkerInfoDir = function (markerIndex, dir) {
-        return artoolkit.setMarkerInfoDir(this.id, markerIndex, dir);
     };
 
   /**
@@ -1367,9 +1333,6 @@
         'getDebugMode',
 
         'getProcessingImage',
-
-        'setMarkerInfoDir',
-        'setMarkerInfoVertex',
 
         'getTransMatSquare',
         'getTransMatSquareCont',

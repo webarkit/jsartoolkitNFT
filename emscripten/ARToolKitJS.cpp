@@ -634,46 +634,6 @@ extern "C" {
 		return 0;
 	}
 
-	int setMarkerInfoDir(int id, int markerIndex, int dir) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->arhandle->marker_num <= markerIndex) {
-			return MARKER_INDEX_OUT_OF_BOUNDS;
-		}
-		ARMarkerInfo* marker = markerIndex < 0 ? &gMarkerInfo : &((arc->arhandle)->markerInfo[markerIndex]);
-
-		marker->dir = dir;
-
-		return 0;
-	}
-
-	int setMarkerInfoVertex(int id, int markerIndex) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->arhandle->marker_num <= markerIndex) {
-			return MARKER_INDEX_OUT_OF_BOUNDS;
-		}
-		ARMarkerInfo* marker = markerIndex < 0 ? &gMarkerInfo : &((arc->arhandle)->markerInfo[markerIndex]);
-
-		auto v = marker->vertex;
-
-		v[0][0] = gTransform[0][0];
-		v[0][1] = gTransform[0][1];
-		v[1][0] = gTransform[0][2];
-		v[1][1] = gTransform[0][3];
-		v[2][0] = gTransform[1][0];
-		v[2][1] = gTransform[1][1];
-		v[3][0] = gTransform[1][2];
-		v[3][1] = gTransform[1][3];
-
-		marker->pos[0] = (v[0][0] + v[1][0] + v[2][0] + v[3][0]) * 0.25;
-		marker->pos[1] = (v[0][1] + v[1][1] + v[2][1] + v[3][1]) * 0.25;
-
-		return 0;
-	}
-
 	int detectMarker(int id) {
 		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
 		arController *arc = &(arControllers[id]);
@@ -688,7 +648,6 @@ extern "C" {
 
 		return arDetectMarker( arc->arhandle, &buff);
 	}
-
 
 	int getMarkerNum(int id) {
 		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }

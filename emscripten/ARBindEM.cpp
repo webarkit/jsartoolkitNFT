@@ -13,9 +13,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	function("_loadCamera", &loadCamera);
 
-	function("setMarkerInfoDir", &setMarkerInfoDir);
-	function("setMarkerInfoVertex", &setMarkerInfoVertex);
-
 	function("getTransMatSquare", &getTransMatSquare);
 	function("getTransMatSquareCont", &getTransMatSquareCont);
 
