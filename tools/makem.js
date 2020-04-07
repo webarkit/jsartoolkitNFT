@@ -44,9 +44,9 @@ var MEM = 256 * 1024 * 1024; // 64MB
 var SOURCE_PATH = path.resolve(__dirname, '../emscripten/') + '/';
 var OUTPUT_PATH = path.resolve(__dirname, '../build/') + '/';
 
-var BUILD_DEBUG_FILE = 'artoolkit.debug.js';
-var BUILD_WASM_FILE = 'artoolkit_wasm.js';
-var BUILD_MIN_FILE = 'artoolkit.min.js';
+var BUILD_DEBUG_FILE = 'artoolkitNFT.debug.js';
+var BUILD_WASM_FILE = 'artoolkitNFT_wasm.js';
+var BUILD_MIN_FILE = 'artoolkitNFT.min.js';
 
 var MAIN_SOURCES = [
 	'ARToolKitJS.cpp',
@@ -89,7 +89,6 @@ function matchAll(patterns, prefix="") {
     'AR/arLabelingSub/*.c',
     'AR/*.c',
     'ARICP/*.c',
-    'ARMulti/*.c',
     'Video/video.c',
     'ARUtil/log.c',
     'ARUtil/file_utils.c',
@@ -99,7 +98,6 @@ function matchAll(patterns, prefix="") {
 	  'AR/arLabelingSub/*.c',
 	  'AR/*.c',
 	  'ARICP/*.c',
-	  'ARMulti/*.c',
 	  'Video/video.c',
 	  'ARUtil/log.c',
 	  'ARUtil/file_utils.c',
@@ -172,7 +170,7 @@ FLAGS += ' --memory-init-file 0 '; // for memless file
 var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp'
 
 
-var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/artoolkit.api.js') +' ';
+var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/artoolkitNFT.api.js') +' ';
 
 FLAGS += ' --bind ';
 

@@ -9,12 +9,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	function("setupAR2", &setupAR2);
 
-	function("_addMarker", &addMarker);
-	function("_addMultiMarker", &addMultiMarker);
 	function("_addNFTMarker", &addNFTMarker);
-
-	function("getMultiMarkerNum", &getMultiMarkerNum);
-	function("getMultiMarkerCount", &getMultiMarkerCount);
 
 	function("_loadCamera", &loadCamera);
 
@@ -24,16 +19,11 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("getTransMatSquare", &getTransMatSquare);
 	function("getTransMatSquareCont", &getTransMatSquareCont);
 
-	function("getTransMatMultiSquare", &getTransMatMultiSquare);
-	function("getTransMatMultiSquareRobust", &getTransMatMultiSquareRobust);
-
 	function("detectMarker", &detectMarker);
 	function("getMarkerNum", &getMarkerNum);
 
 	function("detectNFTMarker", &detectNFTMarker);
 
-	function("getMultiEachMarker", &getMultiEachMarkerInfo);
-	function("getMarker", &getMarkerInfo);
 	function("getNFTMarker", &getNFTMarkerInfo);
 
 
@@ -58,18 +48,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("setThreshold", &setThreshold);
 	function("getThreshold", &getThreshold);
 
-	function("setPatternDetectionMode", &setPatternDetectionMode);
-	function("getPatternDetectionMode", &getPatternDetectionMode);
-
-	function("setPattRatio", &setPattRatio);
-	function("getPattRatio", &getPattRatio);
-
-	function("setMatrixCodeType", &setMatrixCodeType);
-	function("getMatrixCodeType", &getMatrixCodeType);
-
-	function("setLabelingMode", &setLabelingMode);
-	function("getLabelingMode", &getLabelingMode);
-
 	function("setImageProcMode", &setImageProcMode);
 	function("getImageProcMode", &getImageProcMode);
 
@@ -85,12 +63,12 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	constant("AR_DEFAULT_DEBUG_MODE", AR_DEFAULT_DEBUG_MODE);
 
 	/* arLabelingMode */
-	constant("AR_LABELING_WHITE_REGION", AR_LABELING_WHITE_REGION);
-	constant("AR_LABELING_BLACK_REGION", AR_LABELING_BLACK_REGION);
-	constant("AR_DEFAULT_LABELING_MODE", AR_DEFAULT_LABELING_MODE);
+	//constant("AR_LABELING_WHITE_REGION", AR_LABELING_WHITE_REGION);
+	//constant("AR_LABELING_BLACK_REGION", AR_LABELING_BLACK_REGION);
+	//constant("AR_DEFAULT_LABELING_MODE", AR_DEFAULT_LABELING_MODE);
 
 	/* for arlabelingThresh */
-	constant("AR_DEFAULT_LABELING_THRESH", AR_DEFAULT_LABELING_THRESH);
+	//constant("AR_DEFAULT_LABELING_THRESH", AR_DEFAULT_LABELING_THRESH);
 
 	/* for arImageProcMode */
 	constant("AR_IMAGE_PROC_FRAME_IMAGE", AR_IMAGE_PROC_FRAME_IMAGE);

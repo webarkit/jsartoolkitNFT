@@ -11,9 +11,6 @@
 
 #include <stdio.h>
 #include <AR/ar.h>
-//#include <AR/gsub_lite.h>
-// #include <AR/gsub_es2.h>
-#include <AR/arMulti.h>
 #include <emscripten.h>
 #include <string>
 #include <vector>
@@ -27,11 +24,6 @@
 #include "trackingMod.h"
 
 #define PAGES_MAX               10          // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
-
-struct multi_marker {
-	int id;
-	ARMultiMarkerInfoT *multiMarkerHandle;
-};
 
 struct arController {
 	int id;
@@ -48,7 +40,6 @@ struct arController {
 
 	ARHandle *arhandle = NULL;
 	ARPattHandle *arPattHandle = NULL;
-	ARMultiMarkerInfoT *arMultiMarkerHandle = NULL;
 	AR3DHandle* ar3DHandle;
 
 	KpmHandle* kpmHandle;
@@ -62,8 +53,6 @@ struct arController {
 
 	ARdouble nearPlane = 0.0001;
 	ARdouble farPlane = 1000.0;
-
-	std::vector<multi_marker> multi_markers;
 
 	int patt_id = 0; // Running pattern marker id
 
@@ -252,15 +241,10 @@ extern "C" {
 	int getKpmImageHeight(KpmHandle *kpmHandle) {
 		return kpmHandleGetYSize(kpmHandle);
 	}
-	// disbling this; maybe a very old implementation?
-	//int getKpmPixelSize(KpmHandle *kpmHandle) {
-	//	return arUtilGetPixelSize(GetPixelFormat(kpmHandle));
-	//}
 
 	int setupAR2(int id) {
 		if (arControllers.find(id) == arControllers.end()) { return -1; }
 		arController *arc = &(arControllers[id]);
-		//arc->pixFormat = arVideoGetPixelFormat();
 
 		if ((arc->ar2Handle = ar2CreateHandleMod(arc->paramLT, arc->pixFormat)) == NULL) {
 			ARLOGe("Error: ar2CreateHandle.\n");
@@ -380,11 +364,11 @@ extern "C" {
 
 		arControllers.erase(id);
 
-		for (int i=0; i<arc->multi_markers.size(); i++) {
+		/*for (int i=0; i<arc->multi_markers.size(); i++) {
 			arMultiFreeConfig(arc->multi_markers[i].multiMarkerHandle);
-		}
+		}*/
 
-		delete &arc->multi_markers;
+		//delete &arc->multi_markers;
 		delete arc;
 
 		return 0;
@@ -468,50 +452,6 @@ extern "C" {
 	* Marker loading *
 	*****************/
 
-
-	static int loadMarker(const char *patt_name, int *patt_id, ARHandle *arhandle, ARPattHandle **pattHandle_p) {
-		// Loading only 1 pattern in this example.
-		if ((*patt_id = arPattLoad(*pattHandle_p, patt_name)) < 0) {
-			ARLOGe("loadMarker(): Error loading pattern file %s.\n", patt_name);
-			arPattDeleteHandle(*pattHandle_p);
-			return (FALSE);
-		}
-
-		return (TRUE);
-	}
-
-	static int loadMultiMarker(const char *patt_name, ARHandle *arHandle, ARPattHandle **pattHandle_p, ARMultiMarkerInfoT **arMultiConfig) {
-		if( (*arMultiConfig = arMultiReadConfigFile(patt_name, *pattHandle_p)) == NULL ) {
-			ARLOGe("config data load error !!\n");
-			arPattDeleteHandle(*pattHandle_p);
-			return (FALSE);
-		}
-		if( (*arMultiConfig)->patt_type == AR_MULTI_PATTERN_DETECTION_MODE_TEMPLATE ) {
-			arSetPatternDetectionMode( arHandle, AR_TEMPLATE_MATCHING_COLOR );
-		} else if( (*arMultiConfig)->patt_type == AR_MULTI_PATTERN_DETECTION_MODE_MATRIX ) {
-			arSetPatternDetectionMode( arHandle, AR_MATRIX_CODE_DETECTION );
-		} else { // AR_MULTI_PATTERN_DETECTION_MODE_TEMPLATE_AND_MATRIX
-			arSetPatternDetectionMode( arHandle, AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX );
-		}
-
-		return (TRUE);
-	}
-
-
-	int addMarker(int id, std::string patt_name) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		arController *arc = &(arControllers[id]);
-
-		// const char *patt_name
-		// Load marker(s).
-		if (!loadMarker(patt_name.c_str(), &(arc->patt_id), arc->arhandle, &(arc->arPattHandle))) {
-			ARLOGe("ARToolKitJS(): Unable to set up AR marker.\n");
-			return -1;
-		}
-
-		return arc->patt_id;
-	}
-
 	int addNFTMarker(int id, std::string datasetPathname) {
 		if (arControllers.find(id) == arControllers.end()) { return -1; }
 		arController *arc = &(arControllers[id]);
@@ -527,47 +467,6 @@ extern "C" {
 
 		return patt_id;
 	}
-
-	int addMultiMarker(int id, std::string patt_name) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		arController *arc = &(arControllers[id]);
-
-		// const char *patt_name
-		// Load marker(s).
-		if (!loadMultiMarker(patt_name.c_str(), arc->arhandle, &(arc->arPattHandle), &(arc->arMultiMarkerHandle))) {
-			ARLOGe("ARToolKitJS(): Unable to set up AR multimarker.\n");
-			return -1;
-		}
-
-		int multiMarker_id = arc->multi_markers.size();
-		multi_marker marker = multi_marker();
-		marker.id = multiMarker_id;
-		marker.multiMarkerHandle = arc->arMultiMarkerHandle;
-
-		arc->multi_markers.push_back(marker);
-
-		return marker.id;
-	}
-
-	int getMultiMarkerNum(int id, int multiMarker_id) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		arController *arc = &(arControllers[id]);
-
-		int mId = multiMarker_id;
-		if (mId < 0 || arc->multi_markers.size() <= mId) {
-			return -1;
-		}
-		return (arc->multi_markers[mId].multiMarkerHandle)->marker_num;
-	}
-
-	int getMultiMarkerCount(int id) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		arController *arc = &(arControllers[id]);
-
-		return arc->multi_markers.size();
-	}
-
-
 
 	/**********************
 	* Setters and getters *
@@ -595,93 +494,6 @@ extern "C" {
 		if (arControllers.find(id) == arControllers.end()) { return -1; }
 		arController *arc = &(arControllers[id]);
 		return arc->farPlane;
-	}
-
-	void setPatternDetectionMode(int id, int mode) {
-		if (arControllers.find(id) == arControllers.end()) { return; }
-		arController *arc = &(arControllers[id]);
-		if (arSetPatternDetectionMode(arc->arhandle, mode) == 0) {
-			ARLOGi("Pattern detection mode set to %d.\n", mode);
-		}
-	}
-
-	int getPatternDetectionMode(int id) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		int mode;
-		arController *arc = &(arControllers[id]);
-		if (arGetPatternDetectionMode(arc->arhandle, &mode) == 0) {
-			return mode;
-		}
-
-		return -1;
-	}
-
-	void setPattRatio(int id, float ratio) {
-		if (arControllers.find(id) == arControllers.end()) { return; }
-		arController *arc = &(arControllers[id]);
-
-		if (ratio <= 0.0f || ratio >= 1.0f) return;
-		ARdouble pattRatio = (ARdouble)ratio;
-		if (arc->arhandle) {
-			if (arSetPattRatio(arc->arhandle, pattRatio) == 0) {
-				ARLOGi("Pattern ratio size set to %f.\n", pattRatio);
-			}
-		}
-	}
-
-	ARdouble getPattRatio(int id) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		arController *arc = &(arControllers[id]);
-
-		ARdouble pattRatio;
-		if (arc->arhandle) {
-			if (arGetPattRatio(arc->arhandle, &pattRatio) == 0) {
-				return pattRatio;
-			}
-		}
-
-		return -1;
-	}
-
-	void setMatrixCodeType(int id, int type) {
-		if (arControllers.find(id) == arControllers.end()) { return; }
-		arController *arc = &(arControllers[id]);
-
-		AR_MATRIX_CODE_TYPE matrixType = (AR_MATRIX_CODE_TYPE)type;
-		arSetMatrixCodeType(arc->arhandle, matrixType);
-	}
-
-	int getMatrixCodeType(int id) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		arController *arc = &(arControllers[id]);
-
-		AR_MATRIX_CODE_TYPE matrixType;
-		arGetMatrixCodeType(arc->arhandle, &matrixType);
-		return matrixType;
-	}
-
-	void setLabelingMode(int id, int mode) {
-		if (arControllers.find(id) == arControllers.end()) { return; }
-		arController *arc = &(arControllers[id]);
-
-		int labelingMode = mode;
-
-		if (arSetLabelingMode(arc->arhandle, labelingMode) == 0) {
-			ARLOGi("Labeling mode set to %d\n", labelingMode);
-		}
-	}
-
-	int getLabelingMode(int id) {
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
-		arController *arc = &(arControllers[id]);
-
-		int labelingMode;
-
-		if (arGetLabelingMode(arc->arhandle, &labelingMode) == 0) {
-			return labelingMode;
-		}
-
-		return -1;
 	}
 
 	void setThreshold(int id, int threshold) {
@@ -782,9 +594,6 @@ extern "C" {
 		return -1;
 	}
 
-
-
-
 	/*
 	 * Marker processing
 	 */
@@ -865,38 +674,6 @@ extern "C" {
 		return 0;
 	}
 
-	int getTransMatMultiSquareRobust(int id, int multiMarkerId) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->multi_markers.size() <= multiMarkerId || multiMarkerId < 0) {
-			return MULTIMARKER_NOT_FOUND;
-		}
-		multi_marker *multiMatch = &(arc->multi_markers[multiMarkerId]);
-		ARMultiMarkerInfoT *arMulti = multiMatch->multiMarkerHandle;
-
-		arGetTransMatMultiSquareRobust( arc->ar3DHandle, arc->arhandle->markerInfo, arc->arhandle->marker_num, arMulti );
-		matrixCopy(arMulti->trans, gTransform);
-
-		return 0;
-	}
-
-	int getTransMatMultiSquare(int id, int multiMarkerId) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->multi_markers.size() <= multiMarkerId || multiMarkerId < 0) {
-			return MULTIMARKER_NOT_FOUND;
-		}
-		multi_marker *multiMatch = &(arc->multi_markers[multiMarkerId]);
-		ARMultiMarkerInfoT *arMulti = multiMatch->multiMarkerHandle;
-
-		arGetTransMatMultiSquare( arc->ar3DHandle, arc->arhandle->markerInfo, arc->arhandle->marker_num, arMulti );
-		matrixCopy(arMulti->trans, gTransform);
-
-		return 0;
-	}
-
 	int detectMarker(int id) {
 		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
 		arController *arc = &(arControllers[id]);
@@ -919,152 +696,6 @@ extern "C" {
 
 		return arc->arhandle->marker_num;
 	}
-
-	int getMultiEachMarkerInfo(int id, int multiMarkerId, int markerIndex) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->multi_markers.size() <= multiMarkerId || multiMarkerId < 0) {
-			return MULTIMARKER_NOT_FOUND;
-		}
-		multi_marker *multiMatch = &(arc->multi_markers[multiMarkerId]);
-		ARMultiMarkerInfoT *arMulti = multiMatch->multiMarkerHandle;
-
-		if (arMulti->marker_num <= markerIndex || markerIndex < 0) {
-			return MARKER_INDEX_OUT_OF_BOUNDS;
-		}
-
-		ARMultiEachMarkerInfoT *marker = &(arMulti->marker[markerIndex]);
-		matrixCopy(marker->trans, gTransform);
-
-		EM_ASM_({
-			if (!artoolkit["multiEachMarkerInfo"]) {
-				artoolkit["multiEachMarkerInfo"] = ({});
-			}
-			var multiEachMarker = artoolkit["multiEachMarkerInfo"];
-			multiEachMarker['visible'] = $0;
-			multiEachMarker['pattId'] = $1;
-			multiEachMarker['pattType'] = $2;
-			multiEachMarker['width'] = $3;
-		},
-			marker->visible,
-			marker->patt_id,
-			marker->patt_type,
-			marker->width
-		);
-
-		return 0;
-	}
-
-	int getMarkerInfo(int id, int markerIndex) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->arhandle->marker_num <= markerIndex) {
-			return MARKER_INDEX_OUT_OF_BOUNDS;
-		}
-		ARMarkerInfo* markerInfo = markerIndex < 0 ? &gMarkerInfo : &((arc->arhandle)->markerInfo[markerIndex]);
-
-		EM_ASM_({
-			var $a = arguments;
-			var i = 12;
-			if (!artoolkit["markerInfo"]) {
-				artoolkit["markerInfo"] = ({
-					pos: [0,0],
-					line: [[0,0,0], [0,0,0], [0,0,0], [0,0,0]],
-					vertex: [[0,0], [0,0], [0,0], [0,0]]
-				});
-			}
-			var markerInfo = artoolkit["markerInfo"];
-			markerInfo["area"] = $0;
-			markerInfo["id"] = $1;
-			markerInfo["idPatt"] = $2;
-			markerInfo["idMatrix"] = $3;
-			markerInfo["dir"] = $4;
-			markerInfo["dirPatt"] = $5;
-			markerInfo["dirMatrix"] = $6;
-			markerInfo["cf"] = $7;
-			markerInfo["cfPatt"] = $8;
-			markerInfo["cfMatrix"] = $9;
-			markerInfo["pos"][0] = $10;
-			markerInfo["pos"][1] = $11;
-			markerInfo["line"][0][0] = $a[i++];
-			markerInfo["line"][0][1] = $a[i++];
-			markerInfo["line"][0][2] = $a[i++];
-			markerInfo["line"][1][0] = $a[i++];
-			markerInfo["line"][1][1] = $a[i++];
-			markerInfo["line"][1][2] = $a[i++];
-			markerInfo["line"][2][0] = $a[i++];
-			markerInfo["line"][2][1] = $a[i++];
-			markerInfo["line"][2][2] = $a[i++];
-			markerInfo["line"][3][0] = $a[i++];
-			markerInfo["line"][3][1] = $a[i++];
-			markerInfo["line"][3][2] = $a[i++];
-			markerInfo["vertex"][0][0] = $a[i++];
-			markerInfo["vertex"][0][1] = $a[i++];
-			markerInfo["vertex"][1][0] = $a[i++];
-			markerInfo["vertex"][1][1] = $a[i++];
-			markerInfo["vertex"][2][0] = $a[i++];
-			markerInfo["vertex"][2][1] = $a[i++];
-			markerInfo["vertex"][3][0] = $a[i++];
-			markerInfo["vertex"][3][1] = $a[i++];
-			markerInfo["errorCorrected"] = $a[i++];
-			// markerInfo["globalID"] = $a[i++];
-		},
-			markerInfo->area,
-			markerInfo->id,
-			markerInfo->idPatt,
-			markerInfo->idMatrix,
-			markerInfo->dir,
-			markerInfo->dirPatt,
-			markerInfo->dirMatrix,
-			markerInfo->cf,
-			markerInfo->cfPatt,
-			markerInfo->cfMatrix,
-
-			markerInfo->pos[0],
-			markerInfo->pos[1],
-
-			markerInfo->line[0][0],
-			markerInfo->line[0][1],
-			markerInfo->line[0][2],
-
-			markerInfo->line[1][0],
-			markerInfo->line[1][1],
-			markerInfo->line[1][2],
-
-			markerInfo->line[2][0],
-			markerInfo->line[2][1],
-			markerInfo->line[2][2],
-
-			markerInfo->line[3][0],
-			markerInfo->line[3][1],
-			markerInfo->line[3][2],
-
-			//
-
-			markerInfo->vertex[0][0],
-			markerInfo->vertex[0][1],
-
-			markerInfo->vertex[1][0],
-			markerInfo->vertex[1][1],
-
-			markerInfo->vertex[2][0],
-			markerInfo->vertex[2][1],
-
-			markerInfo->vertex[3][0],
-			markerInfo->vertex[3][1],
-
-			//
-
-			markerInfo->errorCorrected
-
-			// markerInfo->globalID
-		);
-
-		return 0;
-	}
-
 
 	/********
 	* Setup *
