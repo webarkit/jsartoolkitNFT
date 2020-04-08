@@ -16,10 +16,8 @@
 #include <vector>
 #include <unordered_map>
 #include <AR/config.h>
-#include <AR/arFilterTransMat.h>
 #include <AR2/tracking.h>
 #include <AR/paramGL.h>
-#include <AR/video.h>
 #include <KPM/kpm.h>
 #include "trackingMod.h"
 
