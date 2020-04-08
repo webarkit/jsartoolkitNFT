@@ -619,13 +619,6 @@ extern "C" {
 		return arDetectMarker( arc->arhandle, &buff);
 	}
 
-	int getMarkerNum(int id) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		return arc->arhandle->marker_num;
-	}
-
 	/********
 	* Setup *
 	********/
