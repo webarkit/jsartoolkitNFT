@@ -45,29 +45,29 @@
     }
 
 	/**
-		The ARController is the main object for doing AR marker detection with JSARToolKit.
+		The ARControllerNFT is the main object for doing AR marker detection with JSARToolKit.
 
-		To use an ARController, you need to tell it the dimensions to use for the AR processing canvas and
+		To use an ARControllerNFT, you need to tell it the dimensions to use for the AR processing canvas and
 		pass it an ARCameraParam to define the camera parameters to use when processing images.
 		The ARCameraParam defines the lens distortion and aspect ratio of the camera used.
 		See https://www.artoolworks.com/support/library/Calibrating_your_camera for more information about AR camera parameters and how to make and use them.
 
-		If you pass an image as the first argument, the ARController uses that as the image to process,
+		If you pass an image as the first argument, the ARControllerNFT uses that as the image to process,
 		using the dimensions of the image as AR processing canvas width and height. If the first argument
-		to ARController is an image, the second argument is used as the camera param.
+		to ARControllerNFT is an image, the second argument is used as the camera param.
 
 		The camera parameters argument can be either an ARCameraParam or an URL to a camera definition file.
-		If the camera argument is an URL, it is loaded into a new ARCameraParam, and the ARController dispatches
+		If the camera argument is an URL, it is loaded into a new ARCameraParam, and the ARControllerNFT dispatches
 		a 'load' event and calls the onload method if it is defined.
 
-	 	@exports ARController
+	 	@exports ARControllerNFT
 	 	@constructor
 
 		@param {number} width The width of the images to process.
 		@param {number} height The height of the images to process.
-		@param {ARCameraParam | string} camera The ARCameraParam to use for image processing. If this is a string, the ARController treats it as an URL and tries to load it as a ARCameraParam definition file, calling ARController#onload on success.
+		@param {ARCameraParam | string} camera The ARCameraParam to use for image processing. If this is a string, the ARControllerNFT treats it as an URL and tries to load it as a ARCameraParam definition file, calling ARControllerNFT#onload on success.
 	*/
-    var ARController = function (width, height, cameraPara) {
+    var ARControllerNFT = function (width, height, cameraPara) {
         this.id = undefined;
         var w = width, h = height;
 
@@ -117,7 +117,7 @@
             this.cameraParam = new ARCameraParam(cameraPara, function () {
                 this._initialize();
             }.bind(this), function (err) {
-                console.error("ARController: Failed to load ARCameraParam", err);
+                console.error("ARControllerNFT: Failed to load ARCameraParam", err);
                 this.onload(err);
             }.bind(this));
         } else {
@@ -127,13 +127,13 @@
     };
 
 	/**
-		Destroys the ARController instance and frees all associated resources.
-		After calling dispose, the ARController can't be used any longer. Make a new one if you need one.
+		Destroys the ARControllerNFT instance and frees all associated resources.
+		After calling dispose, the ARControllerNFT can't be used any longer. Make a new one if you need one.
 
-		Calling this avoids leaking Emscripten memory, which may be important if you're using multiple ARControllers.
+		Calling this avoids leaking Emscripten memory, which may be important if you're using multiple ARControllerNFTs.
 	*/
-    ARController.prototype.dispose = function () {
-        // It is possible to call dispose on an ARController that was never initialized. But if it was never initialized the id is undefined.
+    ARControllerNFT.prototype.dispose = function () {
+        // It is possible to call dispose on an ARControllerNFT that was never initialized. But if it was never initialized the id is undefined.
         if (this.id > -1) {
             artoolkit.teardown(this.id);
         }
@@ -154,25 +154,25 @@
 		Finally, getMultiMarker is dispatched for every found multimarker, followed by getMultiMarkerSub events
 		dispatched for each of the markers in the multimarker.
 
-			arController.addEventListener('markerNum', function(ev) {
+			ARControllerNFT.addEventListener('markerNum', function(ev) {
 				console.log("Detected " + ev.data + " markers.")
 			});
-			arController.addEventListener('getMarker', function(ev) {
+			ARControllerNFT.addEventListener('getMarker', function(ev) {
 				console.log("Detected marker with ids:", ev.data.marker.id, ev.data.marker.idPatt, ev.data.marker.idMatrix);
 				console.log("Marker data", ev.data.marker);
 				console.log("Marker transform matrix:", [].join.call(ev.data.matrix, ', '));
             });
-            arController.addEventListener('getNFTMarker', function(ev) {
+            ARControllerNFT.addEventListener('getNFTMarker', function(ev) {
 				// do stuff
 			});
-			arController.addEventListener('getMultiMarker', function(ev) {
+			ARControllerNFT.addEventListener('getMultiMarker', function(ev) {
 				console.log("Detected multimarker with id:", ev.data.multiMarkerId);
 			});
-			arController.addEventListener('getMultiMarkerSub', function(ev) {
+			ARControllerNFT.addEventListener('getMultiMarkerSub', function(ev) {
 				console.log("Submarker for " + ev.data.multiMarkerId, ev.data.markerIndex, ev.data.marker);
 			});
 
-			arController.process(image);
+			ARControllerNFT.process(image);
 
 
 		If no image is given, defaults to this.image.
@@ -181,7 +181,7 @@
 
 		@param {ImageElement | VideoElement} image The image to process [optional].
 	*/
-    ARController.prototype.process = function (image) {
+    ARControllerNFT.prototype.process = function (image) {
         var result = this.detectMarker(image);
         if (result != 0) {
             console.error("detectMarker error: " + result);
@@ -258,7 +258,7 @@
     Detects the NFT markers in the process() function,
     with the given tracked id.
   */
-    ARController.prototype.detectNFTMarker = function () {
+    ARControllerNFT.prototype.detectNFTMarker = function () {
         artoolkit.detectNFTMarker(this.id);
     }
 
@@ -274,7 +274,7 @@
 		@param {number} markerWidth The width of the marker to track.
 		@return {Object} The marker tracking object.
 	*/
-    ARController.prototype.trackNFTMarkerId = function (id, markerWidth) {
+    ARControllerNFT.prototype.trackNFTMarkerId = function (id, markerWidth) {
         var obj = this.nftMarkers[id];
         if (!obj) {
             this.nftMarkers[id] = obj = {
@@ -292,17 +292,17 @@
     };
 
 	/**
-		Add an event listener on this ARController for the named event, calling the callback function
+		Add an event listener on this ARControllerNFT for the named event, calling the callback function
 		whenever that event is dispatched.
 
 		Possible events are:
 		  * getNFTMarker - dispatched whenever process() finds a NFT marker
-		  * load - dispatched when the ARController is ready to use (useful if passing in a camera URL in the constructor)
+		  * load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
 
 		@param {string} name Name of the event to listen to.
 		@param {function} callback Callback function to call when an event with the given name is dispatched.
 	*/
-    ARController.prototype.addEventListener = function (name, callback) {
+    ARControllerNFT.prototype.addEventListener = function (name, callback) {
         if (!this.listeners[name]) {
             this.listeners[name] = [];
         }
@@ -315,7 +315,7 @@
 		@param {string} name Name of the event to stop listening to.
 		@param {function} callback Callback function to remove from the listeners of the named event.
 	*/
-    ARController.prototype.removeEventListener = function (name, callback) {
+    ARControllerNFT.prototype.removeEventListener = function (name, callback) {
         if (this.listeners[name]) {
             var index = this.listeners[name].indexOf(callback);
             if (index > -1) {
@@ -329,7 +329,7 @@
 
 		@param {Object} event Event to dispatch.
 	*/
-    ARController.prototype.dispatchEvent = function (event) {
+    ARControllerNFT.prototype.dispatchEvent = function (event) {
         var listeners = this.listeners[event.name];
         if (listeners) {
             for (var i = 0; i < listeners.length; i++) {
@@ -343,7 +343,7 @@
 
 		The debug canvas is added to document.body.
 	*/
-    ARController.prototype.debugSetup = function () {
+    ARControllerNFT.prototype.debugSetup = function () {
         document.body.appendChild(this.canvas);
 
         var lumaCanvas = document.createElement('canvas');
@@ -359,13 +359,13 @@
 	/**
 		Loads an NFT marker from the given URL prefix and calls the onSuccess callback with the UID of the marker.
 
-		arController.loadNFTMarker(markerURL, onSuccess, onError);
+		ARControllerNFT.loadNFTMarker(markerURL, onSuccess, onError);
 
 		@param {string} markerURL - The URL prefix of the NFT markers to load.
 		@param {function} onSuccess - The success callback. Called with the id of the loaded marker on a successful load.
 		@param {function} onError - The error callback. Called with the encountered error if the load fails.
 	*/
-    ARController.prototype.loadNFTMarker = function (markerURL, onSuccess, onError) {
+    ARControllerNFT.prototype.loadNFTMarker = function (markerURL, onSuccess, onError) {
         var self = this;
         if (markerURL) {
           return artoolkit.addNFTMarker(this.id, markerURL, function (id) {
@@ -392,7 +392,7 @@
 	 * @param {Float64Array} dst	The float array to populate with the 3x4 marker transformation matrix
 	 * @return	{Float64Array} The dst array.
 	 */
-    ARController.prototype.getTransMatSquare = function (markerUID, markerWidth, dst) {
+    ARControllerNFT.prototype.getTransMatSquare = function (markerUID, markerWidth, dst) {
         artoolkit.getTransMatSquare(this.id, markerUID, markerWidth);
         dst.set(this.marker_transform_mat);
         return dst;
@@ -409,7 +409,7 @@
 	 * @param {Float64Array} dst	The float array to populate with the 3x4 marker transformation matrix
 	 * @return	{Float64Array} The dst array.
 	 */
-    ARController.prototype.getTransMatSquareCont = function (markerUID, markerWidth, previousMarkerTransform, dst) {
+    ARControllerNFT.prototype.getTransMatSquareCont = function (markerUID, markerWidth, previousMarkerTransform, dst) {
         this.marker_transform_mat.set(previousMarkerTransform);
         artoolkit.getTransMatSquareCont(this.id, markerUID, markerWidth);
         dst.set(this.marker_transform_mat);
@@ -426,7 +426,7 @@
 		@param {Float64Array} glMat The 4x4 GL transformation matrix.
 		@param {number} scale The scale for the transform.
 	*/
-    ARController.prototype.transMatToGLMat = function (transMat, glMat, scale) {
+    ARControllerNFT.prototype.transMatToGLMat = function (transMat, glMat, scale) {
         if (glMat == undefined) {
             glMat = new Float64Array(16);
         }
@@ -463,7 +463,7 @@
         @param {Float64Array} [glRhMatrix] The 4x4 GL right hand transformation matrix.
         @param {number} [scale] The scale for the transform.
     */
-    ARController.prototype.arglCameraViewRHf = function (glMatrix, glRhMatrix, scale) {
+    ARControllerNFT.prototype.arglCameraViewRHf = function (glMatrix, glRhMatrix, scale) {
         var m_modelview;
         if (glRhMatrix == undefined)
             m_modelview = new Float64Array(16);
@@ -517,7 +517,7 @@
 		@return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
 			A result of 0 does not however, imply any markers were detected.
 	*/
-    ARController.prototype.detectMarker = function (image) {
+    ARControllerNFT.prototype.detectMarker = function (image) {
         if (this._copyImageToHeap(image)) {
             return artoolkit.detectMarker(this.id);
         }
@@ -531,7 +531,7 @@
     	    Note that this is actually a count, not an index. A better name for this function would be
         	arGetDetectedMarkerCount, but the current name lives on for historical reasons.
     */
-    ARController.prototype.getMarkerNum = function () {
+    ARControllerNFT.prototype.getMarkerNum = function () {
         return artoolkit.getMarkerNum(this.id);
     };
 
@@ -547,7 +547,7 @@
     @param {number} markerIndex The index of the NFT marker to query.
     @returns {Object} The NFTmarkerInfo struct.
   */
-    ARController.prototype.getNFTMarker = function (markerIndex) {
+    ARControllerNFT.prototype.getNFTMarker = function (markerIndex) {
         if (0 === artoolkit.getNFTMarker(this.id, markerIndex)) {
             return artoolkit.NFTMarkerInfo;
         }
@@ -559,28 +559,28 @@
 		@param {Object} markerInfo The marker info object to copy.
 		@return {Object} The new copy of the marker info.
 	*/
-    ARController.prototype.cloneMarkerInfo = function (markerInfo) {
+    ARControllerNFT.prototype.cloneMarkerInfo = function (markerInfo) {
         return JSON.parse(JSON.stringify(markerInfo));
     };
 
 	/**
-		Returns the 16-element WebGL transformation matrix used by ARController.process to
+		Returns the 16-element WebGL transformation matrix used by ARControllerNFT.process to
 		pass marker WebGL matrices to event listeners.
 
-		Unique to each ARController.
+		Unique to each ARControllerNFT.
 
-		@return {Float64Array} The 16-element WebGL transformation matrix used by the ARController.
+		@return {Float64Array} The 16-element WebGL transformation matrix used by the ARControllerNFT.
 	*/
-    ARController.prototype.getTransformationMatrix = function () {
+    ARControllerNFT.prototype.getTransformationMatrix = function () {
         return this.transform_mat;
     };
 
 	/**
-	 * Returns the projection matrix computed from camera parameters for the ARController.
+	 * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
 	 *
-	 * @return {Float64Array} The 16-element WebGL camera matrix for the ARController camera parameters.
+	 * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
 	 */
-    ARController.prototype.getCameraMatrix = function () {
+    ARControllerNFT.prototype.getCameraMatrix = function () {
         return this.camera_mat;
     };
 
@@ -590,7 +590,7 @@
 
 		@return {Float64Array} The 12-element 3x4 row-major marker transformation matrix used by ARToolKit.
 	*/
-    ARController.prototype.getMarkerTransformationMatrix = function () {
+    ARControllerNFT.prototype.getMarkerTransformationMatrix = function () {
         return this.marker_transform_mat;
     };
 
@@ -604,7 +604,7 @@
 	 * @param {boolean} mode		true to enable debug mode, false to disable debug mode
 	 * @see				getDebugMode()
 	 */
-    ARController.prototype.setDebugMode = function (mode) {
+    ARControllerNFT.prototype.setDebugMode = function (mode) {
         return artoolkit.setDebugMode(this.id, mode);
     };
 
@@ -613,7 +613,7 @@
 	 * @return {boolean}	true when debug mode is enabled, false when debug mode is disabled
 	 * @see					setDebugMode()
 	 */
-    ARController.prototype.getDebugMode = function () {
+    ARControllerNFT.prototype.getDebugMode = function () {
         return artoolkit.getDebugMode(this.id);
     };
 
@@ -622,7 +622,7 @@
 
 		@return {number} HEAP offset to the debug processing image.
 	*/
-    ARController.prototype.getProcessingImage = function () {
+    ARControllerNFT.prototype.getProcessingImage = function () {
         return artoolkit.getProcessingImage(this.id);
     };
 
@@ -631,7 +631,7 @@
 
 		@param {number} mode type for the log level.
 	*/
-    ARController.prototype.setLogLevel = function (mode) {
+    ARControllerNFT.prototype.setLogLevel = function (mode) {
         return artoolkit.setLogLevel(mode);
     };
 
@@ -639,7 +639,7 @@
   	Gets the logging level used by ARToolKit.
     @return {number} return the log level in use.
   */
-    ARController.prototype.getLogLevel = function () {
+    ARControllerNFT.prototype.getLogLevel = function () {
         return artoolkit.getLogLevel();
     };
 
@@ -648,7 +648,7 @@
     @param {number} value the value of the near plane
     @return {number} 0 (void)
   */
-    ARController.prototype.setProjectionNearPlane = function (value) {
+    ARControllerNFT.prototype.setProjectionNearPlane = function (value) {
         return artoolkit.setProjectionNearPlane(this.id, value);
     };
 
@@ -656,7 +656,7 @@
     Gets the value of the near plane of the camera with the give id.
     @return {number} the value of the near plane.
   */
-    ARController.prototype.getProjectionNearPlane = function () {
+    ARControllerNFT.prototype.getProjectionNearPlane = function () {
         return artoolkit.getProjectionNearPlane(this.id);
     };
 
@@ -665,7 +665,7 @@
     @param {number} value the value of the far plane
     @return {number} 0 (void)
   */
-    ARController.prototype.setProjectionFarPlane = function (value) {
+    ARControllerNFT.prototype.setProjectionFarPlane = function (value) {
         return artoolkit.setProjectionFarPlane(this.id, value);
     };
 
@@ -673,7 +673,7 @@
     Gets the value of the far plane of the camera with the give id.
     @return {number} the value of the far plane.
   */
-    ARController.prototype.getProjectionFarPlane = function () {
+    ARControllerNFT.prototype.getProjectionFarPlane = function () {
         return artoolkit.getProjectionFarPlane(this.id);
     };
 
@@ -688,7 +688,7 @@
 	        AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
 	        AR_LABELING_THRESH_MODE_AUTO_BRACKETING
 	 */
-    ARController.prototype.setThresholdMode = function (mode) {
+    ARControllerNFT.prototype.setThresholdMode = function (mode) {
         return artoolkit.setThresholdMode(this.id, mode);
     };
 
@@ -697,7 +697,7 @@
 	 * @return	{number}		The current threshold mode
 	 * @see				getVideoThresholdMode()
 	 */
-    ARController.prototype.getThresholdMode = function () {
+    ARControllerNFT.prototype.getThresholdMode = function () {
         return artoolkit.getThresholdMode(this.id);
     };
 
@@ -725,7 +725,7 @@
 
 		@param {number}     threshold An integer in the range [0,255] (inclusive).
 	*/
-    ARController.prototype.setThreshold = function (threshold) {
+    ARControllerNFT.prototype.setThreshold = function (threshold) {
         return artoolkit.setThreshold(this.id, threshold);
     };
 
@@ -744,7 +744,7 @@
 
 	    @return {number} The current threshold value.
 	*/
-    ARController.prototype.getThreshold = function () {
+    ARControllerNFT.prototype.getThreshold = function () {
         return artoolkit.getThreshold(this.id);
     };
 
@@ -770,7 +770,7 @@
 			AR_TEMPLATE_MATCHING_MONO_AND_MATRIX
 			The default mode is AR_TEMPLATE_MATCHING_COLOR.
 	*/
-    /*ARController.prototype.setPatternDetectionMode = function (mode) {
+    /*ARControllerNFT.prototype.setPatternDetectionMode = function (mode) {
         return artoolkit.setPatternDetectionMode(this.id, mode);
     };*/
 
@@ -779,7 +779,7 @@
 
 		@return {number} The current pattern detection mode.
 	*/
-  /*  ARController.prototype.getPatternDetectionMode = function () {
+  /*  ARControllerNFT.prototype.getPatternDetectionMode = function () {
         return artoolkit.getPatternDetectionMode(this.id);
     };*/
 
@@ -804,7 +804,7 @@
 			AR_IMAGE_PROC_FIELD_IMAGE
 			The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
 	*/
-	ARController.prototype.setImageProcMode = function(mode) {
+	ARControllerNFT.prototype.setImageProcMode = function(mode) {
 		return artoolkit.setImageProcMode(this.id, mode);
 	};
 
@@ -815,18 +815,18 @@
 
 	    @return {number} The current image processing mode.
 	*/
-    ARController.prototype.getImageProcMode = function () {
+    ARControllerNFT.prototype.getImageProcMode = function () {
         return artoolkit.getImageProcMode(this.id);
     };
 
 
 	/**
-		Draw the black and white image and debug markers to the ARController canvas.
+		Draw the black and white image and debug markers to the ARControllerNFT canvas.
 
 		See setDebugMode.
     @return 0 (void)
 	*/
-    ARController.prototype.debugDraw = function () {
+    ARControllerNFT.prototype.debugDraw = function () {
         var debugBuffer = new Uint8ClampedArray(Module.HEAPU8.buffer, this._bwpointer, this.framesize);
         var id = new ImageData(new Uint8ClampedArray(this.canvas.width * this.canvas.height * 4), this.canvas.width, this.canvas.height);
         for (var i = 0, j = 0; i < debugBuffer.length; i++ , j += 4) {
@@ -857,11 +857,11 @@
     // private methods
 
     /**
-      This function init the ArController with the necessary parmeters and variables.
-      Don't call directly this but instead instantiate a new ArController.
+      This function init the ARControllerNFT with the necessary parmeters and variables.
+      Don't call directly this but instead instantiate a new ARControllerNFT.
       @return {number} 0 (void)
     */
-    ARController.prototype._initialize = function () {
+    ARControllerNFT.prototype._initialize = function () {
         this.id = artoolkit.setup(this.width, this.height, this.cameraParam.id);
 
         this._initNFT();
@@ -895,7 +895,7 @@
     Init the necessary kpm handle for NFT and the settings for the CPU.
     @return {number} 0 (void)
   */
-    ARController.prototype._initNFT = function () {
+    ARControllerNFT.prototype._initNFT = function () {
         artoolkit.setupAR2(this.id);
     };
 
@@ -903,7 +903,7 @@
     Copy the Image data to the HEAP for the debugSetup function.
     @return {number} 0 (void)
   */
-    ARController.prototype._copyImageToHeap = function (image) {
+    ARControllerNFT.prototype._copyImageToHeap = function (image) {
         if (!image) {
             image = this.image;
         }
@@ -950,7 +950,7 @@
 
     // static
 	/**
-		ARCameraParam is used for loading AR camera parameters for use with ARController.
+		ARCameraParam is used for loading AR camera parameters for use with ARControllerNFT.
 		Use by passing in an URL and a callback function.
 
 			var camera = new ARCameraParam('Data/camera_para.dat', function() {
@@ -1188,7 +1188,7 @@
 
     /* Exports */
     scope.artoolkit = artoolkit;
-    scope.ARController = ARController;
+    scope.ARControllerNFT = ARControllerNFT;
     scope.ARCameraParam = ARCameraParam;
     if (scope.artoolkit_wasm_url) {
       scope.Module = Module;
