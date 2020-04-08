@@ -25,7 +25,7 @@ function load(msg) {
     var param = new ARCameraParam(msg.camera_para);
 
     param.onload = function () {
-        ar = new ARController(msg.pw, msg.ph, param);
+        ar = new ARControllerNFT(msg.pw, msg.ph, param);
         var cameraMatrix = ar.getCameraMatrix();
 
         ar.addEventListener('getNFTMarker', function (ev) {
