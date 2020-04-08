@@ -221,11 +221,6 @@ var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
     + FLAGS + ' ' + DEFINES + ' -o {OUTPUT_PATH}libar.bc ',
     OUTPUT_PATH);
 
-var compile_kpm = format(EMCC + ' ' + INCLUDES + ' '
-    + kpm_sources.join(' ')
-    + FLAGS + ' ' + DEFINES + ' -o {OUTPUT_PATH}libkpm.bc ',
-    OUTPUT_PATH);
-
 var ALL_BC = " {OUTPUT_PATH}libar.bc ";
 
 var compile_combine = format(EMCC + ' ' + INCLUDES + ' '
