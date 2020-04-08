@@ -108,7 +108,6 @@
         this.dataHeap = null;
         this.videoLuma = null;
         this.camera_mat = null;
-        this.marker_transform_mat = null;
         this.videoLumaPointer = null;
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
@@ -384,39 +383,6 @@
     };
 
 	/**
-	 * Populates the provided float array with the current transformation for the specified marker. After
-	 * a call to detectMarker, all marker information will be current. Marker transformations can then be
-	 * checked.
-	 * @param {number} markerUID	The unique identifier (UID) of the marker to query
-	 * @param {number} markerWidth	The width of the marker
-	 * @param {Float64Array} dst	The float array to populate with the 3x4 marker transformation matrix
-	 * @return	{Float64Array} The dst array.
-	 */
-    ARControllerNFT.prototype.getTransMatSquare = function (markerUID, markerWidth, dst) {
-        artoolkit.getTransMatSquare(this.id, markerUID, markerWidth);
-        dst.set(this.marker_transform_mat);
-        return dst;
-    };
-
-	/**
-	 * Populates the provided float array with the current transformation for the specified marker, using
-	 * previousMarkerTransform as the previously detected transformation. After
-	 * a call to detectMarker, all marker information will be current. Marker transformations can then be
-	 * checked.
-	 * @param {number} markerUID	The unique identifier (UID) of the marker to query
-	 * @param {number} markerWidth	The width of the marker
-	 * @param {Float64Array} previousMarkerTransform	The float array to use as the previous 3x4 marker transformation matrix
-	 * @param {Float64Array} dst	The float array to populate with the 3x4 marker transformation matrix
-	 * @return	{Float64Array} The dst array.
-	 */
-    ARControllerNFT.prototype.getTransMatSquareCont = function (markerUID, markerWidth, previousMarkerTransform, dst) {
-        this.marker_transform_mat.set(previousMarkerTransform);
-        artoolkit.getTransMatSquareCont(this.id, markerUID, markerWidth);
-        dst.set(this.marker_transform_mat);
-        return dst;
-    };
-
-	/**
 		Converts the given 3x4 marker transformation matrix in the 12-element transMat array
 		into a 4x4 WebGL matrix and writes the result into the 16-element glMat array.
 
@@ -583,17 +549,6 @@
     ARControllerNFT.prototype.getCameraMatrix = function () {
         return this.camera_mat;
     };
-
-	/**
-		Returns the shared ARToolKit 3x4 marker transformation matrix, used for passing and receiving
-		marker transforms to/from the Emscripten side.
-
-		@return {Float64Array} The 12-element 3x4 row-major marker transformation matrix used by ARToolKit.
-	*/
-    ARControllerNFT.prototype.getMarkerTransformationMatrix = function () {
-        return this.marker_transform_mat;
-    };
-
 
     /* Setter / Getter Proxies */
 
@@ -875,7 +830,7 @@
         this.videoLuma = new Uint8Array(Module.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4);
 
         this.camera_mat = new Float64Array(Module.HEAPU8.buffer, params.camera, 16);
-        this.marker_transform_mat = new Float64Array(Module.HEAPU8.buffer, params.transform, 12);
+        //this.marker_transform_mat = new Float64Array(Module.HEAPU8.buffer, params.transform, 12);
 
         this.setProjectionNearPlane(0.1)
         this.setProjectionFarPlane(1000);
@@ -1065,9 +1020,6 @@
         'getDebugMode',
 
         'getProcessingImage',
-
-        'getTransMatSquare',
-        'getTransMatSquareCont',
 
         'detectMarker',
         'getMarkerNum',

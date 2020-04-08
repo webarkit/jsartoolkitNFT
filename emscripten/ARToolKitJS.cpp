@@ -604,34 +604,6 @@ extern "C" {
 		}
 	}
 
-	int getTransMatSquare(int id, int markerIndex, int markerWidth) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->arhandle->marker_num <= markerIndex) {
-			return MARKER_INDEX_OUT_OF_BOUNDS;
-		}
-		ARMarkerInfo* marker = markerIndex < 0 ? &gMarkerInfo : &((arc->arhandle)->markerInfo[markerIndex]);
-
-		arGetTransMatSquare(arc->ar3DHandle, marker, markerWidth, gTransform);
-
-		return 0;
-	}
-
-	int getTransMatSquareCont(int id, int markerIndex, int markerWidth) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
-		arController *arc = &(arControllers[id]);
-
-		if (arc->arhandle->marker_num <= markerIndex) {
-			return MARKER_INDEX_OUT_OF_BOUNDS;
-		}
-		ARMarkerInfo* marker = markerIndex < 0 ? &gMarkerInfo : &((arc->arhandle)->markerInfo[markerIndex]);
-
-		arGetTransMatSquareCont(arc->ar3DHandle, marker, gTransform, markerWidth, gTransform);
-
-		return 0;
-	}
-
 	int detectMarker(int id) {
 		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
 		arController *arc = &(arControllers[id]);

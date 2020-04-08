@@ -13,16 +13,12 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	function("_loadCamera", &loadCamera);
 
-	function("getTransMatSquare", &getTransMatSquare);
-	function("getTransMatSquareCont", &getTransMatSquareCont);
-
 	function("detectMarker", &detectMarker);
 	function("getMarkerNum", &getMarkerNum);
 
 	function("detectNFTMarker", &detectNFTMarker);
 
 	function("getNFTMarker", &getNFTMarkerInfo);
-
 
 	/* AR Toolkit C APIS */
 	function("setDebugMode", &setDebugMode);
