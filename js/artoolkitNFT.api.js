@@ -7,7 +7,7 @@
     } else {
         scope = self;
     };
-    if (scope.artoolkit_wasm_url) {
+    if (scope.artoolkitNFT_wasm_url) {
         var downloadWasm = function(url) {
             return new Promise(function (resolve, reject) {
                 var wasmXHR = new XMLHttpRequest();
@@ -19,7 +19,7 @@
             });
         };
 
-        var wasm = downloadWasm(scope.artoolkit_wasm_url);
+        var wasm = downloadWasm(scope.artoolkitNFT_wasm_url);
 
         // Module.instantiateWasm is a user-implemented callback which the Emscripten runtime calls to perform
         // the WebAssembly instantiation action. The callback function will be called with two parameters, imports
@@ -1190,14 +1190,14 @@
     scope.artoolkit = artoolkit;
     scope.ARControllerNFT = ARControllerNFT;
     scope.ARCameraParamNFT = ARCameraParamNFT;
-    if (scope.artoolkit_wasm_url) {
+    if (scope.artoolkitNFT_wasm_url) {
       scope.Module = Module;
     };
 
     if (scope.Module) {
         scope.Module.onRuntimeInitialized = function () {
             runWhenLoaded();
-            var event = new Event('artoolkit-loaded');
+            var event = new Event('artoolkitNFT-loaded');
             scope.dispatchEvent(event);
         }
     } else {
