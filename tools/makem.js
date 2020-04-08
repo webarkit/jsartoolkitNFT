@@ -89,7 +89,6 @@ function matchAll(patterns, prefix="") {
     'AR/arLabelingSub/*.c',
     'AR/*.c',
     'ARICP/*.c',
-    'Video/video.c',
     'ARUtil/log.c',
     'ARUtil/file_utils.c',
 ]);
@@ -98,7 +97,6 @@ function matchAll(patterns, prefix="") {
 	  'AR/arLabelingSub/*.c',
 	  'AR/*.c',
 	  'ARICP/*.c',
-	  'Video/video.c',
 	  'ARUtil/log.c',
 	  'ARUtil/file_utils.c',
 	].map(function(src) {
