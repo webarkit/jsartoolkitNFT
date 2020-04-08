@@ -22,7 +22,7 @@ var markerResult = null;
 
 function load(msg) {
 
-    var param = new ARCameraParam(msg.camera_para);
+    var param = new ARCameraParamNFT(msg.camera_para);
 
     param.onload = function () {
         ar = new ARControllerNFT(msg.pw, msg.ph, param);

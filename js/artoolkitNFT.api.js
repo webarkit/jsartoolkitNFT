@@ -48,16 +48,16 @@
 		The ARControllerNFT is the main object for doing AR marker detection with JSARToolKit.
 
 		To use an ARControllerNFT, you need to tell it the dimensions to use for the AR processing canvas and
-		pass it an ARCameraParam to define the camera parameters to use when processing images.
-		The ARCameraParam defines the lens distortion and aspect ratio of the camera used.
+		pass it an ARCameraParamNFT to define the camera parameters to use when processing images.
+		The ARCameraParamNFT defines the lens distortion and aspect ratio of the camera used.
 		See https://www.artoolworks.com/support/library/Calibrating_your_camera for more information about AR camera parameters and how to make and use them.
 
 		If you pass an image as the first argument, the ARControllerNFT uses that as the image to process,
 		using the dimensions of the image as AR processing canvas width and height. If the first argument
 		to ARControllerNFT is an image, the second argument is used as the camera param.
 
-		The camera parameters argument can be either an ARCameraParam or an URL to a camera definition file.
-		If the camera argument is an URL, it is loaded into a new ARCameraParam, and the ARControllerNFT dispatches
+		The camera parameters argument can be either an ARCameraParamNFT or an URL to a camera definition file.
+		If the camera argument is an URL, it is loaded into a new ARCameraParamNFT, and the ARControllerNFT dispatches
 		a 'load' event and calls the onload method if it is defined.
 
 	 	@exports ARControllerNFT
@@ -65,7 +65,7 @@
 
 		@param {number} width The width of the images to process.
 		@param {number} height The height of the images to process.
-		@param {ARCameraParam | string} camera The ARCameraParam to use for image processing. If this is a string, the ARControllerNFT treats it as an URL and tries to load it as a ARCameraParam definition file, calling ARControllerNFT#onload on success.
+		@param {ARCameraParamNFT | string} camera The ARCameraParamNFT to use for image processing. If this is a string, the ARControllerNFT treats it as an URL and tries to load it as a ARCameraParamNFT definition file, calling ARControllerNFT#onload on success.
 	*/
     var ARControllerNFT = function (width, height, cameraPara) {
         this.id = undefined;
@@ -114,10 +114,10 @@
         this._lumaCtx = undefined;
 
         if (typeof cameraPara === 'string') {
-            this.cameraParam = new ARCameraParam(cameraPara, function () {
+            this.cameraParam = new ARCameraParamNFT(cameraPara, function () {
                 this._initialize();
             }.bind(this), function (err) {
-                console.error("ARControllerNFT: Failed to load ARCameraParam", err);
+                console.error("ARControllerNFT: Failed to load ARCameraParamNFT", err);
                 this.onload(err);
             }.bind(this));
         } else {
@@ -950,24 +950,24 @@
 
     // static
 	/**
-		ARCameraParam is used for loading AR camera parameters for use with ARControllerNFT.
+		ARCameraParamNFT is used for loading AR camera parameters for use with ARControllerNFT.
 		Use by passing in an URL and a callback function.
 
-			var camera = new ARCameraParam('Data/camera_para.dat', function() {
+			var camera = new ARCameraParamNFT('Data/camera_para.dat', function() {
 				console.log('loaded camera', this.id);
 			},
 			function(err) {
 				console.log('failed to load camera', err);
 			});
 
-		@exports ARCameraParam
+		@exports ARCameraParamNFT
 		@constructor
 
 		@param {string} src URL to load camera parameters from.
 		@param {Function} onload Onload callback to be called on successful parameter loading.
 		@param {Function} onerror Error callback to called when things don't work out.
 	*/
-    var ARCameraParam = function (src, onload, onerror) {
+    var ARCameraParamNFT = function (src, onload, onerror) {
         this.id = -1;
         this._src = '';
         this.complete = false;
@@ -988,21 +988,21 @@
             this.load(src);
         }
         else {
-            console.warn("No camera parameter file defined! It should be defined in constructor or in ARCameraParam.load(url)");
+            console.warn("No camera parameter file defined! It should be defined in constructor or in ARCameraParamNFT.load(url)");
         }
     };
 
 
 	/**
-		Loads the given URL as camera parameters definition file into this ARCameraParam.
+		Loads the given URL as camera parameters definition file into this ARCameraParamNFT.
 
-		Can only be called on an unloaded ARCameraParam instance.
+		Can only be called on an unloaded ARCameraParamNFT instance.
 
 		@param {string} src URL to load.
 	*/
-    ARCameraParam.prototype.load = function (src) {
+    ARCameraParamNFT.prototype.load = function (src) {
         if (this._src !== '') {
-            throw ("ARCameraParam: Trying to load camera parameters twice.")
+            throw ("ARCameraParamNFT: Trying to load camera parameters twice.")
         }
         this._src = src;
         if (src) {
@@ -1016,7 +1016,7 @@
         }
     };
 
-    Object.defineProperty(ARCameraParam.prototype, 'src', {
+    Object.defineProperty(ARCameraParamNFT.prototype, 'src', {
         set: function (src) {
             this.load(src);
         },
@@ -1029,7 +1029,7 @@
 		Destroys the camera parameter and frees associated Emscripten resources.
 
 	*/
-    ARCameraParam.prototype.dispose = function () {
+    ARCameraParamNFT.prototype.dispose = function () {
         if (this.id !== -1) {
             artoolkit.deleteCamera(this.id);
         }
@@ -1189,7 +1189,7 @@
     /* Exports */
     scope.artoolkit = artoolkit;
     scope.ARControllerNFT = ARControllerNFT;
-    scope.ARCameraParam = ARCameraParam;
+    scope.ARCameraParamNFT = ARCameraParamNFT;
     if (scope.artoolkit_wasm_url) {
       scope.Module = Module;
     };
