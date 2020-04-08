@@ -186,8 +186,7 @@
             console.error("detectMarker error: " + result);
         }
 
-        // get markers
-        //var markerNum = this.getMarkerNum();
+        // get NFT markers
         var k, o;
         for (k in this.nftMarkers) {
             o = this.nftMarkers[k]
@@ -488,17 +487,6 @@
             return artoolkit.detectMarker(this.id);
         }
         return -99;
-    };
-
-	/**
-		Get the number of markers detected in a video frame.
-
-	    @return {number} The number of detected markers in the most recent image passed to arDetectMarker.
-    	    Note that this is actually a count, not an index. A better name for this function would be
-        	arGetDetectedMarkerCount, but the current name lives on for historical reasons.
-    */
-    ARControllerNFT.prototype.getMarkerNum = function () {
-        return artoolkit.getMarkerNum(this.id);
     };
 
   /**
@@ -1012,10 +1000,7 @@
         'getProcessingImage',
 
         'detectMarker',
-        'getMarkerNum',
-
         'detectNFTMarker',
-
         'getNFTMarker',
 
         'setProjectionNearPlane',
