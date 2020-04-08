@@ -1,7 +1,7 @@
 # JSARToolKitNFT
 
 Emscripten port of [ARToolKit](https://github.com/artoolkitx/artoolkit5) to JavaScript.
-Modified and lighter version of JSARToolKit5.
+Modified and lighter version of [JSARToolKit5](https://github.com/artoolkitx/jsartoolkit5).
 
 ## Markers Types
 

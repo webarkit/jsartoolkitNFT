@@ -1,5 +1,5 @@
 {
-  "name": "jsartoolkit",
+  "name": "jsartoolkitNFT",
   "version": "0.0.0",
   "main": "js/index",
   "description": "Emscripten port of ARToolKit to JavaScript",
@@ -21,8 +21,7 @@
   "bugs": {
     "url": "https://github.com/kalwalt/jsartoolkitNFT/issues"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "scripts": {
     "build-local": "node tools/makem.js; echo Built at `date`",
     "build-local-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
