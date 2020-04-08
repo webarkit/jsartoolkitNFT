@@ -250,9 +250,9 @@
             }
         }
 
-        if (this._bwpointer) {
+      /*  if (this._bwpointer) {
             this.debugDraw();
-        }
+        }*/
     };
   /**
     Detects the NFT markers in the process() function,
@@ -344,13 +344,13 @@
 		The debug canvas is added to document.body.
 	*/
     ARControllerNFT.prototype.debugSetup = function () {
-        document.body.appendChild(this.canvas);
+        /*document.body.appendChild(this.canvas);
 
         var lumaCanvas = document.createElement('canvas');
         lumaCanvas.width = this.canvas.width;
         lumaCanvas.height = this.canvas.height;
         this._lumaCtx = lumaCanvas.getContext('2d');
-        document.body.appendChild(lumaCanvas);
+        document.body.appendChild(lumaCanvas);*/
 
         this.setDebugMode(true);
         this._bwpointer = this.getProcessingImage();
@@ -826,7 +826,7 @@
 		See setDebugMode.
     @return 0 (void)
 	*/
-    ARControllerNFT.prototype.debugDraw = function () {
+  /*  ARControllerNFT.prototype.debugDraw = function () {
         var debugBuffer = new Uint8ClampedArray(Module.HEAPU8.buffer, this._bwpointer, this.framesize);
         var id = new ImageData(new Uint8ClampedArray(this.canvas.width * this.canvas.height * 4), this.canvas.width, this.canvas.height);
         for (var i = 0, j = 0; i < debugBuffer.length; i++ , j += 4) {
@@ -852,7 +852,7 @@
             console.log("GL 4x4 Matrix: " + this.transform_mat);
             console.log("GL_RH 4x4 Mat: " + this.transformGL_RH);
         }
-    };
+    };*/
 
     // private methods
 
