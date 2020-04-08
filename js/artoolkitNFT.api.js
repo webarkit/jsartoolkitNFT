@@ -520,16 +520,6 @@
     };
 
 	/**
-		Makes a deep copy of the given marker info.
-
-		@param {Object} markerInfo The marker info object to copy.
-		@return {Object} The new copy of the marker info.
-	*/
-    ARControllerNFT.prototype.cloneMarkerInfo = function (markerInfo) {
-        return JSON.parse(JSON.stringify(markerInfo));
-    };
-
-	/**
 		Returns the 16-element WebGL transformation matrix used by ARControllerNFT.process to
 		pass marker WebGL matrices to event listeners.
 
