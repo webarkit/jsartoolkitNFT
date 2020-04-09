@@ -681,41 +681,6 @@
         return artoolkit.getThreshold(this.id);
     };
 
-
-	/**
-		Set the pattern detection mode
-
-		The pattern detection determines the method by which ARToolKit
-		matches detected squares in the video image to marker templates
-		and/or IDs. ARToolKit v4.x can match against pictorial "template" markers,
-		whose pattern files are created with the mk_patt utility, in either colour
-		or mono, and additionally can match against 2D-barcode-type "matrix"
-		markers, which have an embedded marker ID. Two different two-pass modes
-		are also available, in which a matrix-detection pass is made first,
-		followed by a template-matching pass.
-
-		@param {number} mode
-			Options for this field are:
-			AR_TEMPLATE_MATCHING_COLOR
-			AR_TEMPLATE_MATCHING_MONO
-			AR_MATRIX_CODE_DETECTION
-			AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX
-			AR_TEMPLATE_MATCHING_MONO_AND_MATRIX
-			The default mode is AR_TEMPLATE_MATCHING_COLOR.
-	*/
-    /*ARControllerNFT.prototype.setPatternDetectionMode = function (mode) {
-        return artoolkit.setPatternDetectionMode(this.id, mode);
-    };*/
-
-	/**
-		Returns the current pattern detection mode.
-
-		@return {number} The current pattern detection mode.
-	*/
-  /*  ARControllerNFT.prototype.getPatternDetectionMode = function () {
-        return artoolkit.getPatternDetectionMode(this.id);
-    };*/
-
 	/**
 	    Set the image processing mode.
 
@@ -808,7 +773,6 @@
         this.videoLuma = new Uint8Array(Module.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4);
 
         this.camera_mat = new Float64Array(Module.HEAPU8.buffer, params.camera, 16);
-        //this.marker_transform_mat = new Float64Array(Module.HEAPU8.buffer, params.transform, 12);
 
         this.setProjectionNearPlane(0.1)
         this.setProjectionFarPlane(1000);
