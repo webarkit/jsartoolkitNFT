@@ -25,7 +25,13 @@
   "scripts": {
     "build-local": "node tools/makem.js; echo Built at `date`",
     "build-local-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
+    "minify": "grunt terser",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
   },
-  "license": "LGPL-3.0"
+  "license": "LGPL-3.0",
+  "dependencies": {
+    "grunt": "^1.1.0",
+    "grunt-cli": "^1.3.2",
+    "grunt-terser": "^1.0.0"
+  }
 }
