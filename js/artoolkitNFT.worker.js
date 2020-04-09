@@ -1,4 +1,4 @@
-importScripts('../build/artoolkitNFT.min.js');
+importScripts('../build/artoolkitNFT_wasm.js');
 
 self.onmessage = function(e) {
     var msg = e.data;
@@ -22,6 +22,8 @@ var markerResult = null;
 
 function load(msg) {
 
+self.addEventListener('artoolkitNFT-loaded', function() {
+
     var param = new ARCameraParamNFT(msg.camera_para);
 
     param.onload = function () {
@@ -40,6 +42,8 @@ function load(msg) {
 
         postMessage({type: "loaded", proj: JSON.stringify(cameraMatrix)});
     };
+  });
+
 }
 
 function process() {
