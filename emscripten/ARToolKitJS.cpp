@@ -37,7 +37,6 @@ struct arController {
 	int height = 0;
 
 	ARHandle *arhandle = NULL;
-	ARPattHandle *arPattHandle = NULL;
 	AR3DHandle* ar3DHandle;
 
 	KpmHandle* kpmHandle;
@@ -358,15 +357,8 @@ extern "C" {
 
 		deleteHandle(arc);
 
-		arPattDeleteHandle(arc->arPattHandle);
-
 		arControllers.erase(id);
 
-		/*for (int i=0; i<arc->multi_markers.size(); i++) {
-			arMultiFreeConfig(arc->multi_markers[i].multiMarkerHandle);
-		}*/
-
-		//delete &arc->multi_markers;
 		delete arc;
 
 		return 0;
@@ -423,18 +415,11 @@ extern "C" {
 		// AR_DEFAULT_PIXEL_FORMAT
 		int set = arSetPixelFormat(arc->arhandle, arc->pixFormat);
 
-		// ARLOGi("setCamera(): arCreateHandle done\n");
-
 		arc->ar3DHandle = ar3DCreateHandle(&(arc->param));
 		if (arc->ar3DHandle == NULL) {
 			ARLOGe("setCamera(): Error creating 3D handle");
 			return -1;
 		}
-
-		// ARLOGi("setCamera(): ar3DCreateHandle done\n");
-
-		arPattAttach(arc->arhandle, arc->arPattHandle);
-		// ARLOGi("setCamera(): Pattern handler attached.\n");
 
 		arglCameraFrustumRH(&((arc->paramLT)->param), arc->nearPlane, arc->farPlane, arc->cameraLens);
 
@@ -634,10 +619,6 @@ extern "C" {
 		arc->videoFrameSize = width * height * 4 * sizeof(ARUint8);
 		arc->videoFrame = (ARUint8*) malloc(arc->videoFrameSize);
 		arc->videoLuma = (ARUint8*) malloc(arc->videoFrameSize / 4);
-
-		if ((arc->arPattHandle = arPattCreateHandle()) == NULL) {
-			ARLOGe("setup(): Error: arPattCreateHandle.\n");
-		}
 
 		setCamera(id, cameraID);
 
