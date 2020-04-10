@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 async function jsonParser(requestURL, callback) {
   return await new Promise( function(resolve, reject) {
     let data;
@@ -6,10 +7,10 @@ async function jsonParser(requestURL, callback) {
     request.responseType = 'json';
     request.onload = function() {
       resolve(request.response);
-    }
+    };
     request.onerror = function () {
       reject('error ' + request.status);
-    }
+    };
     request.send(null);
   });
 }

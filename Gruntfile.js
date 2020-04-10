@@ -9,23 +9,40 @@ module.exports = function(grunt) {
 
     concat: {
       dist: {
-        src: ['src/arnft-constructor.js',
-              'src/arnft-init.js',
-              'src/arnft-add.js',
-              'src/arnft-loadmodel.js',
-              'src/utils/isMobile.js',
-              'src/utils/setMatrix.js',
-              'src/utils/start.js',
-              'src/utils/html/createLoading.js',
-              'src/utils/html/createContainer.js',
-              'src/utils/html/createStats.js',
-              'src/utils/jsonParser.js'],
+        src: [
+          'src/arnft-constructor.js',
+          'src/arnft-init.js',
+          'src/arnft-add.js',
+          'src/arnft-loadmodel.js',
+          'src/utils/isMobile.js',
+          'src/utils/setMatrix.js',
+          'src/utils/start.js',
+          'src/utils/html/createLoading.js',
+          'src/utils/html/createContainer.js',
+          'src/utils/html/createStats.js',
+          'src/utils/jsonParser.js'],
         dest: 'dist/arNFT.js',
         options: {
-          banner: ";(function(){ \n 'use strict';\n\n",
+          banner: "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
           footer: "\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());"
         }
       }
+    },
+
+    jshint: {
+      beforeconcat: [
+        'src/arnft-constructor.js',
+        'src/arnft-init.js',
+        'src/arnft-add.js',
+        'src/arnft-loadmodel.js',
+        'src/utils/isMobile.js',
+        'src/utils/setMatrix.js',
+        'src/utils/start.js',
+        'src/utils/html/createLoading.js',
+        'src/utils/html/createContainer.js',
+        'src/utils/html/createStats.js',
+        'src/utils/jsonParser.js'],
+      afterconcat: ['dist/arNFT.js']
     },
 
     terser: {
@@ -37,6 +54,7 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks("grunt-terser");
 };

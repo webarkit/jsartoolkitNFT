@@ -1,7 +1,7 @@
 ARnft.prototype.init = function (markerUrl, stats) {
 
   var cameraParam = this.cameraPara;
-  var root = this.root
+  var root = this.root;
   var config = this.config;
   var data = jsonParser(config);
 
@@ -10,9 +10,9 @@ ARnft.prototype.init = function (markerUrl, stats) {
     createLoading(configData);
     createStats(stats);
     var containerObj = createContainer();
-    var container = containerObj['container'];
-    var canvas = containerObj['canvas'];
-    var video = containerObj['video'];
+    var container = containerObj.container;
+    var canvas = containerObj.canvas;
+    var video = containerObj.video;
 
     if (stats) {
       var statsMain = new Stats();
@@ -42,7 +42,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
               }
           },
     };
-  };
+  }
 
      navigator.mediaDevices.getUserMedia(hint).then(function(stream) {
         video.srcObject = stream;
@@ -75,7 +75,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
       console.log(err.name + ": " + err.message);
 
    });
-  };
-})
+  }
+});
 
 };
