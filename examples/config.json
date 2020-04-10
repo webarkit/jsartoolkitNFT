@@ -1,0 +1,17 @@
+{
+  "workerUrl": "../js/artoolkitNFT.worker.js",
+  "artoolkitUrl": "../build/artoolkitNFT_wasm.js",
+  "cameraPara": "../examples/Data/camera_para.dat",
+  "loading": {
+    "logo": {
+      "src": "Data/logo.gif",
+      "alt": "ar.js logo"
+    },
+    "loadingMessage": "Loading, please wait..."
+  },
+  "renderer": {
+    "alpha": true,
+    "antialias": true,
+    "precision": "mediump"
+  }
+}
