@@ -166,7 +166,7 @@ FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 
-var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp'
+var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp -s SINGLE_FILE=1 '
 
 
 var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/artoolkitNFT.api.js') +' ';
