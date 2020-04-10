@@ -1,5 +1,3 @@
-importScripts('../build/artoolkitNFT_wasm.js');
-
 self.onmessage = function(e) {
     var msg = e.data;
     switch (msg.type) {
@@ -21,6 +19,8 @@ var ar = null;
 var markerResult = null;
 
 function load(msg) {
+
+  importScripts(msg.artoolkitUrl);
 
 self.addEventListener('artoolkitNFT-loaded', function() {
 
