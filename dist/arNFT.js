@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 ;(function(){ 
  'use strict';
 
@@ -12,7 +13,7 @@ var ARnft = function (width, height, config) {
 ARnft.prototype.init = function (markerUrl, stats) {
 
   var cameraParam = this.cameraPara;
-  var root = this.root
+  var root = this.root;
   var config = this.config;
   var data = jsonParser(config);
 
@@ -21,9 +22,9 @@ ARnft.prototype.init = function (markerUrl, stats) {
     createLoading(configData);
     createStats(stats);
     var containerObj = createContainer();
-    var container = containerObj['container'];
-    var canvas = containerObj['canvas'];
-    var video = containerObj['video'];
+    var container = containerObj.container;
+    var canvas = containerObj.canvas;
+    var video = containerObj.video;
 
     if (stats) {
       var statsMain = new Stats();
@@ -53,7 +54,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
               }
           },
     };
-  };
+  }
 
      navigator.mediaDevices.getUserMedia(hint).then(function(stream) {
         video.srcObject = stream;
@@ -86,8 +87,8 @@ ARnft.prototype.init = function (markerUrl, stats) {
       console.log(err.name + ": " + err.message);
 
    });
-  };
-})
+  }
+});
 
 };
 
@@ -140,7 +141,7 @@ var trackedMatrix = {
       0, 0, 0, 0,
       0, 0, 0, 0
   ]
-}
+};
 
 var setMatrix = function (matrix, value) {
   var array = [];
@@ -344,21 +345,21 @@ function createLoading(configData) {
 }
 
 function createContainer() {
-var container = document.createElement('div');
-container.id = "app";
-var canvas = document.createElement('canvas');
-canvas.id = "canvas";
-var video = document.createElement('video');
-video.id = "video";
-video.setAttribute('autoplay', '');
-video.setAttribute('muted', '');
-video.setAttribute('playsinline', '');
-container.appendChild(video);
-container.appendChild(canvas);
-var loading = document.getElementById('loading');
-document.body.insertBefore(container, loading);
-var obj = {container: container, canvas: canvas, video: video}
-return obj;
+  var container = document.createElement('div');
+  container.id = "app";
+  var canvas = document.createElement('canvas');
+  canvas.id = "canvas";
+  var video = document.createElement('video');
+  video.id = "video";
+  video.setAttribute('autoplay', '');
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+  container.appendChild(video);
+  container.appendChild(canvas);
+  var loading = document.getElementById('loading');
+  document.body.insertBefore(container, loading);
+  var obj = {container: container, canvas: canvas, video: video};
+  return obj;
 }
 
 function createStats(create) {
@@ -387,6 +388,7 @@ if(create) {
 }
 }
 
+/*jshint esversion: 8 */
 async function jsonParser(requestURL, callback) {
   return await new Promise( function(resolve, reject) {
     let data;
@@ -395,10 +397,10 @@ async function jsonParser(requestURL, callback) {
     request.responseType = 'json';
     request.onload = function() {
       resolve(request.response);
-    }
+    };
     request.onerror = function () {
       reject('error ' + request.status);
-    }
+    };
     request.send(null);
   });
 }

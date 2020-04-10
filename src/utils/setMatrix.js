@@ -14,7 +14,7 @@ var trackedMatrix = {
       0, 0, 0, 0,
       0, 0, 0, 0
   ]
-}
+};
 
 var setMatrix = function (matrix, value) {
   var array = [];
