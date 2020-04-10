@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     pkg: pkg,
 
     concat: {
-      dist: {
+      regular: {
         src: [
           'src/arnft-constructor.js',
           'src/arnft-init.js',
@@ -21,16 +21,36 @@ module.exports = function(grunt) {
           'src/utils/html/createContainer.js',
           'src/utils/html/createStats.js',
           'src/utils/jsonParser.js'],
+        dest: 'dist/arNFT_reg.js',
+        options: {
+          banner: "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
+          footer: "\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());"
+        }
+      },
+      embedded:{
+        src: [
+          'src/arnft-constructor.js',
+          'src/arnft-init.js',
+          'src/arnft-add.js',
+          'src/arnft-loadmodel.js',
+          'src/utils/isMobile.js',
+          'src/utils/setMatrix.js',
+          'src/utils/start-workerBegin.js',
+          'src/utils/start-workerEnd.js',
+          'src/utils/html/createLoading.js',
+          'src/utils/html/createContainer.js',
+          'src/utils/html/createStats.js',
+          'src/utils/jsonParser.js'],
         dest: 'dist/arNFT.js',
         options: {
           banner: "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
           footer: "\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());"
         }
-      }
+      },
     },
 
     jshint: {
-      beforeconcat: [
+      beforeconcat: [[
         'src/arnft-constructor.js',
         'src/arnft-init.js',
         'src/arnft-add.js',
@@ -42,19 +62,35 @@ module.exports = function(grunt) {
         'src/utils/html/createContainer.js',
         'src/utils/html/createStats.js',
         'src/utils/jsonParser.js'],
-      afterconcat: ['dist/arNFT.js']
+         ['src/arnft-constructor.js',
+          'src/arnft-init.js',
+          'src/arnft-add.js',
+          'src/arnft-loadmodel.js',
+          'src/utils/isMobile.js',
+          'src/utils/setMatrix.js',
+          'src/utils/start-workerBegin.js',
+          'src/utils/start-workerEnd.js',
+          'src/utils/html/createLoading.js',
+          'src/utils/html/createContainer.js',
+          'src/utils/html/createStats.js',
+          'src/utils/jsonParser.js']],
+      afterconcat: ['dist/arNFT.js', 'dist/arNFT.reg.js']
     },
 
     terser: {
       options: {},
-      dist: {
-        src: "dist/arNFT.js",
-        dest: "dist/arNFT.min.js"
+      target: {
+        files: {
+          'dist/arNFT.min.js': ['dist/arNFT.js'],
+          'dist/arNFT_reg.min.js': ['dist/arNFT_reg.js']
+        }
       }
+
     }
+
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks("grunt-terser");
+  grunt.loadNpmTasks('grunt-terser');
 };

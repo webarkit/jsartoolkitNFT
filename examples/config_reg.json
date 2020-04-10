@@ -1,5 +1,6 @@
 {
-  "artoolkitUrl": "build/artoolkitNFT_wasm.js",
+  "workerUrl": "../js/artoolkitNFT.worker.js",
+  "artoolkitUrl": "../build/artoolkitNFT_wasm.js",
   "cameraPara": "../examples/Data/camera_para.dat",
   "loading": {
     "logo": {
