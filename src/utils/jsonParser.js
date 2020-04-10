@@ -1,8 +1,7 @@
 /*jshint esversion: 8 */
-async function jsonParser(requestURL, callback) {
-  return await new Promise( function(resolve, reject) {
-    let data;
-    let request = new XMLHttpRequest();
+async function jsonParser (requestURL, callback) {
+  return await new Promise(function (resolve, reject) {
+    const request = new XMLHttpRequest();
     request.open('GET', requestURL);
     request.responseType = 'json';
     request.onload = function() {
