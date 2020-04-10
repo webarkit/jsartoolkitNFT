@@ -42,6 +42,7 @@
     "build-local": "node tools/makem.js; echo Built at `date`",
     "build-local-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "minify": "grunt terser",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
   },
   "license": "LGPL-3.0",
