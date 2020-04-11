@@ -1,8 +1,8 @@
-/*global module,require */
-module.exports = function(grunt) {
-  "use strict";
+/* global module,require */
+module.exports = function (grunt) {
+  'use strict'
 
-  var pkg = grunt.file.readJSON("package.json");
+  var pkg = grunt.file.readJSON('package.json')
 
   grunt.initConfig({
     pkg: pkg,
@@ -20,14 +20,16 @@ module.exports = function(grunt) {
           'src/utils/html/createLoading.js',
           'src/utils/html/createContainer.js',
           'src/utils/html/createStats.js',
-          'src/utils/jsonParser.js'],
+          'src/utils/jsonParser.js'
+        ],
         dest: 'dist/arNFT_reg.js',
         options: {
-          banner: "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
-          footer: "\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());"
+          banner:
+            "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
+          footer: '\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());'
         }
       },
-      embedded:{
+      embedded: {
         src: [
           'src/arnft-constructor.js',
           'src/arnft-init.js',
@@ -40,29 +42,34 @@ module.exports = function(grunt) {
           'src/utils/html/createLoading.js',
           'src/utils/html/createContainer.js',
           'src/utils/html/createStats.js',
-          'src/utils/jsonParser.js'],
+          'src/utils/jsonParser.js'
+        ],
         dest: 'dist/arNFT.js',
         options: {
-          banner: "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
-          footer: "\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());"
+          banner:
+            "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
+          footer: '\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());'
         }
-      },
+      }
     },
 
     jshint: {
-      beforeconcat: [[
-        'src/arnft-constructor.js',
-        'src/arnft-init.js',
-        'src/arnft-add.js',
-        'src/arnft-loadmodel.js',
-        'src/utils/isMobile.js',
-        'src/utils/setMatrix.js',
-        'src/utils/start.js',
-        'src/utils/html/createLoading.js',
-        'src/utils/html/createContainer.js',
-        'src/utils/html/createStats.js',
-        'src/utils/jsonParser.js'],
-         ['src/arnft-constructor.js',
+      beforeconcat: [
+        [
+          'src/arnft-constructor.js',
+          'src/arnft-init.js',
+          'src/arnft-add.js',
+          'src/arnft-loadmodel.js',
+          'src/utils/isMobile.js',
+          'src/utils/setMatrix.js',
+          'src/utils/start.js',
+          'src/utils/html/createLoading.js',
+          'src/utils/html/createContainer.js',
+          'src/utils/html/createStats.js',
+          'src/utils/jsonParser.js'
+        ],
+        [
+          'src/arnft-constructor.js',
           'src/arnft-init.js',
           'src/arnft-add.js',
           'src/arnft-loadmodel.js',
@@ -73,19 +80,48 @@ module.exports = function(grunt) {
           'src/utils/html/createLoading.js',
           'src/utils/html/createContainer.js',
           'src/utils/html/createStats.js',
-          'src/utils/jsonParser.js']],
+          'src/utils/jsonParser.js'
+        ]
+      ],
       afterconcat: ['dist/arNFT.js', 'dist/arNFT.reg.js']
     },
 
     terser: {
-      options: {},
+      options: {
+        compress: {},
+      },
       target: {
         files: {
           'dist/arNFT.min.js': ['dist/arNFT.js'],
           'dist/arNFT_reg.min.js': ['dist/arNFT_reg.js']
         }
-      }
-
+      },
+      output: {}
+    },
+    jsbeautifier: {
+      files: ['dist/arNFT.min.js'],
+      options: {
+        js: {
+          braceStyle: "collapse",
+          breakChainedMethods: false,
+          e4x: false,
+          evalCode: false,
+          indentChar: '',
+          indentLevel: 0,
+          indentSize: 2,
+          indentWithTabs: false,
+          jslintHappy: false,
+          keepArrayIndentation: false,
+          keepFunctionIndentation: false,
+          maxPreserveNewlines: 10,
+          preserveNewlines: false,
+          spaceBeforeConditional: false,
+          spaceInParen: false,
+          unescapeStrings: false,
+          wrapLineLength: 0,
+          endWithNewline: true
+        }
+      },
     },
     qunit: {
       qunit: {
@@ -96,10 +132,11 @@ module.exports = function(grunt) {
         }
       }
     }
-  });
+  })
 
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-terser');
-};
+  grunt.loadNpmTasks('grunt-contrib-jshint')
+  grunt.loadNpmTasks('grunt-contrib-concat')
+  grunt.loadNpmTasks('grunt-contrib-qunit')
+  grunt.loadNpmTasks("grunt-jsbeautifier")
+  grunt.loadNpmTasks('grunt-terser')
+}
