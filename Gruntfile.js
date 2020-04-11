@@ -86,11 +86,20 @@ module.exports = function(grunt) {
         }
       }
 
+    },
+    qunit: {
+      qunit: {
+        all: {
+          options: {
+            urls: ['http://localhost:8000/tests/index.html']
+          }
+        }
+      }
     }
-
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-terser');
 };
