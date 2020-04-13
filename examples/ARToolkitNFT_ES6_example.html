@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>ARToolkitNFT_ES6 example</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
+</head>
+<body>
+
+		<script src="../dist/ARToolkitNFT_ES6.js"></script>
+
+    <script>
+		window.addEventListener('load', () => {
+			console.log('init ARToolkit...');
+			console.log(ARToolkitNFT);
+			const artoolkit = new ARToolkitNFT.ARToolkitNFT();
+			artoolkit.init()
+			.then(_ => {
+				return artoolkit.loadCamera('./Data/camera_para.dat');
+			})
+			.then(cameraId => {
+				console.log('Got camera ID', cameraId);
+			})
+			.catch(err => {
+				console.log('Something went wrong', err);
+				});
+
+			var arc = new ARToolkitNFT.ARControllerNFT( 640, 480, './Data/camera_para.dat' );
+			console.log(arc);
+
+		});
+    </script>
+
+</body>
+
+</html>

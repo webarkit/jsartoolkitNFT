@@ -46,6 +46,7 @@ var OUTPUT_PATH = path.resolve(__dirname, '../build/') + '/';
 
 var BUILD_DEBUG_FILE = 'artoolkitNFT.debug.js';
 var BUILD_WASM_FILE = 'artoolkitNFT_wasm.js';
+var BUILD_WASM_ES6_FILE = 'artoolkitNFT_ES6_wasm.js';
 var BUILD_MIN_FILE = 'artoolkitNFT.min.js';
 
 var MAIN_SOURCES = [
@@ -164,10 +165,12 @@ FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG';
 FLAGS += ' --memory-init-file 0 '; // for memless file
+FLAGS += ' -s "EXTRA_EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 
 var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp -s SINGLE_FILE=1 '
 
+var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
 
 var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/artoolkitNFT.api.js') +' ';
 
@@ -239,6 +242,10 @@ var compile_wasm = format(EMCC + ' ' + INCLUDES + ' '
     + FLAGS + WASM_FLAGS + DEFINES + PRE_FLAGS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
     OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_FILE);
 
+var compile_wasm_es6 = format(EMCC + ' ' + INCLUDES + ' '
+    + ALL_BC + MAIN_SOURCES
+    + FLAGS + WASM_FLAGS + DEFINES + ES6_FLAGS + ' -o {OUTPUT_PATH}{BUILD_FILE} ',
+    OUTPUT_PATH, OUTPUT_PATH, BUILD_WASM_ES6_FILE);
 /*
  * Run commands
  */
@@ -281,6 +288,7 @@ addJob(clean_builds);
 addJob(compile_arlib);
 addJob(compile_combine);
 addJob(compile_wasm);
+addJob(compile_wasm_es6)
 addJob(compile_combine_min);
 
 if (NO_LIBAR == true){
