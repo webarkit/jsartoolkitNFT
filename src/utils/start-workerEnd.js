@@ -50,6 +50,10 @@ self.addEventListener('artoolkitNFT-loaded', function() {
         ar.loadNFTMarker(nftMarkerUrl, function (markerId) {
             ar.trackNFTMarkerId(markerId, 2);
             console.log("loadNFTMarker -> ", markerId);
+            postMessage({
+              type: "markerData",
+              markerData: JSON.stringify(markerId)
+            })
             postMessage({type: "endLoading", end: true})
         });
 

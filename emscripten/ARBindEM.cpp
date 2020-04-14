@@ -41,6 +41,12 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("setImageProcMode", &setImageProcMode);
 	function("getImageProcMode", &getImageProcMode);
 
+	/* nft marker struct */
+	value_object<nftMarker>("nftMarker")
+  .field("width", &nftMarker::widthNFT)
+  .field("height", &nftMarker::heightNFT)
+  .field("dpi", &nftMarker::dpiNFT);
+
 	/* errors */
 	constant("ERROR_ARCONTROLLER_NOT_FOUND", ARCONTROLLER_NOT_FOUND);
 	constant("ERROR_MULTIMARKER_NOT_FOUND", MULTIMARKER_NOT_FOUND);

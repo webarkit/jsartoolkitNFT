@@ -67,7 +67,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
         video.addEventListener('loadedmetadata', function () {
           video.play();
 
-        m_obj = start(
+        obj = start(
             container,
             markerUrl,
             video,
@@ -91,11 +91,13 @@ ARnft.prototype.init = function (markerUrl, stats) {
           this.obj = m_obj;
           console.log(this.obj);
         });
+
       }).catch(function (err) {
         console.log(err.name + ': ' + err.message);
       });
     }
   });
+  return obj;
 };
 
 ARnft.prototype.add = function (obj) {
@@ -268,6 +270,19 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
           break;
         }
 
+        case 'markerData': {
+          if (ev.data.markerData) {
+            var mkData = JSON.parse(ev.data.markerData);
+            console.log(mkData);
+            var markEvent = new Event('dataMarker');
+            this.dispatchEvent(markEvent, {
+              target: this,
+              data: mkData
+            })
+          }
+          break;
+        }
+
         case 'found': {
           found(msg);
           break;
@@ -338,6 +353,10 @@ self.addEventListener('artoolkitNFT-loaded', function() {
         ar.loadNFTMarker(nftMarkerUrl, function (markerId) {
             ar.trackNFTMarkerId(markerId, 2);
             console.log("loadNFTMarker -> ", markerId);
+            postMessage({
+              type: "markerData",
+              markerData: JSON.stringify(markerId)
+            })
             postMessage({type: "endLoading", end: true})
         });
 

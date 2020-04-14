@@ -104,6 +104,19 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
           break;
         }
 
+        case 'markerData': {
+          if (ev.data.markerData) {
+            var mkData = JSON.parse(ev.data.markerData);
+            console.log(mkData);
+            var markEvent = new Event('dataMarker');
+            this.dispatchEvent(markEvent, {
+              target: this,
+              data: mkData
+            })
+          }
+          break;
+        }
+
         case 'found': {
           found(msg);
           break;

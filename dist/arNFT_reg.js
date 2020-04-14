@@ -67,7 +67,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
         video.addEventListener('loadedmetadata', function () {
           video.play();
 
-        m_obj = start(
+        obj = start(
             container,
             markerUrl,
             video,
@@ -91,11 +91,13 @@ ARnft.prototype.init = function (markerUrl, stats) {
           this.obj = m_obj;
           console.log(this.obj);
         });
+
       }).catch(function (err) {
         console.log(err.name + ': ' + err.message);
       });
     }
   });
+  return obj;
 };
 
 ARnft.prototype.add = function (obj) {
