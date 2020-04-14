@@ -23,6 +23,13 @@
 
 #define PAGES_MAX               10          // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
+struct nftMarker {
+	int id;
+	int width_NFT;
+	int height_NFT;
+	int dpi_NFT;
+};
+
 struct arController {
 	int id;
 
@@ -47,9 +54,8 @@ struct arController {
 	int surfaceSetCount = 0; // Running NFT marker id
 	AR2SurfaceSetT      *surfaceSet[PAGES_MAX];
 	std::unordered_map<int, AR2SurfaceSetT*> surfaceSets;
-	int width_NFT;
-	int height_NFT;
-	int dpi_NFT;
+	// nftMarker struct inside arController
+	nftMarker nft;
 
 	ARdouble nearPlane = 0.0001;
 	ARdouble farPlane = 1000.0;
@@ -173,9 +179,9 @@ extern "C" {
 			},
 				markerIndex,
 				err,
-				arc->width_NFT,
-				arc->height_NFT,
-				arc->dpi_NFT,
+				arc->nft.width_NFT,
+				arc->nft.height_NFT,
+				arc->nft.dpi_NFT,
 
 				trans[0][0],
 				trans[0][1],
@@ -314,14 +320,15 @@ extern "C" {
 		}
 
 		numIset = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->num;
-		arc->width_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->xsize;
-		arc->height_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->ysize;
-		arc->dpi_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->dpi;
+		arc->nft.width_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->xsize;
+		arc->nft.height_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->ysize;
+		arc->nft.dpi_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->dpi;
+    int nftSize = (arc->nft.width_NFT + arc->nft.height_NFT + arc->nft.dpi_NFT) * sizeof(int);
 
 		ARLOGi("NFT num. of ImageSet: %i\n", numIset);
-		ARLOGi("NFT marker width: %i\n", arc->width_NFT);
-		ARLOGi("NFT marker height: %i\n", arc->height_NFT);
-		ARLOGi("NFT marker dpi: %i\n", arc->dpi_NFT);
+		ARLOGi("NFT marker width: %i\n", arc->nft.width_NFT);
+		ARLOGi("NFT marker height: %i\n", arc->nft.height_NFT);
+		ARLOGi("NFT marker dpi: %i\n", arc->nft.dpi_NFT);
 
 		ARLOGi("  Done.\n");
 
@@ -335,6 +342,28 @@ extern "C" {
 
 		ARLOGi("Loading of NFT data complete.\n");
 		return (TRUE);
+	}
+
+	int getNFTdataMarker(int id, int surfaceSetCount) {
+		if (arControllers.find(id) == arControllers.end()) { return -1; }
+		arController *arc = &(arControllers[id]);
+
+		arc->nft.width_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->xsize;
+		arc->nft.height_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->ysize;
+		arc->nft.dpi_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->dpi;
+    int nftSize = (arc->nft.width_NFT + arc->nft.height_NFT + arc->nft.dpi_NFT) * sizeof(int);
+
+		EM_ASM_({
+			if (!artoolkit["frameMalloc"]) {
+				artoolkit["frameMalloc"] = ({});
+			}
+			var frameMalloc = artoolkit["frameMalloc"];
+			frameMalloc["nftpointer"] = $1;
+			frameMalloc["nftpointersize"] = $2;
+		  },
+			arc->nft,
+			nftSize
+	    );
 	}
 
 	/***************
