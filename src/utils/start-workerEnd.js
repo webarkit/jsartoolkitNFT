@@ -35,7 +35,14 @@ self.addEventListener('artoolkitNFT-loaded', function() {
         var cameraMatrix = ar.getCameraMatrix();
 
         ar.addEventListener('getNFTMarker', function (ev) {
-            markerResult = {type: "found", matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH), proj: JSON.stringify(cameraMatrix)};
+            markerResult = {
+              type: "found",
+              matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
+              width: JSON.stringify(ev.data.marker.width),
+              height: JSON.stringify(ev.data.marker.height),
+              dpi: JSON.stringify(ev.data.marker.dpi),
+              proj: JSON.stringify(cameraMatrix)
+            };
         });
 
         var nftMarkerUrl = basePath + '/' + msg.marker;

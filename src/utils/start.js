@@ -28,6 +28,9 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
   var light = new THREE.AmbientLight(0xffffff);
   scene.add(light);
 
+  var obj = new THREE.Object3D();
+  obj.matrixAutoUpdate = false;
+
   scene.add(root);
 
   var load = function () {
@@ -118,6 +121,8 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
       world = null;
     } else {
       world = JSON.parse(msg.matrixGL_RH);
+      obj.position.y = (msg.height / msg.dpi * 2.54 * 10)/2.0;
+      obj.position.x = (msg.width / msg.dpi * 2.54 * 10)/2.0;
     }
   };
 
@@ -169,4 +174,6 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
   load();
   tick();
   process();
+
+  return obj;
 }

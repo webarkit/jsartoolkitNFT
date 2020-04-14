@@ -20,6 +20,7 @@ module.exports = function (grunt) {
           'src/utils/html/createLoading.js',
           'src/utils/html/createContainer.js',
           'src/utils/html/createStats.js',
+          'src/utils/getObj.js',
           'src/utils/jsonParser.js'
         ],
         dest: 'dist/arNFT_reg.js',
@@ -42,6 +43,7 @@ module.exports = function (grunt) {
           'src/utils/html/createLoading.js',
           'src/utils/html/createContainer.js',
           'src/utils/html/createStats.js',
+          'src/utils/getObj.js',
           'src/utils/jsonParser.js'
         ],
         dest: 'dist/arNFT.js',

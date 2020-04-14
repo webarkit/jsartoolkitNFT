@@ -3,6 +3,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
   var root = this.root;
   var config = this.config;
   var data = jsonParser(config);
+  var obj = {};
 
   data.then(function (configData) {
     createLoading(configData);
@@ -48,7 +49,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
         video.addEventListener('loadedmetadata', function () {
           video.play();
 
-          start(
+        obj = start(
             container,
             markerUrl,
             video,
@@ -68,10 +69,15 @@ ARnft.prototype.init = function (markerUrl, stats) {
             root,
             configData
           )
+          console.log(m_obj);
+          this.obj = m_obj;
+          console.log(this.obj);
         });
+
       }).catch(function (err) {
         console.log(err.name + ': ' + err.message);
       });
     }
   });
+  return obj;
 };

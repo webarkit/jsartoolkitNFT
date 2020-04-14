@@ -2,11 +2,17 @@
 ;(function(){ 
  'use strict';
 
+let markW, markH, dpi, m_obj;
+
 var ARnft = function (width, height, config) {
   this.width = width;
   this.height = height;
   this.root = new THREE.Object3D();
   this.root.matrixAutoUpdate = false;
+  this.markerNFTwidth = 0;
+  this.markerNFTheigth = 0;
+  this.markerNFTdpi = 0;
+  this.obj = {};
   this.config = config;
 };
 
@@ -15,6 +21,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
   var root = this.root;
   var config = this.config;
   var data = jsonParser(config);
+  var obj = {};
 
   data.then(function (configData) {
     createLoading(configData);
@@ -60,7 +67,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
         video.addEventListener('loadedmetadata', function () {
           video.play();
 
-          start(
+        m_obj = start(
             container,
             markerUrl,
             video,
@@ -80,6 +87,9 @@ ARnft.prototype.init = function (markerUrl, stats) {
             root,
             configData
           )
+          console.log(m_obj);
+          this.obj = m_obj;
+          console.log(this.obj);
         });
       }).catch(function (err) {
         console.log(err.name + ': ' + err.message);
@@ -90,6 +100,11 @@ ARnft.prototype.init = function (markerUrl, stats) {
 
 ARnft.prototype.add = function (obj) {
   var root = this.root;
+  var obj = getObj();
+  console.log('obj inside add', obj);
+  //obj.position.y = (msg.height / msg.dpi * 2.54 * 10)/2.0;
+  //obj.position.x = (msg.width / msg.dpi * 2.54 * 10)/2.0;
+  root.matrixAutoUpdate = false;
   root.add(obj);
 };
 
@@ -308,7 +323,14 @@ self.addEventListener('artoolkitNFT-loaded', function() {
         var cameraMatrix = ar.getCameraMatrix();
 
         ar.addEventListener('getNFTMarker', function (ev) {
-            markerResult = {type: "found", matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH), proj: JSON.stringify(cameraMatrix)};
+            markerResult = {
+              type: "found",
+              matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
+              width: JSON.stringify(ev.data.marker.width),
+              height: JSON.stringify(ev.data.marker.height),
+              dpi: JSON.stringify(ev.data.marker.dpi),
+              proj: JSON.stringify(cameraMatrix)
+            };
         });
 
         var nftMarkerUrl = basePath + '/' + msg.marker;
@@ -461,6 +483,12 @@ function createStats (create) {
     var loading = document.getElementById('loading');
     document.body.insertBefore(stats, loading);
   }
+}
+
+function getObj(){
+  var obj = {};
+  obj = m_obj;
+  return obj;
 }
 
 /*jshint esversion: 8 */

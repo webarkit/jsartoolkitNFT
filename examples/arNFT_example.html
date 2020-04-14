@@ -17,7 +17,7 @@
 
     <script src="js/third_party/three.js/stats.min.js"></script>
     <script src="js/third_party/three.js/three.min.js"></script>
-		<script src="../dist/arNFT.min.js"></script>
+		<script src="../dist/arNFT.js"></script>
 
     <script>
 
@@ -29,8 +29,8 @@
 			var cubeGeom = new THREE.CubeGeometry(1,1,1);
 			var cube = new THREE.Mesh(cubeGeom, mat);
 			cube.position.z = 90;
-			cube.position.x = 90;
-			cube.position.y = 90;
+			cube.position.x = 1;
+			cube.position.y = 1;
 			cube.scale.set(180,180,180);
 
 			nft.add(cube);
