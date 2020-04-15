@@ -1,6 +1,12 @@
 {
   "artoolkitUrl": "build/artoolkitNFT_wasm.js",
   "cameraPara": "../examples/Data/camera_para.dat",
+  "videoSettings": {
+    "width": 640,
+    "height": 480,
+    "facingMode": "environment",
+    "onError": ""
+  },
   "loading": {
     "logo": {
       "src": "Data/logo.gif",
