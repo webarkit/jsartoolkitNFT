@@ -28,6 +28,9 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
   var light = new THREE.AmbientLight(0xffffff);
   scene.add(light);
 
+  var obj = new THREE.Object3D();
+  obj.matrixAutoUpdate = false;
+
   scene.add(root);
 
   var load = function () {
@@ -108,11 +111,11 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
           if (ev.data.markerData) {
             var mkData = JSON.parse(ev.data.markerData);
             console.log(mkData);
-            var markEvent = new Event('dataMarker');
+            /*var markEvent = new Event('dataMarker');
             this.dispatchEvent(markEvent, {
               target: this,
               data: mkData
-            })
+            })*/
           }
           break;
         }

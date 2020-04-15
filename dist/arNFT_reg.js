@@ -9,6 +9,7 @@ var ARnft = function (width, height, config) {
   this.height = height;
   this.root = new THREE.Object3D();
   this.root.matrixAutoUpdate = false;
+  this.listeners = {};
   this.markerNFTwidth = 0;
   this.markerNFTheigth = 0;
   this.markerNFTdpi = 0;
@@ -67,7 +68,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
         video.addEventListener('loadedmetadata', function () {
           video.play();
 
-        obj = start(
+          m_obj = start(
             container,
             markerUrl,
             video,
@@ -102,12 +103,28 @@ ARnft.prototype.init = function (markerUrl, stats) {
 
 ARnft.prototype.add = function (obj) {
   var root = this.root;
-  var obj = getObj();
+  //var obj = getObj();
   console.log('obj inside add', obj);
   //obj.position.y = (msg.height / msg.dpi * 2.54 * 10)/2.0;
   //obj.position.x = (msg.width / msg.dpi * 2.54 * 10)/2.0;
   root.matrixAutoUpdate = false;
   root.add(obj);
+};
+
+ARnft.prototype.addEventListener = function (name, callback) {
+    if (!this.listeners[name]) {
+        this.listeners[name] = [];
+    }
+    this.listeners[name].push(callback);
+};
+
+ARnft.prototype.dispatchEvent = function (event) {
+    var listeners = this.listeners[event.name];
+    if (listeners) {
+        for (var i = 0; i < listeners.length; i++) {
+            listeners[i].call(this, event);
+        }
+    }
 };
 
 ARnft.prototype.loadModel = function (url, x, y, z, scale) {

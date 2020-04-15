@@ -47,12 +47,12 @@ self.addEventListener('artoolkitNFT-loaded', function() {
 
         var nftMarkerUrl = basePath + '/' + msg.marker;
 
-        ar.loadNFTMarker(nftMarkerUrl, function (markerId) {
-            ar.trackNFTMarkerId(markerId, 2);
-            console.log("loadNFTMarker -> ", markerId);
+        ar.loadNFTMarker(nftMarkerUrl, function (nftMarker) {
+            ar.trackNFTMarkerId(nftMarker.id, 2);
+            console.log("loadNFTMarker -> ", nftMarker.id);
             postMessage({
               type: "markerData",
-              markerData: JSON.stringify(markerId)
+              markerData: JSON.stringify(nftMarker)
             })
             postMessage({type: "endLoading", end: true})
         });
@@ -89,6 +89,13 @@ var found = function (msg) {
     world = null;
   } else {
     world = JSON.parse(msg.matrixGL_RH);
+    //obj.position.y = (msg.height / msg.dpi * 2.54 * 10)/2.0;
+    //obj.position.x = (msg.width / msg.dpi * 2.54 * 10)/2.0;
+    /*var eventM = new Event('cucu');
+    this.dispatchEvent(eventM, {
+      target: this,
+      data: 'cucu'
+    })*/
   }
 };
 

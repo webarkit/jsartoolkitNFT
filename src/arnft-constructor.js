@@ -5,6 +5,7 @@ var ARnft = function (width, height, config) {
   this.height = height;
   this.root = new THREE.Object3D();
   this.root.matrixAutoUpdate = false;
+  this.listeners = {};
   this.markerNFTwidth = 0;
   this.markerNFTheigth = 0;
   this.markerNFTdpi = 0;

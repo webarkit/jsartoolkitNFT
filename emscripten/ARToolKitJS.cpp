@@ -24,6 +24,7 @@
 #define PAGES_MAX               10          // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
 struct nftMarker {
+	int idNFT;
 	int widthNFT;
 	int heightNFT;
 	int dpiNFT;
@@ -486,6 +487,7 @@ extern "C" {
 
 		arc->surfaceSetCount++;
 
+		nft.idNFT = patt_id;
 		nft.widthNFT = arc->width_NFT;
     nft.heightNFT = arc->height_NFT;
     nft.dpiNFT = arc->dpi_NFT;

@@ -41,12 +41,12 @@ self.addEventListener('artoolkitNFT-loaded', function() {
             }
         });
 
-        ar.loadNFTMarker(msg.marker, function (markerId) {
-            ar.trackNFTMarkerId(markerId, 2);
-            console.log("loadNFTMarker -> ", markerId);
+        ar.loadNFTMarker(msg.marker, function (nftMarker) {
+            ar.trackNFTMarkerId(nftMarker.id, 2);
+            console.log("loadNFTMarker -> ", nftMarker.id);
             postMessage({
               type: "markerData",
-              markerData: JSON.stringify(markerId)
+              markerData: JSON.stringify(nftMarker)
             })
             postMessage({type: "endLoading", end: true})
         });

@@ -43,6 +43,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	/* nft marker struct */
 	value_object<nftMarker>("nftMarker")
+	.field("id", &nftMarker::idNFT)
   .field("width", &nftMarker::widthNFT)
   .field("height", &nftMarker::heightNFT)
   .field("dpi", &nftMarker::dpiNFT);

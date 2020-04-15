@@ -49,7 +49,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
         video.addEventListener('loadedmetadata', function () {
           video.play();
 
-        obj = start(
+          m_obj = start(
             container,
             markerUrl,
             video,
