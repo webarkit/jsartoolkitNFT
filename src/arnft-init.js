@@ -12,66 +12,24 @@ ARnft.prototype.init = function (markerUrl, stats) {
     var canvas = containerObj.canvas;
     var video = containerObj.video;
 
+    var statsMain, statsWorker;
+
     if (stats) {
-      var statsMain = new Stats();
+      statsMain = new Stats();
       statsMain.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
       document.getElementById('stats1').appendChild(statsMain.dom);
 
-      var statsWorker = new Stats();
+      statsWorker = new Stats();
       statsWorker.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
       document.getElementById('stats2').appendChild(statsWorker.dom);
     }
 
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      var hint = {
-        audio: false,
-        video: true
-      };
+    var statsObj = {
+      statsMain: statsMain,
+      statsWorker: statsWorker,
+      stats: stats
+    };
 
-      if (window.innerWidth < 800) {
-        hint = {
-          audio: false,
-          video: {
-            width: { ideal: this.width },
-            height: { ideal: this.height },
-            facingMode:
-              {
-                exact:
-                  'environment'
-              }
-          }
-        };
-      }
-
-      navigator.mediaDevices.getUserMedia(hint).then(function (stream) {
-        video.srcObject = stream;
-        video.addEventListener('loadedmetadata', function () {
-          video.play();
-
-          start(
-            container,
-            markerUrl,
-            video,
-            video.videoWidth,
-            video.videoHeight,
-            canvas,
-            function () {
-              if (stats) {
-                statsMain.update();
-              }
-            },
-            function () {
-              if (stats) {
-                statsWorker.update();
-              }
-            },
-            root,
-            configData
-          )
-        });
-      }).catch(function (err) {
-        console.log(err.name + ': ' + err.message);
-      });
-    }
+    getUserMedia (container, markerUrl, video, canvas, root, statsObj, configData)
   });
 };
