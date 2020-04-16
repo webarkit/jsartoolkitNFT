@@ -1,4 +1,5 @@
 ARnft.prototype.init = function (markerUrl, stats) {
+  console.log('ARnft init() %cstart...', 'color: yellow; background-color: blue; border-radius: 4px; padding: 2px')
   var cameraParam = this.cameraPara;
   var root = this.root;
   var config = this.config;
