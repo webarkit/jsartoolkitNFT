@@ -30,6 +30,6 @@ ARnft.prototype.init = function (markerUrl, stats) {
       stats: stats
     };
 
-    getUserMedia (container, markerUrl, video, canvas, root, statsObj, configData)
+    getUserMedia (container, markerUrl, video, canvas, root, statsObj, configData);
   });
 };
