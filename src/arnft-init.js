@@ -24,7 +24,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
       statsWorker.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
       document.getElementById('stats2').appendChild(statsWorker.dom);
     }
-
+ 
     var statsObj = {
       statsMain: statsMain,
       statsWorker: statsWorker,
