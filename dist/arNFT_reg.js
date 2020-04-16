@@ -8,6 +8,8 @@ var ARnft = function (width, height, config) {
   this.root = new THREE.Object3D();
   this.root.matrixAutoUpdate = false;
   this.config = config;
+  this.version = '0.3.0';
+  console.log('ARnft ', this.version);
 };
 
 ARnft.prototype.init = function (markerUrl, stats) {
