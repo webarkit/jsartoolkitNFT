@@ -1,53 +1,63 @@
-self.onmessage = function(e) {
-    var msg = e.data;
-    switch (msg.type) {
-        case "load": {
-            load(msg);
-            return;
-        }
-        case "process": {
-            next = msg.imagedata;
-            process();
-            return;
-        }
+self.onmessage = function (e) {
+  var msg = e.data;
+  switch (msg.type) {
+    case "load": {
+      load(msg);
+      return;
     }
+    case "process": {
+      next = msg.imagedata;
+      process();
+      return;
+    }
+  }
 };
 
 var next = null;
-
 var ar = null;
 var markerResult = null;
 
-function load(msg) {
+function load (msg) {
   var basePath = self.origin;
-  console.log('base path:', basePath);
+  console.debug('Base path:', basePath);
   var artoolkitUrl = basePath + '/' + msg.artoolkitUrl;
+  console.debug('Importing WASM lib from: ', artoolkitUrl);
 
   importScripts(artoolkitUrl);
 
-self.addEventListener('artoolkitNFT-loaded', function() {
-    var cameraParamUrl = basePath + '/' + msg.camera_para;
+  self.addEventListener('artoolkitNFT-loaded', function () {
 
-    var param = new ARCameraParamNFT(cameraParamUrl);
+    var onLoad = function () {
 
-    param.onload = function () {
-        ar = new ARControllerNFT(msg.pw, msg.ph, param);
-        var cameraMatrix = ar.getCameraMatrix();
+      ar = new ARControllerNFT(msg.pw, msg.ph, param);
+      var cameraMatrix = ar.getCameraMatrix();
 
-        ar.addEventListener('getNFTMarker', function (ev) {
+      ar.addEventListener('getNFTMarker', function (ev) {
             markerResult = {type: "found", matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH), proj: JSON.stringify(cameraMatrix)};
         });
 
-        var nftMarkerUrl = basePath + '/' + msg.marker;
+      var nftMarkerUrl = basePath + '/' + msg.marker;
+      console.debug('Loading NFT marker at: ', nftMarkerUrl);
+      ar.loadNFTMarker(nftMarkerUrl, function (markerId) {
+        ar.trackNFTMarkerId(markerId);
+        console.log("loadNFTMarker -> ", markerId);
+        postMessage({ type: "endLoading", end: true }),
+          function (err) {
+            console.error('Error in loading marker on Worker', err)
+        }
+      });
 
-        ar.loadNFTMarker(nftMarkerUrl, function (markerId) {
-            ar.trackNFTMarkerId(markerId, 2);
-            console.log("loadNFTMarker -> ", markerId);
-            postMessage({type: "endLoading", end: true})
-        });
-
-        postMessage({type: "loaded", proj: JSON.stringify(cameraMatrix)});
+      postMessage({ type: 'loaded', proj: JSON.stringify(cameraMatrix) });
     };
+
+    var onError = function (error) {
+      console.error(error);
+    };
+
+    var cameraParamUrl = basePath + '/' + msg.camera_para;
+    console.debug('Loading camera at:', cameraParamUrl);
+    // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
+    var param = new ARCameraParamNFT(cameraParamUrl, onLoad, onError);
   });
 
 }
@@ -56,14 +66,14 @@ function process() {
 
     markerResult = null;
 
-    if (ar) {
-        ar.process(next);
+    if (ar && ar.process) {
+      ar.process(next);
     }
 
     if (markerResult) {
-        postMessage(markerResult);
+      postMessage(markerResult);
     } else {
-        postMessage({type: "not found"});
+      postMessage({type: "not found"});
     }
 
     next = null;
