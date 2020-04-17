@@ -15,8 +15,8 @@
   },
   "loading": {
     "logo": {
-      "src": "https://raw.githack.com/kalwalt/jsartoolkitNFT/master/examples/Data/logo.gif",
-      "alt": "ar.js logo"
+      "src": "https://raw.githack.com/kalwalt/jsartoolkitNFT/master/examples/Data/arNFT-logo.gif",
+      "alt": "arNFT.js logo"
     },
     "loadingMessage": "Loading, please wait..."
   },
