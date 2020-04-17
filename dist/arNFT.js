@@ -332,7 +332,8 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
       ph: ph,
       camera_para: configData.cameraPara,
       marker: markerUrl,
-      artoolkitUrl: configData.artoolkitUrl
+      artoolkitUrl: configData.artoolkitUrl,
+      addPath: configData.addPath
     });
 
     worker.onmessage = function(ev) {
@@ -407,8 +408,14 @@ var markerResult = null;
 
 function load (msg) {
   var basePath = self.origin;
+  var artoolkitUrl
   console.debug('Base path:', basePath);
-  var artoolkitUrl = basePath + '/' + msg.artoolkitUrl;
+  if (msg.addPath) {
+    console.debug('addPath exist: ', msg.addPath);
+    artoolkitUrl = basePath + '/' + msg.addPath + '/' + msg.artoolkitUrl;
+  } else {
+    artoolkitUrl = basePath + '/' + msg.artoolkitUrl;
+  }
   console.debug('Importing WASM lib from: ', artoolkitUrl);
 
   importScripts(artoolkitUrl);
