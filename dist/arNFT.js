@@ -1,5 +1,5 @@
 /*jshint esversion: 8 */
-;(function(){ 
+;(function(){
  'use strict';
 
 var ARnft = function (width, height, config) {
@@ -408,7 +408,7 @@ var markerResult = null;
 
 function load (msg) {
   var basePath = self.origin;
-  var artoolkitUrl
+  var artoolkitUrl, cameraParamUrl, nftMarkerUrl;
   console.debug('Base path:', basePath);
   if (msg.addPath) {
     console.debug('addPath exist: ', msg.addPath);
@@ -430,8 +430,11 @@ function load (msg) {
       ar.addEventListener('getNFTMarker', function (ev) {
             markerResult = {type: "found", matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH), proj: JSON.stringify(cameraMatrix)};
         });
-
-      var nftMarkerUrl = basePath + '/' + msg.marker;
+      if (msg.addPath) {
+        nftMarkerUrl = basePath + '/' + msg.addPath + '/' + msg.marker;
+      } else {
+        nftMarkerUrl = basePath + '/' + msg.marker;
+      }
       console.debug('Loading NFT marker at: ', nftMarkerUrl);
       ar.loadNFTMarker(nftMarkerUrl, function (markerId) {
         ar.trackNFTMarkerId(markerId);
@@ -449,7 +452,11 @@ function load (msg) {
       console.error(error);
     };
 
-    var cameraParamUrl = basePath + '/' + msg.camera_para;
+    if (msg.addPath) {
+      cameraParamUrl = basePath + '/' + msg.addPath + '/' + msg.camera_para;
+    } else {
+      cameraParamUrl = basePath + '/' + msg.camera_para;
+    }
     console.debug('Loading camera at:', cameraParamUrl);
     // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
     var param = new ARCameraParamNFT(cameraParamUrl, onLoad, onError);
