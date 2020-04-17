@@ -43,8 +43,8 @@ function load (msg) {
         console.log("loadNFTMarker -> ", markerId);
         postMessage({ type: "endLoading", end: true }),
           function (err) {
-            console.error('Error in loading marker on Worker', err)
-        }
+            console.error('Error in loading marker on Worker', err);
+        };
       });
 
       postMessage({ type: 'loaded', proj: JSON.stringify(cameraMatrix) });

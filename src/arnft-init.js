@@ -1,5 +1,5 @@
 ARnft.prototype.init = function (markerUrl, stats) {
-  console.log('ARnft init() %cstart...', 'color: yellow; background-color: blue; border-radius: 4px; padding: 2px')
+  console.log('ARnft init() %cstart...', 'color: yellow; background-color: blue; border-radius: 4px; padding: 2px');
   var cameraParam = this.cameraPara;
   var root = this.root;
   var config = this.config;
@@ -24,7 +24,7 @@ ARnft.prototype.init = function (markerUrl, stats) {
       statsWorker.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
       document.getElementById('stats2').appendChild(statsWorker.dom);
     }
- 
+
     var statsObj = {
       statsMain: statsMain,
       statsWorker: statsWorker,

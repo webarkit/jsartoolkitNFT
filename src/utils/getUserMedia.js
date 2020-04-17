@@ -34,10 +34,10 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
           },
           root,
           configData
-        )
+        );
       }).catch(function (error) {
         onError(error);
-        video.stop();
+        ARnft._teardownVideo(video);
       });
       if (!video.paused) {
         eventNames.forEach(function (eventName) {
@@ -48,7 +48,7 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
   };
   eventNames.forEach(function (eventName) {
     window.addEventListener(eventName, play, true);
-  })
+  });
 
   var success = function (stream) {
     // DEPRECATED: don't use window.URL.createObjectURL(stream) any longer it might be removed soon. Only there to support old browsers src: https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
@@ -66,7 +66,7 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
     video.autoplay = true;
     video.playsInline = true;
     play(); // Try playing without user input, should work on non-Android Chrome
-  }
+  };
 
   var constraints = {};
   var mediaDevicesConstraints = {};
@@ -105,7 +105,7 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
   var hdConstraints = {
     audio: false,
     video: constraints
-  }
+  };
 
   if (navigator.mediaDevices || window.MediaStreamTrack.getSources) {
     if (navigator.mediaDevices) {
