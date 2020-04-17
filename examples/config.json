@@ -1,7 +1,7 @@
 {
   "artoolkitUrl": "build/artoolkitNFT_wasm.js",
   "addPath": "jsartoolkitNFT",
-  "cameraPara": "../examples/Data/camera_para.dat",
+  "cameraPara": "examples/Data/camera_para.dat",
   "videoSettings": {
     "width": {
       "min": 640,
