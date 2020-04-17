@@ -13,8 +13,7 @@ var ARnft = function (width, height, config) {
 };
 
 ARnft.prototype.init = function (markerUrl, stats) {
-  console.log('ARnft init() %cstart...', 'color: yellow; background-color: blue; border-radius: 4px; padding: 2px')
-  
+  console.log('ARnft init() %cstart...', 'color: yellow; background-color: blue; border-radius: 4px; padding: 2px');
   var cameraParam = this.cameraPara;
   var root = this.root;
   var config = this.config;
@@ -73,6 +72,12 @@ ARnft.prototype.loadModel = function (url, x, y, z, scale) {
     model.matrixAutoUpdate = false;
     root.add(model);
   });
+};
+
+ARnft._teardownVideo = function (video) {
+    video.srcObject.getVideoTracks()[0].stop();
+    video.srcObject = null;
+    video.src = null;
 };
 
 function isMobile () {
@@ -145,10 +150,10 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
           },
           root,
           configData
-        )
+        );
       }).catch(function (error) {
         onError(error);
-        video.stop();
+        ARnft._teardownVideo(video);
       });
       if (!video.paused) {
         eventNames.forEach(function (eventName) {
@@ -159,7 +164,7 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
   };
   eventNames.forEach(function (eventName) {
     window.addEventListener(eventName, play, true);
-  })
+  });
 
   var success = function (stream) {
     // DEPRECATED: don't use window.URL.createObjectURL(stream) any longer it might be removed soon. Only there to support old browsers src: https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
@@ -177,7 +182,7 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
     video.autoplay = true;
     video.playsInline = true;
     play(); // Try playing without user input, should work on non-Android Chrome
-  }
+  };
 
   var constraints = {};
   var mediaDevicesConstraints = {};
@@ -216,7 +221,7 @@ function getUserMedia (container, markerUrl, video, canvas, root, statsObj, conf
   var hdConstraints = {
     audio: false,
     video: constraints
-  }
+  };
 
   if (navigator.mediaDevices || window.MediaStreamTrack.getSources) {
     if (navigator.mediaDevices) {
@@ -426,8 +431,8 @@ function load (msg) {
         console.log("loadNFTMarker -> ", markerId);
         postMessage({ type: "endLoading", end: true }),
           function (err) {
-            console.error('Error in loading marker on Worker', err)
-        }
+            console.error('Error in loading marker on Worker', err);
+        };
       });
 
       postMessage({ type: 'loaded', proj: JSON.stringify(cameraMatrix) });
