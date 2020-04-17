@@ -25,7 +25,12 @@ function load (msg) {
   var regexA = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/igm
   var reA = regexA.test(msg.artoolkitUrl);
   if (reA == true) {
-    artoolkitUrl = msg.artoolkitUrl;
+    if (msg.addPath) {
+      artoolkitUrl = basePath + '/' + msg.addPath + '/' + msg.artoolkitUrl;
+    } else {
+      artoolkitUrl = msg.artoolkitUrl;
+    }
+
   } else if(reA == false) {
     if (msg.addPath) {
       console.debug('addPath exist: ', msg.addPath);
@@ -52,7 +57,11 @@ function load (msg) {
       var regexM = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/igm
       var reM = regexM.test(msg.marker);
       if (reM == true) {
-        nftMarkerUrl = msg.marker;
+        if (msg.addPath) {
+          nftMarkerUrl = basePath + '/' + msg.addPath + '/' + msg.marker;
+        } else {
+          nftMarkerUrl = msg.marker;
+        }
       } else if (reM == false) {
         if (msg.addPath) {
           nftMarkerUrl = basePath + '/' + msg.addPath + '/' + msg.marker;
@@ -79,7 +88,11 @@ function load (msg) {
     var regexC = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/igm
     var reC = regexC.test(msg.camera_para);
     if (reC == true) {
+      if (msg.addPath) {
+        cameraParamUrl = basePath + '/' + msg.addPath + '/' + msg.camera_para;
+      } else {
         cameraParamUrl = msg.camera_para;
+      }
     } else if (reC == false) {
       if (msg.addPath) {
         cameraParamUrl = basePath + '/' + msg.addPath + '/' + msg.camera_para;
