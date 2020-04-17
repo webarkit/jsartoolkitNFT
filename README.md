@@ -8,6 +8,8 @@
 Emscripten port of [ARToolKit](https://github.com/artoolkitx/artoolkit5) to JavaScript.
 Modified and lighter version of [JSARToolKit5](https://github.com/artoolkitx/jsartoolkit5).
 
+Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html](https://kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html)
+
 ## Markers Types
 
 JSARToolKitNFT support only this types of markers:

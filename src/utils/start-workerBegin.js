@@ -68,7 +68,8 @@ function start (container, markerUrl, video, input_width, input_height, canvas_d
       ph: ph,
       camera_para: configData.cameraPara,
       marker: markerUrl,
-      artoolkitUrl: configData.artoolkitUrl
+      artoolkitUrl: configData.artoolkitUrl,
+      addPath: configData.addPath
     });
 
     worker.onmessage = function(ev) {
