@@ -1,5 +1,5 @@
 /*jshint esversion: 8 */
-;(function(){ 
+;(function(){
  'use strict';
 
 var ARnft = function (width, height, config) {
