@@ -16,8 +16,8 @@
   },
   "loading": {
     "logo": {
-      "src": "Data/logo.gif",
-      "alt": "ar.js logo"
+      "src": "Data/arNFT-logo.gif",
+      "alt": "arNFT.js logo"
     },
     "loadingMessage": "Loading, please wait..."
   },
