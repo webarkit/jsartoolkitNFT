@@ -1,5 +1,5 @@
 /*jshint esversion: 8 */
-;(function(){ 
+;(function(window){ 
  'use strict';
 
 var ARnft = function (width, height, config) {
@@ -8,7 +8,8 @@ var ARnft = function (width, height, config) {
   this.root = new THREE.Object3D();
   this.root.matrixAutoUpdate = false;
   this.config = config;
-  this.version = '0.3.0';
+  this.listeners = {};
+  this.version = '0.5.0';
   console.log('ARnft ', this.version);
 };
 
@@ -72,6 +73,31 @@ ARnft.prototype.loadModel = function (url, x, y, z, scale) {
     model.matrixAutoUpdate = false;
     root.add(model);
   });
+};
+
+ARnft.prototype.dispatchEvent = function (listeners) {
+  var listeners = this.listeners[event.name];
+  if (listeners) {
+      for (var i = 0; i < listeners.length; i++) {
+          listeners[i].call(this, event);
+      }
+  }
+}
+
+ARnft.prototype.addEventListener = function (name, callback) {
+    if (!this.listeners[name]) {
+        this.listeners[name] = [];
+    }
+    this.listeners[name].push(callback);
+};
+
+ARnft.prototype.removeEventListener = function (name, callback) {
+    if (this.listeners[name]) {
+        var index = this.listeners[name].indexOf(callback);
+        if (index > -1) {
+            this.listeners[name].splice(index, 1);
+        }
+    }
 };
 
 ARnft._teardownVideo = function (video) {
@@ -414,7 +440,12 @@ function load (msg) {
   var regexA = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/igm
   var reA = regexA.test(msg.artoolkitUrl);
   if (reA == true) {
-    artoolkitUrl = msg.artoolkitUrl;
+    if (msg.addPath) {
+      artoolkitUrl = basePath + '/' + msg.addPath + '/' + msg.artoolkitUrl;
+    } else {
+      artoolkitUrl = msg.artoolkitUrl;
+    }
+
   } else if(reA == false) {
     if (msg.addPath) {
       console.debug('addPath exist: ', msg.addPath);
@@ -441,7 +472,11 @@ function load (msg) {
       var regexM = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/igm
       var reM = regexM.test(msg.marker);
       if (reM == true) {
-        nftMarkerUrl = msg.marker;
+        if (msg.addPath) {
+          nftMarkerUrl = basePath + '/' + msg.addPath + '/' + msg.marker;
+        } else {
+          nftMarkerUrl = msg.marker;
+        }
       } else if (reM == false) {
         if (msg.addPath) {
           nftMarkerUrl = basePath + '/' + msg.addPath + '/' + msg.marker;
@@ -468,7 +503,11 @@ function load (msg) {
     var regexC = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/igm
     var reC = regexC.test(msg.camera_para);
     if (reC == true) {
+      if (msg.addPath) {
+        cameraParamUrl = basePath + '/' + msg.addPath + '/' + msg.camera_para;
+      } else {
         cameraParamUrl = msg.camera_para;
+      }
     } else if (reC == false) {
       if (msg.addPath) {
         cameraParamUrl = basePath + '/' + msg.addPath + '/' + msg.camera_para;
@@ -639,4 +678,4 @@ async function jsonParser (requestURL, callback) {
 
 window.ARnft = ARnft;
 window.THREE = THREE;
-}());
+}(window));

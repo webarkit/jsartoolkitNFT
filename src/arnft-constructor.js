@@ -4,6 +4,7 @@ var ARnft = function (width, height, config) {
   this.root = new THREE.Object3D();
   this.root.matrixAutoUpdate = false;
   this.config = config;
-  this.version = '0.4.1';
+  this.listeners = {};
+  this.version = '0.5.0';
   console.log('ARnft ', this.version);
 };
