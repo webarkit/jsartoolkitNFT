@@ -1,18 +1,4 @@
-import ARToolkitNFT from '../build/artoolkitNFT_ES6_wasm.js'
-
-'use strict'
-
-/** Definitions of private FUNCTIONS
-
-    */
-const _prepareImage = Symbol('_prepareImage')
-const _teardownVideo = Symbol('_tearDownVideo')
-
-const ORIENTATION = {
-  0: 'portrait',
-  180: 'portrait',
-  90: 'landscape'
-}
+import ARToolkitNFT from './ARToolkitNFT';
 
 export default class ARControllerNFT {
   constructor (width, height, cameraParam, options) {
@@ -87,4 +73,8 @@ export default class ARControllerNFT {
 
     this._bwpointer = false
   }
+
+  async loadNFTMarker(urlOrData) {
+    return await this.artoolkitNFT.addNFTMarker(this.id, urlOrData);
+  };
 }

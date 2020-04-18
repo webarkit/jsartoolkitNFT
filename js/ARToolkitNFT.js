@@ -28,7 +28,7 @@ export default class ARToolkitNFT {
     // the global namespace. all blame goes to the person who created that CPP
     // wrapper ARToolKitJS.cpp and introduced a global "artoolkit" variable.
     const scope = (typeof window !== 'undefined') ? window : global
-    scope.artoolkit = this
+    scope.artoolkitNFT = this;
 
     return this
   }
