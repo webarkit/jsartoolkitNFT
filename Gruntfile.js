@@ -14,6 +14,7 @@ module.exports = function (grunt) {
           'src/arnft-init.js',
           'src/arnft-add.js',
           'src/arnft-loadmodel.js',
+          'src/arnft-eventlisteners.js',
           'src/arnft-teardownvideo.js',
           'src/utils/isMobile.js',
           'src/utils/setMatrix.js',
@@ -27,8 +28,8 @@ module.exports = function (grunt) {
         dest: 'dist/arNFT_reg.js',
         options: {
           banner:
-            "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
-          footer: '\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());'
+            "/*jshint esversion: 8 */\n;(function(window){ \n 'use strict';\n\n",
+          footer: '\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}(window));'
         }
       },
       embedded: {
@@ -37,6 +38,7 @@ module.exports = function (grunt) {
           'src/arnft-init.js',
           'src/arnft-add.js',
           'src/arnft-loadmodel.js',
+          'src/arnft-eventlisteners.js',
           'src/arnft-teardownvideo.js',
           'src/utils/isMobile.js',
           'src/utils/setMatrix.js',
@@ -51,8 +53,8 @@ module.exports = function (grunt) {
         dest: 'dist/arNFT.js',
         options: {
           banner:
-            "/*jshint esversion: 8 */\n;(function(){ \n 'use strict';\n\n",
-          footer: '\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}());'
+            "/*jshint esversion: 8 */\n;(function(window){ \n 'use strict';\n\n",
+          footer: '\nwindow.ARnft = ARnft;\nwindow.THREE = THREE;\n}(window));'
         }
       }
     },
@@ -64,6 +66,7 @@ module.exports = function (grunt) {
           'src/arnft-init.js',
           'src/arnft-add.js',
           'src/arnft-loadmodel.js',
+          'src/arnft-eventlisteners.js',
           'src/arnft-teardownvideo.js',
           'src/utils/isMobile.js',
           'src/utils/setMatrix.js',
@@ -79,6 +82,7 @@ module.exports = function (grunt) {
           'src/arnft-init.js',
           'src/arnft-add.js',
           'src/arnft-loadmodel.js',
+          'src/arnft-eventlisteners.js',
           'src/arnft-teardownvideo.js',
           'src/utils/isMobile.js',
           'src/utils/setMatrix.js',

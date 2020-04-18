@@ -1,5 +1,5 @@
 /*jshint esversion: 8 */
-;(function(){ 
+;(function(window){ 
  'use strict';
 
 var ARnft = function (width, height, config) {
@@ -8,6 +8,7 @@ var ARnft = function (width, height, config) {
   this.root = new THREE.Object3D();
   this.root.matrixAutoUpdate = false;
   this.config = config;
+  this.listeners = {};
   this.version = '0.3.0';
   console.log('ARnft ', this.version);
 };
@@ -72,6 +73,31 @@ ARnft.prototype.loadModel = function (url, x, y, z, scale) {
     model.matrixAutoUpdate = false;
     root.add(model);
   });
+};
+
+ARnft.prototype.dispatchEvent = function (listeners) {
+  var listeners = this.listeners[event.name];
+  if (listeners) {
+      for (var i = 0; i < listeners.length; i++) {
+          listeners[i].call(this, event);
+      }
+  }
+}
+
+ARnft.prototype.addEventListener = function (name, callback) {
+    if (!this.listeners[name]) {
+        this.listeners[name] = [];
+    }
+    this.listeners[name].push(callback);
+};
+
+ARnft.prototype.removeEventListener = function (name, callback) {
+    if (this.listeners[name]) {
+        var index = this.listeners[name].indexOf(callback);
+        if (index > -1) {
+            this.listeners[name].splice(index, 1);
+        }
+    }
 };
 
 ARnft._teardownVideo = function (video) {
@@ -512,4 +538,4 @@ async function jsonParser (requestURL, callback) {
 
 window.ARnft = ARnft;
 window.THREE = THREE;
-}());
+}(window));
