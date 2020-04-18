@@ -17,13 +17,13 @@
 
     <script src="js/third_party/three.js/stats.min.js"></script>
     <script src="js/third_party/three.js/three.min.js"></script>
-		<script src="../dist/arNFT.min.js"></script>
+		<script src="../dist/arNFT_reg.js"></script>
 
     <script>
 
-			var nft = new ARnft(640, 480, 'config.json');
+			var nft = new ARnft(640, 480, 'config_reg.json');
 
-			nft.init("examples/DataNFT/pinball", true);
+			nft.init("../examples/DataNFT/pinball", true);
 
 			var mat = new THREE.MeshLambertMaterial({color: 0xff0000});
 			var cubeGeom = new THREE.CubeGeometry(1,1,1);
