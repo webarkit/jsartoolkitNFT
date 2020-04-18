@@ -1,5 +1,5 @@
 /*jshint esversion: 8 */
-;(function(){ 
+;(function(window){ 
  'use strict';
 
 var ARnft = function (width, height, config) {
@@ -9,7 +9,7 @@ var ARnft = function (width, height, config) {
   this.root.matrixAutoUpdate = false;
   this.config = config;
   this.listeners = {};
-  this.version = '0.3.0';
+  this.version = '0.5.0';
   console.log('ARnft ', this.version);
 };
 
@@ -678,4 +678,4 @@ async function jsonParser (requestURL, callback) {
 
 window.ARnft = ARnft;
 window.THREE = THREE;
-}());
+}(window));
