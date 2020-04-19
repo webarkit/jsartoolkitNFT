@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './src-es6/index.js',
   output: {
-    path: path.resolve('dist'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'ARnft_ES6.js',
     library: 'ARnft',
     libraryTarget: 'umd',
@@ -11,6 +11,20 @@ module.exports = {
     libraryExport: 'default',
     // @see: https://github.com/webpack/webpack/issues/6522
     globalObject: 'typeof self !== \'undefined\' ? self : this',
+  },
+  externals: {
+    three: {
+      commonjs: 'three',
+      commonjs2: 'three',
+      amd: 'three',
+      root: 'THREE' // indicates global variable
+    },
+    stats: {
+      commonjs: 'stats.js',
+      commonjs2: 'stats.js',
+      amd: 'stats.js',
+      root: 'Stats' // indicates global variable
+    }
   },
   module: {
     rules: [
