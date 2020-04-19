@@ -484,10 +484,10 @@ export default class Utils {
     }
   };
 
-  static async jsonParser (requestURL, callback) {
+  static async jsonParser (requestURL) {
     try {
       const response = await axios.get(requestURL, { responseType: 'json' })
-      return new Uint8Array(response.data)
+      return response.data;
     } catch (error) {
       throw error
     }
