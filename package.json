@@ -1,6 +1,6 @@
 {
   "name": "jsartoolkitNFT",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "main": "dist/arNFT.min.js",
   "description": "Emscripten port of ARToolKit to JavaScript",
   "keywords": [

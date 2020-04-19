@@ -9,13 +9,12 @@ var ARnft = function (width, height, config) {
   this.root.matrixAutoUpdate = false;
   this.config = config;
   this.listeners = {};
-  this.version = '0.5.0';
+  this.version = '0.5.1';
   console.log('ARnft ', this.version);
 };
 
 ARnft.prototype.init = function (markerUrl, stats) {
   console.log('ARnft init() %cstart...', 'color: yellow; background-color: blue; border-radius: 4px; padding: 2px');
-  var cameraParam = this.cameraPara;
   var root = this.root;
   var config = this.config;
   var data = jsonParser(config);
@@ -75,7 +74,7 @@ ARnft.prototype.loadModel = function (url, x, y, z, scale) {
   });
 };
 
-ARnft.prototype.dispatchEvent = function (listeners) {
+ARnft.prototype.dispatchEvent = function (event) {
   var listeners = this.listeners[event.name];
   if (listeners) {
       for (var i = 0; i < listeners.length; i++) {
