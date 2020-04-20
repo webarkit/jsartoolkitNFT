@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './js/index.js',
+  entry: './src_es6/index.js',
   output: {
     path: path.resolve('dist'),
     filename: 'ARToolkitNFT_ES6.js',

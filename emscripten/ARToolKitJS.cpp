@@ -137,15 +137,15 @@ extern "C" {
 			EM_ASM_({
 				var $a = arguments;
 				var i = 0;
-				if (!artoolkit["NFTMarkerInfo"]) {
-					artoolkit["NFTMarkerInfo"] = ({
+				if (!artoolkitNFT["NFTMarkerInfo"]) {
+					artoolkitNFT["NFTMarkerInfo"] = ({
 						id: 0,
 						error: -1,
 						found: 0,
 						pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
 					});
 				}
-				var markerInfo = artoolkit["NFTMarkerInfo"];
+				var markerInfo = artoolkitNFT["NFTMarkerInfo"];
 				markerInfo["id"] = $a[i++];
 				markerInfo["error"] = $a[i++];
 				markerInfo["found"] = 1;
@@ -184,15 +184,15 @@ extern "C" {
 			EM_ASM_({
 				var $a = arguments;
 				var i = 0;
-				if (!artoolkit["NFTMarkerInfo"]) {
-					artoolkit["NFTMarkerInfo"] = ({
+				if (!artoolkitNFT["NFTMarkerInfo"]) {
+					artoolkitNFT["NFTMarkerInfo"] = ({
 						id: 0,
 						error: -1,
 						found: 0,
 						pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
 					});
 				}
-				var markerInfo = artoolkit["NFTMarkerInfo"];
+				var markerInfo = artoolkitNFT["NFTMarkerInfo"];
 				markerInfo["id"] = $a[i++];
 				markerInfo["error"] = -1;
 				markerInfo["found"] = 0;
@@ -625,10 +625,10 @@ extern "C" {
 		ARLOGi("Allocated videoFrameSize %d\n", arc->videoFrameSize);
 
 		EM_ASM_({
-			if (!artoolkit["frameMalloc"]) {
-				artoolkit["frameMalloc"] = ({});
+			if (!artoolkitNFT["frameMalloc"]) {
+				artoolkitNFT["frameMalloc"] = ({});
 			}
-			var frameMalloc = artoolkit["frameMalloc"];
+			var frameMalloc = artoolkitNFT["frameMalloc"];
 			frameMalloc["framepointer"] = $1;
 			frameMalloc["framesize"] = $2;
 			frameMalloc["camera"] = $3;
