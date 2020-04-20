@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export default class Utils {
-  constructor() {
+  constructor () {
   }
 
   static getUserMedia (container, markerUrl, video, canvas, root, statsObj, configData) {
@@ -40,7 +40,7 @@ export default class Utils {
           )
         }).catch((error) => {
           onError(error)
-          //ARnft._teardownVideo(video) // to be solved !!
+          // ARnft._teardownVideo(video) // to be solved !!
         })
         if (!video.paused) {
           eventNames.forEach((eventName) => {
@@ -488,11 +488,9 @@ export default class Utils {
   };
 
   static async jsonParser (requestURL) {
-    try {
-      const response = await axios.get(requestURL, { responseType: 'json' })
-      return response.data
-    } catch (error) {
-      throw error
-    }
+    const response = await axios.get(requestURL, { responseType: 'json' })
+      .then((res) => { return res.data })
+      .catch((error) => { console.error(error) })
+    return response
   }
 }
