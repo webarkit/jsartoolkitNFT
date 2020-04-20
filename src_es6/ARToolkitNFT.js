@@ -105,13 +105,26 @@ export default class ARToolkitNFT {
     const target = '/markerNFT_' + this.markerNFTCount++
 
     let data
+    let filename1 = urlOrData + '.fset'
+    let filename2 = urlOrData + '.iset'
+    let filename3 = urlOrData + '.fset3'
 
     if (urlOrData.indexOf('\n') !== -1) {
       // assume text from a .patt file
-      data = Utils.string2Uint8Data(urlOrData)
+      console.log('inside first');
+      data = Promise.all([
+        Utils.string2Uint8Data(filename1), //Utils.fetchRemoteData(filename1),
+        Utils.string2Uint8Data(filename2), //Utils.fetchRemoteData(filename2),
+        Utils.string2Uint8Data(filename3)  //Utils.fetchRemoteData(filename3)
+      ])
     } else {
       // fetch data via HTTP
-      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
+      try {
+        //data = await Utils.fetchRemoteData(urlOrData)
+        console.log('inside try');
+        data = await Utils.fetchRemoteNFTData(urlOrData)
+
+      } catch (error) { throw error }
     }
 
     this._storeDataFile(data, target)

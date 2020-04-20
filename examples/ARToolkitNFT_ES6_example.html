@@ -14,7 +14,10 @@
 			console.log('init ARToolkit...');
 
 			ARToolkitNFT.ARControllerNFT.initNFTWithImage(pinball, './Data/camera_para.dat')
-			.then((nft) => { console.log(nft) })
+			.then((nft) => {
+				console.log(nft)
+				nft.loadNFTMarker('./DataNFT/pinball')
+			})
 			.catch((error) => { console.error(error) })
 
 		});
