@@ -49,6 +49,7 @@ export default class ARnft {
 
       Utils.getUserMedia(container, markerUrl, video, canvas, root, statsObj, configData)
     })
+    return this
   }
 
   static async init (width, height, markerUrl, config, stats) {

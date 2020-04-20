@@ -237,7 +237,7 @@ export default class Utils {
             proj[5] *= ratioH
             proj[9] *= ratioH
             proj[13] *= ratioH
-            setMatrix(camera.projectionMatrix, proj)
+            this.setMatrix(camera.projectionMatrix, proj)
             break
           }
 
