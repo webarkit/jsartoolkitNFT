@@ -1,6 +1,9 @@
 import axios from 'axios'
 
 export default class Utils {
+  constructor() {
+  }
+
   static getUserMedia (container, markerUrl, video, canvas, root, statsObj, configData) {
     const facing = configData.videoSettings.facingMode || 'environment'
 
@@ -15,7 +18,7 @@ export default class Utils {
     const play = () => {
       if (readyToPlay) {
         video.play().then(() => {
-          start(
+          this._startWorker(
             container,
             markerUrl,
             video,
@@ -37,7 +40,7 @@ export default class Utils {
           )
         }).catch((error) => {
           onError(error)
-          ARnft._teardownVideo(video)
+          //ARnft._teardownVideo(video) // to be solved !!
         })
         if (!video.paused) {
           eventNames.forEach((eventName) => {
@@ -145,7 +148,7 @@ export default class Utils {
     }
   }
 
-  start (container, markerUrl, video, input_width, input_height, canvas_draw, render_update, track_update, root, configData) {
+  static _startWorker (container, markerUrl, video, input_width, input_height, canvas_draw, render_update, track_update, root, configData) {
     let vw, vh
     let sw, sh
     let pscale, sscale
@@ -182,7 +185,7 @@ export default class Utils {
       vh = input_height
 
       pscale = 320 / Math.max(vw, (vh / 3) * 4)
-      sscale = isMobile() ? window.outerWidth / input_width : 1
+      sscale = this.isMobile() ? window.outerWidth / input_width : 1
 
       sw = vw * sscale
       sh = vh * sscale
@@ -457,7 +460,7 @@ export default class Utils {
                     trackedMatrix.delta[i] / interpolationFactor
         }
         // set matrix of 'root' by detected 'world' matrix
-        setMatrix(root.matrix, trackedMatrix.interpolated)
+        this.setMatrix(root.matrix, trackedMatrix.interpolated)
       }
 
       renderer.render(scene, camera)
@@ -468,11 +471,11 @@ export default class Utils {
     process()
   }
 
-  isMobile () {
+  static isMobile () {
     return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent)
   }
 
-  setMatrix (matrix, value) {
+  static setMatrix (matrix, value) {
     const array = []
     for (const key in value) {
       array[key] = value[key]
@@ -487,7 +490,7 @@ export default class Utils {
   static async jsonParser (requestURL) {
     try {
       const response = await axios.get(requestURL, { responseType: 'json' })
-      return response.data;
+      return response.data
     } catch (error) {
       throw error
     }
