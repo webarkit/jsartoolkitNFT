@@ -101,7 +101,7 @@ export default class ARToolkitNFT {
     return this.instance._loadCamera(target)
   }
 
-  async addNFTMarker (arId, urlOrData) {
+  async addNFTMarker_old1 (arId, urlOrData) {
     const target = '/markerNFT_' + this.markerNFTCount++
 
     let data
@@ -133,6 +133,69 @@ export default class ARToolkitNFT {
     return this.instance._addNFTMarker(arId, target)
   }
 
+  async addNFTMarker(arId, url, callback, onError) {
+      var mId = this.markerNFTCount++;
+      var prefix = '/markerNFT_' + mId;
+      var filename1 = prefix + '.fset';
+      var filename2 = prefix + '.iset';
+      var filename3 = prefix + '.fset3';
+      console.log(this);
+      this.ajax(url + '.fset', filename1, function () {
+          this.ajax(url + '.iset', filename2, function () {
+              this.ajax(url + '.fset3', filename3, function () {
+                  var id = this.instance._addNFTMarker(arId, prefix);
+                  if (callback) callback(id);
+              }, function (errorNumber) { if (onError) onError(errorNumber) });
+          }, function (errorNumber) { if (onError) onError(errorNumber) });
+      }, function (errorNumber) { if (onError) onError(errorNumber) });
+  }
+
+  ajax(url, target, callback, errorCallback)  {
+    return new Promise((response, reject) => {
+
+    })
+  }
+
+   ajax(url, target, callback, errorCallback) {
+      let oReq = new XMLHttpRequest();
+      oReq.open('GET', url, true);
+      oReq.responseType = 'arraybuffer'; // blob arraybuffer
+      let _this = this;
+      let data;
+
+      oReq.onload = function () {
+          if (this.status == 200) {
+              // console.log('ajax done for ', url);
+              var arrayBuffer = oReq.response;
+              var byteArray = new Uint8Array(arrayBuffer);
+              //_this._writeByteArrayToFS(target, byteArray, callback);
+          }
+          else {
+              errorCallback(this.status);
+          }
+          data = byteArray
+
+      };
+      _this._writeByteArrayToFS(target, data, callback);
+      oReq.send();
+  }
+
+  static writeStringToFS(target, string, callback) {
+      let byteArray = new Uint8Array(string.length);
+      for (let i = 0; i < byteArray.length; i++) {
+          byteArray[i] = string.charCodeAt(i) & 0xff;
+      }
+      this._writeByteArrayToFS(target, byteArray, callback);
+  }
+
+  static _writeByteArrayToFS(target, byteArray, callback) {
+     //console.log(ARToolkitNFT);
+      ARToolkitNFT.instance.FS.writeFile(target, byteArray, { encoding: 'binary' });
+      // console.log('FS written', target);
+
+      callback(byteArray);
+  }
+
   // ---------------------------------------------------------------------------
 
   // implementation
@@ -140,6 +203,7 @@ export default class ARToolkitNFT {
   _storeDataFile (data, target) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
+    //console.log(this);
     this.instance.FS.writeFile(target, data, {
       encoding: 'binary'
     })
