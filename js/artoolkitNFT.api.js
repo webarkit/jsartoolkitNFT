@@ -6,7 +6,7 @@
         scope = window;
     } else {
         scope = self;
-    };
+    }
 
 	/**
 		The ARControllerNFT is the main object for doing AR marker detection with JSARToolKit.
@@ -153,7 +153,7 @@
         // get NFT markers
         var k, o;
         for (k in this.nftMarkers) {
-            o = this.nftMarkers[k]
+            o = this.nftMarkers[k];
             o.inPrevious = o.inCurrent;
             o.inCurrent = false;
         }
@@ -194,7 +194,7 @@
                 if ((Date.now() - self.markerFoundTime) <= MARKER_LOST_TIME) {
                     // not handling marker lost for less than specified time
                     return;
-                };
+                }
 
                 delete self.markerFound;
 
@@ -222,7 +222,7 @@
   */
     ARControllerNFT.prototype.detectNFTMarker = function () {
         artoolkit.detectNFTMarker(this.id);
-    }
+    };
 
 	/**
 		Adds the given NFT marker ID to the index of tracked IDs.
@@ -430,7 +430,7 @@
         glRhMatrix = m_modelview;
 
         return glRhMatrix;
-    }
+    };
 	/**
 		This is the core ARToolKit marker detection function. It calls through to a set of
 		internal functions to perform the key marker detection steps of binarization and
@@ -738,7 +738,7 @@
 
         this.camera_mat = new Float64Array(Module.HEAPU8.buffer, params.camera, 16);
 
-        this.setProjectionNearPlane(0.1)
+        this.setProjectionNearPlane(0.1);
         this.setProjectionFarPlane(1000);
 
         setTimeout(function () {
@@ -863,7 +863,7 @@
 	*/
     ARCameraParamNFT.prototype.load = function (src) {
         if (this._src !== '') {
-            throw ("ARCameraParamNFT: Trying to load camera parameters twice.")
+            throw ("ARCameraParamNFT: Trying to load camera parameters twice.");
         }
         this._src = src;
         if (src) {
@@ -950,7 +950,7 @@
     function runWhenLoaded() {
         FUNCTIONS.forEach(function (n) {
             artoolkit[n] = Module[n];
-        })
+        });
 
         for (var m in Module) {
             if (m.match(/^AR/))
@@ -971,9 +971,9 @@
                 ajax(url + '.fset3', filename3, function () {
                     var id = Module._addNFTMarker(arId, prefix);
                     if (callback) callback(id);
-                }, function (errorNumber) { if (onError) onError(errorNumber) });
-            }, function (errorNumber) { if (onError) onError(errorNumber) });
-        }, function (errorNumber) { if (onError) onError(errorNumber) });
+                }, function (errorNumber) { if (onError) onError(errorNumber); });
+            }, function (errorNumber) { if (onError) onError(errorNumber); });
+        }, function (errorNumber) { if (onError) onError(errorNumber); });
     }
 
     function bytesToString(array) {
@@ -1051,7 +1051,7 @@
             runWhenLoaded();
             var event = new Event('artoolkitNFT-loaded');
             scope.dispatchEvent(event);
-        }
+        };
     } else {
         scope.Module = {
             onRuntimeInitialized: function () {

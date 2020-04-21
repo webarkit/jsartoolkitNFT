@@ -7,7 +7,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     pkg: pkg,
 
-    jshint: ['js/artoolkitNFT.api.js'],
+    jshint: ['js/artoolkitNFT.api.js', 'js/artoolkitNFT.worker.js'],
     qunit: {
       qunit: {
         all: {

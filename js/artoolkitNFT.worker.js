@@ -28,16 +28,16 @@ function load (msg) {
       var cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener('getNFTMarker', function (ev) {
-            markerResult = {type: "found", matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH), proj: JSON.stringify(cameraMatrix)};
-        });
+        markerResult = {type: "found", matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH), proj: JSON.stringify(cameraMatrix)};
+      });
 
       ar.loadNFTMarker(msg.marker, function (markerId) {
         ar.trackNFTMarkerId(markerId);
         console.log("loadNFTMarker -> ", markerId);
-        postMessage({ type: "endLoading", end: true }),
+        postMessage({ type: 'endLoading', end: true }),
           function (err) {
-            console.error('Error in loading marker on Worker', err)
-        }
+          console.error('Error in loading marker on Worker', err);
+        };
       });
 
       postMessage({ type: 'loaded', proj: JSON.stringify(cameraMatrix) });
@@ -66,8 +66,8 @@ function process () {
   if (markerResult) {
     postMessage(markerResult);
   } else {
-    postMessage({type: "not found"});
+    postMessage({type: 'not found'});
   }
 
-    next = null;
+  next = null;
 }
