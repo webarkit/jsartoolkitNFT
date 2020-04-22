@@ -22,7 +22,7 @@
     "url": "https://www.kalwaltart.com"
     },
   "publishConfig": {
-    "registry": ["https://npm.pkg.github.com/", "https://registry.npmjs.org/"] 
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
