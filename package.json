@@ -1,8 +1,9 @@
 {
-  "name": "jsartoolkitNFT",
-  "version": "0.5.1",
+  "name": "jsartoolkit-nft",
+  "version": "0.6.0",
   "main": "build/artoolkitNFT_wasm.js",
-  "description": "Emscripten port of ARToolKit to JavaScript",
+  "browser": "build/artoolkitNFT_wasm.js",
+  "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
   "keywords": [
     "ARToolKit",
     "AR",
@@ -15,8 +16,15 @@
     "NFT",
     "markerless"
   ],
-  "author": "Walter Perdan (@kalwalt https://github.com/kalwalt/)",
-  "repository": "git://https://github.com/kalwalt/jsartoolkitNFT.git",
+  "author": {
+    "name": "Walter Perdan",
+    "email": "github@kawaltart.it",
+    "url": "https://www.kalwaltart.com"
+    },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalwalt/jsartoolkitNFT"
+  },
   "homepage": "https://github.com/kalwalt/jsartoolkitNFT",
   "contributors": [
     "Github Contributors (https://github.com/kalwalt/jsartoolkitNFT/graphs/contributors)"
