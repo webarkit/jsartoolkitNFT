@@ -35,7 +35,7 @@ NO WASM minified:
 or you can install with npm:
 
 ```nodejs
-npm i jsartoolkit-nft
+npm i @kalwalt/jsartoolkit-nft
 ```
 
 or you can clone the repository with git, follow the instructions below:
