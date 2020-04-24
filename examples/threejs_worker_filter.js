@@ -2,7 +2,7 @@ function isMobile () {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent)
 }
 
-var oneFilter = new OneEuroFilter(1.5)
+var oneFilter = new OneEuroFilter(1.5, 2.5, 0.1, 1.1)
 
 var trackedMatrix = []
 
@@ -186,9 +186,6 @@ function start (
       sphere.visible = true
       // interpolate matrix
       console.log(world)
-      /*for (var i = 0; i < 16; i++) {
-        trackedMatrix[i] = oneFilter.filter(world[i])
-      }*/
       trackedMatrix[0] = oneFilter.filter(world[0])
       trackedMatrix[1] = oneFilter.filter(world[1])
       trackedMatrix[2] = oneFilter.filter(world[2])
