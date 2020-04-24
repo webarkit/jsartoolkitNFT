@@ -1,6 +1,6 @@
 {
-  "name": "jsartoolkit-nft",
-  "version": "0.6.0",
+  "name": "@kalwalt/jsartoolkit-nft",
+  "version": "0.6.2",
   "main": "build/artoolkitNFT_wasm.js",
   "browser": "build/artoolkitNFT_wasm.js",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
@@ -21,6 +21,7 @@
     "email": "github@kalwaltart.it",
     "url": "https://www.kalwaltart.com"
     },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
   "repository": {
     "type": "git",
     "url": "https://github.com/kalwalt/jsartoolkitNFT"
