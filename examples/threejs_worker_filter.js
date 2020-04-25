@@ -2,7 +2,13 @@ function isMobile () {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent)
 }
 
-var oneFilter = new OneEuroFilter(1.5, 2.5, 0.1, 1.1)
+var freq = 20.0
+var minCutOff = 65.5
+var beta = 0.8
+var dCutOff = 10.1
+
+var firstFilter = new OneEuroFilter(freq, minCutOff, beta, dCutOff)
+var secondFilter = new OneEuroFilter(freq, minCutOff, beta, dCutOff)
 
 var trackedMatrix = []
 
@@ -186,25 +192,26 @@ function start (
       sphere.visible = true
       // interpolate matrix
       console.log(world)
-      trackedMatrix[0] = oneFilter.filter(world[0])
-      trackedMatrix[1] = oneFilter.filter(world[1])
-      trackedMatrix[2] = oneFilter.filter(world[2])
-      trackedMatrix[4] = oneFilter.filter(world[4])
-      trackedMatrix[5] = oneFilter.filter(world[5])
-      trackedMatrix[6] = oneFilter.filter(world[6])
-      trackedMatrix[8] = oneFilter.filter(world[8])
-      trackedMatrix[9] = oneFilter.filter(world[9])
-      trackedMatrix[10] = oneFilter.filter(world[10])
-      trackedMatrix[11] = oneFilter.filter(world[11])
+      console.log(lasttime);
+      trackedMatrix[0] = firstFilter.filter(world[0], lasttime)
+      trackedMatrix[1] = firstFilter.filter(world[1], lasttime)
+      trackedMatrix[2] = firstFilter.filter(world[2], lasttime)
+      trackedMatrix[4] = firstFilter.filter(world[4], lasttime)
+      trackedMatrix[5] = firstFilter.filter(world[5], lasttime)
+      trackedMatrix[6] = firstFilter.filter(world[6], lasttime)
+      trackedMatrix[8] = firstFilter.filter(world[8], lasttime)
+      trackedMatrix[9] = firstFilter.filter(world[9], lasttime)
+      trackedMatrix[10] = firstFilter.filter(world[10], lasttime)
+      trackedMatrix[11] = firstFilter.filter(world[11], lasttime)
 
       trackedMatrix[3] = 0.0
       trackedMatrix[7] = 0.0
       trackedMatrix[11] = 0.0
       trackedMatrix[15] = 1.0
 
-      trackedMatrix[12] = world[12]
-      trackedMatrix[13] = world[13]
-      trackedMatrix[14] = world[14]
+      trackedMatrix[12] = secondFilter.filter(world[12], lasttime)
+      trackedMatrix[13] = secondFilter.filter(world[13], lasttime)
+      trackedMatrix[14] = secondFilter.filter(world[14], lasttime)
       console.log(trackedMatrix)
       // set matrix of 'root' by detected 'world' matrix
       setMatrix(root.matrix, trackedMatrix)
