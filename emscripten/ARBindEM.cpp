@@ -17,6 +17,13 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("detectNFTMarker", &detectNFTMarker);
 	function("getNFTMarker", &getNFTMarkerInfo);
 
+	/* nft marker struct */
+	value_object<nftMarker>("nftMarker")
+	.field("id", &nftMarker::id_NFT)
+  .field("width", &nftMarker::width_NFT)
+  .field("height", &nftMarker::height_NFT)
+  .field("dpi", &nftMarker::dpi_NFT);
+
 	/* AR Toolkit C APIS */
 	function("setDebugMode", &setDebugMode);
 	function("getDebugMode", &getDebugMode);
