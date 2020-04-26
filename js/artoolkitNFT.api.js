@@ -333,9 +333,9 @@
     ARControllerNFT.prototype.loadNFTMarker = function (markerURL, onSuccess, onError) {
         var self = this;
         if (markerURL) {
-          return artoolkit.addNFTMarker(this.id, markerURL, function (id) {
-              self.nftMarkerCount = id + 1;
-              onSuccess(id);
+          return artoolkit.addNFTMarker(this.id, markerURL, function (nft) {
+              self.nftMarkerCount = nft.id + 1;
+              onSuccess(nft);
           }, onError);
         } else {
           if (onError) {
@@ -972,8 +972,8 @@
         ajax(url + '.fset', filename1, function () {
             ajax(url + '.iset', filename2, function () {
                 ajax(url + '.fset3', filename3, function () {
-                    var id = Module._addNFTMarker(arId, prefix);
-                    if (callback) callback(id);
+                    var nftMarker = Module._addNFTMarker(arId, prefix);
+                    if (callback) callback(nftMarker);
                 }, function (errorNumber) { if (onError) onError(errorNumber); });
             }, function (errorNumber) { if (onError) onError(errorNumber); });
         }, function (errorNumber) { if (onError) onError(errorNumber); });
