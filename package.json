@@ -25,6 +25,9 @@
     "type": "git",
     "url": "https://github.com/kalwalt/jsartoolkitNFT"
   },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com/"
+  },
   "homepage": "https://github.com/kalwalt/jsartoolkitNFT",
   "contributors": [
     "Github Contributors (https://github.com/kalwalt/jsartoolkitNFT/graphs/contributors)"
