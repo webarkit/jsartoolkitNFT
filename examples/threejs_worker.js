@@ -2,24 +2,6 @@ function isMobile () {
     return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
-var interpolationFactor = 24;
-
-var trackedMatrix = {
-  // for interpolation
-  delta: [
-      0,0,0,0,
-      0,0,0,0,
-      0,0,0,0,
-      0,0,0,0
-  ],
-  interpolated: [
-      0,0,0,0,
-      0,0,0,0,
-      0,0,0,0,
-      0,0,0,0
-  ]
-}
-
 var markers = {
     "pinball": {
         width: 1637,
@@ -177,16 +159,8 @@ function start(container, marker, video, input_width, input_height, canvas_draw,
             sphere.visible = false;
         } else {
           sphere.visible = true;
-                // interpolate matrix
-                for (var i = 0; i < 16; i++) {
-                  trackedMatrix.delta[i] = world[i] - trackedMatrix.interpolated[i];
-                  trackedMatrix.interpolated[i] =
-                    trackedMatrix.interpolated[i] +
-                    trackedMatrix.delta[i] / interpolationFactor;
-                }
-
                 // set matrix of 'root' by detected 'world' matrix
-                setMatrix(root.matrix, trackedMatrix.interpolated);
+                setMatrix(root.matrix, world);
         }
         renderer.render(scene, camera);
     };
