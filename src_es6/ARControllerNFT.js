@@ -424,7 +424,7 @@ export default class ARControllerNFT {
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
   */
   async loadNFTMarker (urlOrData) {
-    const markerId = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
+    const markerId = await this.artoolkitNFT.addNFTMarker_old1(this.id, urlOrData)
     this.nftMarkerCount = markerId + 1
     return markerId
   };

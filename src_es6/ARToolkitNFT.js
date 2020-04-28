@@ -101,6 +101,38 @@ export default class ARToolkitNFT {
     return this.instance._loadCamera(target)
   }
 
+  async addNFTMarker_new (arId, urlOrData) {
+    const target = '/markerNFT_' + this.markerNFTCount++
+
+    let data
+    let filename1 = urlOrData + '.fset'
+    let filename2 = urlOrData + '.iset'
+    let filename3 = urlOrData + '.fset3'
+
+    if (urlOrData.indexOf('\n') !== -1) {
+      // assume text from a .patt file
+      console.log('inside first');
+      data = Promise.all([
+        Utils.string2Uint8Data(filename1), //Utils.fetchRemoteData(filename1),
+        Utils.string2Uint8Data(filename2), //Utils.fetchRemoteData(filename2),
+        Utils.string2Uint8Data(filename3)  //Utils.fetchRemoteData(filename3)
+      ])
+    } else {
+      // fetch data via HTTP
+      try {
+        //data = await Utils.fetchRemoteData(urlOrData)
+        console.log('inside try');
+        data = await Utils.fetchRemoteNFTData(urlOrData)
+
+      } catch (error) { throw error }
+    }
+
+    this._storeDataFile(data, target)
+
+    // return the internal marker ID
+    return this.instance._addNFTMarker(arId, target)
+  }
+
   async addNFTMarker_old1 (arId, urlOrData) {
     const target = '/markerNFT_' + this.markerNFTCount++
 
@@ -150,34 +182,33 @@ export default class ARToolkitNFT {
       }, function (errorNumber) { if (onError) onError(errorNumber) });
   }
 
-  ajax(url, target, callback, errorCallback)  {
-    return new Promise((response, reject) => {
-
-    })
+  ajax(url, target, callback, errorCallback) {
   }
 
-   ajax(url, target, callback, errorCallback) {
-      let oReq = new XMLHttpRequest();
-      oReq.open('GET', url, true);
-      oReq.responseType = 'arraybuffer'; // blob arraybuffer
-      let _this = this;
-      let data;
+  ajax(url, target, callback, errorCallback) {
+    let oReq = new XMLHttpRequest();
+    oReq.open('GET', url, true);
+    oReq.responseType = 'arraybuffer'; // blob arraybuffer
+    // let _this = this;
+    let data;
 
-      oReq.onload = function () {
-          if (this.status == 200) {
-              // console.log('ajax done for ', url);
-              var arrayBuffer = oReq.response;
-              var byteArray = new Uint8Array(arrayBuffer);
-              //_this._writeByteArrayToFS(target, byteArray, callback);
-          }
-          else {
-              errorCallback(this.status);
-          }
-          data = byteArray
-
-      };
-      _this._writeByteArrayToFS(target, data, callback);
-      oReq.send();
+    oReq.onload = function () {
+      if (this.status == 200) {
+        // console.log('ajax done for ', url);
+        var arrayBuffer = oReq.response
+        var byteArray = new Uint8Array(arrayBuffer);
+        //ARToolkitNFT._writeByteArrayToFS(target, byteArray, callback);
+        data = byteArray
+        console.log(byteArray);
+      }
+      else {
+        errorCallback(this.status)
+      }
+      //return data = byteArray
+    }
+    console.log(data);
+    this._writeByteArrayToFS(target, data, callback);
+    oReq.send()
   }
 
   static writeStringToFS(target, string, callback) {
@@ -188,9 +219,10 @@ export default class ARToolkitNFT {
       this._writeByteArrayToFS(target, byteArray, callback);
   }
 
-  static _writeByteArrayToFS(target, byteArray, callback) {
+   _writeByteArrayToFS(target, byteArray, callback) {
      //console.log(ARToolkitNFT);
-      ARToolkitNFT.instance.FS.writeFile(target, byteArray, { encoding: 'binary' });
+     console.log(this);
+      this.instance.FS.writeFile(target, byteArray, { encoding: 'binary' });
       // console.log('FS written', target);
 
       callback(byteArray);
