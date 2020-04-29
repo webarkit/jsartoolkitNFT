@@ -2,15 +2,6 @@ function isMobile () {
     return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
-var markers = {
-    "pinball": {
-        width: 1637,
-        height: 2048,
-        dpi: 250,
-        url: "./examples/DataNFT/pinball",
-    },
-};
-
 var setMatrix = function (matrix, value) {
     var array = [];
     for (var key in value) {
@@ -23,7 +14,7 @@ var setMatrix = function (matrix, value) {
     }
 };
 
-function start(container, marker, video, input_width, input_height, canvas_draw, render_update, track_update, greyCover) {
+function start(container, markerUrl, video, input_width, input_height, canvas_draw, render_update, track_update, greyCover) {
     var vw, vh;
     var sw, sh;
     var pscale, sscale;
@@ -88,7 +79,7 @@ function start(container, marker, video, input_width, input_height, canvas_draw,
 
         worker = new Worker('../js/artoolkitNFT.worker.js');
 
-        worker.postMessage({ type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: '../' + marker.url });
+        worker.postMessage({ type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: markerUrl });
 
         worker.onmessage = function (ev) {
             var msg = ev.data;
