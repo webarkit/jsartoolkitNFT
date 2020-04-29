@@ -2,6 +2,7 @@
 <img src="https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot" alt="Dependabot Badge" />
 [![Build Status](https://travis-ci.com/kalwalt/jsartoolkitNFT.svg?branch=master)](https://travis-ci.com/kalwalt/jsartoolkitNFT)
 [![Build Status](https://app.bitrise.io/app/27069fc90c01edd4/status.svg?token=NEccMUM1Jh8TFezKwDexAw)](https://app.bitrise.io/app/27069fc90c01edd4)
+![Publish to GitHub Packages](https://github.com/kalwalt/jsartoolkitNFT/workflows/Publish%20to%20GitHub%20Packages/badge.svg)
 
 # JSARToolKitNFT
 
