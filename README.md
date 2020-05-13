@@ -5,7 +5,7 @@
 
 # JSARToolKitNFT
 
-Emscripten port of [ARToolKit5](https://github.com/artoolkitx/artoolkit5) to JavaScript.
+Emscripten port of [WebARKitLib](https://github.com/webarkit/WebARKitLib) to JavaScript.
 Modified and lighter version of [JSARToolKit5](https://github.com/artoolkitx/jsartoolkit5).
 
 Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html](https://kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html)
@@ -46,7 +46,7 @@ or you can clone the repository with git, follow the instructions below:
 2. Clone ARToolKit5 project to get the latest source files. From within JSARToolKitNFT directory do `git submodule update --init`. If you already cloned ARToolKit5 to a different directory you can:
 
   - create a link in the `jsartoolkitNFT/emscripten/` directory that points to ARToolKit5 (`jsartoolkitNFT/emscripten/artoolkit5`) (Linux and macOS only)
-  - or, set the `ARTOOLKIT5_ROOT` environment variable to point to your ARToolKit5 clone
+  - or, set the `WEBARKITLIB_ROOT` environment variable to point to your ARToolKit5 clone
   - or, change the `tools/makem.js` file to point to your artoolkit5 clone (line 20)
 
 ## ARnft library
