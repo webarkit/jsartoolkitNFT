@@ -23,7 +23,7 @@ module.exports = {
             presets: ['@babel/preset-env'],
             plugins: [
               // @see https://github.com/babel/babel/issues/9849
-              ["@babel/transform-runtime"]
+              ['@babel/transform-runtime']
             ]
           }
         }]

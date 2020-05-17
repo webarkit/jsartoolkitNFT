@@ -6,21 +6,49 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
 </head>
 <body>
-    <img id="pinball" src="./Data/pinball-test.jpg"/>
+		<video id="video" autoplay playsinline></video>
+		<canvas id="targetcanvas" class="layer"></canvas>
 		<script src="../dist/ARToolkitNFT_ES6.js"></script>
+		<script src="index.js"></script>
 
     <script>
 		window.addEventListener('load', () => {
 			console.log('init ARToolkit...');
 
-			ARToolkitNFT.ARControllerNFT.initNFTWithImage(pinball, './Data/camera_para.dat')
+			initCamera()
+			.then(video => {
+
+				// start camera playback
+		    sourceVideo = video;
+		    sourceVideo.width = 640;
+		    sourceVideo.height = 480;
+		    sourceVideo.play();
+
+				// init target canvas
+		    initTargetCanvas();
+
+				return new Promise(resolve => {
+		      sourceVideo.addEventListener("loadeddata", event => {
+		        console.log("Camera is ready");
+		        resolve();
+		      });
+		    });
+		  })
+			.then(_ => {
+
+			ARToolkitNFT.ARControllerNFT.initNFTWithImage(video, './Data/camera_para.dat')
 			.then((nft) => {
 				console.log(nft)
 				nft.loadNFTMarker('./DataNFT/pinball')
+				.then(id => {
+						nft.trackNFTMarkerId(id)
+						console.log("loadNFTMarker -> ", id);
+				})
 			})
 			.catch((error) => { console.error(error) })
 
 		});
+	})
     </script>
 
 </body>
