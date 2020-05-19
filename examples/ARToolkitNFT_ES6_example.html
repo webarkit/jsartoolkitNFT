@@ -39,11 +39,15 @@
 			ARToolkitNFT.ARControllerNFT.initNFTWithImage(video, './Data/camera_para.dat')
 			.then((nft) => {
 				console.log(nft)
+				nft.addEventListener('getNFTMarker',
+				(ev) => {console.log(ev)}
+			)
 				nft.loadNFTMarker('./DataNFT/pinball')
 				.then(id => {
 						nft.trackNFTMarkerId(id)
 						console.log("loadNFTMarker -> ", id);
 				})
+				nft.process(video)
 			})
 			.catch((error) => { console.error(error) })
 
