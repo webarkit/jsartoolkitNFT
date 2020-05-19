@@ -29,7 +29,7 @@ for (var j = 2; j < arguments.length; j++) {
 var HAVE_NFT = 1;
 
 var EMSCRIPTEN_ROOT = process.env.EMSCRIPTEN;
-var ARTOOLKIT5_ROOT = process.env.ARTOOLKIT5_ROOT || path.resolve(__dirname, "../emscripten/artoolkit5");
+var WEBARKITLIB_ROOT = process.env.WEBARKITLIB_ROOT || path.resolve(__dirname, "../emscripten/WebARKitLib");
 
 if (!EMSCRIPTEN_ROOT) {
   console.log("\nWarning: EMSCRIPTEN environment variable not found.")
@@ -55,11 +55,11 @@ var MAIN_SOURCES = [
 	'trackingMod2d.c',
 ];
 
-if (!fs.existsSync(path.resolve(ARTOOLKIT5_ROOT, 'include/AR/config.h'))) {
+if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h'))) {
 	console.log("Renaming and moving config.h.in to config.h");
 	fs.copyFileSync(
-		path.resolve(ARTOOLKIT5_ROOT, 'include/AR/config.h.in'),
-		path.resolve(ARTOOLKIT5_ROOT, 'include/AR/config.h')
+		path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h.in'),
+		path.resolve(WEBARKITLIB_ROOT, 'include/AR/config.h')
 	);
 	console.log("Done!");
 }
@@ -68,7 +68,7 @@ MAIN_SOURCES = MAIN_SOURCES.map(function(src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(' ');
 
-let srcTest = path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/');
+let srcTest = path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/');
 
 let arSources, ar_sources;
 
@@ -101,7 +101,7 @@ function matchAll(patterns, prefix="") {
 	  'ARUtil/log.c',
 	  'ARUtil/file_utils.c',
 	].map(function(src) {
-		return path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/', src);
+		return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/', src);
 	});
 }
 
@@ -123,7 +123,7 @@ var ar2_sources = [
     'coord.c',
     'util.c',
 ].map(function(src) {
-	return path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/AR2/', src);
+	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/AR2/', src);
 });
 
 var kpm_sources = [
@@ -147,7 +147,7 @@ var kpm_sources = [
 	'FreakMatcher/framework/logger.cpp',
 	'FreakMatcher/framework/timers.cpp',
 ].map(function(src) {
-	return path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/KPM/', src);
+	return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/', src);
 });
 
 if (HAVE_NFT) {
@@ -183,10 +183,10 @@ DEBUG_FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 DEBUG_FLAGS += '  -s DEMANGLE_SUPPORT=1 ';
 
 var INCLUDES = [
-    path.resolve(__dirname, ARTOOLKIT5_ROOT + '/include'),
+    path.resolve(__dirname, WEBARKITLIB_ROOT + '/include'),
     OUTPUT_PATH,
     SOURCE_PATH,
-    path.resolve(__dirname, ARTOOLKIT5_ROOT + '/lib/SRC/KPM/FreakMatcher'),
+    path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/FreakMatcher'),
 ].map(function(s) { return '-I' + s }).join(' ');
 
 function format(str) {
