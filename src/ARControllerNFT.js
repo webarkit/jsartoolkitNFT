@@ -85,7 +85,7 @@ export default class ARControllerNFT {
   process (image) {
     const result = this.detectMarker(image)
     if (result != 0) {
-      console.error('[ARController]', 'detectMarker error:', result)
+      console.error('[ARControllerNFT]', 'detectMarker error:', result)
     }
 
     let k, o
@@ -229,13 +229,13 @@ export default class ARControllerNFT {
   //----------------------------------------------------------------------------
 
   /**
-   * Add an event listener on this ARController for the named event, calling the callback function
+   * Add an event listener on this ARControllerNFTNFT for the named event, calling the callback function
    * whenever that event is dispatched.
    * Possible events are:
    * - getMarker - dispatched whenever process() finds a square marker
    * - getMultiMarker - dispatched whenever process() finds a visible registered multimarker
    * - getMultiMarkerSub - dispatched by process() for each marker in a visible multimarker
-   * - load - dispatched when the ARController is ready to use (useful if passing in a camera URL in the constructor)
+   * - load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
    * @param {string} name Name of the event to listen to.
    * @param {function} callback Callback function to call when an event with the given name is dispatched.
    */
@@ -360,18 +360,18 @@ export default class ARControllerNFT {
   }
 
   /**
-   * Returns the 16-element WebGL transformation matrix used by ARController.process to
+   * Returns the 16-element WebGL transformation matrix used by ARControllerNFT.process to
    * pass marker WebGL matrices to event listeners.
-   * Unique to each ARController.
-   * @return {Float64Array} The 16-element WebGL transformation matrix used by the ARController.
+   * Unique to each ARControllerNFT.
+   * @return {Float64Array} The 16-element WebGL transformation matrix used by the ARControllerNFT.
    */
   getTransformationMatrix () {
     return this.transform_mat
   };
 
   /**
-   * Returns the projection matrix computed from camera parameters for the ARController.
-   * @return {Float64Array} The 16-element WebGL camera matrix for the ARController camera parameters.
+   * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
+   * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
    */
   getCameraMatrix () {
     return this.camera_mat
@@ -433,22 +433,22 @@ export default class ARControllerNFT {
   // ----------------------------------------------------------------------------
 
   /**
-   * This function init the ArController with the necessary parmeters and variables.
-   * Don't call directly this but instead instantiate a new ArController.
-   * @return {ARController} The initialized ARController instance
+   * This function init the ARControllerNFT with the necessary parmeters and variables.
+   * Don't call directly this but instead instantiate a new ARControllerNFT.
+   * @return {ARControllerNFT} The initialized ARControllerNFT instance
    */
   async _initialize () {
     // initialize the toolkit
     this.artoolkitNFT = await new ARToolkitNFT().init()
-    console.log('[ARController]', 'ARToolkitNFT initialized')
+    console.log('[ARControllerNFT]', 'ARToolkitNFT initialized')
 
     // load the camera
     this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam)
-    console.log('[ARController]', 'Camera params loaded with ID', this.cameraId)
+    console.log('[ARControllerNFT]', 'Camera params loaded with ID', this.cameraId)
 
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId)
-    console.log('[ARController]', 'Got ID from setup', this.id)
+    console.log('[ARControllerNFT]', 'Got ID from setup', this.id)
 
     this._initNFT()
 
