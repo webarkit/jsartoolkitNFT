@@ -54,17 +54,17 @@ export default class ARControllerNFT {
     if (this.options.canvas) {
       // in case you use Node.js, create a canvas with node-canvas
       this.canvas = this.options.canvas
-    } else {
+    } else if (typeof document !== 'undefined') {
       // try creating a canvas from document
-      if (typeof document === 'undefined') {
-        throw 'No canvas available'
-      }
       this.canvas = document.createElement('canvas')
     }
-
-    this.canvas.width = width
-    this.canvas.height = height
-    this.ctx = this.canvas.getContext('2d')
+    if (this.canvas) {
+      this.canvas.width = width
+      this.canvas.height = height
+      this.ctx = this.canvas.getContext('2d')
+    } else {
+      console.warn('No canvas available')
+    }
 
     // this is to workaround the introduction of "self" variable
     this.nftMarkerFound = false
