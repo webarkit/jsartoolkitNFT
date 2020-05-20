@@ -74,6 +74,12 @@ export default class ARControllerNFT {
     this._bwpointer = false
   }
 
+  static async initWithDimensions (width, height, cameraParam, options) {
+    // directly init with given width / height
+    const arControllerNFT = new ARControllerNFT(width, height, cameraParam, options)
+    return await arControllerNFT._initialize()
+  }
+
   static async initNFTWithImage (image, cameraParam, options) {
     const width = image.videoWidth || image.width
     const height = image.Height || image.height
