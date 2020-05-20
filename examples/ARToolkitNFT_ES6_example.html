@@ -9,6 +9,8 @@
 		<video id="video" autoplay playsinline></video>
 		<canvas id="targetcanvas" class="layer"></canvas>
 		<script src="../dist/ARToolkitNFT.js"></script>
+		<script src="js/third_party/three.js/three.min.js"></script>
+		<script src="threejs_worker_ES6.js"></script>
 		<script src="index.js"></script>
 
     <script>
@@ -36,20 +38,7 @@
 		  })
 			.then(_ => {
 
-			ARToolkitNFT.ARControllerNFT.initNFTWithImage(video, './Data/camera_para.dat')
-			.then((nft) => {
-				console.log(nft)
-				nft.addEventListener('getNFTMarker',
-				(ev) => {console.log(ev)}
-			)
-				nft.loadNFTMarker('./DataNFT/pinball')
-				.then(id => {
-						nft.trackNFTMarkerId(id)
-						console.log("loadNFTMarker -> ", id);
-				})
-				nft.process(video)
-			})
-			.catch((error) => { console.error(error) })
+			start('../DataNFT/pinball', video, video.videoWidth, video.videoHeight)
 
 		});
 	})
