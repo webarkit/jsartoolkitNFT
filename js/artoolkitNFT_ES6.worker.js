@@ -1,4 +1,4 @@
-import { ARToolkitNFT, ARControllerNFT } from '../dist/ARToolkitNFT'
+importScripts('../dist/ARToolkitNFT.js')
 
 self.onmessage = function (e) {
   var msg = e.data
@@ -18,7 +18,6 @@ self.onmessage = function (e) {
 var next = null
 var ar = null
 var markerResult = null
-var artoolkitNFT = new ARToolkitNFT()
 
 function load (msg) {
   console.debug('Loading marker at: ', msg.marker)
@@ -50,9 +49,7 @@ function load (msg) {
   console.debug('Loading camera at:', msg.camera_para)
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  artoolkitNFT.init(_ => {
-    ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
-  })
+    ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
 }
 
 function process () {

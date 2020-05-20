@@ -79,7 +79,7 @@ function start(markerUrl, video, input_width, input_height) {
 
         renderer.setSize(sw, sh);
 
-        worker = new Worker('../js/artoolkitNFT_ES6.worker.js', { type: 'module' })
+        worker = new Worker('../js/artoolkitNFT_ES6.worker.js')
 
         worker.postMessage({ type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: markerUrl });
 
