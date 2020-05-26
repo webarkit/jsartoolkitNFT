@@ -10,7 +10,6 @@ self.onmessage = function (e) {
     case 'process': {
       next = msg.imagedata
       process()
-      return
     }
   }
 }
@@ -49,7 +48,7 @@ function load (msg) {
   console.debug('Loading camera at:', msg.camera_para)
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-    ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
+  ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
 }
 
 function process () {
