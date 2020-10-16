@@ -3,13 +3,16 @@
 <head>
 	<meta charset="utf-8">
 	<title>ARToolkitNFT_ES6 example</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="css/nft-style.css">
 </head>
 <body>
 		<video id="video" autoplay playsinline></video>
-		<canvas id="targetcanvas" class="layer"></canvas>
+		<canvas id="targetcanvas"></canvas>
 		<script src="../dist/ARToolkitNFT.js"></script>
+		<script src="js/third_party/three.js/three.min.js"></script>
 		<script src="index.js"></script>
+		<script src="threejs_worker_ES6.js"></script>
 
     <script>
 		window.addEventListener('load', () => {
@@ -36,20 +39,7 @@
 		  })
 			.then(_ => {
 
-			ARToolkitNFT.ARControllerNFT.initNFTWithImage(video, './Data/camera_para.dat')
-			.then((nft) => {
-				console.log(nft)
-				nft.addEventListener('getNFTMarker',
-				(ev) => {console.log(ev)}
-			)
-				nft.loadNFTMarker('./DataNFT/pinball')
-				.then(id => {
-						nft.trackNFTMarkerId(id)
-						console.log("loadNFTMarker -> ", id);
-				})
-				nft.process(video)
-			})
-			.catch((error) => { console.error(error) })
+			start('../examples/DataNFT/pinball', video, video.videoWidth, video.videoHeight)
 
 		});
 	})
