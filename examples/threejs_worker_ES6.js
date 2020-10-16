@@ -27,7 +27,6 @@ function start(markerUrl, video, input_width, input_height) {
     var canvas_process = document.createElement('canvas');
     var context_process = canvas_process.getContext('2d');
     var targetCanvas = document.querySelector("#targetcanvas");
-    console.log(targetCanvas);
 
     var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -150,8 +149,8 @@ function start(markerUrl, video, input_width, input_height) {
           sphere.visible = false;
         } else {
           sphere.visible = true;
-                // set matrix of 'root' by detected 'world' matrix
-                setMatrix(root.matrix, world);
+          // set matrix of 'root' by detected 'world' matrix
+          setMatrix(root.matrix, world);
         }
         renderer.render(scene, camera);
     };
