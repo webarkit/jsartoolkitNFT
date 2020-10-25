@@ -20,13 +20,13 @@
     "name": "Walter Perdan",
     "email": "github@kalwaltart.it",
     "url": "https://www.kalwaltart.com"
-    },
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/kalwalt/jsartoolkitNFT"
   },
   "publishConfig": {
-    "registry":"https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/"
   },
   "homepage": "https://github.com/kalwalt/jsartoolkitNFT",
   "contributors": [
@@ -36,15 +36,15 @@
     "url": "https://github.com/kalwalt/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "eslint": "^7.9.0",
+    "eslint": "^7.12.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.2",
     "grunt": "^1.1.0",
     "grunt-cli": "^1.3.2",
-    "grunt-contrib-jshint": "^2.1.0",
+    "grunt-contrib-jshint": "^3.0.0",
     "grunt-contrib-qunit": "^4.0.0",
     "grunt-eslint": "^23.0.0"
   },
