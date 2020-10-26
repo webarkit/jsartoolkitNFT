@@ -26,7 +26,7 @@
     "url": "https://github.com/kalwalt/jsartoolkitNFT"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://registry.npmjs.org/"
   },
   "homepage": "https://github.com/kalwalt/jsartoolkitNFT",
   "contributors": [
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "eslint": "^7.12.0",
-    "eslint-config-standard": "^14.1.1",
+    "eslint-config-standard": "^15.0.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
@@ -50,8 +50,8 @@
   },
   "scripts": {
     "build-jshint": "grunt jshint --force",
-    "build-local": "node tools/makem.js; echo Built at `date`",
-    "build-local-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
+    "build": "node tools/makem.js; echo Built at `date`",
+    "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "test": "grunt qunit",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/"
   },
