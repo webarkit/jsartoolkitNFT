@@ -51,7 +51,6 @@
     "grunt-contrib-jshint": "^2.1.0",
     "grunt-contrib-qunit": "^4.0.0",
     "grunt-eslint": "^23.0.0",
-    "canvas": "^2.6.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   },
