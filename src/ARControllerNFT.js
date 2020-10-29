@@ -1,4 +1,5 @@
 import ARToolkitNFT from './ARToolkitNFT'
+import { createCanvas } from 'canvas'
 
 export default class ARControllerNFT {
   constructor (width, height, cameraParam, options) {
@@ -54,6 +55,9 @@ export default class ARControllerNFT {
     if (this.options.canvas) {
       // in case you use Node.js, create a canvas with node-canvas
       this.canvas = this.options.canvas
+    } else if (this.options.canvas == null) {
+      this.canvas = createCanvas(this.videoWidth, this.videoHeight)
+      console.debug('canvas created with node-canvas');
     } else if (typeof document !== 'undefined') {
       // try creating a canvas from document
       this.canvas = document.createElement('canvas')
