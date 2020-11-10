@@ -101,7 +101,7 @@
     ARControllerNFT.prototype.dispose = function () {
         // It is possible to call dispose on an ARControllerNFT that was never initialized. But if it was never initialized the id is undefined.
         if (this.id > -1) {
-            artoolkit.teardown(this.id);
+            artoolkitNFT.teardown(this.id);
         }
 
         for (var t in this) {
@@ -170,7 +170,7 @@
 
         for (var i = 0; i < nftMarkerCount; i++) {
             var nftMarkerInfo = this.getNFTMarker(i);
-            var markerType = artoolkit.NFT_MARKER;
+            var markerType = artoolkitNFT.NFT_MARKER;
 
             if (nftMarkerInfo.found) {
                 self.markerFound = i;
@@ -224,7 +224,7 @@
     with the given tracked id.
   */
     ARControllerNFT.prototype.detectNFTMarker = function () {
-        artoolkit.detectNFTMarker(this.id);
+        artoolkitNFT.detectNFTMarker(this.id);
     };
 
 	/**
@@ -333,7 +333,7 @@
     ARControllerNFT.prototype.loadNFTMarker = function (markerURL, onSuccess, onError) {
         var self = this;
         if (markerURL) {
-          return artoolkit.addNFTMarker(this.id, markerURL, function (nft) {
+          return artoolkitNFT.addNFTMarker(this.id, markerURL, function (nft) {
               self.nftMarkerCount = nft.id + 1;
               onSuccess(nft);
           }, onError);
@@ -451,7 +451,7 @@
 	*/
     ARControllerNFT.prototype.detectMarker = function (image) {
         if (this._copyImageToHeap(image)) {
-            return artoolkit.detectMarker(this.id);
+            return artoolkitNFT.detectMarker(this.id);
         }
         return -99;
     };
@@ -469,8 +469,8 @@
     @returns {Object} The NFTmarkerInfo struct.
   */
     ARControllerNFT.prototype.getNFTMarker = function (markerIndex) {
-        if (0 === artoolkit.getNFTMarker(this.id, markerIndex)) {
-            return artoolkit.NFTMarkerInfo;
+        if (0 === artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
+            return artoolkitNFT.NFTMarkerInfo;
         }
     };
 
@@ -505,7 +505,7 @@
 	 * @see				getDebugMode()
 	 */
     ARControllerNFT.prototype.setDebugMode = function (mode) {
-        return artoolkit.setDebugMode(this.id, mode);
+        return artoolkitNFT.setDebugMode(this.id, mode);
     };
 
 	/**
@@ -514,7 +514,7 @@
 	 * @see					setDebugMode()
 	 */
     ARControllerNFT.prototype.getDebugMode = function () {
-        return artoolkit.getDebugMode(this.id);
+        return artoolkitNFT.getDebugMode(this.id);
     };
 
 	/**
@@ -523,7 +523,7 @@
 		@return {number} HEAP offset to the debug processing image.
 	*/
     ARControllerNFT.prototype.getProcessingImage = function () {
-        return artoolkit.getProcessingImage(this.id);
+        return artoolkitNFT.getProcessingImage(this.id);
     };
 
 	/**
@@ -532,7 +532,7 @@
 		@param {number} mode type for the log level.
 	*/
     ARControllerNFT.prototype.setLogLevel = function (mode) {
-        return artoolkit.setLogLevel(mode);
+        return artoolkitNFT.setLogLevel(mode);
     };
 
   /**
@@ -540,7 +540,7 @@
     @return {number} return the log level in use.
   */
     ARControllerNFT.prototype.getLogLevel = function () {
-        return artoolkit.getLogLevel();
+        return artoolkitNFT.getLogLevel();
     };
 
   /**
@@ -549,7 +549,7 @@
     @return {number} 0 (void)
   */
     ARControllerNFT.prototype.setProjectionNearPlane = function (value) {
-        return artoolkit.setProjectionNearPlane(this.id, value);
+        return artoolkitNFT.setProjectionNearPlane(this.id, value);
     };
 
   /**
@@ -557,7 +557,7 @@
     @return {number} the value of the near plane.
   */
     ARControllerNFT.prototype.getProjectionNearPlane = function () {
-        return artoolkit.getProjectionNearPlane(this.id);
+        return artoolkitNFT.getProjectionNearPlane(this.id);
     };
 
   /**
@@ -566,7 +566,7 @@
     @return {number} 0 (void)
   */
     ARControllerNFT.prototype.setProjectionFarPlane = function (value) {
-        return artoolkit.setProjectionFarPlane(this.id, value);
+        return artoolkitNFT.setProjectionFarPlane(this.id, value);
     };
 
   /**
@@ -574,7 +574,7 @@
     @return {number} the value of the far plane.
   */
     ARControllerNFT.prototype.getProjectionFarPlane = function () {
-        return artoolkit.getProjectionFarPlane(this.id);
+        return artoolkitNFT.getProjectionFarPlane(this.id);
     };
 
 
@@ -589,7 +589,7 @@
 	        AR_LABELING_THRESH_MODE_AUTO_BRACKETING
 	 */
     ARControllerNFT.prototype.setThresholdMode = function (mode) {
-        return artoolkit.setThresholdMode(this.id, mode);
+        return artoolkitNFT.setThresholdMode(this.id, mode);
     };
 
 	/**
@@ -598,7 +598,7 @@
 	 * @see				getVideoThresholdMode()
 	 */
     ARControllerNFT.prototype.getThresholdMode = function () {
-        return artoolkit.getThresholdMode(this.id);
+        return artoolkitNFT.getThresholdMode(this.id);
     };
 
 	/**
@@ -626,7 +626,7 @@
 		@param {number}     threshold An integer in the range [0,255] (inclusive).
 	*/
     ARControllerNFT.prototype.setThreshold = function (threshold) {
-        return artoolkit.setThreshold(this.id, threshold);
+        return artoolkitNFT.setThreshold(this.id, threshold);
     };
 
 	/**
@@ -645,7 +645,7 @@
 	    @return {number} The current threshold value.
 	*/
     ARControllerNFT.prototype.getThreshold = function () {
-        return artoolkit.getThreshold(this.id);
+        return artoolkitNFT.getThreshold(this.id);
     };
 
 	/**
@@ -670,7 +670,7 @@
 			The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
 	*/
 	ARControllerNFT.prototype.setImageProcMode = function(mode) {
-		return artoolkit.setImageProcMode(this.id, mode);
+		return artoolkitNFT.setImageProcMode(this.id, mode);
 	};
 
 	/**
@@ -681,7 +681,7 @@
 	    @return {number} The current image processing mode.
 	*/
     ARControllerNFT.prototype.getImageProcMode = function () {
-        return artoolkit.getImageProcMode(this.id);
+        return artoolkitNFT.getImageProcMode(this.id);
     };
 
 
@@ -727,11 +727,11 @@
       @return {number} 0 (void)
     */
     ARControllerNFT.prototype._initialize = function () {
-        this.id = artoolkit.setup(this.width, this.height, this.cameraParam.id);
+        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id);
 
         this._initNFT();
 
-        var params = artoolkit.frameMalloc;
+        var params = artoolkitNFT.frameMalloc;
         this.framepointer = params.framepointer;
         this.framesize = params.framesize;
         this.videoLumaPointer = params.videoLumaPointer;
@@ -760,7 +760,7 @@
     @return {number} 0 (void)
   */
     ARControllerNFT.prototype._initNFT = function () {
-        artoolkit.setupAR2(this.id);
+        artoolkitNFT.setupAR2(this.id);
     };
 
   /**
@@ -870,7 +870,7 @@
         }
         this._src = src;
         if (src) {
-            artoolkit.loadCamera(src, function (id) {
+            artoolkitNFT.loadCamera(src, function (id) {
                 this.id = id;
                 this.complete = true;
                 this.onload();
@@ -895,7 +895,7 @@
 	*/
     ARCameraParamNFT.prototype.dispose = function () {
         if (this.id !== -1) {
-            artoolkit.deleteCamera(this.id);
+            artoolkitNFT.deleteCamera(this.id);
         }
         this.id = -1;
         this._src = '';
@@ -906,7 +906,7 @@
 
     // ARToolKit exported JS API
     //
-    var artoolkit = {
+    var artoolkitNFT = {
 
         UNKNOWN_MARKER: -1,
         NFT_MARKER: 0, // 0,
@@ -952,12 +952,12 @@
 
     function runWhenLoaded() {
         FUNCTIONS.forEach(function (n) {
-            artoolkit[n] = Module[n];
+            artoolkitNFT[n] = Module[n];
         });
 
         for (var m in Module) {
             if (m.match(/^AR/))
-                artoolkit[m] = Module[m];
+                artoolkitNFT[m] = Module[m];
         }
     }
 
@@ -1045,7 +1045,7 @@
     }
 
     /* Exports */
-    scope.artoolkit = artoolkit;
+    scope.artoolkitNFT = artoolkitNFT;
     scope.ARControllerNFT = ARControllerNFT;
     scope.ARCameraParamNFT = ARCameraParamNFT;
 

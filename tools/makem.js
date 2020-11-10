@@ -170,7 +170,7 @@ FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += ' -s "EXTRA_EXPORTED_RUNTIME_METHODS=[\'FS\']"';
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 
-var WASM_FLAGS = ' -s BINARYEN_TRAP_MODE=clamp -s SINGLE_FILE=1 '
+var WASM_FLAGS = ' -s SINGLE_FILE=1 '
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
 
 var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/artoolkitNFT.api.js') +' ';
@@ -223,7 +223,7 @@ function clean_builds() {
 
 var compile_arlib = format(EMCC + ' ' + INCLUDES + ' '
     + ar_sources.join(' ')
-    + FLAGS + ' ' + DEFINES + ' -o {OUTPUT_PATH}libar.bc ',
+    + FLAGS + ' ' + DEFINES + ' -r -o {OUTPUT_PATH}libar.bc ',
     OUTPUT_PATH);
 
 var ALL_BC = " {OUTPUT_PATH}libar.bc ";
