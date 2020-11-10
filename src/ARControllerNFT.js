@@ -159,9 +159,9 @@ export default class ARControllerNFT {
       }
     }
 
-    if (this._bwpointer) {
+    /*if (this._bwpointer) {
       this.debugDraw()
-    }
+    }*/
   }
 
   /**
