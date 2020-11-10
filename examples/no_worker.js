@@ -7,6 +7,10 @@ function start (markerUrl, video, inputWidth, inputHeight) {
       console.log(ev)
     })
 
+    ar.addEventListener('lostNFTMarker', function (ev) {
+      console.log(ev)
+    })
+
     ar.loadNFTMarker(markerUrl).then(function (nft) {
       ar.trackNFTMarkerId(nft.id)
       console.log('loadNFTMarker -> ', nft.id)
@@ -16,14 +20,13 @@ function start (markerUrl, video, inputWidth, inputHeight) {
     })
 
     if (ar && ar.process) {
-      console.log(ar);
       let imageDataCanvas = document.createElement('canvas');
       let contextProcess = imageDataCanvas.getContext('2d');
       contextProcess.fillStyle = 'black';
       contextProcess.fillRect(0, 0, 640, 480);
-      contextProcess.drawImage(video, 0, 0, 0, 0, 640, 480, 640, 480);
+      contextProcess.drawImage(video, 0, 0, 640, 480);
       var imageData = contextProcess.getImageData(0, 0, 640, 480);
-      ar.process(imageData.data)
+      ar.process(imageData)
     }
   }
 
