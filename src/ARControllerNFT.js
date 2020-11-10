@@ -90,7 +90,7 @@ export default class ARControllerNFT {
 
   process (image) {
     console.log(image);
-    const result = this.detectMarker(image)
+    let result = this.detectMarker(image)
     console.log(result);
     if (result != 0) {
       console.error('[ARControllerNFT]', 'detectMarker error:', result)
@@ -106,7 +106,7 @@ export default class ARControllerNFT {
     }
 
     // detect NFT markers
-    const nftMarkerCount = this.nftMarkerCount
+    let nftMarkerCount = this.nftMarkerCount
     console.log(nftMarkerCount);
     this.detectNFTMarker()
 
@@ -114,15 +114,16 @@ export default class ARControllerNFT {
     const MARKER_LOST_TIME = 200
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      const nftMarkerInfo = this.getNFTMarker(i)
+      let nftMarkerInfo = this.getNFTMarker(i)
       console.log(nftMarkerInfo);
-      const markerType = ARToolkitNFT.NFT_MARKER
+      let markerType = ARToolkitNFT.NFT_MARKER
+      console.log(markerType);
 
       if (nftMarkerInfo.found) {
         this.nftMarkerFound = i
         this.nftMarkerFoundTime = Date.now()
 
-        const visible = this.trackNFTMarkerId(i)
+        let visible = this.trackNFTMarkerId(i)
         console.log(visible);
         visible.matrix.set(nftMarkerInfo.pose)
         visible.inCurrent = true
@@ -233,9 +234,9 @@ export default class ARControllerNFT {
    * @returns {Object} The NFTmarkerInfo struct.
    */
   getNFTMarker (markerIndex) {
-    if (this.artoolkitNFT.getNFTMarker(this.id, markerIndex) === 0) {
+    if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
       console.log('we are in get NFT marker!');
-      return this.artoolkitNFT.NFTMarkerInfo
+      return this.artoolkitNFT.NFTMarkerInfo;
     }
   };
 
@@ -255,7 +256,7 @@ export default class ARControllerNFT {
    */
   addEventListener(name, callback) {
     if(!this.listeners[name]) {
-      this.listeners[name] = [];
+     this.listeners[name] = [];
     }
     this.listeners[name].push(callback);
   };
@@ -438,9 +439,11 @@ export default class ARControllerNFT {
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
   */
   async loadNFTMarker (urlOrData) {
-    const markerId = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
-    this.nftMarkerCount = markerId + 1
-    return markerId
+    let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
+    console.log(nft);
+    this.nftMarkerCount = nft.id + 1
+    console.log(this.nftMarkerCount);
+    return nft
   };
 
   // private accessors
@@ -466,7 +469,7 @@ export default class ARControllerNFT {
 
     this._initNFT()
 
-    const params = artoolkitNFT.frameMalloc
+    let params = artoolkitNFT.frameMalloc
     this.framepointer = params.framepointer
     this.framesize = params.framesize
     this.videoLumaPointer = params.videoLumaPointer
@@ -530,7 +533,7 @@ export default class ARControllerNFT {
 
       this.ctx.restore()
 
-      const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+      let imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
       data = imageData.data
     }
 
@@ -541,7 +544,7 @@ export default class ARControllerNFT {
       // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
       // see (ARToolKitJS.cpp L: 43)
       for (let p = 0; p < this.videoSize; p++) {
-        const r = data[q + 0]; const g = data[q + 1]; const b = data[q + 2]
+        let r = data[q + 0]; const g = data[q + 1]; const b = data[q + 2]
         // @see https://stackoverflow.com/a/596241/5843642
         this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3
         q += 4
