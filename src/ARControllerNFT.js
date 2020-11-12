@@ -551,6 +551,38 @@ export default class ARControllerNFT {
     return nft
   };
 
+  /**
+   * Set the image processing mode.
+   * When the image processing mode is AR_IMAGE_PROC_FRAME_IMAGE,
+   * ARToolKit processes all pixels in each incoming image
+   * to locate markers. When the mode is AR_IMAGE_PROC_FIELD_IMAGE,
+   * ARToolKit processes pixels in only every second pixel row and
+   * column. This is useful both for handling images from interlaced
+   * video sources (where alternate lines are assembled from alternate
+   * fields and thus have one field time-difference, resulting in a
+   * "comb" effect) such as Digital Video cameras.
+   * The effective reduction by 75% in the pixels processed also
+   * has utility in accelerating tracking by effectively reducing
+   * the image size to one quarter size, at the cost of pose accuraccy.
+   * @param {number} mode
+   * Options for this field are:
+   * AR_IMAGE_PROC_FRAME_IMAGE
+   * AR_IMAGE_PROC_FIELD_IMAGE
+   * The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
+   */
+  setImageProcMode (mode) {
+    return this.artoolkitNFT.setImageProcMode(this.id, mode);
+  };
+
+  /**
+   * Get the image processing mode.
+   * See arSetImageProcMode() for a complete description.
+   * @return {number} The current image processing mode.
+   */
+  getImageProcMode () {
+    return this.artoolkitNFT.getImageProcMode(this.id);
+  };
+
   // private accessors
   // ----------------------------------------------------------------------------
 
