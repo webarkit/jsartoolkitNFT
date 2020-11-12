@@ -86,9 +86,7 @@ export default class ARControllerNFT {
   }
 
   process (image) {
-    console.log(image);
     let result = this.detectMarker(image)
-    console.log(result);
     if (result != 0) {
       console.error('[ARControllerNFT]', 'detectMarker error:', result)
     }
@@ -104,7 +102,6 @@ export default class ARControllerNFT {
 
     // detect NFT markers
     let nftMarkerCount = this.nftMarkerCount
-    console.log(nftMarkerCount);
     this.detectNFTMarker()
 
     // in ms
@@ -112,17 +109,13 @@ export default class ARControllerNFT {
 
     for (let i = 0; i < nftMarkerCount; i++) {
       let nftMarkerInfo = this.getNFTMarker(i)
-      console.log(nftMarkerInfo);
-      //let markerType = ARToolkitNFT.NFT_MARKER
-      let markerType = this.artoolkitNFT.NFT_MARKER
-      console.log(markerType);
+      let markerType = ARToolkitNFT.NFT_MARKER
 
       if (nftMarkerInfo.found) {
         this.nftMarkerFound = i
         this.nftMarkerFoundTime = Date.now()
 
         let visible = this.trackNFTMarkerId(i)
-        console.log(visible);
         visible.matrix.set(nftMarkerInfo.pose)
         visible.inCurrent = true
         this.transMatToGLMat(visible.matrix, this.transform_mat)
@@ -168,7 +161,6 @@ export default class ARControllerNFT {
    */
   detectNFTMarker () {
     this.artoolkitNFT.detectNFTMarker(this.id)
-    console.log('detecting NFT markers');
   }
 
   /**
@@ -216,7 +208,6 @@ export default class ARControllerNFT {
    */
   detectMarker (image) {
     if (this._copyImageToHeap(image)) {
-      console.log('we are in detect marker');
       return this.artoolkitNFT.detectMarker(this.id)
     }
     return -99
@@ -233,7 +224,6 @@ export default class ARControllerNFT {
    */
   getNFTMarker (markerIndex) {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-      console.log('we are in get NFT marker!');
       return this.artoolkitNFT.NFTMarkerInfo;
     }
   };
@@ -278,8 +268,6 @@ export default class ARControllerNFT {
    * @param {Object} event Event to dispatch.
    */
   dispatchEvent(event) {
-//console.log('Dispatched event');
-//console.log(event);
     let listeners = this.listeners[event.name];
     if(listeners) {
       for(let i = 0; i < listeners.length; i++) {
