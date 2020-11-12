@@ -3,13 +3,10 @@ import ARToolkitNFT from './ARToolkitNFT'
 export default class ARControllerNFT {
   constructor (width, height, cameraParam, options) {
     // read settings
-    this.options = {
-      ...{
+    this.options = {...{
         canvas: null,
         orientation: 'landscape'
-      },
-      ...options
-    }
+      },...options};
 
     // no point in initializing a member as "undefined"
     // replaced it with -1
@@ -116,7 +113,8 @@ export default class ARControllerNFT {
     for (let i = 0; i < nftMarkerCount; i++) {
       let nftMarkerInfo = this.getNFTMarker(i)
       console.log(nftMarkerInfo);
-      let markerType = ARToolkitNFT.NFT_MARKER
+      //let markerType = ARToolkitNFT.NFT_MARKER
+      let markerType = this.artoolkitNFT.NFT_MARKER
       console.log(markerType);
 
       if (nftMarkerInfo.found) {
@@ -290,6 +288,26 @@ export default class ARControllerNFT {
     }
   };
 
+  // debug stuff
+  //----------------------------------------------------------------------------
+
+	/**
+	 * Sets up a debug canvas for the AR detection.
+   * Draws a red marker on top of each detected square in the image.
+	 * The debug canvas is added to document.body.
+	 */
+  debugSetup() {
+
+    if(typeof document === 'undefined') {
+      console.log('debugSetup() currently only supports Browser environments');
+      return;
+    }
+
+    document.body.appendChild(this.canvas);
+
+    this.setDebugMode(true);
+    this._bwpointer = this.getProcessingImage();
+  };
 
   /**
    * Converts the given 3x4 marker transformation matrix in the 12-element transMat array
@@ -392,12 +410,51 @@ export default class ARControllerNFT {
     return this.camera_mat
   };
 
+  // Setter / Getter Proxies
+  //----------------------------------------------------------------------------
+
+  /**
+   * Enables or disables debug mode in the tracker. When enabled, a black and white debug
+   * image is generated during marker detection. The debug image is useful for visualising
+   * the binarization process and choosing a threshold value.
+   * @param {boolean} mode true to enable debug mode, false to disable debug mode
+   * @see getDebugMode()
+   */
+  setDebugMode(mode) {
+    return this.artoolkitNFT.setDebugMode(this.id, mode);
+  };
+
+  /**
+   * Returns whether debug mode is currently enabled.
+   * @return {boolean} true when debug mode is enabled, false when debug mode is disabled
+   * @see  setDebugMode()
+   */
+  getDebugMode() {
+    return this.artoolkitNFT.getDebugMode(this.id);
+  };
+
   /**
    * Returns the Emscripten HEAP offset to the debug processing image used by ARToolKit.
    * @return {number} HEAP offset to the debug processing image.
    */
   getProcessingImage () {
     return this.artoolkitNFT.getProcessingImage(this.id)
+  };
+
+  /**
+   * Sets the logging level to use by ARToolKit.
+   * @param {number} mode type for the log level.
+   */
+  setLogLevel (mode) {
+    return this.artoolkitNFT.setLogLevel(mode);
+  };
+
+  /**
+   * Gets the logging level used by ARToolKit.
+   * @return {number} return the log level in use.
+   */
+  getLogLevel () {
+    return this.artoolkitNFT.getLogLevel();
   };
 
   /**
@@ -435,6 +492,66 @@ export default class ARControllerNFT {
   };
 
   /**
+   * Set the labeling threshold mode (auto/manual).
+   * @param {number} mode An integer specifying the mode. One of:
+   * AR_LABELING_THRESH_MODE_MANUAL,
+   * AR_LABELING_THRESH_MODE_AUTO_MEDIAN,
+   * AR_LABELING_THRESH_MODE_AUTO_OTSU,
+   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
+   * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
+   */
+  setThresholdMode(mode) {
+    return this.artoolkitNFT.setThresholdMode(this.id, mode);
+  };
+
+  /**
+   * Gets the current threshold mode used for image binarization.
+   * @return {number} The current threshold mode
+   * @see getVideoThresholdMode()
+   */
+  getThresholdMode() {
+    return this.artoolkitNFT.getThresholdMode(this.id);
+  };
+
+  /**
+   * Set the labeling threshold.
+   * This function forces sets the threshold value.
+   * The default value is AR_DEFAULT_LABELING_THRESH which is 100.
+   * The current threshold mode is not affected by this call.
+   * Typically, this function is used when labeling threshold mode
+   * is AR_LABELING_THRESH_MODE_MANUAL.
+   * The threshold value is not relevant if threshold mode is
+   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
+   * Background: The labeling threshold is the value which
+   * the AR library uses to differentiate between black and white
+   * portions of an ARToolKit marker. Since the actual brightness,
+   * contrast, and gamma of incoming images can vary signficantly
+   * between different cameras and lighting conditions, this
+   * value typically needs to be adjusted dynamically to a
+   * suitable midpoint between the observed values for black
+   * and white portions of the markers in the image.
+   * @param {number} threshold An integer in the range [0,255] (inclusive).
+   */
+  setThreshold(threshold) {
+    return this.artoolkitNFT.setThreshold(this.id, threshold);
+  };
+
+  /**
+   * Get the current labeling threshold.
+   * This function queries the current labeling threshold. For,
+   * AR_LABELING_THRESH_MODE_AUTO_MEDIAN, AR_LABELING_THRESH_MODE_AUTO_OTSU,
+   * and AR_LABELING_THRESH_MODE_AUTO_BRACKETING
+   * the threshold value is only valid until the next auto-update.
+   * The current threshold mode is not affected by this call.
+   * The threshold value is not relevant if threshold mode is
+   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
+   * @return {number} The current threshold value.
+   */
+  getThreshold() {
+    return this.artoolkitNFT.getThreshold(this.id);
+  };
+
+  /**
    * Loads an NFT marker from the given URL or data string
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
   */
@@ -469,7 +586,7 @@ export default class ARControllerNFT {
 
     this._initNFT()
 
-    let params = artoolkitNFT.frameMalloc
+    let params = this.artoolkitNFT.frameMalloc
     this.framepointer = params.framepointer
     this.framesize = params.framesize
     this.videoLumaPointer = params.videoLumaPointer
@@ -544,7 +661,7 @@ export default class ARControllerNFT {
       // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
       // see (ARToolKitJS.cpp L: 43)
       for (let p = 0; p < this.videoSize; p++) {
-        let r = data[q + 0]; const g = data[q + 1]; const b = data[q + 2]
+        let r = data[q + 0], g = data[q + 1], b = data[q + 2];
         // @see https://stackoverflow.com/a/596241/5843642
         this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3
         q += 4
