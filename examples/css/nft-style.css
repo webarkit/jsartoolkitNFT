@@ -94,7 +94,7 @@ html {
   object-fit: cover;
 }
 
-#canvas {
+#canvas, #targetcanvas{
   position: absolute;
   left: 0;
   top: 0;

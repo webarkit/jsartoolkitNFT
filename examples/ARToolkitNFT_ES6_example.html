@@ -3,19 +3,56 @@
 <head>
 	<meta charset="utf-8">
 	<title>ARToolkitNFT_ES6 example</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
 	<link rel="stylesheet" href="css/nft-style.css">
 </head>
 <body>
+	<div id="loading" >
+			<img  src="Data/JsartoolkitNFT-logo.gif"/>
+			<span class="loading-text">Loading, please wait</span>
+	</div>
+	<!--
+  ==================
+  STATS
+  ==================
+  -->
+
+      <div id="stats" class="ui stats">
+
+          <div id="stats1" class="stats-item">
+              <p class="stats-item-title">
+                  Main
+              </p>
+          </div>
+
+          <div id="stats2" class="stats-item">
+              <p class="stats-item-title">
+                  Worker
+              </p>
+          </div>
+
+      </div>
+
 		<video id="video" autoplay playsinline></video>
 		<canvas id="targetcanvas"></canvas>
 		<script src="../dist/ARToolkitNFT.js"></script>
+		<script src="js/third_party/three.js/stats.min.js"></script>
 		<script src="js/third_party/three.js/three.min.js"></script>
 		<script src="index.js"></script>
 		<script src="threejs_worker_ES6.js"></script>
-		<!--<script src="no_worker.js"></script>-->
 
     <script>
+		/**
+     * STATS
+     */
+    var statsMain = new Stats();
+    statsMain.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.getElementById( 'stats1' ).appendChild( statsMain.dom );
+
+    var statsWorker = new Stats();
+    statsWorker.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.getElementById( 'stats2' ).appendChild( statsWorker.dom );
+
 		window.addEventListener('load', () => {
 			console.log('init ARToolkitNFT...');
 
@@ -40,7 +77,7 @@
 		  })
 			.then(_ => {
 
-			start('../examples/DataNFT/pinball', video, video.videoWidth, video.videoHeight)
+			start('../examples/DataNFT/pinball', video, video.videoWidth, video.videoHeight, function() { statsMain.update() }, function() { statsWorker.update() })
 
 		});
 	})
