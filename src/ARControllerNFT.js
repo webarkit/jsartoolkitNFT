@@ -546,7 +546,6 @@ export default class ARControllerNFT {
   async loadNFTMarker (urlOrData) {
     let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
     this.nftMarkerCount = nft.id + 1
-    console.log(this.nftMarkerCount);
     return nft
   };
 
