@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <AR/config.h>
 #include <AR2/tracking.h>
+#include <AR/arFilterTransMat.h>
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 #include "trackingMod.h"
@@ -48,6 +49,12 @@ struct arController {
 
 	KpmHandle* kpmHandle;
 	AR2HandleT* ar2Handle;
+
+	#if WITH_FILTERING
+	ARFilterTransMatInfo *ftmi;
+	ARdouble   filterCutoffFrequency = 60.0;
+	ARdouble   filterSampleRate = 120.0;
+	#endif
 
 	int detectedPage = -2;  // -2 Tracking not inited, -1 tracking inited OK, >= 0 tracking online on page.
 
@@ -91,6 +98,14 @@ extern "C" {
 		NFT API bindings
 	*/
 
+	void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4], float interpolationFactor) {
+		for (int i=0; i<3; i++) {
+			for (int j=0; j<4; j++) {
+				dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) / interpolationFactor;
+			}
+		}
+	}
+
 	int getNFTMarkerInfo(int id, int markerIndex) {
 		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
 		arController *arc = &(arControllers[id]);
@@ -103,10 +118,22 @@ extern "C" {
 		int kpmResultNum = -1;
 
 		float trans[3][4];
+
+		#if WITH_FILTERING
+		ARdouble transF[3][4];
+		ARdouble transFLerp[3][4];
+		memset( transFLerp, 0, 3 * 4 * sizeof(ARdouble) );
+		#endif
+
 		float err = -1;
 		if (arc->detectedPage == -2) {
 			kpmMatching( arc->kpmHandle, arc->videoLuma );
 			kpmGetResult( arc->kpmHandle, &kpmResult, &kpmResultNum );
+
+			#if WITH_FILTERING
+			arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
+			#endif
+
 			int i, j, k;
 			int flag = -1;
 			for( i = 0; i < kpmResultNum; i++ ) {
@@ -134,6 +161,28 @@ extern "C" {
 
 		if (arc->detectedPage >= 0) {
 			int trackResult = ar2TrackingMod(arc->ar2Handle, arc->surfaceSet[arc->detectedPage], arc->videoFrame, trans, &err);
+
+			#if WITH_FILTERING
+			for (int j = 0; j < 3; j++) {
+				for (int k = 0; k < 4; k++) {
+					transF[j][k] = trans[j][k];
+				}
+			}
+
+			bool reset;
+			if (trackResult < 0) {
+				reset = 1;
+			} else {
+				reset = 0;
+			}
+
+			if (arFilterTransMat(arc->ftmi, transF, reset) < 0) {
+					ARLOGe("arFilterTransMat error with marker %d.\n", markerIndex);
+			}
+
+			matrixLerp(transF, transFLerp, 0.95);
+			#endif
+
 			if( trackResult < 0 ) {
 				ARLOGi("Tracking lost. %d\n", trackResult);
 				arc->detectedPage = -2;
@@ -146,15 +195,15 @@ extern "C" {
 			EM_ASM_({
 				var $a = arguments;
 				var i = 0;
-				if (!artoolkit["NFTMarkerInfo"]) {
-					artoolkit["NFTMarkerInfo"] = ({
+				if (!artoolkitNFT["NFTMarkerInfo"]) {
+					artoolkitNFT["NFTMarkerInfo"] = ({
 						id: 0,
 						error: -1,
 						found: 0,
 						pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
 					});
 				}
-				var markerInfo = artoolkit["NFTMarkerInfo"];
+				var markerInfo = artoolkitNFT["NFTMarkerInfo"];
 				markerInfo["id"] = $a[i++];
 				markerInfo["error"] = $a[i++];
 				markerInfo["found"] = 1;
@@ -174,6 +223,25 @@ extern "C" {
 				markerIndex,
 				err,
 
+				#if WITH_FILTERING
+
+				transFLerp[0][0],
+				transFLerp[0][1],
+				transFLerp[0][2],
+				transFLerp[0][3],
+
+				transFLerp[1][0],
+				transFLerp[1][1],
+				transFLerp[1][2],
+				transFLerp[1][3],
+
+				transFLerp[2][0],
+				transFLerp[2][1],
+				transFLerp[2][2],
+				transFLerp[2][3]
+
+				#else
+
 				trans[0][0],
 				trans[0][1],
 				trans[0][2],
@@ -188,20 +256,22 @@ extern "C" {
 				trans[2][1],
 				trans[2][2],
 				trans[2][3]
+
+				#endif
 			);
         } else {
 			EM_ASM_({
 				var $a = arguments;
 				var i = 0;
-				if (!artoolkit["NFTMarkerInfo"]) {
-					artoolkit["NFTMarkerInfo"] = ({
+				if (!artoolkitNFT["NFTMarkerInfo"]) {
+					artoolkitNFT["NFTMarkerInfo"] = ({
 						id: 0,
 						error: -1,
 						found: 0,
 						pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
 					});
 				}
-				var markerInfo = artoolkit["NFTMarkerInfo"];
+				var markerInfo = artoolkitNFT["NFTMarkerInfo"];
 				markerInfo["id"] = $a[i++];
 				markerInfo["error"] = -1;
 				markerInfo["found"] = 0;
@@ -648,10 +718,10 @@ extern "C" {
 		ARLOGi("Allocated videoFrameSize %d\n", arc->videoFrameSize);
 
 		EM_ASM_({
-			if (!artoolkit["frameMalloc"]) {
-				artoolkit["frameMalloc"] = ({});
+			if (!artoolkitNFT["frameMalloc"]) {
+				artoolkitNFT["frameMalloc"] = ({});
 			}
-			var frameMalloc = artoolkit["frameMalloc"];
+			var frameMalloc = artoolkitNFT["frameMalloc"];
 			frameMalloc["framepointer"] = $1;
 			frameMalloc["framesize"] = $2;
 			frameMalloc["camera"] = $3;
