@@ -156,7 +156,7 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
     renderer.render(scene, camera);
   };
 
-  function process () {
+  var process = function () {
     context_process.fillStyle = 'black';
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
