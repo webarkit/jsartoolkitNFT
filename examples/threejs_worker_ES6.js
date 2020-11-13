@@ -26,7 +26,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var canvas_process = document.createElement('canvas');
   var context_process = canvas_process.getContext('2d');
-  var targetCanvas = document.querySelector("#targetcanvas");
+  var targetCanvas = document.querySelector("#canvas");
 
   var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
