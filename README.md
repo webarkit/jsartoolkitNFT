@@ -38,7 +38,7 @@ You can use raw.githack.com links:
 or (recommended) use the **UMD** libary:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/dist/ArtoolkitNFT.js">
+<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
 ```
 
 or you can install with npm and use as a module:
