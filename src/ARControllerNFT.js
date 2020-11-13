@@ -244,7 +244,7 @@ export default class ARControllerNFT {
    */
   addEventListener(name, callback) {
     if(!this.listeners[name]) {
-     this.listeners[name] = [];
+      this.listeners[name] = [];
     }
     this.listeners[name].push(callback);
   };
@@ -545,7 +545,6 @@ export default class ARControllerNFT {
   */
   async loadNFTMarker (urlOrData) {
     let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
-    console.log(nft);
     this.nftMarkerCount = nft.id + 1
     console.log(this.nftMarkerCount);
     return nft
