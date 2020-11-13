@@ -70,8 +70,9 @@ or you can clone the repository with git, follow the instructions below:
 ## Project Structure 📂
 
 - `build/` (compiled debug and minified versions of JSARToolKitNFT)
+- `dist/` (compiled UMD lib with ES6 of JSARToolKitNFT)
 - `doc/` (documentation, coming...)
-- `emscripten/` (source code for ARToolKit)
+- `emscripten/` (source code for ARToolKitNFT)
 - `examples/` (demos and examples using JSARToolKitNFT)
 - `js/` (compiled versions of ARToolKit.js with Three.js helper api)
 - `tools/` (build scripts for building JSARToolKitNFT)
