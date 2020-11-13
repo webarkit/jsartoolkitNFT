@@ -1,6 +1,6 @@
 {
   "name": "@kalwalt/jsartoolkit-nft",
-  "version": "0.7.5",
+  "version": "0.8.0",
   "main": "dist/ARToolkitNFT.js",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
   "keywords": [
