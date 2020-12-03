@@ -1,6 +1,6 @@
 {
   "name": "@kalwalt/jsartoolkit-nft",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "main": "dist/ARToolkitNFT.js",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
   "keywords": [
@@ -35,10 +35,10 @@
     "url": "https://github.com/kalwalt/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
+    "@babel/core": "^7.12.3",
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
-    "babel-loader": "^8.1.0",
+    "babel-loader": "^8.2.1",
     "eslint": "^7.13.0",
     "eslint-config-standard": "^16.0.1",
     "eslint-plugin-import": "^2.22.1",
@@ -51,7 +51,7 @@
     "grunt-contrib-qunit": "^4.0.0",
     "grunt-eslint": "^23.0.0",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^4.2.0"
   },
   "scripts": {
     "dev-es6": "webpack --mode development --progress --colors --watch",
@@ -64,7 +64,7 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.9.2",
-    "axios": "^0.19.2"
+    "@babel/runtime": "^7.9.5",
+    "axios": "^0.21.0"
   }
 }
