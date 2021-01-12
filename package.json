@@ -1,6 +1,6 @@
 {
   "name": "@kalwalt/jsartoolkit-nft",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "main": "dist/ARToolkitNFT.js",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
   "keywords": [
@@ -22,17 +22,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalwalt/jsartoolkitNFT"
+    "url": "https://github.com/webarkit/jsartoolkitNFT"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "homepage": "https://github.com/kalwalt/jsartoolkitNFT",
+  "homepage": "https://github.com/webarkit/jsartoolkitNFT",
   "contributors": [
-    "Github Contributors (https://github.com/kalwalt/jsartoolkitNFT/graphs/contributors)"
+    "Github Contributors (https://github.com/webarkit/jsartoolkitNFT/graphs/contributors)"
   ],
   "bugs": {
-    "url": "https://github.com/kalwalt/jsartoolkitNFT/issues"
+    "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
