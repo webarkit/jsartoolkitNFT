@@ -1,9 +1,11 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.ts',
+  devtool: 'inline-source-map',
   output: {
-    path: path.resolve('dist'),
+    //path: path.resolve('dist'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'ARToolkitNFT.js',
     library: 'ARToolkitNFT',
     libraryTarget: 'umd',
@@ -15,9 +17,10 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: [{
+        use: 'ts-loader',
+        /*use: [{
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
@@ -26,12 +29,12 @@ module.exports = {
               ['@babel/transform-runtime']
             ]
           }
-        }]
+        }]*/
       },
     ],
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.tsx', '.ts', '.js'],
   },
   // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
   node: {
