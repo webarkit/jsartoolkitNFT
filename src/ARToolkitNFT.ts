@@ -11,7 +11,7 @@ export default class ARToolkitNFT {
   private instance: any;
   private markerNFTCount: number;
   private cameraCount: number;
-  public version: string;
+  private version: string;
 
   // construction
   constructor () {
@@ -26,21 +26,25 @@ export default class ARToolkitNFT {
   // ---------------------------------------------------------------------------
 
   // initialization
-  async init () {
-    const runtime = await ModuleLoader.init()
-    this.instance = runtime.instance
+  public async init () {
+    const runtime = await ModuleLoader.init().catch(err => {
+      console.log(err);
+      return Promise.reject(err)
+    }).then((resolve) => {
+      console.log(resolve);
+      
+      //this.instance = resolve.instance;
+    })
+    //this.instance = runtime.instance
     this._decorate()
 
-    // we're committing a cardinal sin here by exporting the instance into
-    // the global namespace. all blame goes to the person who created that CPP
-    // wrapper ARToolKitJS.cpp and introduced a global "artoolkitNFT" variable.
-    const scope = (typeof window !== 'undefined') ? window : global
-    scope.artoolkitNFT = this
+    let scope = (typeof window !== 'undefined') ? window : global
+    //scope.artoolkitNFT = thisS
 
     return this
   }
 
-  _decorate () {
+  private _decorate () {
     // add delegate methods
     [
       'setup',
@@ -75,13 +79,13 @@ export default class ARToolkitNFT {
       'setImageProcMode',
       'getImageProcMode'
     ].forEach(method => {
-      this[method] = this.instance[method]
+      //this[method] = this.instance[method]
     })
 
     // expose constants
     for (const co in this.instance) {
       if (co.match(/^AR/)) {
-        this[co] = this.instance[co]
+        //this[co] = this.instance[co]
       }
     }
   }
@@ -89,7 +93,7 @@ export default class ARToolkitNFT {
   // ----------------------------------------------------------------------------
 
   // public accessors
-  async loadCamera (urlOrData: any) {
+  public async loadCamera (urlOrData: any): Promise<number> {
     const target = '/camera_param_' + this.cameraCount++
 
     let data
@@ -108,12 +112,12 @@ export default class ARToolkitNFT {
     return this.instance._loadCamera(target)
   }
 
-  async addNFTMarker (arId: number, url: string) {
+  public async addNFTMarker (arId: number, url: string) {
     // url doesn't need to be a valid url. Extensions to make it valid will be added here
     const targetPrefix = '/markerNFT_' + this.markerNFTCount++
     const extensions = ['fset', 'iset', 'fset3']
 
-    const storeMarker = async function (ext: string) {
+    const storeMarker = async (ext: string) => {
       const fullUrl = url + '.' + ext
       const target = targetPrefix + '.' + ext
       const data = await Utils.fetchRemoteData(fullUrl)
@@ -131,7 +135,7 @@ export default class ARToolkitNFT {
 
   // implementation
 
-  _storeDataFile (data: any, target: string) {
+  private _storeDataFile (data: Uint8Array, target: string) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
     this.instance.FS.writeFile(target, data, {
