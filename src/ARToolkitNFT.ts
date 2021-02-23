@@ -33,13 +33,13 @@ export default class ARToolkitNFT {
     }).then((resolve) => {
       console.log(resolve);
       
-      //this.instance = resolve.instance;
+      this.instance = resolve;
     })
     //this.instance = runtime.instance
     this._decorate()
 
     let scope = (typeof window !== 'undefined') ? window : global
-    //scope.artoolkitNFT = thisS
+    //scope.artoolkitNFT = this
 
     return this
   }
