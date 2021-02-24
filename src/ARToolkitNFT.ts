@@ -4,6 +4,15 @@ import Utils from './Utils'
 const UNKNOWN_MARKER = -1
 const NFT_MARKER = 0
 
+declare global {
+  interface Window {
+    artoolkitNFT: any;
+  }
+  interface Global {
+    artoolkitNFT: any;
+  }
+}
+
 export default class ARToolkitNFT {
   static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
   static get NFT_MARKER () { return NFT_MARKER }
@@ -35,11 +44,12 @@ export default class ARToolkitNFT {
       
       this.instance = resolve;
     })
-    //this.instance = runtime.instance
+
     this._decorate()
 
-    let scope = (typeof window !== 'undefined') ? window : global
-    //scope.artoolkitNFT = this
+    // let scope = (typeof window !== 'undefined') ? window : global
+    let scope = window
+    scope.artoolkitNFT = this
 
     return this
   }
