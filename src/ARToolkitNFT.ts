@@ -5,10 +5,12 @@ const UNKNOWN_MARKER = -1
 const NFT_MARKER = 0
 
 declare global {
-  interface Window {
-    artoolkitNFT: any;
+  namespace NodeJS {
+    interface Global {
+       artoolkitNFT: any;
+    } 
   }
-  interface Global {
+  interface Window {
     artoolkitNFT: any;
   }
 }
@@ -47,8 +49,7 @@ export default class ARToolkitNFT {
 
     this._decorate()
 
-    // let scope = (typeof window !== 'undefined') ? window : global
-    let scope = window
+    let scope = (typeof window !== 'undefined') ? window : global
     scope.artoolkitNFT = this
 
     return this
