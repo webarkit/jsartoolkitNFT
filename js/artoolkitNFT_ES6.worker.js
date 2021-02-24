@@ -46,7 +46,12 @@ function load (msg) {
   }
 
   console.debug('Loading camera at:', msg.camera_para)
-
+  console.log(ARToolkitNFT);
+  // just for testing the code... this will be removed
+  let ar = new ARToolkitNFT.ARToolkitNFT();
+  ar.init().then(l=>{
+    console.log(l);
+  });
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
   ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
 }
