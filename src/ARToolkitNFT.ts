@@ -49,7 +49,6 @@ export default class ARToolkitNFT {
       return Promise.reject(err)
     }).then((resolve) => {
       console.log(resolve);
-      //console.log(this.instance);
       return resolve;
     })
 
