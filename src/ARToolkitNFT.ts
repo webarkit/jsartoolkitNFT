@@ -15,6 +15,10 @@ declare global {
   }
 }
 
+interface instanceObj {
+  instance: any;
+}
+
 export default class ARToolkitNFT {
   static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
   static get NFT_MARKER () { return NFT_MARKER }
@@ -23,11 +27,13 @@ export default class ARToolkitNFT {
   private markerNFTCount: number;
   private cameraCount: number;
   private version: string;
+  private runtime: instanceObj;
 
   // construction
   constructor () {
     // reference to WASM module
     this.instance
+    this.runtime
     this.markerNFTCount = 0
     this.cameraCount = 0
     this.version = '0.8.2'
@@ -38,14 +44,18 @@ export default class ARToolkitNFT {
 
   // initialization
   public async init () {
-    const runtime = await ModuleLoader.init().catch(err => {
+    this.runtime = await ModuleLoader.init().catch(err => {
       console.log(err);
       return Promise.reject(err)
     }).then((resolve) => {
       console.log(resolve);
-      
-      this.instance = resolve;
+      //console.log(this.instance);
+      return resolve;
     })
+
+    console.log(this.runtime)
+    this.instance = this.runtime.instance
+    console.log(this.instance);
 
     this._decorate()
 
@@ -91,6 +101,7 @@ export default class ARToolkitNFT {
       'getImageProcMode'
     ].forEach(method => {
       //this[method] = this.instance[method]
+      //this.setLogLevel = this.instance.setLogLevel
     })
 
     // expose constants
