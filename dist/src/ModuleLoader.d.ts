@@ -1,4 +1,4 @@
 declare const ModuleLoader: {
-    init: () => Promise<unknown>;
+    init: Promise<object>;
 };
 export default ModuleLoader;
