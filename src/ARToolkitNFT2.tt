@@ -4,16 +4,29 @@ import Utils from './Utils'
 const UNKNOWN_MARKER = -1
 const NFT_MARKER = 0
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-       artoolkitNFT: any;
-    } 
-  }
-  interface Window {
-    artoolkitNFT: any;
-  }
-}
+const delegateMethods = {
+  setup: 'setup',
+  teardown: 'teardown',
+  setupAR2: 'setupAR2',
+  setLogLevel: 'setLogLevel',
+  getLogLevel: 'getLogLevel',
+  setDebugMode: 'setDebugMode',
+  getDebugMode: 'getDebugMode',
+  getProcessingImage: 'getProcessingImage',
+  detectMarker: 'detectMarker',
+  detectNFTMarker: 'detectNFTMarker',
+  getNFTMarker: 'getNFTMarker',
+  setProjectionNearPlane: 'setProjectionNearPlane',
+  getProjectionNearPlane: 'getProjectionNearPlane',
+  setProjectionFarPlane: 'setProjectionFarPlane',
+  getProjectionFarPlane: 'getProjectionFarPlane',
+  setThresholdMode: 'setThresholdMode',
+  getThresholdMode: 'getThresholdMode',
+  setThreshold: 'setThreshold',
+  getThreshold: 'getThreshold',
+  setImageProcMode: 'setImageProcMode',
+  getImageProcMode:  'getImageProcMode'
+} as const
 
 export default class ARToolkitNFT {
   static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
@@ -38,23 +51,38 @@ export default class ARToolkitNFT {
 
   // initialization
   public async init () {
-     const runtime = await ModuleLoader.init.catch((err: string) => {
+    const runtime = await ModuleLoader.init().catch(err => {
       console.log(err);
       return Promise.reject(err)
-    }).then((resolve: any) => {
+    }).then((resolve) => {
       console.log(resolve);
-      return resolve;
+      
+      this.instance = resolve;
     })
-
-    this.instance = runtime
-    console.log(this.instance);
-
+    //this.instance = runtime.instance
     this._decorate()
 
     let scope = (typeof window !== 'undefined') ? window : global
     scope.artoolkitNFT = this
 
     return this
+  }
+
+  private _populate(method: string) {
+    const codons = [...method];
+        if (!this.isValidSequence(codons)) {
+            throw Error('invalid sequence');
+        }
+    const transcribedRNA = codons.map(codon => delegateMethods[codon]);
+    return transcribedRNA;
+  }
+
+  private isValidSequence(values: string[]): values is Array<keyof typeof delegateMethods> {
+    return values.every(this.isValidCodon);
+  }
+
+  private isValidCodon(value: string): value is keyof typeof delegateMethods {
+    return value in delegateMethods;
   }
 
   private _decorate () {
@@ -92,8 +120,7 @@ export default class ARToolkitNFT {
       'setImageProcMode',
       'getImageProcMode'
     ].forEach(method => {
-      //this[method] = this.instance[method]
-      //this.setLogLevel = this.instance.setLogLevel
+      this[method] = this.instance[method]
     })
 
     // expose constants
@@ -103,6 +130,10 @@ export default class ARToolkitNFT {
       }
     }
   }
+
+private _decorate2 () {
+  this[this._populate(delegateMethods)]
+}
 
   // ----------------------------------------------------------------------------
 

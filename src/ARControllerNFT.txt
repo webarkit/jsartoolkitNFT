@@ -29,6 +29,7 @@ export default class ARControllerNFT {
   private listeners: object;
   private nftMarkers: object;
   private transform_mat: object;
+  private marker_transform_mat: Float64Array;
   private transformGL_RH: object;
   private videoWidth: number;
   private videoHeight: number;
@@ -81,6 +82,7 @@ export default class ARControllerNFT {
 
     this.transform_mat = new Float32Array(16)
     this.transformGL_RH = new Float64Array(16)
+    this.marker_transform_mat = null
 
     this.videoWidth = width
     this.videoHeight = height
@@ -350,7 +352,7 @@ export default class ARControllerNFT {
    * @param {Float64Array} glMat The 4x4 GL transformation matrix.
    * @param {number} scale The scale for the transform.
    */
-  transMatToGLMat (transMat: Array<number>, scale: number, glMat?: Array<number>) {
+  transMatToGLMat (transMat: Float64Array, scale: number, glMat?: Float64Array) {
     if (glMat == undefined) {
       glMat = new Float64Array(16)
     }
