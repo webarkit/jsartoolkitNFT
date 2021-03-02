@@ -61,7 +61,7 @@ export default class ARToolkitNFT {
     return this
   }
 
-  private _decorate () {
+  private _decorate () {  
     // add delegate methods
     [
       'setup',
@@ -96,14 +96,15 @@ export default class ARToolkitNFT {
       'setImageProcMode',
       'getImageProcMode'
     ].forEach(method => {
-      //this[method] = this.instance[method]
-      //this.setLogLevel = this.instance.setLogLevel
+      // @ts-ignore
+      this[method] = this.instance[method]
     })
 
     // expose constants
     for (const co in this.instance) {
       if (co.match(/^AR/)) {
-        //this[co] = this.instance[co]
+        // @ts-ignore
+        this[co] = this.instance[co]
       }
     }
   }
