@@ -51,8 +51,8 @@ function load (msg) {
   let ar = new ARToolkitNFT.ARToolkitNFT();
   ar.init().then(ar=>{
     console.log(ar);
-    // you can access to artoolkitNFT methods with this.instance.instance, but it is odd!!
-    console.log(ar.instance.instance.getLogLevel())
+    // now it is solved!!
+    console.log(ar.instance.getLogLevel())
   });
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
   ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
