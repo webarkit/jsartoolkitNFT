@@ -15,6 +15,10 @@ declare global {
   }
 }
 
+interface runtimeInstanced {
+  instance: any;
+}
+
 export default class ARToolkitNFT {
   static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
   static get NFT_MARKER () { return NFT_MARKER }
@@ -38,15 +42,15 @@ export default class ARToolkitNFT {
 
   // initialization
   public async init () {
-     const runtime = await ModuleLoader.init.catch((err: string) => {
+     const runtime: runtimeInstanced = await ModuleLoader.init.catch((err: string) => {
       console.log(err);
       return Promise.reject(err)
     }).then((resolve: any) => {
-      console.log(resolve);
       return resolve;
     })
 
-    this.instance = runtime
+    this.instance = runtime.instance;
+    console.log(runtime);
     console.log(this.instance);
 
     this._decorate()
