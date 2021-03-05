@@ -19,7 +19,13 @@ interface runtimeInstanced {
   instance: any;
 }
 
-export default class ARToolkitNFT {
+interface baseARTNFT {
+  setup: {
+    (width: number, height: number, cameraId: number): number
+}
+}
+
+export default class ARToolkitNFT implements baseARTNFT {
   static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
   static get NFT_MARKER () { return NFT_MARKER }
 
@@ -27,6 +33,7 @@ export default class ARToolkitNFT {
   private markerNFTCount: number;
   private cameraCount: number;
   private version: string;
+  public setup: (width: number, height: number, cameraId: number) => number;
 
   // construction
   constructor () {
@@ -95,9 +102,12 @@ export default class ARToolkitNFT {
 
       'setImageProcMode',
       'getImageProcMode'
-    ].forEach(method => {
+    ].forEach((method, id) => {
+      this.setup = this.instance[method]
+    
       // @ts-ignore
       this[method] = this.instance[method]
+      //this.setup = this.instance.setup
     })
 
     // expose constants
