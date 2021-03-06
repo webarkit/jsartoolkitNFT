@@ -19,24 +19,24 @@ interface runtimeInstanced {
   instance: any;
 }
 
-/*interface baseARTNFT {
-  setup: {
-    (width: number, height: number, cameraId: number): number
-}
-}*/
-
 export default class ARToolkitNFT {
   static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
   static get NFT_MARKER () { return NFT_MARKER }
 
-  private instance: any;
+  public instance: any;
   private markerNFTCount: number;
   private cameraCount: number;
   private version: string;
   public setup: (width: number, height: number, cameraId: number) => number;
   public teardown: () => void;
   public setupAR2: (id: number) => void;
-  //public frameMalloc: { framepointer: number}
+  public frameMalloc: { 
+    framepointer: number;
+    framesize: number;
+    videoLumaPointer: number;
+    camera: number;
+    transform: number
+  }
   public setProjectionNearPlane: (id: number, value: number) => void;
   public getProjectionNearPlane: (id: number) => number;
   public setProjectionFarPlane: (id: number, value: number) => void;
@@ -155,7 +155,7 @@ export default class ARToolkitNFT {
     return this.instance._loadCamera(target)
   }
 
-  public async addNFTMarker (arId: number, url: string) {
+  public async addNFTMarker (arId: number, url: string): Promise<{id: number}> {
     // url doesn't need to be a valid url. Extensions to make it valid will be added here
     const targetPrefix = '/markerNFT_' + this.markerNFTCount++
     const extensions = ['fset', 'iset', 'fset3']
