@@ -44,6 +44,14 @@ export default class ARControllerNFT {
     getProjectionNearPlane(): number;
     setProjectionFarPlane(value: number): void;
     getProjectionFarPlane(): number;
+    addEventListener(name: string, callback: object): void;
+    dispatchEvent(event: {
+        name: string;
+        target: any;
+    }): void;
+    loadNFTMarker(urlOrData: any): Promise<{
+        id: number;
+    }>;
     _initialize(): Promise<this>;
     _initNFT(): void;
 }
