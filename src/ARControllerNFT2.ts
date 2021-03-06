@@ -73,6 +73,7 @@ export default class ARControllerNFT {
   private nftMarkerFound: boolean;// = false
   private nftMarkerFoundTime: boolean;// = false
   private nftMarkerCount: number;// = 0
+  private defaultMarkerWidth: number;
 
   private _bwpointer: boolean = false;
   constructor (width: number, height: number, cameraParam: string, options: object) {
@@ -144,6 +145,7 @@ export default class ARControllerNFT {
     this.nftMarkerCount = 0
 
     this._bwpointer = false
+    this.defaultMarkerWidth = 1
   }
 
   static async initWithDimensions (width: number, height: number, cameraParam: string, options: object) {
@@ -232,6 +234,36 @@ export default class ARControllerNFT {
       }
     }
   };
+
+  /**
+   * Adds the given NFT marker ID to the index of tracked IDs.
+   * Sets the markerWidth for the pattern marker to markerWidth.
+   * Used by process() to implement continuous tracking,
+   * keeping track of the marker's transformation matrix
+   * and customizable marker widths.
+   * @param {number} id ID of the NFT marker to track.
+   * @param {number} markerWidth The width of the marker to track.
+   * @return {Object} The marker tracking object.
+   */
+  trackNFTMarkerId (id: number, markerWidth?: number) {
+    //@ts-ignore
+    let obj = this.nftMarkers[id]
+    if (!obj) {
+      //@ts-ignore
+      this.nftMarkers[id] = obj = {
+        inPrevious: false,
+        inCurrent: false,
+        matrix: new Float64Array(12),
+        matrixGL_RH: new Float64Array(12),
+        markerWidth: markerWidth || this.defaultMarkerWidth
+      }
+    }
+    if (markerWidth) {
+      obj.markerWidth = markerWidth
+    }
+    return obj
+  };
+
 
   /**
    * Loads an NFT marker from the given URL or data string
