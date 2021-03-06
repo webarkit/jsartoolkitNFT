@@ -19,13 +19,13 @@ interface runtimeInstanced {
   instance: any;
 }
 
-interface baseARTNFT {
+/*interface baseARTNFT {
   setup: {
     (width: number, height: number, cameraId: number): number
 }
-}
+}*/
 
-export default class ARToolkitNFT implements baseARTNFT {
+export default class ARToolkitNFT {
   static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
   static get NFT_MARKER () { return NFT_MARKER }
 
@@ -34,6 +34,13 @@ export default class ARToolkitNFT implements baseARTNFT {
   private cameraCount: number;
   private version: string;
   public setup: (width: number, height: number, cameraId: number) => number;
+  public teardown: () => void;
+  public setupAR2: (id: number) => void;
+  //public frameMalloc: { framepointer: number}
+  public setProjectionNearPlane: (id: number, value: number) => void;
+  public getProjectionNearPlane: (id: number) => number;
+  public setProjectionFarPlane: (id: number, value: number) => void;
+  public getProjectionFarPlane: (id: number) => number;
 
   // construction
   constructor () {
@@ -104,6 +111,13 @@ export default class ARToolkitNFT implements baseARTNFT {
       'getImageProcMode'
     ].forEach((method, id) => {
       this.setup = this.instance['setup']
+      this.setupAR2 = this.instance['setupAR2']
+      //this.frameMalloc = this.instance['frameMalloc']
+      this.instance = this.instance
+      this.setProjectionNearPlane = this.instance['setProjectionNearPlane']
+      this.getProjectionNearPlane = this.instance['getProjectionNearPlane']
+      this.setProjectionFarPlane = this.instance['setProjectionFarPlane']
+      this.getProjectionFarPlane = this.instance['getProjectionFarPlane']
     
       // @ts-ignore
       this[method] = this.instance[method]

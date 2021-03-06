@@ -18,6 +18,27 @@ interface delegateMethods {
     setup: {
         (width: number, height: number, cameraId: number): number
     }
+    setupAR2: {
+      (id: number): void
+    }
+    /*frameMalloc: {
+       framepointer: number;
+       framesize: number;
+       videoLumaPointer: number;
+       camera: number;
+       transform: number
+    }
+    instance: {
+      HEAPU8: {
+        buffer: Uint8Array
+      };
+    }*/
+    setProjectionNearPlane: {
+      (id: number, value: number): void;
+    }
+    getProjectionNearPlane: (id: number) => number;
+    setProjectionFarPlane: (id: number, value: number) => void;
+    getProjectionFarPlane: (id: number) => number;
 }
 
 export default class ARControllerNFT {
@@ -142,16 +163,80 @@ export default class ARControllerNFT {
     return this.camera_mat
   };
 
+  /**
+   * Sets the value of the near plane of the camera.
+   * @param {number} value the value of the near plane
+   * @return {number} 0 (void)
+   */
+  setProjectionNearPlane (value: number) {
+    return this.artoolkitNFT.setProjectionNearPlane(this.id, value)
+  };
+
+  /**
+   * Gets the value of the near plane of the camera with the give id.
+   * @return {number} the value of the near plane.
+   */
+  getProjectionNearPlane () {
+    return this.artoolkitNFT.getProjectionNearPlane(this.id)
+  };
+
+  /**
+   * Sets the value of the far plane of the camera.
+   * @param {number} value the value of the far plane
+   * @return {number} 0 (void)
+   */
+  setProjectionFarPlane (value: number) {
+    return this.artoolkitNFT.setProjectionFarPlane(this.id, value)
+  };
+
+  /**
+   * Gets the value of the far plane of the camera with the give id.
+   * @return {number} the value of the far plane.
+   */
+  getProjectionFarPlane () {
+    return this.artoolkitNFT.getProjectionFarPlane(this.id)
+  };
+
   async _initialize () {
     // initialize the toolkit
     this.artoolkitNFT = await new ARToolkitNFT().init()
     console.log(this.artoolkitNFT)
     console.log('[ARControllerNFT]', 'ARToolkitNFT initialized')
     // setup
-    // @ts-ignor
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId)
     console.log('[ARControllerNFT]', 'Got ID from setup', this.id)
 
+    this._initNFT()
+
+    /*let params = this.artoolkitNFT.frameMalloc
+    this.framepointer = params.framepointer
+    this.framesize = params.framesize
+    this.videoLumaPointer = params.videoLumaPointer
+
+    this.dataHeap = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.framepointer, this.framesize)
+    this.videoLuma = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4)
+
+    this.camera_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.camera, 16)
+    this.marker_transform_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.transform, 12)*/
+
+    this.setProjectionNearPlane(0.1)
+    this.setProjectionFarPlane(1000)
+
+    /*setTimeout(() => {
+      this.dispatchEvent({
+        name: 'load',
+        target: this
+      })
+    }, 1)*/
+
     return this
   }
+
+  /**
+   * Init the necessary kpm handle for NFT and the settings for the CPU.
+   * @return {number} 0 (void)
+   */
+  _initNFT () {
+    this.artoolkitNFT.setupAR2(this.id)
+   };
 }
