@@ -35,6 +35,7 @@ export default class ARControllerNFT {
     private nftMarkerFound;
     private nftMarkerFoundTime;
     private nftMarkerCount;
+    private defaultMarkerWidth;
     private _bwpointer;
     constructor(width: number, height: number, cameraParam: string, options: object);
     static initWithDimensions(width: number, height: number, cameraParam: string, options: object): Promise<ARControllerNFT>;
@@ -49,6 +50,7 @@ export default class ARControllerNFT {
         name: string;
         target: any;
     }): void;
+    trackNFTMarkerId(id: number, markerWidth?: number): any;
     loadNFTMarker(urlOrData: any): Promise<{
         id: number;
     }>;
