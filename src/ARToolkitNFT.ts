@@ -103,7 +103,7 @@ export default class ARToolkitNFT implements baseARTNFT {
       'setImageProcMode',
       'getImageProcMode'
     ].forEach((method, id) => {
-      this.setup = this.instance[method]
+      this.setup = this.instance['setup']
     
       // @ts-ignore
       this[method] = this.instance[method]
