@@ -40,6 +40,11 @@ export default class ARControllerNFT {
     static initWithDimensions(width: number, height: number, cameraParam: string, options: object): Promise<ARControllerNFT>;
     static initNFTWithImage(image: ImageObj, cameraParam: string, options: object): Promise<ARControllerNFT>;
     getCameraMatrix(): object;
+    setProjectionNearPlane(value: number): void;
+    getProjectionNearPlane(): number;
+    setProjectionFarPlane(value: number): void;
+    getProjectionFarPlane(): number;
     _initialize(): Promise<this>;
+    _initNFT(): void;
 }
 export {};
