@@ -8,12 +8,7 @@ declare global {
         artoolkitNFT: any;
     }
 }
-interface baseARTNFT {
-    setup: {
-        (width: number, height: number, cameraId: number): number;
-    };
-}
-export default class ARToolkitNFT implements baseARTNFT {
+export default class ARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
     private instance;
@@ -21,6 +16,12 @@ export default class ARToolkitNFT implements baseARTNFT {
     private cameraCount;
     private version;
     setup: (width: number, height: number, cameraId: number) => number;
+    teardown: () => void;
+    setupAR2: (id: number) => void;
+    setProjectionNearPlane: (id: number, value: number) => void;
+    getProjectionNearPlane: (id: number) => number;
+    setProjectionFarPlane: (id: number, value: number) => void;
+    getProjectionFarPlane: (id: number) => number;
     constructor();
     init(): Promise<this>;
     private _decorate;
@@ -28,4 +29,3 @@ export default class ARToolkitNFT implements baseARTNFT {
     addNFTMarker(arId: number, url: string): Promise<any>;
     private _storeDataFile;
 }
-export {};
