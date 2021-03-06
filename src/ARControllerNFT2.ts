@@ -21,7 +21,7 @@ interface delegateMethods {
     setupAR2: {
       (id: number): void
     }
-    /*frameMalloc: {
+    frameMalloc: {
        framepointer: number;
        framesize: number;
        videoLumaPointer: number;
@@ -32,13 +32,14 @@ interface delegateMethods {
       HEAPU8: {
         buffer: Uint8Array
       };
-    }*/
+    }
     setProjectionNearPlane: {
       (id: number, value: number): void;
     }
     getProjectionNearPlane: (id: number) => number;
     setProjectionFarPlane: (id: number, value: number) => void;
     getProjectionFarPlane: (id: number) => number;
+    addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
 }
 
 export default class ARControllerNFT {
@@ -56,7 +57,7 @@ export default class ARControllerNFT {
   private listeners: object;
   private nftMarkers: object;
   private transform_mat: object;
-  private marker_transform_mat: Float64Array;
+  private marker_transform_mat: object;
   private transformGL_RH: object;
   private videoWidth: number;
   private videoHeight: number;
@@ -197,6 +198,51 @@ export default class ARControllerNFT {
     return this.artoolkitNFT.getProjectionFarPlane(this.id)
   };
 
+  /**
+   * Add an event listener on this ARControllerNFTNFT for the named event, calling the callback function
+   * whenever that event is dispatched.
+   * Possible events are:
+   * - getMarker - dispatched whenever process() finds a square marker
+   * - getMultiMarker - dispatched whenever process() finds a visible registered multimarker
+   * - getMultiMarkerSub - dispatched by process() for each marker in a visible multimarker
+   * - load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
+   * @param {string} name Name of the event to listen to.
+   * @param {function} callback Callback function to call when an event with the given name is dispatched.
+   */
+  addEventListener(name: string, callback: object) {
+    //@ts-ignore
+    if(!this.listeners[name]) {
+      //@ts-ignore
+      this.listeners[name] = [];
+    }
+    //@ts-ignore
+    this.listeners[name].push(callback);
+  };
+
+  /**
+   * Dispatches the given event to all registered listeners on event.name.
+   * @param {Object} event Event to dispatch.
+   */
+  dispatchEvent(event: { name: string; target: any }) {
+    //@ts-ignore
+    let listeners = this.listeners[event.name];
+    if(listeners) {
+      for(let i = 0; i < listeners.length; i++) {
+        listeners[i].call(this, event);
+      }
+    }
+  };
+
+  /**
+   * Loads an NFT marker from the given URL or data string
+   * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
+  */
+  async loadNFTMarker (urlOrData: any) {
+    let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
+    this.nftMarkerCount = nft.id + 1
+    return nft
+  };
+
   async _initialize () {
     // initialize the toolkit
     this.artoolkitNFT = await new ARToolkitNFT().init()
@@ -208,7 +254,7 @@ export default class ARControllerNFT {
 
     this._initNFT()
 
-    /*let params = this.artoolkitNFT.frameMalloc
+    let params = this.artoolkitNFT.frameMalloc
     this.framepointer = params.framepointer
     this.framesize = params.framesize
     this.videoLumaPointer = params.videoLumaPointer
@@ -217,17 +263,17 @@ export default class ARControllerNFT {
     this.videoLuma = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4)
 
     this.camera_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.camera, 16)
-    this.marker_transform_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.transform, 12)*/
+    this.marker_transform_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.transform, 12)
 
     this.setProjectionNearPlane(0.1)
     this.setProjectionFarPlane(1000)
 
-    /*setTimeout(() => {
+    setTimeout(() => {
       this.dispatchEvent({
         name: 'load',
         target: this
       })
-    }, 1)*/
+    }, 1)
 
     return this
   }
