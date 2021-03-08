@@ -37,10 +37,17 @@ export default class ARToolkitNFT {
     camera: number;
     transform: number
   }
+  public  NFTMarkerInfo: {
+    found: boolean;
+    pose: object;
+  };
   public setProjectionNearPlane: (id: number, value: number) => void;
   public getProjectionNearPlane: (id: number) => number;
   public setProjectionFarPlane: (id: number, value: number) => void;
   public getProjectionFarPlane: (id: number) => number;
+  public detectMarker: (id: number) => void;
+  public detectNFTMarker: (id: number) => void;
+  public getNFTMarker: (id: number, markerIndex: number) => number;
 
   // construction
   constructor () {
@@ -118,6 +125,9 @@ export default class ARToolkitNFT {
       this.getProjectionNearPlane = this.instance['getProjectionNearPlane']
       this.setProjectionFarPlane = this.instance['setProjectionFarPlane']
       this.getProjectionFarPlane = this.instance['getProjectionFarPlane']
+      this.detectMarker = this.instance['detectMarker']
+      this.detectNFTMarker = this.instance['detectNFTMarker']
+      this.getNFTMarker = this.instance['getNFTMarker']
     
       // @ts-ignore
       this[method] = this.instance[method]

@@ -40,6 +40,14 @@ export default class ARControllerNFT {
     constructor(width: number, height: number, cameraParam: string, options: object);
     static initWithDimensions(width: number, height: number, cameraParam: string, options: object): Promise<ARControllerNFT>;
     static initNFTWithImage(image: ImageObj, cameraParam: string, options: object): Promise<ARControllerNFT>;
+    process(image: any): void;
+    detectNFTMarker(): void;
+    trackNFTMarkerId(id: number, markerWidth?: number): any;
+    detectMarker(image: any): void | -99;
+    getNFTMarker(markerIndex: number): {
+        found: boolean;
+        pose: object;
+    };
     getCameraMatrix(): object;
     setProjectionNearPlane(value: number): void;
     getProjectionNearPlane(): number;
@@ -49,12 +57,15 @@ export default class ARControllerNFT {
     dispatchEvent(event: {
         name: string;
         target: any;
+        data?: object;
     }): void;
-    trackNFTMarkerId(id: number, markerWidth?: number): any;
+    transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number): Float64Array;
+    arglCameraViewRHf(glMatrix: Float64Array, glRhMatrix?: Float64Array, scale?: number): Float64Array;
     loadNFTMarker(urlOrData: any): Promise<{
         id: number;
     }>;
     _initialize(): Promise<this>;
     _initNFT(): void;
+    _copyImageToHeap(sourceImage: ImageObj): boolean;
 }
 export {};
