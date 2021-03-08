@@ -25,10 +25,17 @@ export default class ARToolkitNFT {
         camera: number;
         transform: number;
     };
+    NFTMarkerInfo: {
+        found: boolean;
+        pose: object;
+    };
     setProjectionNearPlane: (id: number, value: number) => void;
     getProjectionNearPlane: (id: number) => number;
     setProjectionFarPlane: (id: number, value: number) => void;
     getProjectionFarPlane: (id: number) => number;
+    detectMarker: (id: number) => void;
+    detectNFTMarker: (id: number) => void;
+    getNFTMarker: (id: number, markerIndex: number) => number;
     constructor();
     init(): Promise<this>;
     private _decorate;
