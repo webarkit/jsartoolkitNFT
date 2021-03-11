@@ -27,13 +27,15 @@ function load (msg) {
     var cameraMatrix = ar.getCameraMatrix()
 
     ar.addEventListener('getNFTMarker', function (ev) {
+      console.log(ev)
       markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)}
     })
 
     ar.loadNFTMarker(msg.marker).then(function (nft) {
-      ar.trackNFTMarkerId(nft.id)
+      var obj = ar.trackNFTMarkerId(nft.id)
       console.log('loadNFTMarker -> ', nft.id)
       console.log('nftMarker struct: ', nft)
+      console.log(obj)
       postMessage({ type: 'endLoading', end: true })
     }).catch(function (err) {
       console.log('Error in loading marker on Worker', err)
@@ -47,17 +49,7 @@ function load (msg) {
   }
 
   console.debug('Loading camera at:', msg.camera_para)
-  console.log(ARToolkitNFT);
-  // just for testing the code... this will be removed
-  let ar = new ARToolkitNFT.ARToolkitNFT();
-  ar.init().then(ar=>{
-    console.log(ar);
-    // we can use the artoolkitNFT methods...
-    //ar.loadCamera(msg.camera_para)
-    //ar.setup(320,480,0);
-    //ar.setupAR2(0)
-    //ar.addNFTMarker(0,msg.marker)
-  });
+
   const options = {
     canvas: msg.canvas
   }
