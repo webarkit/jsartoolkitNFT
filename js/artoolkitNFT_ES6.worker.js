@@ -58,8 +58,11 @@ function load (msg) {
     //ar.setupAR2(0)
     //ar.addNFTMarker(0,msg.marker)
   });
+  const options = {
+    canvas: msg.canvas
+  }
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
+  ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para, options).then(onLoad).catch(onError)
 }
 
 function process () {
