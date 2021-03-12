@@ -170,6 +170,7 @@ export default class ARControllerNFT {
   }
 
   process (image: any) {
+    console.log(image)
     let result = this.detectMarker(image)
     if (result != 0) {
       console.error('[ARControllerNFT]', 'detectMarker error:', result)
@@ -301,6 +302,7 @@ export default class ARControllerNFT {
    */
   detectMarker (image: any) {
     if (this._copyImageToHeap(image)) {
+      console.log('image is ok')
       return this.artoolkitNFT.detectMarker(this.id)
     }
     return -99
