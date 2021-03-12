@@ -33,8 +33,8 @@ export default class ARToolkitNFT {
     getProjectionNearPlane: (id: number) => number;
     setProjectionFarPlane: (id: number, value: number) => void;
     getProjectionFarPlane: (id: number) => number;
-    detectMarker: (id: number) => void;
-    detectNFTMarker: (id: number) => void;
+    detectMarker: (id: number) => number;
+    detectNFTMarker: (id: number) => number;
     getNFTMarker: (id: number, markerIndex: number) => number;
     constructor();
     init(): Promise<this>;

@@ -8,7 +8,7 @@ declare global {
   namespace NodeJS {
     interface Global {
        artoolkitNFT: any;
-    } 
+    }
   }
   interface Window {
     artoolkitNFT: any;
@@ -30,7 +30,7 @@ export default class ARToolkitNFT {
   public setup: (width: number, height: number, cameraId: number) => number;
   public teardown: () => void;
   public setupAR2: (id: number) => void;
-  public frameMalloc: { 
+  public frameMalloc: {
     framepointer: number;
     framesize: number;
     videoLumaPointer: number;
@@ -45,8 +45,8 @@ export default class ARToolkitNFT {
   public getProjectionNearPlane: (id: number) => number;
   public setProjectionFarPlane: (id: number, value: number) => void;
   public getProjectionFarPlane: (id: number) => number;
-  public detectMarker: (id: number) => void;
-  public detectNFTMarker: (id: number) => void;
+  public detectMarker: (id: number) => number;
+  public detectNFTMarker: (id: number) => number;
   public getNFTMarker: (id: number, markerIndex: number) => number;
 
   // construction
@@ -82,7 +82,7 @@ export default class ARToolkitNFT {
     return this
   }
 
-  private _decorate () {  
+  private _decorate () {
     // add delegate methods
     [
       'setup',
@@ -128,7 +128,7 @@ export default class ARToolkitNFT {
       this.detectMarker = this.instance['detectMarker']
       this.detectNFTMarker = this.instance['detectNFTMarker']
       this.getNFTMarker = this.instance['getNFTMarker']
-    
+
       // @ts-ignore
       this[method] = this.instance[method]
       //this.setup = this.instance.setup

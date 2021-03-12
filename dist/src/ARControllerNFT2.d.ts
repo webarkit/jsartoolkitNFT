@@ -43,7 +43,7 @@ export default class ARControllerNFT {
     process(image: any): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): any;
-    detectMarker(image: any): void | -99;
+    detectMarker(image: any): number;
     getNFTMarker(markerIndex: number): {
         found: boolean;
         pose: object;
