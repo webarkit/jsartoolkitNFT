@@ -1,9 +1,9 @@
 interface ImageObj {
-    videoWidth: null;
-    width: null;
-    videoHeight: null;
-    height: null;
-    data: null;
+    videoWidth: number;
+    width: number;
+    videoHeight: number;
+    height: number;
+    data: Uint8ClampedArray;
 }
 export default class ARControllerNFT {
     private options;
