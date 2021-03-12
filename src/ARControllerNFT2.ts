@@ -44,8 +44,8 @@ interface delegateMethods {
     setProjectionFarPlane: (id: number, value: number) => void;
     getProjectionFarPlane: (id: number) => number;
     addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
-    detectMarker: (id: number) => void;
-    detectNFTMarker: (arId: number) => void;
+    detectMarker: (id: number) => number;
+    detectNFTMarker: (arId: number) => number;
     getNFTMarker: (id: number, markerIndex: number) => number;
 }
 
@@ -133,7 +133,7 @@ export default class ARControllerNFT {
 
     if (this.options.canvas) {
       // in case you use Node.js, create a canvas with node-canvas
-      this.canvas = this.options.canvas      
+      this.canvas = this.options.canvas
     } else if (typeof document !== 'undefined') {
       // try creating a canvas from document
       this.canvas = document.createElement('canvas') as HTMLCanvasElement
@@ -535,6 +535,7 @@ export default class ARControllerNFT {
    * @return {number} 0 (void)
    */
   _copyImageToHeap (sourceImage: ImageObj) {
+    console.log('inside _copy')
     if (!sourceImage) {
     // default to preloaded image
       sourceImage = this.image
@@ -544,11 +545,12 @@ export default class ARControllerNFT {
     // The Uint8ClampedArray typed array represents an array of 8-bit unsigned
     // integers clamped to 0-255
     // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray
-    let data
+    let data: Uint8ClampedArray;
 
     if (sourceImage.data) {
       // directly use source image
       data = sourceImage.data
+      console.log('get the data')
     } else {
       this.ctx.save()
 
