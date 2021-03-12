@@ -9,6 +9,7 @@ self.onmessage = function (e) {
     }
     case 'process': {
       next = msg.imagedata
+      console.log(next);
       process()
     }
   }
