@@ -35,7 +35,7 @@ interface delegateMethods {
     }
     NFTMarkerInfo: {
       found: boolean;
-      pose: object;
+      pose: Float64Array;
     };
     setProjectionNearPlane: {
       (id: number, value: number): void;
@@ -64,7 +64,7 @@ export default class ARControllerNFT {
   private listeners: object;
   private nftMarkers: object;
   private transform_mat: Float32Array;
-  private marker_transform_mat: object;
+  private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
   private videoWidth: number;
   private videoHeight: number;
@@ -73,7 +73,7 @@ export default class ARControllerNFT {
   private framesize: number;
   private dataHeap: Uint8Array;
   private videoLuma: Uint8Array;
-  private camera_mat: object;
+  private camera_mat: Float64Array;
   private videoLumaPointer: number;
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;

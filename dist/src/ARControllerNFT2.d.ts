@@ -46,9 +46,9 @@ export default class ARControllerNFT {
     detectMarker(image: any): number;
     getNFTMarker(markerIndex: number): {
         found: boolean;
-        pose: object;
+        pose: Float64Array;
     };
-    getCameraMatrix(): object;
+    getCameraMatrix(): Float64Array;
     setProjectionNearPlane(value: number): void;
     getProjectionNearPlane(): number;
     setProjectionFarPlane(value: number): void;

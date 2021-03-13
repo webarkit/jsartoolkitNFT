@@ -27,7 +27,7 @@ export default class ARToolkitNFT {
     };
     NFTMarkerInfo: {
         found: boolean;
-        pose: object;
+        pose: Float64Array;
     };
     setProjectionNearPlane: (id: number, value: number) => void;
     getProjectionNearPlane: (id: number) => number;
