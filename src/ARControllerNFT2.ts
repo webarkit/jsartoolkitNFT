@@ -63,7 +63,7 @@ export default class ARControllerNFT {
   private artoolkitNFT: delegateMethods;
   private listeners: object;
   private nftMarkers: object;
-  private transform_mat: Float32Array;
+  private transform_mat: Float64Array;
   private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
   private videoWidth: number;
@@ -116,7 +116,7 @@ export default class ARControllerNFT {
 
     this.nftMarkers = {}
 
-    this.transform_mat = new Float32Array(16)
+    this.transform_mat = new Float64Array(16)
     this.transformGL_RH = new Float64Array(16)
     this.marker_transform_mat = null
 
