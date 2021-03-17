@@ -500,7 +500,7 @@ export default class ARControllerNFT {
 
     this._initNFT()
 
-    let params = this.artoolkitNFT.frameMalloc
+    const params: delegateMethods['frameMalloc'] = this.artoolkitNFT.frameMalloc
     this.framepointer = params.framepointer
     this.framesize = params.framesize
     this.videoLumaPointer = params.videoLumaPointer
@@ -579,8 +579,10 @@ export default class ARControllerNFT {
       // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
       // see (ARToolKitJS.cpp L: 43)
       for (let p = 0; p < this.videoSize; p++) {
+        //@ts-ignore
         let r = data[q + 0], g = data[q + 1], b = data[q + 2];
         // @see https://stackoverflow.com/a/596241/5843642
+        //@ts-ignore
         this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3
         q += 4
       }
