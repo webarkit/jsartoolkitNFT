@@ -77,6 +77,8 @@ export default class ARControllerNFT {
     loadNFTMarker(urlOrData: string): Promise<{
         id: number;
     }>;
+    setImageProcMode(mode: number): number;
+    getImageProcMode(): number;
     _initialize(): Promise<this>;
     _initNFT(): void;
     _copyImageToHeap(sourceImage: ImageObj): boolean;

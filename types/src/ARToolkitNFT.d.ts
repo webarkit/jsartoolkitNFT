@@ -21,6 +21,9 @@ export default class ARToolkitNFT {
     setDebugMode: (id: number, mode: boolean) => number;
     getDebugMode: (id: number) => boolean;
     getProcessingImage: (id: number) => number;
+    detectMarker: (id: number) => number;
+    detectNFTMarker: (id: number) => number;
+    getNFTMarker: (id: number, markerIndex: number) => number;
     setLogLevel: (mode: boolean) => number;
     getLogLevel: () => number;
     frameMalloc: {
@@ -44,9 +47,8 @@ export default class ARToolkitNFT {
     getThresholdMode: (id: number) => number;
     setThreshold: (id: number, threshold: number) => number;
     getThreshold: (id: number) => number;
-    detectMarker: (id: number) => number;
-    detectNFTMarker: (id: number) => number;
-    getNFTMarker: (id: number, markerIndex: number) => number;
+    setImageProcMode: (id: number, mode: number) => number;
+    getImageProcMode: (id: number) => number;
     constructor();
     init(): Promise<this>;
     private _decorate;
