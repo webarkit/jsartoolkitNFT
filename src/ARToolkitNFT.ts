@@ -33,6 +33,8 @@ export default class ARToolkitNFT {
   public setDebugMode: (id: number, mode: boolean) => number;
   public getDebugMode: (id: number) => boolean;
   public getProcessingImage: (id: number) => number;
+  public setLogLevel: (mode: boolean) => number;
+  public getLogLevel: () => number;
   public frameMalloc: {
     framepointer: number;
     framesize: number;
@@ -129,6 +131,8 @@ export default class ARToolkitNFT {
       this.setDebugMode = this.instance['setDebugMode']
       this.getDebugMode = this.instance['getDebugMode']
       this.getProcessingImage = this.instance['getProcessingImage']
+      this.setLogLevel = this.instance['setLogLevel']
+      this.getLogLevel = this.instance['getLogLevel']
       this.frameMalloc = this.instance['frameMalloc']
       this.NFTMarkerInfo = this.instance['NFTMarkerInfo']
       //this.instance = this.instance
@@ -141,7 +145,7 @@ export default class ARToolkitNFT {
       this.getNFTMarker = this.instance['getNFTMarker']
 
       // @ts-ignore
-      this[method] = this.instance[method]
+      //this[method] = this.instance[method]
     })
 
     // expose constants
