@@ -21,6 +21,8 @@ export default class ARToolkitNFT {
     setDebugMode: (id: number, mode: boolean) => number;
     getDebugMode: (id: number) => boolean;
     getProcessingImage: (id: number) => number;
+    setLogLevel: (mode: boolean) => number;
+    getLogLevel: () => number;
     frameMalloc: {
         framepointer: number;
         framesize: number;

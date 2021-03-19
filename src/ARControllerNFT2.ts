@@ -24,6 +24,8 @@ interface delegateMethods {
     setDebugMode:  (id: number, mode: boolean) => number;
     getDebugMode: (id: number) => boolean;
     getProcessingImage: (id: number) => number;
+    setLogLevel: (mode: boolean) => number;
+    getLogLevel: () => number;
     frameMalloc: {
        framepointer: number;
        framesize: number;
@@ -555,6 +557,22 @@ export default class ARControllerNFT {
    */
   getProcessingImage () {
     return this.artoolkitNFT.getProcessingImage(this.id)
+  };
+
+   /**
+   * Sets the logging level to use by ARToolKit.
+   * @param {number} mode type for the log level.
+   */
+  setLogLevel (mode: boolean) {
+    return this.artoolkitNFT.setLogLevel(mode);
+  };
+
+  /**
+   * Gets the logging level used by ARToolKit.
+   * @return {number} return the log level in use.
+   */
+  getLogLevel () {
+    return this.artoolkitNFT.getLogLevel();
   };
 
 

@@ -68,6 +68,8 @@ export default class ARControllerNFT {
     setDebugMode(mode: boolean): number;
     getDebugMode(): boolean;
     getProcessingImage(): number;
+    setLogLevel(mode: boolean): number;
+    getLogLevel(): number;
     loadNFTMarker(urlOrData: string): Promise<{
         id: number;
     }>;
