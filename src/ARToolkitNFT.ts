@@ -30,6 +30,9 @@ export default class ARToolkitNFT {
   public setup: (width: number, height: number, cameraId: number) => number;
   public teardown: () => void;
   public setupAR2: (id: number) => void;
+  public setDebugMode: (id: number, mode: boolean) => number;
+  public getDebugMode: (id: number) => boolean;
+  public getProcessingImage: (id: number) => number;
   public frameMalloc: {
     framepointer: number;
     framesize: number;
@@ -123,6 +126,9 @@ export default class ARToolkitNFT {
       this.setup = this.instance['setup']
       this.teardown = this.instance['teardown']
       this.setupAR2 = this.instance['setupAR2']
+      this.setDebugMode = this.instance['setDebugMode']
+      this.getDebugMode = this.instance['getDebugMode']
+      this.getProcessingImage = this.instance['getProcessingImage']
       this.frameMalloc = this.instance['frameMalloc']
       this.NFTMarkerInfo = this.instance['NFTMarkerInfo']
       //this.instance = this.instance

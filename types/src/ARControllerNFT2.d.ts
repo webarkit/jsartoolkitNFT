@@ -62,8 +62,12 @@ export default class ARControllerNFT {
         target: any;
         data?: object;
     }): void;
+    debugSetup(): void;
     transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number): Float64Array;
     arglCameraViewRHf(glMatrix: Float64Array, glRhMatrix?: Float64Array, scale?: number): Float64Array;
+    setDebugMode(mode: boolean): number;
+    getDebugMode(): boolean;
+    getProcessingImage(): number;
     loadNFTMarker(urlOrData: string): Promise<{
         id: number;
     }>;
