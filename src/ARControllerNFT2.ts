@@ -659,6 +659,8 @@ export default class ARControllerNFT {
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
     console.log('[ARControllerNFT]', 'Got ID from setup', this.id);
+    console.log(this);
+    
 
     this._initNFT();
 
