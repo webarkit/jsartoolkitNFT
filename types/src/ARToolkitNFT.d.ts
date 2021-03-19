@@ -40,6 +40,10 @@ export default class ARToolkitNFT {
     getProjectionNearPlane: (id: number) => number;
     setProjectionFarPlane: (id: number, value: number) => void;
     getProjectionFarPlane: (id: number) => number;
+    setThresholdMode: (id: number, mode: number) => number;
+    getThresholdMode: (id: number) => number;
+    setThreshold: (id: number, threshold: number) => number;
+    getThreshold: (id: number) => number;
     detectMarker: (id: number) => number;
     detectNFTMarker: (id: number) => number;
     getNFTMarker: (id: number, markerIndex: number) => number;
