@@ -45,7 +45,9 @@ export default class ARControllerNFT {
     trackNFTMarkerId(id: number, markerWidth?: number): any;
     detectMarker(image: any): number;
     getNFTMarker(markerIndex: number): {
-        found: boolean;
+        error: number;
+        found: number;
+        id: number;
         pose: Float64Array;
     };
     getCameraMatrix(): Float64Array;

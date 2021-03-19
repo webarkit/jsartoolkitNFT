@@ -34,7 +34,9 @@ interface delegateMethods {
       };
     }
     NFTMarkerInfo: {
-      found: boolean;
+      error: number;
+      found: number;
+      id: number,
       pose: Float64Array;
     };
     setProjectionNearPlane: {
