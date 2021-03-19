@@ -50,6 +50,10 @@ interface delegateMethods {
     getProjectionNearPlane: (id: number) => number;
     setProjectionFarPlane: (id: number, value: number) => void;
     getProjectionFarPlane: (id: number) => number;
+    setThresholdMode: (id: number, mode: number) => number;
+    getThresholdMode: (id: number) => number;
+    setThreshold: (id: number, threshold: number) => number;
+    getThreshold: (id: number) => number;
     addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
     detectMarker: (id: number) => number;
     detectNFTMarker: (arId: number) => void;
@@ -371,6 +375,67 @@ export default class ARControllerNFT {
   getProjectionFarPlane () {
     return this.artoolkitNFT.getProjectionFarPlane(this.id)
   };
+
+  /**
+   * Set the labeling threshold mode (auto/manual).
+   * @param {number} mode An integer specifying the mode. One of:
+   * AR_LABELING_THRESH_MODE_MANUAL,
+   * AR_LABELING_THRESH_MODE_AUTO_MEDIAN,
+   * AR_LABELING_THRESH_MODE_AUTO_OTSU,
+   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
+   * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
+   */
+  setThresholdMode(mode: number) {
+    return this.artoolkitNFT.setThresholdMode(this.id, mode);
+  };
+
+  /**
+   * Gets the current threshold mode used for image binarization.
+   * @return {number} The current threshold mode
+   * @see getVideoThresholdMode()
+   */
+  getThresholdMode() {
+    return this.artoolkitNFT.getThresholdMode(this.id);
+  };
+
+  /**
+   * Set the labeling threshold.
+   * This function forces sets the threshold value.
+   * The default value is AR_DEFAULT_LABELING_THRESH which is 100.
+   * The current threshold mode is not affected by this call.
+   * Typically, this function is used when labeling threshold mode
+   * is AR_LABELING_THRESH_MODE_MANUAL.
+   * The threshold value is not relevant if threshold mode is
+   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
+   * Background: The labeling threshold is the value which
+   * the AR library uses to differentiate between black and white
+   * portions of an ARToolKit marker. Since the actual brightness,
+   * contrast, and gamma of incoming images can vary signficantly
+   * between different cameras and lighting conditions, this
+   * value typically needs to be adjusted dynamically to a
+   * suitable midpoint between the observed values for black
+   * and white portions of the markers in the image.
+   * @param {number} threshold An integer in the range [0,255] (inclusive).
+   */
+  setThreshold(threshold: number) {
+    return this.artoolkitNFT.setThreshold(this.id, threshold);
+  };
+
+  /**
+   * Get the current labeling threshold.
+   * This function queries the current labeling threshold. For,
+   * AR_LABELING_THRESH_MODE_AUTO_MEDIAN, AR_LABELING_THRESH_MODE_AUTO_OTSU,
+   * and AR_LABELING_THRESH_MODE_AUTO_BRACKETING
+   * the threshold value is only valid until the next auto-update.
+   * The current threshold mode is not affected by this call.
+   * The threshold value is not relevant if threshold mode is
+   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
+   * @return {number} The current threshold value.
+   */
+  getThreshold() {
+    return this.artoolkitNFT.getThreshold(this.id);
+  };
+
 
   /**
    * Add an event listener on this ARControllerNFTNFT for the named event, calling the callback function

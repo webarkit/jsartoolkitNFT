@@ -52,6 +52,10 @@ export default class ARToolkitNFT {
   public getProjectionNearPlane: (id: number) => number;
   public setProjectionFarPlane: (id: number, value: number) => void;
   public getProjectionFarPlane: (id: number) => number;
+  public setThresholdMode: (id: number, mode: number) => number;
+  public getThresholdMode: (id: number) => number;
+  public setThreshold: (id: number, threshold: number) => number;
+  public getThreshold: (id: number) => number;
   public detectMarker: (id: number) => number;
   public detectNFTMarker: (id: number) => number;
   public getNFTMarker: (id: number, markerIndex: number) => number;
@@ -128,21 +132,24 @@ export default class ARToolkitNFT {
       this.setup = this.instance['setup']
       this.teardown = this.instance['teardown']
       this.setupAR2 = this.instance['setupAR2']
+      this.setLogLevel = this.instance['setLogLevel']
+      this.getLogLevel = this.instance['getLogLevel']
       this.setDebugMode = this.instance['setDebugMode']
       this.getDebugMode = this.instance['getDebugMode']
       this.getProcessingImage = this.instance['getProcessingImage']
-      this.setLogLevel = this.instance['setLogLevel']
-      this.getLogLevel = this.instance['getLogLevel']
+      this.detectMarker = this.instance['detectMarker']
+      this.detectNFTMarker = this.instance['detectNFTMarker']
+      this.getNFTMarker = this.instance['getNFTMarker']
       this.frameMalloc = this.instance['frameMalloc']
       this.NFTMarkerInfo = this.instance['NFTMarkerInfo']
-      //this.instance = this.instance
       this.setProjectionNearPlane = this.instance['setProjectionNearPlane']
       this.getProjectionNearPlane = this.instance['getProjectionNearPlane']
       this.setProjectionFarPlane = this.instance['setProjectionFarPlane']
       this.getProjectionFarPlane = this.instance['getProjectionFarPlane']
-      this.detectMarker = this.instance['detectMarker']
-      this.detectNFTMarker = this.instance['detectNFTMarker']
-      this.getNFTMarker = this.instance['getNFTMarker']
+      this.setThresholdMode = this.instance['setThresholdMode']
+      this.getThresholdMode = this.instance['getThresholdMode']
+      this.setThreshold = this.instance['setThreshold']
+      this.getThreshold = this.instance['getThreshold']
 
       // @ts-ignore
       //this[method] = this.instance[method]
