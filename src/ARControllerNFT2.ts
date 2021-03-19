@@ -45,7 +45,7 @@ interface delegateMethods {
     getProjectionFarPlane: (id: number) => number;
     addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
     detectMarker: (id: number) => number;
-    detectNFTMarker: (arId: number) => number;
+    detectNFTMarker: (arId: number) => void;
     getNFTMarker: (id: number, markerIndex: number) => number;
 }
 
@@ -169,7 +169,7 @@ export default class ARControllerNFT {
     return await arControllerNFT._initialize()
   }
 
-  process (image: any) {
+  process (image: ImageObj) {
     console.log(image)
     let result = this.detectMarker(image)
     if (result != 0) {
@@ -483,7 +483,7 @@ export default class ARControllerNFT {
    * Loads an NFT marker from the given URL or data string
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
   */
-  async loadNFTMarker (urlOrData: any) {
+  async loadNFTMarker (urlOrData: string) {
     let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
     this.nftMarkerCount = nft.id + 1
     return nft
@@ -491,38 +491,38 @@ export default class ARControllerNFT {
 
   async _initialize () {
     // initialize the toolkit
-    this.artoolkitNFT = await new ARToolkitNFT().init()
-    console.log(this.artoolkitNFT)
-    console.log('[ARControllerNFT]', 'ARToolkitNFT initialized')
+    this.artoolkitNFT = await new ARToolkitNFT().init();
+    console.log(this.artoolkitNFT);
+    console.log('[ARControllerNFT]', 'ARToolkitNFT initialized');
     // setup
-    this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId)
-    console.log('[ARControllerNFT]', 'Got ID from setup', this.id)
+    this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
+    console.log('[ARControllerNFT]', 'Got ID from setup', this.id);
 
-    this._initNFT()
+    this._initNFT();
 
-    const params: delegateMethods['frameMalloc'] = this.artoolkitNFT.frameMalloc
-    this.framepointer = params.framepointer
-    this.framesize = params.framesize
-    this.videoLumaPointer = params.videoLumaPointer
+    const params: delegateMethods['frameMalloc'] = this.artoolkitNFT.frameMalloc;
+    this.framepointer = params.framepointer;
+    this.framesize = params.framesize;
+    this.videoLumaPointer = params.videoLumaPointer;
 
-    this.dataHeap = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.framepointer, this.framesize)
-    this.videoLuma = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4)
+    this.dataHeap = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.framepointer, this.framesize);
+    this.videoLuma = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4);
 
-    this.camera_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.camera, 16)
-    this.marker_transform_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.transform, 12)
+    this.camera_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.camera, 16);
+    this.marker_transform_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.transform, 12);
 
-    this.setProjectionNearPlane(0.1)
-    this.setProjectionFarPlane(1000)
+    this.setProjectionNearPlane(0.1);
+    this.setProjectionFarPlane(1000);
 
     setTimeout(() => {
       this.dispatchEvent({
         name: 'load',
         target: this
       })
-    }, 1)
+    }, 1);
 
-    return this
-  }
+    return this;
+  };
 
   /**
    * Init the necessary kpm handle for NFT and the settings for the CPU.
