@@ -78,6 +78,7 @@ export default class ARToolkitNFT {
 
     let scope = (typeof window !== 'undefined') ? window : global
     scope.artoolkitNFT = this
+    console.log(this)
 
     return this
   }
