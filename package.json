@@ -2,6 +2,7 @@
   "name": "@kalwalt/jsartoolkit-nft",
   "version": "0.8.2",
   "main": "dist/ARToolkitNFT.js",
+  "types": "types/src/index.d.ts",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
   "keywords": [
     "ARToolKit",
@@ -56,7 +57,7 @@
     "webpack-cli": "^4.2.0"
   },
   "scripts": {
-    "dev-es6": "webpack --mode development --progress --colors --watch",
+    "dev-es6": "webpack --mode development --progress --watch",
     "build-es6": "webpack --mode production",
     "build-jshint": "grunt jshint --force",
     "build": "node tools/makem.js; echo Built at `date`",

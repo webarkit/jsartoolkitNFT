@@ -40,7 +40,7 @@ export default class ARControllerNFT {
     constructor(width: number, height: number, cameraParam: string, options: object);
     static initWithDimensions(width: number, height: number, cameraParam: string, options: object): Promise<ARControllerNFT>;
     static initNFTWithImage(image: ImageObj, cameraParam: string, options: object): Promise<ARControllerNFT>;
-    process(image: any): void;
+    process(image: ImageObj): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): any;
     detectMarker(image: any): number;
@@ -61,7 +61,7 @@ export default class ARControllerNFT {
     }): void;
     transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number): Float64Array;
     arglCameraViewRHf(glMatrix: Float64Array, glRhMatrix?: Float64Array, scale?: number): Float64Array;
-    loadNFTMarker(urlOrData: any): Promise<{
+    loadNFTMarker(urlOrData: string): Promise<{
         id: number;
     }>;
     _initialize(): Promise<this>;
