@@ -99,39 +99,6 @@ export default class ARToolkitNFT {
 
   private _decorate () {
     // add delegate methods
-    [
-      'setup',
-      'teardown',
-
-      'setupAR2',
-
-      'setLogLevel',
-      'getLogLevel',
-
-      'setDebugMode',
-      'getDebugMode',
-
-      'getProcessingImage',
-
-      'detectMarker',
-      'detectNFTMarker',
-      'getNFTMarker',
-
-      'setProjectionNearPlane',
-      'getProjectionNearPlane',
-
-      'setProjectionFarPlane',
-      'getProjectionFarPlane',
-
-      'setThresholdMode',
-      'getThresholdMode',
-
-      'setThreshold',
-      'getThreshold',
-
-      'setImageProcMode',
-      'getImageProcMode'
-    ].forEach((method, id) => {
       this.setup = this.instance['setup']
       this.teardown = this.instance['teardown']
       this.setupAR2 = this.instance['setupAR2']
@@ -155,10 +122,6 @@ export default class ARToolkitNFT {
       this.getThreshold = this.instance['getThreshold']
       this.setImageProcMode = this.instance['setImageProcMode']
       this.getImageProcMode = this.instance['getImageProcMode']
-
-      // @ts-ignore
-      //this[method] = this.instance[method]
-    })
 
     // expose constants
     for (const co in this.instance) {
