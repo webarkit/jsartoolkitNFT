@@ -56,6 +56,7 @@ export default class ARControllerNFT {
     setProjectionFarPlane(value: number): void;
     getProjectionFarPlane(): number;
     addEventListener(name: string, callback: object): void;
+    removeEventListener(name: string, callback: object): void;
     dispatchEvent(event: {
         name: string;
         target: any;

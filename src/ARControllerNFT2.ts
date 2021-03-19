@@ -385,6 +385,23 @@ export default class ARControllerNFT {
   };
 
   /**
+   * Remove an event listener from the named event.
+   * @param {string} name Name of the event to stop listening to.
+   * @param {function} callback Callback function to remove from the listeners of the named event.
+   */
+  removeEventListener(name: string, callback: object) {
+    //@ts-ignore
+    if(this.listeners[name]) {
+      //@ts-ignore
+      let index = this.listeners[name].indexOf(callback);
+      if(index > -1) {
+        //@ts-ignore
+        this.listeners[name].splice(index, 1);
+      }
+    }
+  };
+
+  /**
    * Dispatches the given event to all registered listeners on event.name.
    * @param {Object} event Event to dispatch.
    */
