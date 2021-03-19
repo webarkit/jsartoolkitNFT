@@ -18,6 +18,9 @@ export default class ARToolkitNFT {
     setup: (width: number, height: number, cameraId: number) => number;
     teardown: () => void;
     setupAR2: (id: number) => void;
+    setDebugMode: (id: number, mode: boolean) => number;
+    getDebugMode: (id: number) => boolean;
+    getProcessingImage: (id: number) => number;
     frameMalloc: {
         framepointer: number;
         framesize: number;
