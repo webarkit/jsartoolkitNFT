@@ -55,6 +55,10 @@ export default class ARControllerNFT {
     getProjectionNearPlane(): number;
     setProjectionFarPlane(value: number): void;
     getProjectionFarPlane(): number;
+    setThresholdMode(mode: number): number;
+    getThresholdMode(): number;
+    setThreshold(threshold: number): number;
+    getThreshold(): number;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
     dispatchEvent(event: {
