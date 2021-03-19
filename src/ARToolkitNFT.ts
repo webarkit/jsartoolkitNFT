@@ -38,7 +38,9 @@ export default class ARToolkitNFT {
     transform: number
   }
   public  NFTMarkerInfo: {
-    found: boolean;
+    error: number;
+    found: number;
+    id: number,
     pose: Float64Array;
   };
   public setProjectionNearPlane: (id: number, value: number) => void;
@@ -122,6 +124,7 @@ export default class ARToolkitNFT {
       this.teardown = this.instance['teardown']
       this.setupAR2 = this.instance['setupAR2']
       this.frameMalloc = this.instance['frameMalloc']
+      this.NFTMarkerInfo = this.instance['NFTMarkerInfo']
       //this.instance = this.instance
       this.setProjectionNearPlane = this.instance['setProjectionNearPlane']
       this.getProjectionNearPlane = this.instance['getProjectionNearPlane']
