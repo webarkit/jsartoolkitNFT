@@ -118,9 +118,10 @@ export default class ARToolkitNFT {
       'getImageProcMode'
     ].forEach((method, id) => {
       this.setup = this.instance['setup']
+      this.teardown = this.instance['teardown']
       this.setupAR2 = this.instance['setupAR2']
-      //this.frameMalloc = this.instance['frameMalloc']
-      this.instance = this.instance
+      this.frameMalloc = this.instance['frameMalloc']
+      //this.instance = this.instance
       this.setProjectionNearPlane = this.instance['setProjectionNearPlane']
       this.getProjectionNearPlane = this.instance['getProjectionNearPlane']
       this.setProjectionFarPlane = this.instance['setProjectionFarPlane']
@@ -131,7 +132,6 @@ export default class ARToolkitNFT {
 
       // @ts-ignore
       this[method] = this.instance[method]
-      //this.setup = this.instance.setup
     })
 
     // expose constants

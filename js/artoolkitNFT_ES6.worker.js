@@ -26,6 +26,8 @@ function load (msg) {
     console.log(arController)
     ar = arController
     var cameraMatrix = ar.getCameraMatrix()
+    console.log(cameraMatrix);
+    console.log(ar.artoolkitNFT.instance)
 
     ar.addEventListener('getNFTMarker', function (ev) {
       console.log(ev)
