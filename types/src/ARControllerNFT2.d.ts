@@ -50,15 +50,6 @@ export default class ARControllerNFT {
         id: number;
         pose: Float64Array;
     };
-    getCameraMatrix(): Float64Array;
-    setProjectionNearPlane(value: number): void;
-    getProjectionNearPlane(): number;
-    setProjectionFarPlane(value: number): void;
-    getProjectionFarPlane(): number;
-    setThresholdMode(mode: number): number;
-    getThresholdMode(): number;
-    setThreshold(threshold: number): number;
-    getThreshold(): number;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
     dispatchEvent(event: {
@@ -69,11 +60,21 @@ export default class ARControllerNFT {
     debugSetup(): void;
     transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number): Float64Array;
     arglCameraViewRHf(glMatrix: Float64Array, glRhMatrix?: Float64Array, scale?: number): Float64Array;
+    getTransformationMatrix(): Float64Array;
+    getCameraMatrix(): Float64Array;
     setDebugMode(mode: boolean): number;
     getDebugMode(): boolean;
     getProcessingImage(): number;
     setLogLevel(mode: boolean): number;
     getLogLevel(): number;
+    setProjectionNearPlane(value: number): void;
+    getProjectionNearPlane(): number;
+    setProjectionFarPlane(value: number): void;
+    getProjectionFarPlane(): number;
+    setThresholdMode(mode: number): number;
+    getThresholdMode(): number;
+    setThreshold(threshold: number): number;
+    getThreshold(): number;
     loadNFTMarker(urlOrData: string): Promise<{
         id: number;
     }>;
