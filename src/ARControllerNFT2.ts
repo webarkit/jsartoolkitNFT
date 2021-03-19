@@ -21,6 +21,9 @@ interface delegateMethods {
     setupAR2: {
       (id: number): void
     }
+    setDebugMode:  (id: number, mode: boolean) => number;
+    getDebugMode: (id: number) => boolean;
+    getProcessingImage: (id: number) => number;
     frameMalloc: {
        framepointer: number;
        framesize: number;
@@ -84,7 +87,7 @@ export default class ARControllerNFT {
   private nftMarkerCount: number;// = 0
   private defaultMarkerWidth: number;
 
-  private _bwpointer: boolean = false;
+  private _bwpointer: number;
   constructor (width: number, height: number, cameraParam: string, options: object) {
     // read settings
     this.options = {...{
@@ -153,7 +156,7 @@ export default class ARControllerNFT {
     this.nftMarkerFoundTime = false
     this.nftMarkerCount = 0
 
-    this._bwpointer = false
+    this._bwpointer = null
     this.defaultMarkerWidth = 1
   }
 
@@ -325,6 +328,10 @@ export default class ARControllerNFT {
     }
   };
 
+  /**
+   * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
+   * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
+   */
   getCameraMatrix () {
     return this.camera_mat
   };
@@ -415,6 +422,27 @@ export default class ARControllerNFT {
     }
   };
 
+  // debug stuff
+  //----------------------------------------------------------------------------
+
+	/**
+	 * Sets up a debug canvas for the AR detection.
+   * Draws a red marker on top of each detected square in the image.
+	 * The debug canvas is added to document.body.
+	 */
+  debugSetup() {
+
+    if(typeof document === 'undefined') {
+      console.log('debugSetup() currently only supports Browser environments');
+      return;
+    }
+
+    document.body.appendChild(this.canvas);
+
+    this.setDebugMode(true);
+    this._bwpointer = this.getProcessingImage();
+  };
+
   /**
    * Converts the given 3x4 marker transformation matrix in the 12-element transMat array
    * into a 4x4 WebGL matrix and writes the result into the 16-element glMat array.
@@ -497,6 +525,38 @@ export default class ARControllerNFT {
 
     return glRhMatrix
   }
+
+  // Setter / Getter Proxies
+  //----------------------------------------------------------------------------
+
+  /**
+   * Enables or disables debug mode in the tracker. When enabled, a black and white debug
+   * image is generated during marker detection. The debug image is useful for visualising
+   * the binarization process and choosing a threshold value.
+   * @param {boolean} mode true to enable debug mode, false to disable debug mode
+   * @see getDebugMode()
+   */
+  setDebugMode(mode: boolean) {
+    return this.artoolkitNFT.setDebugMode(this.id, mode);
+  };
+
+  /**
+   * Returns whether debug mode is currently enabled.
+   * @return {boolean} true when debug mode is enabled, false when debug mode is disabled
+   * @see  setDebugMode()
+   */
+  getDebugMode() {
+    return this.artoolkitNFT.getDebugMode(this.id);
+  };
+
+  /**
+   * Returns the Emscripten HEAP offset to the debug processing image used by ARToolKit.
+   * @return {number} HEAP offset to the debug processing image.
+   */
+  getProcessingImage () {
+    return this.artoolkitNFT.getProcessingImage(this.id)
+  };
+
 
   /**
    * Loads an NFT marker from the given URL or data string
