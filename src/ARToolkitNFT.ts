@@ -33,6 +33,9 @@ export default class ARToolkitNFT {
   public setDebugMode: (id: number, mode: boolean) => number;
   public getDebugMode: (id: number) => boolean;
   public getProcessingImage: (id: number) => number;
+  public detectMarker: (id: number) => number;
+  public detectNFTMarker: (id: number) => number;
+  public getNFTMarker: (id: number, markerIndex: number) => number;
   public setLogLevel: (mode: boolean) => number;
   public getLogLevel: () => number;
   public frameMalloc: {
@@ -56,9 +59,9 @@ export default class ARToolkitNFT {
   public getThresholdMode: (id: number) => number;
   public setThreshold: (id: number, threshold: number) => number;
   public getThreshold: (id: number) => number;
-  public detectMarker: (id: number) => number;
-  public detectNFTMarker: (id: number) => number;
-  public getNFTMarker: (id: number, markerIndex: number) => number;
+  public setImageProcMode: (id: number, mode: number) => number;
+  public getImageProcMode: (id: number) => number;
+  
 
   // construction
   constructor () {
@@ -150,6 +153,8 @@ export default class ARToolkitNFT {
       this.getThresholdMode = this.instance['getThresholdMode']
       this.setThreshold = this.instance['setThreshold']
       this.getThreshold = this.instance['getThreshold']
+      this.setImageProcMode = this.instance['setImageProcMode']
+      this.getImageProcMode = this.instance['getImageProcMode']
 
       // @ts-ignore
       //this[method] = this.instance[method]
