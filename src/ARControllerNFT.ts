@@ -192,7 +192,6 @@ export default class ARControllerNFT {
 
     // get NFT markers
     for (k in this.nftMarkers) {
-
       o = this.converter().nftMarkers[k]
       o.inPrevious = o.inCurrent
       o.inCurrent = false
@@ -274,7 +273,6 @@ export default class ARControllerNFT {
    * @return {Object} The marker tracking object.
    */
   trackNFTMarkerId (id: number, markerWidth?: number) {
-
     let obj = this.converter().nftMarkers[id]
     if (!obj) {
       this.converter().nftMarkers[id] = obj = {
@@ -530,7 +528,7 @@ export default class ARControllerNFT {
     return this.artoolkitNFT.getProcessingImage(this.id)
   };
 
-   /**
+  /**
    * Sets the logging level to use by ARToolKit.
    * @param {number} mode type for the log level.
    */
@@ -580,7 +578,6 @@ export default class ARControllerNFT {
     return this.artoolkitNFT.getProjectionFarPlane(this.id)
   };
 
-
   /**
    * Set the labeling threshold mode (auto/manual).
    * @param {number} mode An integer specifying the mode. One of:
@@ -590,7 +587,7 @@ export default class ARControllerNFT {
    * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
    * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
    */
-   setThresholdMode(mode: number) {
+  setThresholdMode(mode: number) {
     return this.artoolkitNFT.setThresholdMode(this.id, mode);
   };
 
@@ -743,9 +740,9 @@ export default class ARControllerNFT {
    */
   private _initNFT () {
     this.artoolkitNFT.setupAR2(this.id)
-   };
+  };
 
-   /**
+  /**
    * Copy the Image data to the HEAP for the debugSetup function.
    * @return {number} 0 (void)
    */
