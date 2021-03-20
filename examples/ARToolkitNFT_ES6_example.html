@@ -39,7 +39,6 @@
 			id="video">
 		</video>
 		<canvas id="canvas"></canvas>
-    <canvas id="canvasW"></canvas>
 	</div>
   <script src="../dist/ARToolkitNFT.js"></script>
   <script src="js/third_party/three.js/stats.min.js"></script>
@@ -82,10 +81,7 @@
   })
   .then(_ => {
 
-    var htmlCanvas = document.getElementById("canvasW");
-    var offscreen = htmlCanvas.transferControlToOffscreen();
-
-    start('../examples/DataNFT/pinball', offscreen, video, video.videoWidth, video.videoHeight, function() { statsMain.update() }, function() { statsWorker.update() })
+    start('../examples/DataNFT/pinball', video, video.videoWidth, video.videoHeight, function() { statsMain.update() }, function() { statsWorker.update() })
 
     });
   })
