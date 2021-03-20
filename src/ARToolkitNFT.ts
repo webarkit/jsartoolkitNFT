@@ -64,6 +64,16 @@ export default class ARToolkitNFT {
 
 
   // construction
+  /**
+   * The ARToolkitNFT constructor. It has no arguments.
+   * These properties are initialized:
+   * - instance
+   * - markerNFTCount
+   * - cameraCount
+   * - version
+   * A message is displayed in the browser console during the intitialization, for example:
+   * "ARToolkitNFT 0.8.3"
+   */
   constructor () {
     // reference to WASM module
     this.instance
@@ -76,6 +86,11 @@ export default class ARToolkitNFT {
   // ---------------------------------------------------------------------------
 
   // initialization
+  /**
+   * Init the class injecting the Wasm Module, link the instanced methods and
+   * create a global artoolkitNFT variable.
+   * @return {object} the this object
+   */
   public async init () {
      const runtime: runtimeInstanced = await ModuleLoader.init.catch((err: string) => {
       console.log(err);
@@ -95,7 +110,11 @@ export default class ARToolkitNFT {
   }
 
   // private methods
-
+  /**
+   * Used internally to link the instance in the ModuleLoader to the
+   * ARToolkitNFT internal methods.
+   * @return {void}
+   */
   private _decorate () {
     // add delegate methods
     [
@@ -145,13 +164,23 @@ export default class ARToolkitNFT {
     }
   }
 
+  /**
+   * Used internally to convert and inject code.
+   * @return {this} the this object
+   */
   private converter(): any {
     return this
   }
 
-  // ----------------------------------------------------------------------------
-
+  // ---------------------------------------------------------------------------
   // public accessors
+  //----------------------------------------------------------------------------
+  /**
+   * Load the camera, this is an important and required step, Internally fill
+   * the ARParam struct.
+   * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
+   * @return {number} a number, the internal id.
+   */
   public async loadCamera (urlOrData: any): Promise<number> {
     const target = '/camera_param_' + this.cameraCount++
 
@@ -171,6 +200,12 @@ export default class ARToolkitNFT {
     return this.instance._loadCamera(target)
   }
 
+  /**
+   * Load the NFT Marker (.fset, .iset and .fset3) in the code, Must be provided
+   * the url of the file without the extension. If fails to load it raise an error.
+   * @param {number} arId internal id
+   * @param {string} url url of the descriptors files without ext
+   */
   public async addNFTMarker (arId: number, url: string): Promise<{id: number}> {
     // url doesn't need to be a valid url. Extensions to make it valid will be added here
     const targetPrefix = '/markerNFT_' + this.markerNFTCount++
@@ -193,7 +228,10 @@ export default class ARToolkitNFT {
   // ---------------------------------------------------------------------------
 
   // implementation
-
+  /**
+   * Used internally by LoadCamera and addNFTMarker methods
+   * @return {void}
+   */
   private _storeDataFile (data: Uint8Array, target: string) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
