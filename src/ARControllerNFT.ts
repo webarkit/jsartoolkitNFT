@@ -91,7 +91,7 @@ export default class ARControllerNFT {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private nftMarkerFound: boolean;// = false
-  private nftMarkerFoundTime: boolean;// = false
+  private nftMarkerFoundTime: number;
   private nftMarkerCount: number;// = 0
   private defaultMarkerWidth: number;
 
@@ -161,7 +161,7 @@ export default class ARControllerNFT {
 
     // this is to workaround the introduction of "self" variable
     this.nftMarkerFound = false
-    this.nftMarkerFoundTime = false
+    this.nftMarkerFoundTime = 0
     this.nftMarkerCount = 0
 
     this._bwpointer = null
@@ -212,15 +212,12 @@ export default class ARControllerNFT {
       if (nftMarkerInfo.found) {
         //@ts-ignore
         this.nftMarkerFound = i
-        //@ts-ignore
         this.nftMarkerFoundTime = Date.now()
 
         let visible = this.trackNFTMarkerId(i)
         visible.matrix.set(nftMarkerInfo.pose)
         visible.inCurrent = true
-        //@ts-ignore
         this.transMatToGLMat(visible.matrix, this.transform_mat)
-        //@ts-ignore
         this.transformGL_RH = this.arglCameraViewRHf(this.transform_mat)
         this.dispatchEvent({
           name: 'getNFTMarker',
@@ -236,7 +233,6 @@ export default class ARControllerNFT {
       //@ts-ignore
       } else if (self.nftMarkerFound === i) {
         // for now this marker found/lost events handling is for one marker at a time
-        //@ts-ignore
         if ((Date.now() - this.nftMarkerFoundTime) > MARKER_LOST_TIME) {
           this.nftMarkerFound = false
           this.dispatchEvent({
@@ -278,11 +274,10 @@ export default class ARControllerNFT {
    * @return {Object} The marker tracking object.
    */
   trackNFTMarkerId (id: number, markerWidth?: number) {
-    //@ts-ignore
-    let obj = this.nftMarkers[id]
+
+    let obj = this.converter().nftMarkers[id]
     if (!obj) {
-      //@ts-ignore
-      this.nftMarkers[id] = obj = {
+      this.converter().nftMarkers[id] = obj = {
         inPrevious: false,
         inCurrent: false,
         matrix: new Float64Array(12),
@@ -349,13 +344,10 @@ export default class ARControllerNFT {
    * @param {function} callback Callback function to call when an event with the given name is dispatched.
    */
   addEventListener(name: string, callback: object) {
-    //@ts-ignore
-    if(!this.listeners[name]) {
-      //@ts-ignore
-      this.listeners[name] = [];
+    if(!this.converter().listeners[name]) {
+      this.converter().listeners[name] = [];
     }
-    //@ts-ignore
-    this.listeners[name].push(callback);
+    this.converter().listeners[name].push(callback);
   };
 
   /**
@@ -364,13 +356,10 @@ export default class ARControllerNFT {
    * @param {function} callback Callback function to remove from the listeners of the named event.
    */
   removeEventListener(name: string, callback: object) {
-    //@ts-ignore
-    if(this.listeners[name]) {
-      //@ts-ignore
-      let index = this.listeners[name].indexOf(callback);
+    if(this.converter().listeners[name]) {
+      let index = this.converter().listeners[name].indexOf(callback);
       if(index > -1) {
-        //@ts-ignore
-        this.listeners[name].splice(index, 1);
+        this.converter().listeners[name].splice(index, 1);
       }
     }
   };
@@ -380,8 +369,7 @@ export default class ARControllerNFT {
    * @param {Object} event Event to dispatch.
    */
   dispatchEvent(event: { name: string; target: any; data?: object }) {
-    //@ts-ignore
-    let listeners = this.listeners[event.name];
+    let listeners = this.converter().listeners[event.name];
     if(listeners) {
       for(let i = 0; i < listeners.length; i++) {
         listeners[i].call(this, event);
