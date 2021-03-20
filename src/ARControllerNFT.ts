@@ -96,6 +96,19 @@ export default class ARControllerNFT {
   private defaultMarkerWidth: number;
 
   private _bwpointer: number;
+
+  /**
+   * The ARControllerNFT constructor. It has 4 params (see above).
+   * These properties are initialized:
+   * options, id, width, height, image, orientation, cameraParam, cameraId,
+   * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
+   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * @param {number} width
+   * @param {number} height
+   * @param {string} cameraParam
+   * @param {object} options
+   */
   constructor (width: number, height: number, cameraParam: string, options: object) {
     // read settings
     this.options = {...{
@@ -182,6 +195,13 @@ export default class ARControllerNFT {
     return await arControllerNFT._initialize()
   }
 
+  /**
+   * This is one of the most important method inside ARControllerNFT. It detect the marker
+   * and dispatch internally with the getNFTMarker event listener the NFTMarkerInfo
+   * struct object of the tracked NFT Markers.
+   * @param {image} image or image data
+   * @return {void}
+   */
   process (image: ImageObj) {
     let result = this.detectMarker(image)
     if (result != 0) {
@@ -257,6 +277,7 @@ export default class ARControllerNFT {
   /**
    * Detects the NFT markers in the process() function,
    * with the given tracked id.
+   * @return {void}
    */
   detectNFTMarker () {
     this.artoolkitNFT.detectNFTMarker(this.id)
@@ -319,7 +340,7 @@ export default class ARControllerNFT {
    * Returns undefined if no marker was found.
    * A markerIndex of -1 is used to access the global custom marker.
    * @param {number} markerIndex The index of the NFT marker to query.
-   * @returns {Object} The NFTmarkerInfo struct.
+   * @return {Object} The NFTmarkerInfo struct.
    */
   getNFTMarker (markerIndex: number) {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
