@@ -1,2 +1,3 @@
 build/*.bc
 node_modules
+docs/*

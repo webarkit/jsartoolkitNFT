@@ -30,6 +30,16 @@
         ]
       }
     },
+    "typedocOptions": {
+    "entryPoints": [
+      "src/index.ts",
+      "src/ARControllerNFT.ts",
+      "src/ARToolkitNFT.ts",
+      "src/ModuleLoader.ts",
+      "src/utils.ts"
+    ],
+    "out": "docs"
+    },
     "lib": [
       "esNext",
       "dom",
