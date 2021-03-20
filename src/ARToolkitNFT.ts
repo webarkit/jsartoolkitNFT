@@ -61,7 +61,7 @@ export default class ARToolkitNFT {
   public getThreshold: (id: number) => number;
   public setImageProcMode: (id: number, mode: number) => number;
   public getImageProcMode: (id: number) => number;
-  
+
 
   // construction
   constructor () {
@@ -85,43 +85,40 @@ export default class ARToolkitNFT {
     })
 
     this.instance = runtime.instance;
-    console.log(runtime);
-    console.log(this.instance);
 
     this._decorate()
 
     let scope = (typeof window !== 'undefined') ? window : global
     scope.artoolkitNFT = this
-    console.log(this)
 
     return this
   }
 
   private _decorate () {
     // add delegate methods
-      this.setup = this.instance['setup']
-      this.teardown = this.instance['teardown']
-      this.setupAR2 = this.instance['setupAR2']
-      this.setLogLevel = this.instance['setLogLevel']
-      this.getLogLevel = this.instance['getLogLevel']
-      this.setDebugMode = this.instance['setDebugMode']
-      this.getDebugMode = this.instance['getDebugMode']
-      this.getProcessingImage = this.instance['getProcessingImage']
-      this.detectMarker = this.instance['detectMarker']
-      this.detectNFTMarker = this.instance['detectNFTMarker']
-      this.getNFTMarker = this.instance['getNFTMarker']
-      this.frameMalloc = this.instance['frameMalloc']
-      this.NFTMarkerInfo = this.instance['NFTMarkerInfo']
-      this.setProjectionNearPlane = this.instance['setProjectionNearPlane']
-      this.getProjectionNearPlane = this.instance['getProjectionNearPlane']
-      this.setProjectionFarPlane = this.instance['setProjectionFarPlane']
-      this.getProjectionFarPlane = this.instance['getProjectionFarPlane']
-      this.setThresholdMode = this.instance['setThresholdMode']
-      this.getThresholdMode = this.instance['getThresholdMode']
-      this.setThreshold = this.instance['setThreshold']
-      this.getThreshold = this.instance['getThreshold']
-      this.setImageProcMode = this.instance['setImageProcMode']
-      this.getImageProcMode = this.instance['getImageProcMode']
+    this.setup = this.instance['setup']
+    this.teardown = this.instance['teardown']
+    this.setupAR2 = this.instance['setupAR2']
+    this.setLogLevel = this.instance['setLogLevel']
+    this.getLogLevel = this.instance['getLogLevel']
+    this.setDebugMode = this.instance['setDebugMode']
+    this.getDebugMode = this.instance['getDebugMode']
+    this.getProcessingImage = this.instance['getProcessingImage']
+    this.detectMarker = this.instance['detectMarker']
+    this.detectNFTMarker = this.instance['detectNFTMarker']
+    this.getNFTMarker = this.instance['getNFTMarker']
+    this.frameMalloc = this.instance['frameMalloc']
+    this.NFTMarkerInfo = this.instance['NFTMarkerInfo']
+    this.setProjectionNearPlane = this.instance['setProjectionNearPlane']
+    this.getProjectionNearPlane = this.instance['getProjectionNearPlane']
+    this.setProjectionFarPlane = this.instance['setProjectionFarPlane']
+    this.getProjectionFarPlane = this.instance['getProjectionFarPlane']
+    this.setThresholdMode = this.instance['setThresholdMode']
+    this.getThresholdMode = this.instance['getThresholdMode']
+    this.setThreshold = this.instance['setThreshold']
+    this.getThreshold = this.instance['getThreshold']
+    this.setImageProcMode = this.instance['setImageProcMode']
+    this.getImageProcMode = this.instance['getImageProcMode']
 
     // expose constants
     for (const co in this.instance) {
