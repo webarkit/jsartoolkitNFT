@@ -94,6 +94,8 @@ export default class ARToolkitNFT {
     return this
   }
 
+  // private methods
+
   private _decorate () {
     // add delegate methods
     [
