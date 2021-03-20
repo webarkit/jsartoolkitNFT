@@ -25,7 +25,6 @@ function load (msg) {
     ar = arController
     var cameraMatrix = ar.getCameraMatrix()
     ar.addEventListener('getNFTMarker', function (ev) {
-      console.log(ev)
       markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)}
     })
 
@@ -47,11 +46,8 @@ function load (msg) {
 
   console.debug('Loading camera at:', msg.camera_para)
 
-  const options = {
-    canvas: msg.canvas
-  }
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para, options).then(onLoad).catch(onError)
+  ARToolkitNFT.ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para).then(onLoad).catch(onError)
 }
 
 function process () {
