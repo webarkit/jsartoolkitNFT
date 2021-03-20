@@ -29,7 +29,7 @@ function load (msg) {
     })
 
     ar.loadNFTMarker(msg.marker).then(function (nft) {
-      var obj = ar.trackNFTMarkerId(nft.id)
+      trackNFTMarkerId(nft.id)
       console.log('loadNFTMarker -> ', nft.id)
       console.log('nftMarker struct: ', nft)
       postMessage({ type: 'endLoading', end: true })
