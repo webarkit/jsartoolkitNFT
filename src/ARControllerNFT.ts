@@ -183,7 +183,6 @@ export default class ARControllerNFT {
   }
 
   process (image: ImageObj) {
-    console.log(image)
     let result = this.detectMarker(image)
     if (result != 0) {
       console.error('[ARControllerNFT]', 'detectMarker error:', result)
@@ -315,7 +314,6 @@ export default class ARControllerNFT {
    */
   detectMarker (image: any) {
     if (this._copyImageToHeap(image)) {
-      console.log('image is ok')
       return this.artoolkitNFT.detectMarker(this.id)
     }
     return -99
@@ -707,7 +705,6 @@ export default class ARControllerNFT {
   async _initialize () {
     // initialize the toolkit
     this.artoolkitNFT = await new ARToolkitNFT().init();
-    console.log(this.artoolkitNFT);
     console.log('[ARControllerNFT]', 'ARToolkitNFT initialized');
 
     // load the camera
@@ -717,8 +714,6 @@ export default class ARControllerNFT {
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
     console.log('[ARControllerNFT]', 'Got ID from setup', this.id);
-    console.log(this);
-
 
     this._initNFT();
 
@@ -759,7 +754,6 @@ export default class ARControllerNFT {
    * @return {number} 0 (void)
    */
   _copyImageToHeap (sourceImage: ImageObj) {
-    console.log('inside _copy')
     if (!sourceImage) {
     // default to preloaded image
       sourceImage = this.image
@@ -774,7 +768,6 @@ export default class ARControllerNFT {
     if (sourceImage.data) {
       // directly use source image
       data = sourceImage.data
-      console.log('get the data')
     } else {
       this.ctx.save()
 

@@ -9,7 +9,6 @@ self.onmessage = function (e) {
     }
     case 'process': {
       next = msg.imagedata
-      console.log(next);
       process()
     }
   }
@@ -23,12 +22,8 @@ function load (msg) {
   console.debug('Loading marker at: ', msg.marker)
 
   var onLoad = function (arController) {
-    console.log(arController)
     ar = arController
     var cameraMatrix = ar.getCameraMatrix()
-    console.log(cameraMatrix);
-    console.log(ar.artoolkitNFT)
-
     ar.addEventListener('getNFTMarker', function (ev) {
       console.log(ev)
       markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)}
@@ -38,7 +33,6 @@ function load (msg) {
       var obj = ar.trackNFTMarkerId(nft.id)
       console.log('loadNFTMarker -> ', nft.id)
       console.log('nftMarker struct: ', nft)
-      console.log(obj)
       postMessage({ type: 'endLoading', end: true })
     }).catch(function (err) {
       console.log('Error in loading marker on Worker', err)
