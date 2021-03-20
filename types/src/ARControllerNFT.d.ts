@@ -80,8 +80,9 @@ export default class ARControllerNFT {
     }>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
-    _initialize(): Promise<this>;
-    _initNFT(): void;
-    _copyImageToHeap(sourceImage: ImageObj): boolean;
+    private converter;
+    private _initialize;
+    private _initNFT;
+    private _copyImageToHeap;
 }
 export {};
