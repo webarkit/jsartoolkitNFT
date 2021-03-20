@@ -192,8 +192,8 @@ export default class ARControllerNFT {
 
     // get NFT markers
     for (k in this.nftMarkers) {
-      //@ts-ignore
-      o = this.nftMarkers[k]
+
+      o = this.converter().nftMarkers[k]
       o.inPrevious = o.inCurrent
       o.inCurrent = false
     }
@@ -698,11 +698,19 @@ export default class ARControllerNFT {
   // private accessors
   // ----------------------------------------------------------------------------
   /**
+   * Used internally by ARControllerNFT, it permit to add methods to this.
+   * @return {any} ARControllerNFT
+   */
+  private converter(): any {
+    return this;
+  }
+
+  /**
    * This function init the ARControllerNFT with the necessary parmeters and variables.
    * Don't call directly this but instead instantiate a new ARControllerNFT.
    * @return {ARControllerNFT} The initialized ARControllerNFT instance
    */
-  async _initialize () {
+  private async _initialize () {
     // initialize the toolkit
     this.artoolkitNFT = await new ARToolkitNFT().init();
     console.log('[ARControllerNFT]', 'ARToolkitNFT initialized');
@@ -745,7 +753,7 @@ export default class ARControllerNFT {
    * Init the necessary kpm handle for NFT and the settings for the CPU.
    * @return {number} 0 (void)
    */
-  _initNFT () {
+  private _initNFT () {
     this.artoolkitNFT.setupAR2(this.id)
    };
 
@@ -753,7 +761,7 @@ export default class ARControllerNFT {
    * Copy the Image data to the HEAP for the debugSetup function.
    * @return {number} 0 (void)
    */
-  _copyImageToHeap (sourceImage: ImageObj) {
+  private _copyImageToHeap (sourceImage: ImageObj) {
     if (!sourceImage) {
     // default to preloaded image
       sourceImage = this.image
