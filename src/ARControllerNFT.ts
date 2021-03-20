@@ -43,6 +43,7 @@ interface delegateMethods {
       id: number,
       pose: Float64Array;
     };
+    loadCamera: (cameraParam: string) => Promise<number>;
     setProjectionNearPlane: {
       (id: number, value: number): void;
     }
@@ -708,11 +709,16 @@ export default class ARControllerNFT {
     this.artoolkitNFT = await new ARToolkitNFT().init();
     console.log(this.artoolkitNFT);
     console.log('[ARControllerNFT]', 'ARToolkitNFT initialized');
+
+    // load the camera
+    this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam)
+    console.log('[ARControllerNFT]', 'Camera params loaded with ID', this.cameraId)
+
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
     console.log('[ARControllerNFT]', 'Got ID from setup', this.id);
     console.log(this);
-    
+
 
     this._initNFT();
 
