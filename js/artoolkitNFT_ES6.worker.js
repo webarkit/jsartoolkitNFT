@@ -23,13 +23,14 @@ function load (msg) {
 
   var onLoad = function (arController) {
     ar = arController
+    console.log(ar);
     var cameraMatrix = ar.getCameraMatrix()
     ar.addEventListener('getNFTMarker', function (ev) {
       markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)}
     })
 
     ar.loadNFTMarker(msg.marker).then(function (nft) {
-      trackNFTMarkerId(nft.id)
+      ar.trackNFTMarkerId(nft.id)
       console.log('loadNFTMarker -> ', nft.id)
       console.log('nftMarker struct: ', nft)
       postMessage({ type: 'endLoading', end: true })
