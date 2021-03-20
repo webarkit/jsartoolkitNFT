@@ -23,8 +23,8 @@ function load (msg) {
 
   var onLoad = function (arController) {
     ar = arController
-    console.log(ar);
     var cameraMatrix = ar.getCameraMatrix()
+
     ar.addEventListener('getNFTMarker', function (ev) {
       markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)}
     })
