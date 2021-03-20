@@ -52,12 +52,14 @@
     "grunt-contrib-qunit": "^4.0.0",
     "grunt-eslint": "^23.0.0",
     "ts-loader": "^8.0.17",
+    "typedoc": "^0.20.32",
     "typescript": "^4.1.5",
     "webpack": "^4.42.1",
     "webpack-cli": "^4.2.0"
   },
   "scripts": {
     "dev-es6": "webpack --mode development --progress --watch",
+    "docs": "typedoc",
     "build-es6": "webpack --mode production",
     "build-jshint": "grunt jshint --force",
     "build": "node tools/makem.js; echo Built at `date`",
