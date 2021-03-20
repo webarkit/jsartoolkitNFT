@@ -123,10 +123,13 @@ export default class ARToolkitNFT {
     // expose constants
     for (const co in this.instance) {
       if (co.match(/^AR/)) {
-        // @ts-ignore
-        this[co] = this.instance[co]
+        this.converter()[co] = this.instance[co]
       }
     }
+  }
+
+  private converter(): any {
+    return this
   }
 
   // ----------------------------------------------------------------------------
