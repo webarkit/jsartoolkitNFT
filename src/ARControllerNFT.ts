@@ -352,7 +352,7 @@ export default class ARControllerNFT {
   //----------------------------------------------------------------------------
 
   /**
-   * Add an event listener on this ARControllerNFTNFT for the named event, calling the callback function
+   * Add an event listener on this ARControllerNFT for the named event, calling the callback function
    * whenever that event is dispatched.
    * Possible events are:
    * - getMarker - dispatched whenever process() finds a square marker
@@ -421,7 +421,7 @@ export default class ARControllerNFT {
    * Converts the given 3x4 marker transformation matrix in the 12-element transMat array
    * into a 4x4 WebGL matrix and writes the result into the 16-element glMat array.
    * If scale parameter is given, scales the transform of the glMat by the scale parameter.
-   * m {Float64Array} transMat The 3x4 marker transformation matrix.
+   * @param {Float64Array} transMat The 3x4 marker transformation matrix.
    * @param {Float64Array} glMat The 4x4 GL transformation matrix.
    * @param {number} scale The scale for the transform.
    */
@@ -807,11 +807,9 @@ export default class ARControllerNFT {
 
       // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
       // see (ARToolKitJS.cpp L: 43)
-      for (let p = 0; p < this.videoSize; p++) {
-        //@ts-ignore
+      for (let p = 0; p < this.videoSize; p++) {      
         let r = data[q + 0], g = data[q + 1], b = data[q + 2];
-        // @see https://stackoverflow.com/a/596241/5843642
-        //@ts-ignore
+        // @see https://stackoverflow.com/a/596241/5843642    
         this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3
         q += 4
       }
