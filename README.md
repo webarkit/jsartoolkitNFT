@@ -51,6 +51,9 @@ then:
 ```javascript
 import { ARToolkitNFT, ARControllerNFT } from '@kalwalt/jsartoolkit-nft'
 ```
+## Downloads
+
+You can download the build libs in the [releases page](https://github.com/webarkit/jsartoolkitNFT/releases). Starting from version 0.8.0 it is possible to download `dist` or `build` zip packages.
 
 or you can clone the repository with git, follow the instructions below:
 
