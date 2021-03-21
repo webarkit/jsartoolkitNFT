@@ -19,8 +19,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: 'ts-loader',
-        /*use: [{
+        use: [{
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
@@ -29,15 +28,21 @@ module.exports = {
               ['@babel/transform-runtime']
             ]
           }
-        }]*/
+        },
+        {
+          loader: 'ts-loader',
+        }
+      ]
       },
     ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
+    fallback: {
+      fs: false,
+      path: false,
+      crypto: false,
+    }
   },
-  // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
-  node: {
-    'fs': 'empty'
-  }
 };
