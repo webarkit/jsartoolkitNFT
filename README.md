@@ -14,11 +14,11 @@ Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html
 
 **JSARToolKitNFT** support only this types of markers:
 
-- NFT (natural feature tracking) markers :white_check_mark: 🎉 🎨
+- NFT (natural feature tracking) markers ✅ 🎉 🎨
 
 has **WASM** embedded in a single file!
 
-:grey_exclamation: from 0.8.0 version has **ES6** feature 🎉 😻
+❕from 0.8.0 version has **ES6** feature 🎉 😻
 
 ## Using the library 💥
 You can use raw.githack.com links:
@@ -54,28 +54,40 @@ import { ARToolkitNFT, ARControllerNFT } from '@kalwalt/jsartoolkit-nft'
 
 or you can clone the repository with git, follow the instructions below:
 
-## Clone the repository :cyclone:
+## Clone the repository 🌀
 
 1. Clone this repository
-2. Clone ARToolKit5 project to get the latest source files. From within JSARToolKitNFT directory do `git submodule update --init`. If you already cloned ARToolKit5 to a different directory you can:
+2. Clone WebARKitLib project to get the latest source files. From within JSARToolKitNFT directory do `git submodule update --init`. If you already cloned WebARKitLib to a different directory you can:
 
-  - create a link in the `jsartoolkitNFT/emscripten/` directory that points to ARToolKit5 (`jsartoolkitNFT/emscripten/artoolkit5`) (Linux and macOS only)
-  - or, set the `WEBARKITLIB_ROOT` environment variable to point to your ARToolKit5 clone
-  - or, change the `tools/makem.js` file to point to your artoolkit5 clone (line 20)
+  - create a link in the `jsartoolkitNFT/emscripten/` directory that points to WebARKitLib (`jsartoolkitNFT/emscripten/WebARKitLib`) (Linux and macOS only)
+  - or, set the `WEBARKITLIB_ROOT` environment variable to point to your WebARKitLib clone
+  - or, change the `tools/makem.js` file to point to your WebARKitLib clone (line 32)
+
+## Documentation
+
+You can build the documentation of the library. You need node and npm installed and then run theses commands in a console:
+
+```nodejs
+npm install
+npm run docs
+```
+At this point you have build the docs in the `docs/` folder, you should run a server and then go to `docs/` folder.
 
 ## ARnft library
 
-**JSARToolKitNFT** is used by [ARnft](https://github.com/kalwalt/ARnft) a small libary that help developers to create **WebAR** apps.
+**JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small libary that help developers to create **WebAR** apps.
 
 ## Project Structure 📂
 
 - `build/` (compiled debug and minified versions of JSARToolKitNFT)
 - `dist/` (compiled UMD lib with ES6 of JSARToolKitNFT)
-- `doc/` (documentation, coming...)
 - `emscripten/` (source code for ARToolKitNFT)
 - `examples/` (demos and examples using JSARToolKitNFT)
-- `js/` (compiled versions of ARToolKit.js with Three.js helper api)
-- `tools/` (build scripts for building JSARToolKitNFT)
+- `js/` (api and workers of JSARToolKitNFT.js for the standard api)
+- `src/` (source code of ARToolKitNFT with Typescript)
+- `tests`/ (tests - WIP)
+- `tools/` (build scripts for building JSARToolKitNFT with Emscripten)
+- `types/` (type definitions of ARToolKitNFT)
 
 ## WebAssembly 👋
 
@@ -93,9 +105,9 @@ window.addEventListener('artoolkitNFT-loaded', () => {
 });
 ```
 
-See the examples for details.
+See the examples folder for details.
 
 
 ## Build the project 🔨
 
-Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more infos
+Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more infos. Note that you need to build the library only if you make changes to the source code.
