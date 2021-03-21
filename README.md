@@ -23,7 +23,7 @@ has **WASM** embedded in a single file!
 ## Using the library 💥
 You can use raw.githack.com links:
 
-**WASM** version of the libary:
+**WASM** version of the library:
 
 ```html
 <script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
@@ -35,7 +35,7 @@ You can use raw.githack.com links:
 <script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
 ```
 
-or (recommended) use the **UMD** libary:
+or (recommended) use the **UMD** library:
 
 ```html
 <script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
