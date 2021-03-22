@@ -1,7 +1,11 @@
-[![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](https://gruntjs.com/)
-<img src="https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot" alt="Dependabot Badge" />
-[![Build Status](https://travis-ci.com/kalwalt/jsartoolkitNFT.svg?branch=master)](https://travis-ci.com/kalwalt/jsartoolkitNFT)
-[![Build Status](https://app.bitrise.io/app/27069fc90c01edd4/status.svg?token=NEccMUM1Jh8TFezKwDexAw)](https://app.bitrise.io/app/27069fc90c01edd4)
+<img src="https://flat.badgen.net/github/release/webarkit/jsartoolkitNFT" alt="github releases"/>
+<img src="https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT" alt="github stars"/>
+<img src="https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT" alt="github forks"/>
+<img src="https://flat.badgen.net/
+npm/v/@kalwalt/jsartoolkit-nft" alt="npm package version"/>
+<img src="https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot" alt="Dependabot Badge"/>
+
+
 
 # JSARToolKitNFT
 
@@ -10,15 +14,24 @@ Modified and lighter version of [JSARToolKit5](https://github.com/artoolkitx/jsa
 
 Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html](https://kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html)
 
-## Markers Types
+## Features
+### Markers Types
 
 **JSARToolKitNFT** support only this types of markers:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 
+## WASM
+
 has **WASM** embedded in a single file!
 
-❕from 0.8.0 version has **ES6** feature 🎉 😻
+## ES6
+
+❕From 0.8.0 version has **ES6** feature 🎉 😻
+
+## Typescript
+
+❕From 0.9.0 version has **Typescript** feature 💖 💣
 
 ## Using the library 💥
 You can use raw.githack.com links:
