@@ -36,7 +36,7 @@
       "src/ARControllerNFT.ts",
       "src/ARToolkitNFT.ts",
       "src/ModuleLoader.ts",
-      "src/utils.ts"
+      "src/Utils.ts"
     ],
     "out": "docs"
     },
