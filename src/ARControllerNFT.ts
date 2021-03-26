@@ -144,7 +144,7 @@ export default class ARControllerNFT {
    * @param {string} cameraParam
    * @param {object} options
    */
-  constructor (width: number, height: number, cameraParam: string, options: object) {
+  constructor (width: number, height: number, cameraParam: string, options?: object) {
     // read settings
     this.options = {...{
         canvas: null,
@@ -216,13 +216,13 @@ export default class ARControllerNFT {
     this.defaultMarkerWidth = 1
   }
 
-  static async initWithDimensions (width: number, height: number, cameraParam: string, options: object) {
+  static async initWithDimensions (width: number, height: number, cameraParam: string, options?: object) {
     // directly init with given width / height
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam, options)
     return await arControllerNFT._initialize()
   }
 
-  static async initNFTWithImage (image: ImageObj, cameraParam: string, options: object) {
+  static async initNFTWithImage (image: ImageObj, cameraParam: string, options?: object) {
     const width = image.videoWidth || image.width
     const height = image.videoHeight || image.height
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam, options)
