@@ -222,7 +222,7 @@ export default class ARControllerNFT {
     return await arControllerNFT._initialize()
   }
 
-  static async initNFTWithImage (image: ImageObj, cameraParam: string, options?: object) {
+  static async initWithImage (image: ImageObj, cameraParam: string, options?: object) {
     const width = image.videoWidth || image.width
     const height = image.videoHeight || image.height
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam, options)
