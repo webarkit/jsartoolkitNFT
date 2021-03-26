@@ -1,8 +1,7 @@
 <img src="https://flat.badgen.net/github/release/webarkit/jsartoolkitNFT" alt="github releases"/>
 <img src="https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT" alt="github stars"/>
 <img src="https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT" alt="github forks"/>
-<img src="https://flat.badgen.net/
-npm/v/@kalwalt/jsartoolkit-nft" alt="npm package version"/>
+<img src="https://flat.badgen.net/npm/v/@kalwalt/jsartoolkit-nft" alt="npm package version"/>
 <img src="https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot" alt="Dependabot Badge"/>
 
 
