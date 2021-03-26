@@ -39,7 +39,7 @@ export default class ARControllerNFT {
     private _bwpointer;
     constructor(width: number, height: number, cameraParam: string, options?: object);
     static initWithDimensions(width: number, height: number, cameraParam: string, options?: object): Promise<ARControllerNFT>;
-    static initNFTWithImage(image: ImageObj, cameraParam: string, options?: object): Promise<ARControllerNFT>;
+    static initWithImage(image: ImageObj, cameraParam: string, options?: object): Promise<ARControllerNFT>;
     process(image: ImageObj): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): any;
