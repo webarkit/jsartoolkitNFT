@@ -1,3 +1,6 @@
 emscripten/*
 examples/*
 tools/*
+build/*.bc
+*.zip
+docs/*
