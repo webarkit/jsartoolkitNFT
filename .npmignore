@@ -1,3 +1,10 @@
+emscripten/
 emscripten/*
+emscripten/**/*
 examples/*
+tools/
 tools/*
+build/*.bc
+*.zip
+docs/**/*
+docs/
