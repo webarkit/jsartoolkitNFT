@@ -16,6 +16,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("detectMarker", &detectMarker);
 	function("detectNFTMarker", &detectNFTMarker);
 	function("getNFTMarker", &getNFTMarkerInfo);
+	function("getNFTData", &getNFTData);
 
 	/* nft marker struct */
 	value_object<nftMarker>("nftMarker")
