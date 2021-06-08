@@ -547,6 +547,70 @@ extern "C" {
 		return nft;
 	}
 
+	std::vector<int> addNFTMarkers(int id, std::vector<std::string> &datasetPathnames) {
+		if (arControllers.find(id) == arControllers.end()) { return {}; }
+		arController *arc = &(arControllers[id]);
+
+        KpmHandle *kpmHandle = arc->kpmHandle;
+
+        KpmRefDataSet *refDataSet;
+        refDataSet = NULL;
+
+        if (datasetPathnames.size() >= PAGES_MAX) {
+            ARLOGe("Error exceed maximum pages\n");
+            exit(-1);
+        }
+
+        std::vector<int> markerIds = {};
+
+        for (int i = 0; i < datasetPathnames.size(); i++) {
+            ARLOGi("add NFT marker- '%s' \n", datasetPathnames[i].c_str());
+
+            const char* datasetPathname = datasetPathnames[i].c_str();
+            int pageNo = i;
+            markerIds.push_back(i);
+
+            // Load KPM data.
+            KpmRefDataSet  *refDataSet2;
+            ARLOGi("Reading %s.fset3\n", datasetPathname);
+            if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0 ) {
+                ARLOGe("Error reading KPM data from %s.fset3\n", datasetPathname);
+                return {};
+            }
+            ARLOGi("  Assigned page no. %d.\n", pageNo);
+            if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages, pageNo) < 0) {
+                ARLOGe("Error: kpmChangePageNoOfRefDataSet\n");
+                return {};
+            }
+            if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0) {
+                ARLOGe("Error: kpmMergeRefDataSet\n");
+                return {};
+            }
+            ARLOGi("Done.\n");
+
+            // Load AR2 data.
+            ARLOGi("Reading %s.fset\n", datasetPathname);
+
+            if ((arc->surfaceSet[i] = ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL ) {
+                ARLOGe("Error reading data from %s.fset\n", datasetPathname);
+                return {};
+            }
+            ARLOGi("Done.\n");
+        }
+
+        if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
+            ARLOGe("Error: kpmSetRefDataSet\n");
+            return {};
+        }
+        kpmDeleteRefDataSet(&refDataSet);
+
+        ARLOGi("Loading of NFT data complete.\n");
+
+		arc->surfaceSetCount += markerIds.size();
+
+        return markerIds;
+    }
+
 	/**********************
 	* Setters and getters *
 	**********************/

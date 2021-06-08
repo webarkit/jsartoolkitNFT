@@ -10,6 +10,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("setupAR2", &setupAR2);
 
 	function("_addNFTMarker", &addNFTMarker);
+	function("_addNFTMarkers", &addNFTMarkers);
 
 	function("_loadCamera", &loadCamera);
 
@@ -21,9 +22,9 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	/* nft marker struct */
 	value_object<nftMarker>("nftMarker")
 	.field("id", &nftMarker::id_NFT)
-  .field("width", &nftMarker::width_NFT)
-  .field("height", &nftMarker::height_NFT)
-  .field("dpi", &nftMarker::dpi_NFT);
+	.field("width", &nftMarker::width_NFT)
+	.field("height", &nftMarker::height_NFT)
+	.field("dpi", &nftMarker::dpi_NFT);
 
 	/* AR Toolkit C APIS */
 	function("setDebugMode", &setDebugMode);
