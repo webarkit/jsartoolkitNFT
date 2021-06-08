@@ -386,6 +386,21 @@ extern "C" {
 		return (TRUE);
 	}
 
+	nftMarker getNFTData(int id) {
+		nftMarker nft;
+		if (arControllers.find(id) == arControllers.end()) { return nft; }
+		arController *arc = &(arControllers[id]);
+
+		// get marker(s) nft data.
+
+		nft.id_NFT = arc->surfaceSetCount;
+		nft.width_NFT = arc->nft.width_NFT;
+		nft.height_NFT = arc->nft.height_NFT;
+		nft.dpi_NFT = arc->nft.dpi_NFT;
+
+		return nft;
+	}
+
 	/***************
 	 * Set Log Level
 	 ****************/
@@ -525,9 +540,9 @@ extern "C" {
 		arc->surfaceSetCount++;
 
 		nft.id_NFT = patt_id;
-    nft.width_NFT = arc->nft.width_NFT;
-    nft.height_NFT = arc->nft.height_NFT;
-    nft.dpi_NFT = arc->nft.dpi_NFT;
+		nft.width_NFT = arc->nft.width_NFT;
+		nft.height_NFT = arc->nft.height_NFT;
+		nft.dpi_NFT = arc->nft.dpi_NFT;
 
 		return nft;
 	}
