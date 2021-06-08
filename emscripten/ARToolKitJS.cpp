@@ -114,9 +114,6 @@ extern "C" {
 			return MARKER_INDEX_OUT_OF_BOUNDS;
 		}
 
-		KpmResult *kpmResult = NULL;
-		int kpmResultNum = -1;
-
 		float trans[3][4];
 
 		#if WITH_FILTERING
@@ -126,40 +123,8 @@ extern "C" {
 		#endif
 
 		float err = -1;
-		if (arc->detectedPage == -2) {
-			kpmMatching( arc->kpmHandle, arc->videoLuma );
-			kpmGetResult( arc->kpmHandle, &kpmResult, &kpmResultNum );
-
-			#if WITH_FILTERING
-			arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
-			#endif
-
-			int i, j, k;
-			int flag = -1;
-			for( i = 0; i < kpmResultNum; i++ ) {
-				if (kpmResult[i].pageNo == markerIndex && kpmResult[i].camPoseF == 0 ) {
-					if( flag == -1 || err > kpmResult[i].error ) { // Take the first or best result.
-						flag = i;
-						err = kpmResult[i].error;
-					}
-				}
-			}
-
-			if (flag > -1) {
-				arc->detectedPage = kpmResult[0].pageNo;
-
-				for (j = 0; j < 3; j++) {
-					for (k = 0; k < 4; k++) {
-						trans[j][k] = kpmResult[flag].camPose[j][k];
-					}
-				}
-				ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
-			} else {
-				arc->detectedPage = -2;
-			}
-		}
-
-		if (arc->detectedPage >= 0) {
+		if (arc->detectedPage == markerIndex) {
+			
 			int trackResult = ar2TrackingMod(arc->ar2Handle, arc->surfaceSet[arc->detectedPage], arc->videoFrame, trans, &err);
 
 			#if WITH_FILTERING
@@ -191,7 +156,7 @@ extern "C" {
 			}
 		}
 
-		if (arc->detectedPage >= 0) {
+		if (arc->detectedPage == markerIndex) {
 			EM_ASM_({
 				var $a = arguments;
 				var i = 0;
@@ -301,6 +266,29 @@ extern "C" {
 
 		KpmResult *kpmResult = NULL;
 		int kpmResultNum = -1;
+
+		if (arc->detectedPage == -2) {
+        kpmMatching( arc->kpmHandle, arc->videoLuma );
+        kpmGetResult( arc->kpmHandle, &kpmResult, &kpmResultNum );
+
+			#if WITH_FILTERING
+			arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
+			#endif
+
+			for(int i = 0; i < kpmResultNum; i++ ) {
+				if (kpmResult[i].camPoseF == 0 ) {
+
+                    float trans[3][4];
+                    arc->detectedPage = kpmResult[i].pageNo;
+                    for (int j = 0; j < 3; j++) {
+                        for (int k = 0; k < 4; k++) {
+                            trans[j][k] = kpmResult[i].camPose[j][k];
+                        }
+                    }
+                    ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
+                }
+            }
+        }
 		return kpmResultNum;
 	}
 
