@@ -271,6 +271,7 @@ export default class ARToolkitNFT {
     let out;
     let prefixes: any = [];
     let vec;
+    prefixes.push(targetPrefix);
     for (var i = 0; i < urls.length; i++) {
         console.log('inside for cycle');
         console.log(i);      
@@ -286,10 +287,11 @@ export default class ARToolkitNFT {
           const markerIds = [];
           console.log(prefixes.length);
           for (let v = 0; v < prefixes.length; v++) {
+            //prefixes.push(targetPrefix);
             vec.push_back(prefixes[v]);    
           }
           //var prefix = '/markerNFT_' + marker_count;
-          prefixes.push(targetPrefix);
+          //prefixes.push(targetPrefix);
           console.log(vec);
         }
 
