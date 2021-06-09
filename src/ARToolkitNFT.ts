@@ -188,7 +188,9 @@ export default class ARToolkitNFT {
       'getThreshold',
 
       'setImageProcMode',
-      'getImageProcMode'
+      'getImageProcMode',
+
+      'StringList'
     ].forEach(method => {
       this.converter()[method] = this.instance[method]
     })
@@ -260,6 +262,45 @@ export default class ARToolkitNFT {
 
     // return the internal marker ID
     return this.instance._addNFTMarker(arId, targetPrefix)
+  }
+
+  public async addNFTMarkers(arId: number, urls: Array<string>): Promise<{id: number}> {
+    // url doesn't need to be a valid url. Extensions to make it valid will be added here
+    const targetPrefix = '/markerNFT_' + this.markerNFTCount++
+    const extensions = ['fset', 'iset', 'fset3']
+    let out;
+    var prefixes: any = [];
+    var pending = urls.length * 3;
+    pending -= 1;
+    if (pending === 0) {
+        const vec = new this.instance.StringList();
+        const markerIds = [];
+        for (let i = 0; i < prefixes.length; i++) {
+            vec.push_back(prefixes[i]);
+        }
+    /*var ret = Module._addNFTMarkers(arId, vec);
+    for (let i = 0; i < ret.size(); i++) {
+      markerIds.push(ret.get(i));
+    }*/
+    for (var i = 0; i < urls.length; i++) {
+        let url = urls[i];
+        const storeMarker = async (ext: string) => {
+          const fullUrl = url + '.' + ext
+          const target = targetPrefix + '.' + ext
+          const data = await Utils.fetchRemoteData(fullUrl)
+          this._storeDataFile(data, target)
+        }
+
+        const promises = extensions.map(storeMarker, this)
+    
+        await Promise.all(promises)
+    }
+    out = this.instance._addNFTMarkers(arId, vec)
+
+  }
+
+    // return the internal marker ID
+    return out
   }
 
   // ---------------------------------------------------------------------------
