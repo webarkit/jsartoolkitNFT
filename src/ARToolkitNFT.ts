@@ -271,12 +271,14 @@ export default class ARToolkitNFT {
     let out;
     let prefixes: any = [];
     let vec;
+    const markerIds: any = [];
     prefixes.push(targetPrefix);
     for (var i = 0; i < urls.length; i++) {
         console.log('inside for cycle');
         console.log(i);      
         const url = urls[i];
-        console.log(url);      
+        console.log(url); 
+            
         const storeMarker = async (ext: string) => {
           const fullUrl = url + '.' + ext
           const target = targetPrefix + '.' + ext
@@ -299,12 +301,15 @@ export default class ARToolkitNFT {
     
         await Promise.all(promises)
 
-   // out = this.instance._addNFTMarkers(arId, vec)
+    out = this.instance._addNFTMarkers(arId, vec)
+    for (let i = 0; i < out.size(); i++) {
+      markerIds.push(out.get(i));
+  }
 
   }//for cycle end
 
     // return the internal marker ID
-    return this.instance._addNFTMarkers(arId, vec)
+    return markerIds
   }
 
   // ---------------------------------------------------------------------------
