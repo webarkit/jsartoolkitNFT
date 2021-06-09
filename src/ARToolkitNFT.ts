@@ -273,37 +273,36 @@ export default class ARToolkitNFT {
     let vec;
     for (var i = 0; i < urls.length; i++) {
         console.log('inside for cycle');
-      
+        console.log(i);      
         const url = urls[i];
-        console.log(url);
-        
+        console.log(url);      
         const storeMarker = async (ext: string) => {
           const fullUrl = url + '.' + ext
           const target = targetPrefix + '.' + ext
           const data = await Utils.fetchRemoteData(fullUrl)
           this._storeDataFile(data, target)
-           vec = new this.instance.StringList();
+          vec = new this.instance.StringList();
           console.log(vec);
-        const markerIds = [];
-        for (let i = 0; i < prefixes.length; i++) {
-            vec.push_back(prefixes[i]);
-        }
-        //var prefix = '/markerNFT_' + marker_count;
-        prefixes.push(targetPrefix);
-
-        console.log(vec);
+          const markerIds = [];
+          console.log(prefixes.length);
+          for (let v = 0; v < prefixes.length; v++) {
+            vec.push_back(prefixes[v]);    
+          }
+          //var prefix = '/markerNFT_' + marker_count;
+          prefixes.push(targetPrefix);
+          console.log(vec);
         }
 
         const promises = extensions.map(storeMarker, this)
     
         await Promise.all(promises)
 
-    out = this.instance._addNFTMarkers(arId, vec)
+   // out = this.instance._addNFTMarkers(arId, vec)
 
-  }
+  }//for cycle end
 
     // return the internal marker ID
-    return out
+    return this.instance._addNFTMarkers(arId, vec)
   }
 
   // ---------------------------------------------------------------------------
