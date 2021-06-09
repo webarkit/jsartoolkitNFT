@@ -32,7 +32,6 @@ function load (msg) {
     ar.loadNFTMarker2([msg.marker]).then(function (id) {
       ar.trackNFTMarkerId(id)
       console.log('loadNFTMarker -> ', id)
-      //console.log('nftMarker struct: ', nft)
       postMessage({ type: 'endLoading', end: true })
     }).catch(function (err) {
       console.log('Error in loading marker on Worker', err)

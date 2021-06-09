@@ -269,32 +269,35 @@ export default class ARToolkitNFT {
     const targetPrefix = '/markerNFT_' + this.markerNFTCount++
     const extensions = ['fset', 'iset', 'fset3']
     let out;
-    var prefixes: any = [];
-    var pending = urls.length * 3;
-    pending -= 1;
-    if (pending === 0) {
-        const vec = new this.instance.StringList();
-        const markerIds = [];
-        for (let i = 0; i < prefixes.length; i++) {
-            vec.push_back(prefixes[i]);
-        }
-    /*var ret = Module._addNFTMarkers(arId, vec);
-    for (let i = 0; i < ret.size(); i++) {
-      markerIds.push(ret.get(i));
-    }*/
+    let prefixes: any = [];
+    let vec;
     for (var i = 0; i < urls.length; i++) {
-        let url = urls[i];
+        console.log('inside for cycle');
+      
+        const url = urls[i];
+        console.log(url);
+        
         const storeMarker = async (ext: string) => {
           const fullUrl = url + '.' + ext
           const target = targetPrefix + '.' + ext
           const data = await Utils.fetchRemoteData(fullUrl)
           this._storeDataFile(data, target)
+           vec = new this.instance.StringList();
+          console.log(vec);
+        const markerIds = [];
+        for (let i = 0; i < prefixes.length; i++) {
+            vec.push_back(prefixes[i]);
+        }
+        //var prefix = '/markerNFT_' + marker_count;
+        prefixes.push(targetPrefix);
+
+        console.log(vec);
         }
 
         const promises = extensions.map(storeMarker, this)
     
         await Promise.all(promises)
-    }
+
     out = this.instance._addNFTMarkers(arId, vec)
 
   }
