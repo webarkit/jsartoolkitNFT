@@ -595,6 +595,18 @@ extern "C" {
                 ARLOGe("Error reading data from %s.fset\n", datasetPathname);
                 return {};
             }
+
+			int surfaceSetCount = arc->surfaceSetCount;
+			int numIset = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->num;
+			arc->nft.width_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->xsize;
+			arc->nft.height_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->ysize;
+			arc->nft.dpi_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->dpi;
+
+			ARLOGi("NFT num. of ImageSet: %i\n", numIset);
+			ARLOGi("NFT marker width: %i\n", arc->nft.width_NFT);
+			ARLOGi("NFT marker height: %i\n", arc->nft.height_NFT);
+			ARLOGi("NFT marker dpi: %i\n", arc->nft.dpi_NFT);
+
             ARLOGi("Done.\n");
         }
 

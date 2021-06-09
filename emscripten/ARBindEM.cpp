@@ -4,6 +4,9 @@ using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(constant_bindings) {
 
+	register_vector<std::string>("StringList");
+    register_vector<int>("IntList");
+
 	function("setup", &setup);
 	function("teardown", &teardown);
 
