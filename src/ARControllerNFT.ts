@@ -90,7 +90,7 @@ interface delegateMethods {
     setThreshold: (id: number, threshold: number) => number;
     getThreshold: (id: number) => number;
     addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
-    addNFTMarkers: (arId: number, urls: Array<string>) => Promise<{id: number}>;
+    addNFTMarkers: (arId: number, urls: Array<string>) => Promise<[{id: number}]>;
     detectMarker: (id: number) => number;
     detectNFTMarker: (arId: number) => void;
     getNFTMarker: (id: number, markerIndex: number) => number;
@@ -716,7 +716,7 @@ export default class ARControllerNFT {
   */
    async loadNFTMarker2 (urlOrData: Array<string>) {
     let nft = await this.artoolkitNFT.addNFTMarkers(this.id, urlOrData)
-    //this.nftMarkerCount = nft.id + 1
+    this.nftMarkerCount += nft.length;
     return nft
   };
 

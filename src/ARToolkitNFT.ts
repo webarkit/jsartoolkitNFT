@@ -264,7 +264,7 @@ export default class ARToolkitNFT {
     return this.instance._addNFTMarker(arId, targetPrefix)
   }
 
-  public async addNFTMarkers(arId: number, urls: Array<string>): Promise<{id: number}> {
+  public async addNFTMarkers(arId: number, urls: Array<string>): Promise<[{id: number}]> {
     // url doesn't need to be a valid url. Extensions to make it valid will be added here
     const targetPrefix = '/markerNFT_' + this.markerNFTCount++
     const extensions = ['fset', 'iset', 'fset3']
@@ -273,40 +273,30 @@ export default class ARToolkitNFT {
     let vec;
     const markerIds: any = [];
     prefixes.push(targetPrefix);
-    for (var i = 0; i < urls.length; i++) {
-        console.log('inside for cycle');
-        console.log(i);      
+    for (var i = 0; i < urls.length; i++) {   
         const url = urls[i];
-        console.log(url); 
-            
         const storeMarker = async (ext: string) => {
           const fullUrl = url + '.' + ext
           const target = targetPrefix + '.' + ext
           const data = await Utils.fetchRemoteData(fullUrl)
           this._storeDataFile(data, target)
           vec = new this.instance.StringList();
-          console.log(vec);
           const markerIds = [];
-          console.log(prefixes.length);
           for (let v = 0; v < prefixes.length; v++) {
-            //prefixes.push(targetPrefix);
             vec.push_back(prefixes[v]);    
           }
-          //var prefix = '/markerNFT_' + marker_count;
-          //prefixes.push(targetPrefix);
-          console.log(vec);
         }
 
         const promises = extensions.map(storeMarker, this)
     
         await Promise.all(promises)
 
-    out = this.instance._addNFTMarkers(arId, vec)
-    for (let i = 0; i < out.size(); i++) {
-      markerIds.push(out.get(i));
-  }
+        out = this.instance._addNFTMarkers(arId, vec)
+        for (let i = 0; i < out.size(); i++) {
+          markerIds.push(out.get(i));
+        }
 
-  }//for cycle end
+    }
 
     // return the internal marker ID
     return markerIds

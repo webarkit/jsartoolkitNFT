@@ -58,8 +58,8 @@ export default class ARToolkitNFT {
     addNFTMarker(arId: number, url: string): Promise<{
         id: number;
     }>;
-    addNFTMarkers(arId: number, urls: Array<string>): Promise<{
+    addNFTMarkers(arId: number, urls: Array<string>): Promise<[{
         id: number;
-    }>;
+    }]>;
     private _storeDataFile;
 }
