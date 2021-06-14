@@ -55,9 +55,6 @@ export default class ARToolkitNFT {
     private _decorate;
     private converter;
     loadCamera(urlOrData: any): Promise<number>;
-    addNFTMarker(arId: number, url: string): Promise<{
-        id: number;
-    }>;
     addNFTMarkers(arId: number, urls: Array<string>): Promise<[{
         id: number;
     }]>;

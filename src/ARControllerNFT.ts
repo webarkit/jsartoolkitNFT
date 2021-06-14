@@ -89,7 +89,6 @@ interface delegateMethods {
     getThresholdMode: (id: number) => number;
     setThreshold: (id: number, threshold: number) => number;
     getThreshold: (id: number) => number;
-    addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
     addNFTMarkers: (arId: number, urls: Array<string>) => Promise<[{id: number}]>;
     detectMarker: (id: number) => number;
     detectNFTMarker: (arId: number) => void;
@@ -704,17 +703,17 @@ export default class ARControllerNFT {
    * Loads an NFT marker from the given URL or data string
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
   */
-  async loadNFTMarker (urlOrData: string) {
-    let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
-    this.nftMarkerCount = nft.id + 1
+   async loadNFTMarker (urlOrData: string) {
+    let nft = await this.artoolkitNFT.addNFTMarkers(this.id, [urlOrData])
+    this.nftMarkerCount += nft.length;
     return nft
   };
 
   /**
-   * Loads an NFT marker from the given URL or data string
-   * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
+   * Loads an array of NFT markers from the given URLs or data string
+   * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
   */
-   async loadNFTMarker2 (urlOrData: Array<string>) {
+   async loadNFTMarkers (urlOrData: Array<string>) {
     let nft = await this.artoolkitNFT.addNFTMarkers(this.id, urlOrData)
     this.nftMarkerCount += nft.length;
     return nft

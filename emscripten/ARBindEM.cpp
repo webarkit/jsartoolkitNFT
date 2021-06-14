@@ -12,7 +12,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	function("setupAR2", &setupAR2);
 
-	function("_addNFTMarker", &addNFTMarker);
 	function("_addNFTMarkers", &addNFTMarkers);
 
 	function("_loadCamera", &loadCamera);

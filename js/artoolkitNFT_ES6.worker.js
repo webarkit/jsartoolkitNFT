@@ -29,7 +29,7 @@ function load (msg) {
       markerResult = { type: 'found', matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)}
     })
 
-    ar.loadNFTMarker2([msg.marker]).then(function (id) {
+    ar.loadNFTMarker(msg.marker).then(function (id) {
       ar.trackNFTMarkerId(id[0])
       console.log('loadNFTMarker -> ', id[0])
       postMessage({ type: 'endLoading', end: true })

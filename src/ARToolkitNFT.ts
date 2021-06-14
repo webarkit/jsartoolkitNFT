@@ -240,29 +240,11 @@ export default class ARToolkitNFT {
   }
 
   /**
-   * Load the NFT Marker (.fset, .iset and .fset3) in the code, Must be provided
+   * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
    * the url of the file without the extension. If fails to load it raise an error.
    * @param {number} arId internal id
-   * @param {string} url url of the descriptors files without ext
+   * @param {Array<string>} urls  array of urls of the descriptors files without ext
    */
-  public async addNFTMarker (arId: number, url: string): Promise<{id: number}> {
-    // url doesn't need to be a valid url. Extensions to make it valid will be added here
-    const targetPrefix = '/markerNFT_' + this.markerNFTCount++
-    const extensions = ['fset', 'iset', 'fset3']
-
-    const storeMarker = async (ext: string) => {
-      const fullUrl = url + '.' + ext
-      const target = targetPrefix + '.' + ext
-      const data = await Utils.fetchRemoteData(fullUrl)
-      this._storeDataFile(data, target)
-    }
-
-    const promises = extensions.map(storeMarker, this)
-    await Promise.all(promises)
-
-    // return the internal marker ID
-    return this.instance._addNFTMarker(arId, targetPrefix)
-  }
 
   public async addNFTMarkers(arId: number, urls: Array<string>): Promise<[{id: number}]> {
     // url doesn't need to be a valid url. Extensions to make it valid will be added here

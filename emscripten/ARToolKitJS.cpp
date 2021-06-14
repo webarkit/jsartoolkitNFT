@@ -327,65 +327,6 @@ extern "C" {
 		return 0;
 	}
 
-	int loadNFTMarker(arController *arc, int surfaceSetCount, const char* datasetPathname) {
-		int i, pageNo, numIset;
-		KpmRefDataSet *refDataSet;
-
-		KpmHandle *kpmHandle = arc->kpmHandle;
-
-		refDataSet = NULL;
-
-		// Load KPM data.
-		KpmRefDataSet  *refDataSet2;
-		ARLOGi("Reading %s.fset3\n", datasetPathname);
-		if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0 ) {
-			ARLOGe("Error reading KPM data from %s.fset3\n", datasetPathname);
-			pageNo = -1;
-			return (FALSE);
-		}
-		pageNo = surfaceSetCount;
-		ARLOGi("  Assigned page no. %d.\n", surfaceSetCount);
-		if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages, surfaceSetCount) < 0) {
-		    ARLOGe("Error: kpmChangePageNoOfRefDataSet\n");
-		    return (FALSE);
-		}
-		if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0) {
-		    ARLOGe("Error: kpmMergeRefDataSet\n");
-		    return (FALSE);
-		}
-		ARLOGi("  Done.\n");
-
-		// Load AR2 data.
-		ARLOGi("Reading %s.fset\n", datasetPathname);
-
-		if ((arc->surfaceSet[surfaceSetCount] = ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL ) {
-		    ARLOGe("Error reading data from %s.fset\n", datasetPathname);
-		}
-
-		numIset = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->num;
-		arc->nft.width_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->xsize;
-		arc->nft.height_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->ysize;
-		arc->nft.dpi_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->dpi;
-
-		ARLOGi("NFT num. of ImageSet: %i\n", numIset);
-		ARLOGi("NFT marker width: %i\n", arc->nft.width_NFT);
-		ARLOGi("NFT marker height: %i\n", arc->nft.height_NFT);
-		ARLOGi("NFT marker dpi: %i\n", arc->nft.dpi_NFT);
-
-		ARLOGi("  Done.\n");
-
-	if (surfaceSetCount == PAGES_MAX) exit(-1);
-
-		if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
-		    ARLOGe("Error: kpmSetRefDataSet\n");
-		    return (FALSE);
-		}
-		kpmDeleteRefDataSet(&refDataSet);
-
-		ARLOGi("Loading of NFT data complete.\n");
-		return (TRUE);
-	}
-
 	nftMarker getNFTData(int id) {
 		nftMarker nft;
 		if (arControllers.find(id) == arControllers.end()) { return nft; }
@@ -524,28 +465,6 @@ extern "C" {
 	/*****************
 	* Marker loading *
 	*****************/
-
-	nftMarker addNFTMarker(int id, std::string datasetPathname) {
-		nftMarker nft;
-		if (arControllers.find(id) == arControllers.end()) { return nft; }
-		arController *arc = &(arControllers[id]);
-
-		// Load marker(s).
-		int patt_id = arc->surfaceSetCount;
-		if (!loadNFTMarker(arc, patt_id, datasetPathname.c_str())) {
-			ARLOGe("ARToolKitJS(): Unable to set up NFT marker.\n");
-			return nft;
-		}
-
-		arc->surfaceSetCount++;
-
-		nft.id_NFT = patt_id;
-		nft.width_NFT = arc->nft.width_NFT;
-		nft.height_NFT = arc->nft.height_NFT;
-		nft.dpi_NFT = arc->nft.dpi_NFT;
-
-		return nft;
-	}
 
 	std::vector<int> addNFTMarkers(int id, std::vector<std::string> &datasetPathnames) {
 		if (arControllers.find(id) == arControllers.end()) { return {}; }

@@ -76,10 +76,10 @@ export default class ARControllerNFT {
     getThresholdMode(): number;
     setThreshold(threshold: number): number;
     getThreshold(): number;
-    loadNFTMarker(urlOrData: string): Promise<{
+    loadNFTMarker(urlOrData: string): Promise<[{
         id: number;
-    }>;
-    loadNFTMarker2(urlOrData: Array<string>): Promise<[{
+    }]>;
+    loadNFTMarkers(urlOrData: Array<string>): Promise<[{
         id: number;
     }]>;
     setImageProcMode(mode: number): number;
