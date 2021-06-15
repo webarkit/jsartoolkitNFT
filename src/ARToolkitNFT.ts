@@ -248,14 +248,19 @@ export default class ARToolkitNFT {
 
   public async addNFTMarkers(arId: number, urls: Array<string>): Promise<[{id: number}]> {
     // url doesn't need to be a valid url. Extensions to make it valid will be added here
-    const targetPrefix = '/markerNFT_' + this.markerNFTCount++
+    console.log(this.markerNFTCount);
+    
+    //const targetPrefix = '/markerNFT_' + this.markerNFTCount
     const extensions = ['fset', 'iset', 'fset3']
     let out;
     let prefixes: any = [];
     let vec;
     const markerIds: any = [];
-    prefixes.push(targetPrefix);
+    //prefixes.push(targetPrefix);
     for (var i = 0; i < urls.length; i++) {   
+      const targetPrefix = '/markerNFT_' + this.markerNFTCount++
+      console.log(this.markerNFTCount);
+      prefixes.push(targetPrefix);
         const url = urls[i];
         const storeMarker = async (ext: string) => {
           const fullUrl = url + '.' + ext
