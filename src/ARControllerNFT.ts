@@ -90,6 +90,7 @@ interface delegateMethods {
     setThreshold: (id: number, threshold: number) => number;
     getThreshold: (id: number) => number;
     addNFTMarkers: (arId: number, urls: Array<string>) => Promise<[{id: number}]>;
+    addNFTMarkers2: (arId: number, urls: Array<string>) => Promise<[{id: number}]>;
     detectMarker: (id: number) => number;
     detectNFTMarker: (arId: number) => void;
     getNFTMarker: (id: number, markerIndex: number) => number;
