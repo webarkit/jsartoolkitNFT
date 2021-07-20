@@ -49,6 +49,7 @@ interface ImageObj {
 }
 
 interface delegateMethods {
+    addNFTMarkersnew: any;
     setup: {
         (width: number, height: number, cameraId: number): number
     }
@@ -715,7 +716,7 @@ export default class ARControllerNFT {
    * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
   */
    async loadNFTMarkers (urlOrData: Array<string>) {
-    let nft = await this.artoolkitNFT.addNFTMarkers2(this.id, urlOrData)
+    let nft = await this.artoolkitNFT.addNFTMarkersnew(this.id, urlOrData)
     this.nftMarkerCount += nft.length;
     return nft
   };

@@ -297,13 +297,57 @@ export default class ARToolkitNFT {
   public async addNFTMarkers2(arId: number, urls: Array<string>): Promise<[{id: number}]> {
     // url doesn't need to be a valid url. Extensions to make it valid will be added here
     let markerIds: any;
-    const promises = urls.map(url =>{this._storeNFTMarkers(arId, url)})
+    const promises = urls.map(url =>{
+      console.log(url); 
+      this._storeNFTMarkers(arId, url)})
+    console.log(promises);
+    
 
     await Promise.all(promises).then((id)=> {markerIds = id})
     console.log( markerIds)
 
     // return the internal marker ID
     return markerIds
+  }
+
+  public addNFTMarkersnew(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void): void {
+    var prefixes: any = [];
+    var pending = urls.length * 3;
+    var onSuccess = (filename: any) => {
+        pending -= 1;
+        if (pending === 0) {
+            const vec = new this.instance.StringList();
+            const markerIds = [];
+            for (let i = 0; i < prefixes.length; i++) {
+                vec.push_back(prefixes[i]);
+            }
+            var ret = this.instance._addNFTMarkers(arId, vec);
+            for (let i = 0; i < ret.size(); i++) {
+                markerIds.push(ret.get(i));
+            }
+
+            console.log("add nft marker ids: ", markerIds);
+            if (callback) callback(markerIds);
+        }
+    }
+    var onError = ( filename: any, errorNumber?: any) => {
+        console.log("failed to load: ", filename);
+        onError2(errorNumber);
+    }
+
+    for (var i = 0; i < urls.length; i++) {
+        var url = urls[i];
+        var prefix = '/markerNFT_' + this.markerNFTCount;
+        prefixes.push(prefix);
+        var filename1 = prefix + '.fset';
+        var filename2 = prefix + '.iset';
+        var filename3 = prefix + '.fset3';
+
+        this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
+        this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
+        this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
+        this.markerNFTCount += 1;
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -320,6 +364,69 @@ export default class ARToolkitNFT {
       encoding: 'binary'
     })
   }
+
+  /*private async storeMarker (url: string, targetPrefix: string, prefixes: any, ext: string): Promise<{id: number}> {
+   return new Promise((resolve, reject) => {
+    const fullUrl = url + '.' + ext
+    const target = targetPrefix + '.' + ext
+    const data = await Utils.fetchRemoteData(fullUrl)
+    this._storeDataFile(data, target)
+    const vec = new this.instance.StringList();
+    for (let v = 0; v < prefixes.length; v++) {
+      vec.push_back(prefixes[v]);    
+      }
+   })
+  }*/
+
+  private stM (url:string, ext: string): Promise<string> {
+    const extensions = ['fset', 'iset', 'fset3']
+    //let out;
+    let prefixes: any = [];
+    let vec;
+    const markerIds: any = [];
+    var oReq = new XMLHttpRequest();
+    const targetPrefix = '/markerNFT_' + this.markerNFTCount++
+    console.log(this.markerNFTCount);
+    prefixes.push(targetPrefix);
+    return new Promise(async(resolve, reject) => {  
+      const fullUrl = url + '.' + ext
+      const target = targetPrefix + '.' + ext
+      const data = await Utils.fetchRemoteData(fullUrl)
+      this._storeDataFile(data, target)
+      vec = new this.instance.StringList();
+      for (let v = 0; v < prefixes.length; v++) {
+        vec.push_back(prefixes[v]);    
+        } 
+    })
+  }
+
+  private ajax(url: string, target: string, callback: (byteArray: Uint8Array) => void, errorCallback: (message: any) => void) {
+    var oReq = new XMLHttpRequest();
+        oReq.open('GET', url, true);
+        oReq.responseType = 'arraybuffer'; // blob arraybuffer
+        const writeByteArrayToFS = (target: string, byteArray: Uint8Array, callback: (byteArray: Uint8Array) => void) => {
+          this.instance.FS.writeFile(target, byteArray, { encoding: 'binary' });
+          // console.log('FS written', target);
+  
+          callback(byteArray);
+        }
+
+        oReq.onload = function () {
+            if (this.status == 200) {
+                // console.log('ajax done for ', url);
+                var arrayBuffer = oReq.response;
+                var byteArray = new Uint8Array(arrayBuffer);
+                writeByteArrayToFS(target, byteArray, callback);
+            }
+            else {
+                errorCallback(this.status);
+            }
+        };
+
+        oReq.send();
+  }
+
+
 
   private async _storeNFTMarkers (arId: number, url: string): Promise<{id: number}> {
     const extensions = ['fset', 'iset', 'fset3']
@@ -346,9 +453,13 @@ export default class ARToolkitNFT {
       await Promise.all(promises)
 
     out = this.instance._addNFTMarkers(arId, vec)
+    //
     for (let i = 0; i < out.size(); i++) {
       markerIds.push(out.get(i));
     }
-    return markerIds
+    console.log(markerIds);
+    
+    return {id: markerIds}
+    //return this.instance._addNFTMarkers(arId, vec)
   }
 }
