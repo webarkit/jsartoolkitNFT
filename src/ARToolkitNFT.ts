@@ -310,7 +310,7 @@ export default class ARToolkitNFT {
     return markerIds
   }
 
-  public addNFTMarkersnew(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void): void {
+  public addNFTMarkersnew(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void): [{id: number}] {
     var prefixes: any = [];
     var pending = urls.length * 3;
     var onSuccess = (filename: any) => {
@@ -348,6 +348,14 @@ export default class ARToolkitNFT {
         this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
         this.markerNFTCount += 1;
     }
+    let Ids: any = [];
+
+    for (var i = 0; i < urls.length; ++i) {
+      Ids.push(i)
+    }
+    console.log(Ids);
+
+    return Ids
   }
 
   // ---------------------------------------------------------------------------
