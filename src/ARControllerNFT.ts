@@ -261,9 +261,15 @@ export default class ARControllerNFT {
 
     // in ms
     const MARKER_LOST_TIME = 200
+    console.log(nftMarkerCount);
+    
 
     for (let i = 0; i < nftMarkerCount; i++) {
+      console.log(i);
+      
       let nftMarkerInfo = this.getNFTMarker(i)
+      console.log(nftMarkerInfo);
+      
       let markerType = ARToolkitNFT.NFT_MARKER
 
       if (nftMarkerInfo.found) {
@@ -707,7 +713,10 @@ export default class ARControllerNFT {
   */
    async loadNFTMarker (urlOrData: string) {
     let nft = await this.artoolkitNFT.addNFTMarkers(this.id, [urlOrData])
+    console.log(nft);
+    
     this.nftMarkerCount += nft.length;
+    console.log(this.nftMarkerCount);
     return nft
   };
 
@@ -718,6 +727,8 @@ export default class ARControllerNFT {
    async loadNFTMarkers (urlOrData: Array<string>) {
     let nft = await this.artoolkitNFT.addNFTMarkersnew(this.id, urlOrData)
     this.nftMarkerCount += nft.length;
+    console.log(this.nftMarkerCount);
+    
     return nft
   };
 
