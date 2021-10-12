@@ -36,31 +36,31 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.10",
-    "@babel/plugin-transform-runtime": "^7.13.10",
-    "@babel/preset-env": "^7.13.10",
+    "@babel/core": "^7.15.8",
+    "@babel/plugin-transform-runtime": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
     "babel-loader": "^8.2.2",
-    "eslint": "^7.13.0",
-    "eslint-config-standard": "^16.0.1",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint": "^8.0.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-standard": "^5.0.0",
     "grunt": "^1.4.1",
     "grunt-cli": "^1.4.3",
-    "grunt-contrib-jshint": "^3.0.0",
+    "grunt-contrib-jshint": "^3.1.1",
     "grunt-contrib-qunit": "^5.1.0",
     "grunt-eslint": "^23.0.0",
-    "ts-loader": "^8.0.18",
-    "typedoc": "^0.20.34",
+    "ts-loader": "^9.2.6",
+    "typedoc": "^0.22.5",
     "typescript": "^4.2.3",
-    "webpack": "^5.28.0",
-    "webpack-cli": "^4.5.0"
+    "webpack": "^5.58.1",
+    "webpack-cli": "^4.9.0"
   },
   "scripts": {
-    "dev-es6": "webpack --mode development --progress --watch",
+    "dev-ts": "webpack --mode development --progress --watch",
     "docs": "typedoc",
-    "build-es6": "webpack --mode production",
+    "build-ts": "webpack --mode production",
     "build-jshint": "grunt jshint --force",
     "build": "node tools/makem.js; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
@@ -69,7 +69,7 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.13.10",
-    "axios": "^0.21.2"
+    "@babel/runtime": "^7.15.4",
+    "axios": "^0.23.0"
   }
 }
