@@ -108,7 +108,7 @@ At this point you have build the docs in the `docs/` folder, you should run a se
 - `examples/` (demos and examples using JSARToolKitNFT)
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
 - `src/` (source code of ARToolKitNFT with Typescript)
-- `tests`/ (tests - WIP)
+- `tests/` (tests - WIP)
 - `tools/` (build scripts for building JSARToolKitNFT with Emscripten)
 - `types/` (type definitions of ARToolKitNFT)
 
