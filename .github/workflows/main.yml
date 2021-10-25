@@ -48,5 +48,5 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          build-${{ env.RELEASE_VERSION }}.zip
-          dist-${{ env.RELEASE_VERSION }}.zip
+          build.zip
+          dist.zip
