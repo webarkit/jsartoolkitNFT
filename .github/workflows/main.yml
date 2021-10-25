@@ -27,8 +27,6 @@ jobs:
         path: |
           build
           !build/libar.bc
-        name: dist
-        path: dist
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -37,4 +35,9 @@ jobs:
     - run: npm install
     - run: docker run -dit --name emscripten -v $(pwd):/src emscripten/emsdk:2.0.31 bash
     - run: docker exec emscripten npm run build
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build
+        name: dist
+        path: dist
     - run: npm run build-ts
