@@ -19,10 +19,10 @@ jobs:
       matrix:
         node-version: [14.x]
         include:
-          type: dist
-          artifactName: dist.zip
-          type: build
-          artifactName: build.zip
+          - type: dist
+            artifactName: dist.zip
+          - type: build
+            artifactName: build.zip
     steps:
     - uses: actions/checkout@v2
     - uses: actions/upload-artifact@v2
