@@ -31,7 +31,7 @@ jobs:
         echo ${{ steps.vars.outputs.tag }}
     - uses: actions/upload-artifact@v2
       with:
-        name: build-$RELEASE_VERSION
+        name: build-${{RELEASE_VERSION}}
         path: |
           build
           !build/libar.bc
@@ -45,7 +45,7 @@ jobs:
     - run: docker exec emscripten npm run build
     - uses: actions/upload-artifact@v2
       with:
-        name: dist-$RELEASE_VERSION
+        name: dist-${{RELEASE_VERSION}}
         path: dist
     - run: npm run build-ts
     - name: Release
@@ -53,5 +53,5 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          build-$RELEASE_VERSION.zip
-          dist-$RELEASE_VERSION.zip
+          build-${{RELEASE_VERSION}}.zip
+          dist-${{RELEASE_VERSION}}.zip
