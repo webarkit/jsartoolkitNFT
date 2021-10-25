@@ -48,5 +48,11 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          build.zip
-          dist.zip
+          build/artoolkitNFT_ES6_wasm.js
+          build/artoolkitNFT_wasm.js
+          build/artoolkitNFT.debug.js
+          build/artoolkitNFT.min.js
+          js/artoolkitNFT_ES6.worker.js
+          js/artoolkitNFT.api.js
+          js/artoolkitNFT.worker.js
+          dist/ARToolkitNFT.js
