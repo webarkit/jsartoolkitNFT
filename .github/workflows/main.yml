@@ -27,7 +27,6 @@ jobs:
         path: |
           build
           !build/libar.bc
-      with:
         name: dist
         path: dist
     - name: Use Node.js ${{ matrix.node-version }}
