@@ -18,7 +18,11 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
-
+        include:
+          type: dist
+          artifactName: dist.zip
+          type: build
+          artifactName: build.zip
     steps:
     - uses: actions/checkout@v2
     - uses: actions/upload-artifact@v2
@@ -44,6 +48,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: |
-          build
-          dist
+        files: ${{ matrix.artifactName }}
