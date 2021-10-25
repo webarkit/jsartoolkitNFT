@@ -5,8 +5,7 @@ name: Build jsartoolkitNFT CI
 on:
   push:
     branches:
-      - '*'
-      - '!master'
+      - 'master'
   pull_request:
     branches: [ master ]
 
