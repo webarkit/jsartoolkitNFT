@@ -40,3 +40,10 @@ jobs:
         name: dist
         path: dist
     - run: npm run build-ts
+    - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            build
+            dist
