@@ -25,8 +25,8 @@ jobs:
       with:
         name: build
         path: |
-        build
-        !build/libar.bc
+          build
+          !build/libar.bc
       with:
         name: dist
         path: dist
