@@ -44,6 +44,12 @@ jobs:
         name: dist
         path: dist
     - run: npm run build-ts
+    - name: print ref
+      run: echo $GITHUB_REF
+    - name: 
+      run: |
+        echo "action_ref=$GITHUB_REF" >> $GITHUB_ENV
+        echo "${{env.action_ref}}"
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
