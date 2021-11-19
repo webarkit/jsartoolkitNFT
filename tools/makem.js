@@ -172,7 +172,7 @@ FLAGS += ' --memory-init-file 0 '; // for memless file
 FLAGS += " -s EXPORTED_RUNTIME_METHODS='[\"FS\"]'"
 FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
 
-var WASM_FLAGS = ' -s SINGLE_FILE=1 '
+var WASM_FLAGS = ' -s SINGLE_FILE=1 -msimd128'
 var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 ';
 
 var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/artoolkitNFT.api.js') +' ';
