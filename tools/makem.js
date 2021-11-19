@@ -15,7 +15,8 @@ var
 const platform = os.platform();
 
 var NO_LIBAR = false;
-var WITH_FILTERING = 1;
+/* Filtering remote jitter, but makes the tracking swim */
+var WITH_FILTERING = 0;
 
 var arguments = process.argv;
 
