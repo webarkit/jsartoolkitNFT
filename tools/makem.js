@@ -164,7 +164,6 @@ if (WITH_FILTERING) DEFINES += ' -D WITH_FILTERING';
 
 var FLAGS = '' + OPTIMIZE_FLAGS;
 FLAGS += ' -Wno-warn-absolute-paths';
-FLAGS += ' -s MINIMAL_RUNTIME=1';
 FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
 FLAGS += ' -s USE_ZLIB=1';
 FLAGS += ' -s USE_LIBJPEG=1';
