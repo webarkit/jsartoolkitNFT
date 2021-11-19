@@ -160,7 +160,7 @@ if (HAVE_NFT) {
 
 var DEFINES = ' ';
 if (HAVE_NFT) DEFINES += ' -D HAVE_NFT';
-if (WITH_FILTERING) DEFINES += ' -D WITH_FILTERING';
+DEFINES += ' -D WITH_FILTERING=' + WITH_FILTERING;
 
 var FLAGS = '' + OPTIMIZE_FLAGS;
 FLAGS += ' -Wno-warn-absolute-paths';
