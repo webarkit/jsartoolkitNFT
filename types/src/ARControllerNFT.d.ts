@@ -79,7 +79,7 @@ export default class ARControllerNFT {
     loadNFTMarker(urlOrData: string): Promise<[{
         id: number;
     }]>;
-    loadNFTMarkers(urlOrData: Array<string>): Promise<any>;
+    loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number) => void, onError: () => void): Promise<any>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
     private converter;

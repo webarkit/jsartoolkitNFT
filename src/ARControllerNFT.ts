@@ -724,9 +724,12 @@ export default class ARControllerNFT {
    * Loads an array of NFT markers from the given URLs or data string
    * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
   */
-   async loadNFTMarkers (urlOrData: Array<string>) {
-    let nft = await this.artoolkitNFT.addNFTMarkersnew(this.id, urlOrData)
-    this.nftMarkerCount += nft.length;
+   async loadNFTMarkers (urlOrData: Array<string>, onSuccess: (ids: number) => void, onError: () => void) {
+    let nft = await this.artoolkitNFT.addNFTMarkersnew(this.id, urlOrData, function(ids: any){
+      //this.nftMarkerCount += ids.length;
+            onSuccess(ids);
+    }, onError) 
+    //this.nftMarkerCount += nft.length;
     console.log(this.nftMarkerCount);
     
     return nft

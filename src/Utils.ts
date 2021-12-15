@@ -38,7 +38,7 @@ import axios from 'axios'
 export default class Utils {
   static async fetchRemoteData (url: string) {
     try {
-      const response = await axios.get(url, { responseType: 'arraybuffer' })
+      const response: any = await axios.get(url, { responseType: 'arraybuffer' })
       return new Uint8Array(response.data)
     } catch (error) {
       throw error
@@ -47,8 +47,8 @@ export default class Utils {
 
   static async fetchRemoteDataCallback (url: string, callback: any) {
     try {
-      const response = await axios.get(url, { responseType: 'arraybuffer' })
-      .then((response) => {
+      const response: any = await axios.get(url, { responseType: 'arraybuffer' })
+      .then((response: any) => {
         const data = new Uint8Array(response.data)
         console.log(data);
         callback(response)
