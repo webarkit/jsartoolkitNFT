@@ -261,14 +261,12 @@ export default class ARControllerNFT {
 
     // in ms
     const MARKER_LOST_TIME = 200
-    console.log(nftMarkerCount);
+    //console.log(nftMarkerCount);
     
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      console.log(i);
       
       let nftMarkerInfo = this.getNFTMarker(i)
-      console.log(nftMarkerInfo);
       
       let markerType = ARToolkitNFT.NFT_MARKER
 

@@ -42,6 +42,16 @@ function isMobile () {
       new THREE.SphereGeometry(0.5, 8, 8),
       new THREE.MeshNormalMaterial()
     );
+
+    var cube = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5),
+      new THREE.MeshNormalMaterial()
+    );
+
+    var cone = new THREE.Mesh(
+      new THREE.ConeGeometry( 0.5, 1, 32 ),
+      new THREE.MeshNormalMaterial()
+    );
   
     var root = new THREE.Object3D();
     scene.add(root);
@@ -51,9 +61,24 @@ function isMobile () {
     sphere.position.x = 100;
     sphere.position.y = 100;
     sphere.scale.set(200, 200, 200);
+
+    cube.material.flatShading;
+    cube.position.z = 0;
+    cube.position.x = 100;
+    cube.position.y = 100;
+    cube.scale.set(200, 200, 200);
+
+    cone.material.flatShading;
+    cone.rotation.x = 90;
+    cone.position.z = 0;
+    cone.position.x = 100;
+    cone.position.y = 100;
+    cone.scale.set(200, 200, 200);
   
     root.matrixAutoUpdate = false;
     root.add(sphere);
+    root.add(cube);
+    root.add(cone);
   
     var load = function () {
       vw = input_width;
@@ -134,6 +159,7 @@ function isMobile () {
         world = null;
       } else {
         world = JSON.parse(msg.matrixGL_RH);
+        index = JSON.parse(msg.index);
       }
     };
   
@@ -149,8 +175,24 @@ function isMobile () {
   
       if (!world) {
         sphere.visible = false;
-      } else {
-        sphere.visible = true;
+        cube.visible = false;
+        cone.visible = false;
+    } else {
+        if (index == 0) {
+            sphere.visible = true;
+            cube.visible = false;
+            cone.visible = false;
+        }
+        else if(index == 1) {
+            sphere.visible = false;
+            cube.visible = true;
+            cone.visible = false;
+        }
+        else if(index == 2) {
+            sphere.visible = false;
+            cube.visible = false;
+            cone.visible = true;
+        }
         // set matrix of 'root' by detected 'world' matrix
         setMatrix(root.matrix, world);
       }
