@@ -244,73 +244,10 @@ export default class ARToolkitNFT {
    * the url of the file without the extension. If fails to load it raise an error.
    * @param {number} arId internal id
    * @param {Array<string>} urls  array of urls of the descriptors files without ext
+   * @param {function} callback the callback to retrieve the ids.
+   * @param {function} onError2 the error callback.
    */
-
-  public async addNFTMarkers(arId: number, urls: Array<string>): Promise<[{id: number}]> {
-    // url doesn't need to be a valid url. Extensions to make it valid will be added here
-    console.log(this.markerNFTCount);
-    
-    //const targetPrefix = '/markerNFT_' + this.markerNFTCount
-    const extensions = ['fset', 'iset', 'fset3']
-    let out;
-    let prefixes: any = [];
-    let vec;
-    const markerIds: any = [];
-    //prefixes.push(targetPrefix);
-    for (var i = 0; i < urls.length; i++) {
-      //this.markerNFTCount = i;
-      const targetPrefix = '/markerNFT_' + this.markerNFTCount
-      console.log(this.markerNFTCount);
-      prefixes.push(targetPrefix);
-        const url = urls[i];
-        const storeMarker = async (ext: string) => {
-          //prefixes.push(targetPrefix);
-          const fullUrl = url + '.' + ext
-          const target = targetPrefix + '.' + ext
-          const data = await Utils.fetchRemoteData(fullUrl)
-          this._storeDataFile(data, target)
-          vec = new this.instance.StringList();
-          const markerIds = [];
-          for (let v = 0; v < prefixes.length; v++) {
-            vec.push_back(prefixes[v]);    
-          }
-        }
-
-        const promises = extensions.map(storeMarker, this)
-        ++this.markerNFTCount;
-    
-        await Promise.all(promises)
-
-        out = this.instance._addNFTMarkers(arId, vec)
-        for (let i = 0; i < out.size(); i++) {
-          markerIds.push(out.get(i));
-        }
-        //++this.markerNFTCount;
-        console.log(this.markerNFTCount);
-
-    }
-
-    // return the internal marker ID
-    return markerIds
-  }
-
-  public async addNFTMarkers2(arId: number, urls: Array<string>): Promise<[{id: number}]> {
-    // url doesn't need to be a valid url. Extensions to make it valid will be added here
-    let markerIds: any;
-    const promises = urls.map(url =>{
-      console.log(url); 
-      this._storeNFTMarkers(arId, url)})
-    console.log(promises);
-    
-
-    await Promise.all(promises).then((id)=> {markerIds = id})
-    console.log( markerIds)
-
-    // return the internal marker ID
-    return markerIds
-  }
-
-  public addNFTMarkersnew(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void): [{id: number}] {
+  public addNFTMarkers(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void): [{id: number}] {
     var prefixes: any = [];
     var pending = urls.length * 3;
     var onSuccess = (filename: any) => {
@@ -353,7 +290,6 @@ export default class ARToolkitNFT {
     for (var i = 0; i < urls.length; ++i) {
       Ids.push(i)
     }
-    console.log(Ids);
 
     return Ids
   }
@@ -362,7 +298,7 @@ export default class ARToolkitNFT {
 
   // implementation
   /**
-   * Used internally by LoadCamera and addNFTMarker methods
+   * Used internally by LoadCamera method
    * @return {void}
    */
   private _storeDataFile (data: Uint8Array, target: string) {
@@ -373,55 +309,24 @@ export default class ARToolkitNFT {
     })
   }
 
-  /*private async storeMarker (url: string, targetPrefix: string, prefixes: any, ext: string): Promise<{id: number}> {
-   return new Promise((resolve, reject) => {
-    const fullUrl = url + '.' + ext
-    const target = targetPrefix + '.' + ext
-    const data = await Utils.fetchRemoteData(fullUrl)
-    this._storeDataFile(data, target)
-    const vec = new this.instance.StringList();
-    for (let v = 0; v < prefixes.length; v++) {
-      vec.push_back(prefixes[v]);    
-      }
-   })
-  }*/
-
-  private stM (url:string, ext: string): Promise<string> {
-    const extensions = ['fset', 'iset', 'fset3']
-    //let out;
-    let prefixes: any = [];
-    let vec;
-    const markerIds: any = [];
-    var oReq = new XMLHttpRequest();
-    const targetPrefix = '/markerNFT_' + this.markerNFTCount++
-    console.log(this.markerNFTCount);
-    prefixes.push(targetPrefix);
-    return new Promise(async(resolve, reject) => {  
-      const fullUrl = url + '.' + ext
-      const target = targetPrefix + '.' + ext
-      const data = await Utils.fetchRemoteData(fullUrl)
-      this._storeDataFile(data, target)
-      vec = new this.instance.StringList();
-      for (let v = 0; v < prefixes.length; v++) {
-        vec.push_back(prefixes[v]);    
-        } 
-    })
-  }
-
+  /**
+   * Used internally by the addNFTMarkers method
+   * @param url url of the marker.
+   * @param target the target of the marker.
+   * @param callback callback  to get the binary data.
+   * @param errorCallback the error callback.
+   */
   private ajax(url: string, target: string, callback: (byteArray: Uint8Array) => void, errorCallback: (message: any) => void) {
     var oReq = new XMLHttpRequest();
         oReq.open('GET', url, true);
         oReq.responseType = 'arraybuffer'; // blob arraybuffer
         const writeByteArrayToFS = (target: string, byteArray: Uint8Array, callback: (byteArray: Uint8Array) => void) => {
           this.instance.FS.writeFile(target, byteArray, { encoding: 'binary' });
-          // console.log('FS written', target);
-  
           callback(byteArray);
         }
 
         oReq.onload = function () {
             if (this.status == 200) {
-                // console.log('ajax done for ', url);
                 var arrayBuffer = oReq.response;
                 var byteArray = new Uint8Array(arrayBuffer);
                 writeByteArrayToFS(target, byteArray, callback);
@@ -432,42 +337,5 @@ export default class ARToolkitNFT {
         };
 
         oReq.send();
-  }
-
-
-
-  private async _storeNFTMarkers (arId: number, url: string): Promise<{id: number}> {
-    const extensions = ['fset', 'iset', 'fset3']
-    let out;
-    let prefixes: any = [];
-    let vec;
-    const markerIds: any = [];
-    const targetPrefix = '/markerNFT_' + this.markerNFTCount++
-    console.log(this.markerNFTCount);
-    prefixes.push(targetPrefix);
-    const storeMarker = async (ext: string) => {
-      const fullUrl = url + '.' + ext
-      const target = targetPrefix + '.' + ext
-      const data = await Utils.fetchRemoteData(fullUrl)
-      this._storeDataFile(data, target)
-      vec = new this.instance.StringList();
-      for (let v = 0; v < prefixes.length; v++) {
-        vec.push_back(prefixes[v]);    
-        }
-    }
-
-    const promises = extensions.map(storeMarker, this)
-    
-      await Promise.all(promises)
-
-    out = this.instance._addNFTMarkers(arId, vec)
-    //
-    for (let i = 0; i < out.size(); i++) {
-      markerIds.push(out.get(i));
-    }
-    console.log(markerIds);
-    
-    return {id: markerIds}
-    //return this.instance._addNFTMarkers(arId, vec)
   }
 }

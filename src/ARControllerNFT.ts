@@ -49,7 +49,6 @@ interface ImageObj {
 }
 
 interface delegateMethods {
-    addNFTMarkersnew: any;
     setup: {
         (width: number, height: number, cameraId: number): number
     }
@@ -90,8 +89,7 @@ interface delegateMethods {
     getThresholdMode: (id: number) => number;
     setThreshold: (id: number, threshold: number) => number;
     getThreshold: (id: number) => number;
-    addNFTMarkers: (arId: number, urls: Array<string>) => Promise<[{id: number}]>;
-    addNFTMarkers2: (arId: number, urls: Array<string>) => Promise<[{id: number}]>;
+    addNFTMarkers: (arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void) => [{id: number}];
     detectMarker: (id: number) => number;
     detectNFTMarker: (arId: number) => void;
     getNFTMarker: (id: number, markerIndex: number) => number;
@@ -709,12 +707,11 @@ export default class ARControllerNFT {
    * Loads an NFT marker from the given URL or data string
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
   */
-   async loadNFTMarker (urlOrData: string) {
-    let nft = await this.artoolkitNFT.addNFTMarkers(this.id, [urlOrData])
-    console.log(nft);
-    
-    this.nftMarkerCount += nft.length;
-    console.log(this.nftMarkerCount);
+   async loadNFTMarker (urlOrData: string, onSuccess: (ids: number) => void, onError: () => void) {
+    let nft = await this.artoolkitNFT.addNFTMarkers(this.id, [urlOrData],  (ids: any) => {
+      this.nftMarkerCount += ids.length;
+      onSuccess(ids);
+    }, onError) 
     return nft
   };
 
@@ -723,7 +720,7 @@ export default class ARControllerNFT {
    * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
   */
    async loadNFTMarkers (urlOrData: Array<string>, onSuccess: (ids: number) => void, onError: () => void) {
-    let nft = await this.artoolkitNFT.addNFTMarkersnew(this.id, urlOrData, (ids: any) => {
+    let nft = await this.artoolkitNFT.addNFTMarkers(this.id, urlOrData, (ids: any) => {
       this.nftMarkerCount += ids.length;
       onSuccess(ids);
     }, onError) 
