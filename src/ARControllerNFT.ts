@@ -388,8 +388,8 @@ export default class ARControllerNFT {
     }
   };
 
-  getNFTData () {
-    return this.artoolkitNFT.getNFTData(this.id);
+  getNFTData (id: number) {
+    return this.artoolkitNFT.getNFTData(id);
   }
 
   // event handling
@@ -711,7 +711,7 @@ export default class ARControllerNFT {
     let nft = await this.artoolkitNFT.addNFTMarkers(this.id, [urlOrData],  (ids: any) => {
       this.nftMarkerCount += ids.length;
       onSuccess(ids);
-    }, onError) 
+    }, onError)  
     return nft
   };
 

@@ -36,7 +36,7 @@ function load (msg) {
     }).then().catch(function (err) {
       console.log('Error in loading marker on Worker', err)
     }).then( function() {
-      let nftData = ar.getNFTData()
+      let nftData = ar.getNFTData(3)
       console.log("nftMarker data: ", nftData)
     })
 

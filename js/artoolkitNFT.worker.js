@@ -34,7 +34,7 @@ function load (msg) {
       ar.loadNFTMarker(msg.marker, function (id) {
         ar.trackNFTMarkerId(id);
         console.log("loadNFTMarker -> ", id);
-        let nftData = ar.getNFTData()
+        let nftData = ar.getNFTData(id)
         console.log("nftMarker data: ", nftData)
         postMessage({ type: 'endLoading', end: true }),
           function (err) {

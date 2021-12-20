@@ -34,10 +34,11 @@ function load (msg) {
       ar.loadNFTMarkers(msg.marker, function (ids) {
         for(var i = 0; i<ids.length; i++){
           ar.trackNFTMarkerId(i);
-        }
-        console.log("loadNFTMarker -> ", id);
-        let nftData = ar.getNFTData()
+          let nftData = ar.getNFTData(i)
         console.log("nftMarker data: ", nftData)
+        }
+        console.log("loadNFTMarker -> ", ids);
+        
         postMessage({ type: 'endLoading', end: true }),
           function (err) {
           console.error('Error in loading marker on Worker', err);
