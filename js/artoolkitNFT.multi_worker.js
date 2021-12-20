@@ -31,8 +31,10 @@ function load (msg) {
         markerResult = {type: "found", index: JSON.stringify(ev.data.index), matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)};
       });
 
-      ar.loadNFTMarkers(msg.marker, function (id) {
-        ar.trackNFTMarkerId(id);
+      ar.loadNFTMarkers(msg.marker, function (ids) {
+        for(var i = 0; i<ids.length; i++){
+          ar.trackNFTMarkerId(i);
+        }
         console.log("loadNFTMarker -> ", id);
         let nftData = ar.getNFTData()
         console.log("nftMarker data: ", nftData)
