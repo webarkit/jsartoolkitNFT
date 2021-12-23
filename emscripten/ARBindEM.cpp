@@ -6,6 +6,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	register_vector<std::string>("StringList");
     register_vector<int>("IntList");
+	register_vector<nftMarker>("nftMarkers");
 
 	function("setup", &setup);
 	function("teardown", &teardown);

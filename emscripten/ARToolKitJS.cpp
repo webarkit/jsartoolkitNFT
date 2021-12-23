@@ -31,10 +31,6 @@ struct nftMarker {
 	int dpi_NFT;
 };
 
-/*struct nftMarkers {
-   nftMarker *nfts;
-};*/
-
 struct arController {
 	int id;
 
@@ -67,6 +63,7 @@ struct arController {
 	std::unordered_map<int, AR2SurfaceSetT*> surfaceSets;
 	// nftMarker struct inside arController
 	nftMarker nft;
+    std::vector<nftMarker> nftMarkers;
 
 	ARdouble nearPlane = 0.0001;
 	ARdouble farPlane = 1000.0;
@@ -333,22 +330,14 @@ extern "C" {
 		return 0;
 	}
 
-	int getNFTData(int id, std::vector<nftMarker> out) {
+	int getNFTData(int id, std::vector<nftMarker> &out) {
 		std::vector<nftMarker> nfts;
 		nftMarker nft;
 		if (arControllers.find(id) == arControllers.end()) { return -1; }
 		arController *arc = &(arControllers[id]);
 
 		// get marker(s) nft data.
-
-		nft.id_NFT = arc->surfaceSetCount;
-		nft.width_NFT = arc->nft.width_NFT;
-		nft.height_NFT = arc->nft.height_NFT;
-		nft.dpi_NFT = arc->nft.dpi_NFT;
-
-		nfts.push_back(nft);
-
-		out = nfts;
+		out = arc->nftMarkers;
 	}
 
 	/***************
@@ -536,6 +525,12 @@ extern "C" {
 			ARLOGi("NFT marker width: %i\n", arc->nft.width_NFT);
 			ARLOGi("NFT marker height: %i\n", arc->nft.height_NFT);
 			ARLOGi("NFT marker dpi: %i\n", arc->nft.dpi_NFT);
+
+			arc->nft.id_NFT = i;
+		    arc->nft.width_NFT = arc->nft.width_NFT;
+		    arc->nft.height_NFT = arc->nft.height_NFT;
+		    arc->nft.dpi_NFT = arc->nft.dpi_NFT;
+			arc->nftMarkers.push_back(arc->nft);
 
             ARLOGi("Done.\n");
 			surfaceSetCount++;

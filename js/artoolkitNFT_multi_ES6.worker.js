@@ -23,6 +23,7 @@ function load (msg) {
 
   var onLoad = function (arController) {
     ar = arController
+    console.log(arController);
     var cameraMatrix = ar.getCameraMatrix()
 
     ar.addEventListener('getNFTMarker', function (ev) {
@@ -34,8 +35,10 @@ function load (msg) {
       for(var i = 0; i < ids.length; i++){
         console.log(i);
         ar.trackNFTMarkerId(i);
-        let nftData = ar.getNFTData(i)
-        console.log("nftMarker data: ", nftData)
+        let array = new ar.artoolkitNFT.instance.nftMarkers();
+        console.log(array);
+        ar.getNFTData(i, array)
+        console.log("nftMarker data: ", array)
       }
     postMessage({ type: 'endLoading', end: true })
     }).catch(function (err) {
