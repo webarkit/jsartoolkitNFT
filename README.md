@@ -64,7 +64,7 @@ or (recommended) use the **UMD** library:
 or you can install with npm and use as a module:
 
 ```nodejs
-npm i @kalwalt/jsartoolkit-nft
+npm i @webarkit/jsartoolkit-nft
 ```
 then:
 
@@ -108,7 +108,7 @@ At this point you have build the docs in the `docs/` folder, you should run a se
 - `examples/` (demos and examples using JSARToolKitNFT)
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
 - `src/` (source code of ARToolKitNFT with Typescript)
-- `tests`/ (tests - WIP)
+- `tests/` (tests - WIP)
 - `tools/` (build scripts for building JSARToolKitNFT with Emscripten)
 - `types/` (type definitions of ARToolKitNFT)
 
@@ -134,3 +134,6 @@ See the examples folder for details.
 ## Build the project 🔨
 
 Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more infos. Note that you need to build the library only if you make changes to the source code.
+
+### Notes
+The jsartoolkitNFT npm package is served until version **0.9.4** from `@kalwalt/jsartoolkit-nft`. By 0.9.5 version from `@webarkit/jsartoolkit-nft`.
