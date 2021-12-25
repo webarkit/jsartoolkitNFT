@@ -93,7 +93,7 @@ interface delegateMethods {
     detectMarker: (id: number) => number;
     detectNFTMarker: (arId: number) => void;
     getNFTMarker: (id: number, markerIndex: number) => number;
-    getNFTData: (id: number) => number;
+    getNFTData: (id: number, index: number) => object;
     setImageProcMode: (id: number, mode: number) => number;
     getImageProcMode: (id: number) => number;
 }
@@ -388,8 +388,8 @@ export default class ARControllerNFT {
     }
   };
 
-  getNFTData (id: number) {
-    return this.artoolkitNFT.getNFTData(id);
+  getNFTData (id: number, index: number) {
+    return this.artoolkitNFT.getNFTData(id, index);
   }
 
   // event handling

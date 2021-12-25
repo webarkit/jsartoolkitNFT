@@ -50,7 +50,7 @@ export default class ARControllerNFT {
         id: number;
         pose: Float64Array;
     };
-    getNFTData(id: number): number;
+    getNFTData(id: number, index: number): object;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
     dispatchEvent(event: {

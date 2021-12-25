@@ -71,7 +71,7 @@ export default class ARToolkitNFT {
   public detectMarker: (id: number) => number;
   public detectNFTMarker: (id: number) => number;
   public getNFTMarker: (id: number, markerIndex: number) => number;
-  public getNFTData: (id: number) => number;
+  public getNFTData: (id: number, index: number) => object;
   public setLogLevel: (mode: boolean) => number;
   public getLogLevel: () => number;
   public frameMalloc: {

@@ -35,10 +35,8 @@ function load (msg) {
       for(var i = 0; i < ids.length; i++){
         console.log(i);
         ar.trackNFTMarkerId(i);
-        let array = new ar.artoolkitNFT.instance.nftMarkers();
-        console.log(array);
-        ar.getNFTData(i, array)
-        console.log("nftMarker data: ", array)
+        let nftm = ar.getNFTData(0, i);
+        console.log(nftm);
       }
     postMessage({ type: 'endLoading', end: true })
     }).catch(function (err) {

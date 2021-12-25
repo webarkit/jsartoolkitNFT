@@ -330,14 +330,12 @@ extern "C" {
 		return 0;
 	}
 
-	int getNFTData(int id, std::vector<nftMarker> &out) {
-		std::vector<nftMarker> nfts;
-		nftMarker nft;
-		if (arControllers.find(id) == arControllers.end()) { return -1; }
+	nftMarker getNFTData(int id, int index) {
+		if (arControllers.find(id) == arControllers.end()) { return {}; }
 		arController *arc = &(arControllers[id]);
 
 		// get marker(s) nft data.
-		out = arc->nftMarkers;
+		return arc->nftMarkers.at(index);
 	}
 
 	/***************
