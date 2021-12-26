@@ -55,11 +55,10 @@ function isMobile () {
   
     var root = new THREE.Object3D();
     scene.add(root);
+
+    var marker1, marker2, marker3;
   
     sphere.material.flatShading;
-    sphere.position.z = 0;
-    sphere.position.x = 100;
-    sphere.position.y = 100;
     sphere.scale.set(200, 200, 200);
 
     cube.material.flatShading;
@@ -146,6 +145,11 @@ function isMobile () {
             found(null);
             break;
           }
+          case 'markerInfos': {
+            marker1 = msg.marker1;
+            marker2 = msg.marker2;
+            marker3 = msg.marker3;
+          }
         }
         track_update();
         process();
@@ -180,6 +184,8 @@ function isMobile () {
     } else {
         if (index == 0) {
             sphere.visible = true;
+            sphere.position.y = ((marker1.height / marker1.dpi) * 2.54 * 10) / 2.0;
+            sphere.position.x = ((marker1.width / marker1.dpi) * 2.54 * 10) / 2.0;
             cube.visible = false;
             cone.visible = false;
         }
