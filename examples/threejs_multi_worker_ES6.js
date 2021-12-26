@@ -62,16 +62,10 @@ function isMobile () {
     sphere.scale.set(200, 200, 200);
 
     cube.material.flatShading;
-    cube.position.z = 0;
-    cube.position.x = 100;
-    cube.position.y = 100;
     cube.scale.set(200, 200, 200);
 
     cone.material.flatShading;
     cone.rotation.x = 90;
-    cone.position.z = 0;
-    cone.position.x = 100;
-    cone.position.y = 100;
     cone.scale.set(200, 200, 200);
   
     root.matrixAutoUpdate = false;
@@ -192,12 +186,16 @@ function isMobile () {
         else if(index == 1) {
             sphere.visible = false;
             cube.visible = true;
+            cube.position.y = ((marker2.height / marker2.dpi) * 2.54 * 10) / 2.0;
+            cube.position.x = ((marker2.width / marker2.dpi) * 2.54 * 10) / 2.0;
             cone.visible = false;
         }
         else if(index == 2) {
             sphere.visible = false;
             cube.visible = false;
             cone.visible = true;
+            cone.position.y = ((marker3.height / marker3.dpi) * 2.54 * 10) / 2.0;
+            cone.position.x = ((marker3.width / marker3.dpi) * 2.54 * 10) / 2.0;
         }
         // set matrix of 'root' by detected 'world' matrix
         setMatrix(root.matrix, world);
