@@ -333,7 +333,6 @@ extern "C" {
 	nftMarker getNFTData(int id, int index) {
 		if (arControllers.find(id) == arControllers.end()) { return {}; }
 		arController *arc = &(arControllers[id]);
-
 		// get marker(s) nft data.
 		return arc->nftMarkers.at(index);
 	}
@@ -513,7 +512,6 @@ extern "C" {
             }
 
 			int surfaceSetCount = arc->surfaceSetCount;
-			ARLOGi("surfsetC: %i\n", surfaceSetCount);
 			int numIset = arc->surfaceSet[i]->surface[0].imageSet->num;
 			arc->nft.width_NFT = arc->surfaceSet[i]->surface[0].imageSet->scale[0]->xsize;
 			arc->nft.height_NFT = arc->surfaceSet[i]->surface[0].imageSet->scale[0]->ysize;
@@ -543,8 +541,6 @@ extern "C" {
         ARLOGi("Loading of NFT data complete.\n");
 
 		arc->surfaceSetCount += markerIds.size();
-
-		ARLOGi("SurfaceSetCount: %i\n", arc->surfaceSetCount);
 
         return markerIds;
     }

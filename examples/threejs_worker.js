@@ -45,10 +45,9 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
   var root = new THREE.Object3D();
   scene.add(root);
 
+  var marker;
+
   sphere.material.flatShading;
-  sphere.position.z = 0;
-  sphere.position.x = 100;
-  sphere.position.y = 100;
   sphere.scale.set(200, 200, 200);
 
   root.matrixAutoUpdate = false;
@@ -120,6 +119,9 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
           found(null);
           break;
         }
+        case 'markerInfos': {
+          marker = msg.marker;
+        }
       }
       track_update();
       process();
@@ -150,6 +152,8 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
       sphere.visible = false;
     } else {
       sphere.visible = true;
+      sphere.position.y = ((marker.height / marker.dpi) * 2.54 * 10) / 2.0;
+      sphere.position.x = ((marker.width / marker.dpi) * 2.54 * 10) / 2.0;
       // set matrix of 'root' by detected 'world' matrix
       setMatrix(root.matrix, world);
     }

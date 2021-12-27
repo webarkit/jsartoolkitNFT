@@ -24,7 +24,6 @@ function load (msg) {
 
   var onLoad = function (arController) {
     ar = arController
-    console.log(arController);
     var cameraMatrix = ar.getCameraMatrix()
 
     ar.addEventListener('getNFTMarker', function (ev) {
@@ -36,10 +35,11 @@ function load (msg) {
         ar.trackNFTMarkerId(i);
       }
 
-    marker1 = ar.getNFTData(ar.id, 0);
-    marker2 = ar.getNFTData(ar.id, 1);
-    marker3 = ar.getNFTData(ar.id, 2);
-    postMessage({type: 'markerInfos', marker1: marker1, marker2: marker2, marker3: marker3})
+      marker1 = ar.getNFTData(ar.id, 0);
+      marker2 = ar.getNFTData(ar.id, 1);
+      marker3 = ar.getNFTData(ar.id, 2);
+      postMessage({type: 'markerInfos', marker1: marker1, marker2: marker2, marker3: marker3})
+      console.log("loadNFTMarker -> ", ids);
 
     postMessage({ type: 'endLoading', end: true })
     }).catch(function (err) {

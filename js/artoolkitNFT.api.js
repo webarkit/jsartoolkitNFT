@@ -484,8 +484,8 @@
      * Get the NFT data (id, dpi, width and height) of the NFT marker.
      * @returns {Object} nft object (id, dpi, width, height)
      */    
-    ARControllerNFT.prototype.getNFTData = function () {
-        return artoolkitNFT.getNFTData(this.id);
+    ARControllerNFT.prototype.getNFTData = function (index) {
+        return artoolkitNFT.getNFTData(this.id, index);
     };
 
 

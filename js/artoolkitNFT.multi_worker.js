@@ -17,6 +17,7 @@ self.onmessage = function (e) {
 var next = null;
 var ar = null;
 var markerResult = null;
+var marker1, marker2, marker3;
 
 function load (msg) {
 
@@ -32,11 +33,14 @@ function load (msg) {
       });
 
       ar.loadNFTMarkers(msg.marker, function (ids) {
-        for(var i = 0; i<ids.length; i++){
+        for(var i = 0; i < ids.length; i++){
           ar.trackNFTMarkerId(i);
-          let nftData = ar.getNFTData(i)
-        console.log("nftMarker data: ", nftData)
         }
+  
+        marker1 = ar.getNFTData(ar.id, 0);
+        marker2 = ar.getNFTData(ar.id, 1);
+        marker3 = ar.getNFTData(ar.id, 2);
+        postMessage({type: 'markerInfos', marker1: marker1, marker2: marker2, marker3: marker3})
         console.log("loadNFTMarker -> ", ids);
         
         postMessage({ type: 'endLoading', end: true }),
