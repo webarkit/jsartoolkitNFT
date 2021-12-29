@@ -271,8 +271,8 @@ extern "C" {
 		int kpmResultNum = -1;
 
 		if (arc->detectedPage == -2) {
-        kpmMatching( arc->kpmHandle, arc->videoLuma );
-        kpmGetResult( arc->kpmHandle, &kpmResult, &kpmResultNum );
+            kpmMatching( arc->kpmHandle, arc->videoLuma );
+            kpmGetResult( arc->kpmHandle, &kpmResult, &kpmResultNum );
 
 			#if WITH_FILTERING
 			arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
