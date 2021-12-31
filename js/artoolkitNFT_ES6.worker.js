@@ -39,8 +39,6 @@ function load (msg) {
       postMessage({ type: 'endLoading', end: true })
     }).catch(function (err) {
       console.log('Error in loading marker on Worker', err)
-    }).then( function() {
-      
     })
 
     postMessage({ type: 'loaded', proj: JSON.stringify(cameraMatrix) })
