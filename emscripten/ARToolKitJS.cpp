@@ -74,8 +74,6 @@ struct arController {
 	AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
 };
 
-//std::vector<nftMarker> nftMarkers;
-
 std::unordered_map<int, arController> arControllers;
 std::unordered_map<int, ARParam> cameraParams;
 
