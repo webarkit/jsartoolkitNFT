@@ -24,6 +24,7 @@ export default class ARToolkitNFT {
     detectMarker: (id: number) => number;
     detectNFTMarker: (id: number) => number;
     getNFTMarker: (id: number, markerIndex: number) => number;
+    getNFTData: (id: number, index: number) => object;
     setLogLevel: (mode: boolean) => number;
     getLogLevel: () => number;
     frameMalloc: {
@@ -54,8 +55,9 @@ export default class ARToolkitNFT {
     private _decorate;
     private converter;
     loadCamera(urlOrData: any): Promise<number>;
-    addNFTMarker(arId: number, url: string): Promise<{
+    addNFTMarkers(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: (errorNumber: any) => void): [{
         id: number;
-    }>;
+    }];
     private _storeDataFile;
+    private ajax;
 }

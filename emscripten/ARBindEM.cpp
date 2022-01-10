@@ -4,25 +4,30 @@ using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(constant_bindings) {
 
+	register_vector<std::string>("StringList");
+    register_vector<int>("IntList");
+	register_vector<nftMarker>("nftMarkers");
+
 	function("setup", &setup);
 	function("teardown", &teardown);
 
 	function("setupAR2", &setupAR2);
 
-	function("_addNFTMarker", &addNFTMarker);
+	function("_addNFTMarkers", &addNFTMarkers);
 
 	function("_loadCamera", &loadCamera);
 
 	function("detectMarker", &detectMarker);
 	function("detectNFTMarker", &detectNFTMarker);
 	function("getNFTMarker", &getNFTMarkerInfo);
+	function("getNFTData", &getNFTData);
 
 	/* nft marker struct */
 	value_object<nftMarker>("nftMarker")
 	.field("id", &nftMarker::id_NFT)
-  .field("width", &nftMarker::width_NFT)
-  .field("height", &nftMarker::height_NFT)
-  .field("dpi", &nftMarker::dpi_NFT);
+	.field("width", &nftMarker::width_NFT)
+	.field("height", &nftMarker::height_NFT)
+	.field("dpi", &nftMarker::dpi_NFT);
 
 	/* AR Toolkit C APIS */
 	function("setDebugMode", &setDebugMode);

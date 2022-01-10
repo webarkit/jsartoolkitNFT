@@ -71,6 +71,7 @@ export default class ARToolkitNFT {
   public detectMarker: (id: number) => number;
   public detectNFTMarker: (id: number) => number;
   public getNFTMarker: (id: number, markerIndex: number) => number;
+  public getNFTData: (id: number, index: number) => object;
   public setLogLevel: (mode: boolean) => number;
   public getLogLevel: () => number;
   public frameMalloc: {
@@ -169,6 +170,7 @@ export default class ARToolkitNFT {
       'detectMarker',
       'detectNFTMarker',
       'getNFTMarker',
+      'getNFTData',
 
       'frameMalloc',
       'NFTMarkerInfo',
@@ -186,7 +188,9 @@ export default class ARToolkitNFT {
       'getThreshold',
 
       'setImageProcMode',
-      'getImageProcMode'
+      'getImageProcMode',
+
+      'StringList'
     ].forEach(method => {
       this.converter()[method] = this.instance[method]
     })
@@ -236,35 +240,65 @@ export default class ARToolkitNFT {
   }
 
   /**
-   * Load the NFT Marker (.fset, .iset and .fset3) in the code, Must be provided
+   * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
    * the url of the file without the extension. If fails to load it raise an error.
    * @param {number} arId internal id
-   * @param {string} url url of the descriptors files without ext
+   * @param {Array<string>} urls  array of urls of the descriptors files without ext
+   * @param {function} callback the callback to retrieve the ids.
+   * @param {function} onError2 the error callback.
    */
-  public async addNFTMarker (arId: number, url: string): Promise<{id: number}> {
-    // url doesn't need to be a valid url. Extensions to make it valid will be added here
-    const targetPrefix = '/markerNFT_' + this.markerNFTCount++
-    const extensions = ['fset', 'iset', 'fset3']
+  public addNFTMarkers(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void): [{id: number}] {
+    var prefixes: any = [];
+    var pending = urls.length * 3;
+    var onSuccess = (filename: any) => {
+        pending -= 1;
+        if (pending === 0) {
+            const vec = new this.instance.StringList();
+            const markerIds = [];
+            for (let i = 0; i < prefixes.length; i++) {
+                vec.push_back(prefixes[i]);
+            }
+            var ret = this.instance._addNFTMarkers(arId, vec);
+            for (let i = 0; i < ret.size(); i++) {
+                markerIds.push(ret.get(i));
+            }
 
-    const storeMarker = async (ext: string) => {
-      const fullUrl = url + '.' + ext
-      const target = targetPrefix + '.' + ext
-      const data = await Utils.fetchRemoteData(fullUrl)
-      this._storeDataFile(data, target)
+            console.log("add nft marker ids: ", markerIds);
+            if (callback) callback(markerIds);
+        }
+    }
+    var onError = ( filename: any, errorNumber?: any) => {
+        console.log("failed to load: ", filename);
+        onError2(errorNumber);
     }
 
-    const promises = extensions.map(storeMarker, this)
-    await Promise.all(promises)
+    for (var i = 0; i < urls.length; i++) {
+        var url = urls[i];
+        var prefix = '/markerNFT_' + this.markerNFTCount;
+        prefixes.push(prefix);
+        var filename1 = prefix + '.fset';
+        var filename2 = prefix + '.iset';
+        var filename3 = prefix + '.fset3';
 
-    // return the internal marker ID
-    return this.instance._addNFTMarker(arId, targetPrefix)
+        this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
+        this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
+        this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
+        this.markerNFTCount += 1;
+    }
+    let Ids: any = [];
+
+    for (var i = 0; i < urls.length; ++i) {
+      Ids.push(i)
+    }
+
+    return Ids
   }
 
   // ---------------------------------------------------------------------------
 
   // implementation
   /**
-   * Used internally by LoadCamera and addNFTMarker methods
+   * Used internally by LoadCamera method
    * @return {void}
    */
   private _storeDataFile (data: Uint8Array, target: string) {
@@ -273,5 +307,35 @@ export default class ARToolkitNFT {
     this.instance.FS.writeFile(target, data, {
       encoding: 'binary'
     })
+  }
+
+  /**
+   * Used internally by the addNFTMarkers method
+   * @param url url of the marker.
+   * @param target the target of the marker.
+   * @param callback callback  to get the binary data.
+   * @param errorCallback the error callback.
+   */
+  private ajax(url: string, target: string, callback: (byteArray: Uint8Array) => void, errorCallback: (message: any) => void) {
+    var oReq = new XMLHttpRequest();
+        oReq.open('GET', url, true);
+        oReq.responseType = 'arraybuffer'; // blob arraybuffer
+        const writeByteArrayToFS = (target: string, byteArray: Uint8Array, callback: (byteArray: Uint8Array) => void) => {
+          this.instance.FS.writeFile(target, byteArray, { encoding: 'binary' });
+          callback(byteArray);
+        }
+
+        oReq.onload = function () {
+            if (this.status == 200) {
+                var arrayBuffer = oReq.response;
+                var byteArray = new Uint8Array(arrayBuffer);
+                writeByteArrayToFS(target, byteArray, callback);
+            }
+            else {
+                errorCallback(this.status);
+            }
+        };
+
+        oReq.send();
   }
 }

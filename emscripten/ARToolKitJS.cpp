@@ -63,6 +63,7 @@ struct arController {
 	std::unordered_map<int, AR2SurfaceSetT*> surfaceSets;
 	// nftMarker struct inside arController
 	nftMarker nft;
+    std::vector<nftMarker> nftMarkers;
 
 	ARdouble nearPlane = 0.0001;
 	ARdouble farPlane = 1000.0;
@@ -114,9 +115,6 @@ extern "C" {
 			return MARKER_INDEX_OUT_OF_BOUNDS;
 		}
 
-		KpmResult *kpmResult = NULL;
-		int kpmResultNum = -1;
-
 		float trans[3][4];
 
 		#if WITH_FILTERING
@@ -126,40 +124,8 @@ extern "C" {
 		#endif
 
 		float err = -1;
-		if (arc->detectedPage == -2) {
-			kpmMatching( arc->kpmHandle, arc->videoLuma );
-			kpmGetResult( arc->kpmHandle, &kpmResult, &kpmResultNum );
-
-			#if WITH_FILTERING
-			arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
-			#endif
-
-			int i, j, k;
-			int flag = -1;
-			for( i = 0; i < kpmResultNum; i++ ) {
-				if (kpmResult[i].pageNo == markerIndex && kpmResult[i].camPoseF == 0 ) {
-					if( flag == -1 || err > kpmResult[i].error ) { // Take the first or best result.
-						flag = i;
-						err = kpmResult[i].error;
-					}
-				}
-			}
-
-			if (flag > -1) {
-				arc->detectedPage = kpmResult[0].pageNo;
-
-				for (j = 0; j < 3; j++) {
-					for (k = 0; k < 4; k++) {
-						trans[j][k] = kpmResult[flag].camPose[j][k];
-					}
-				}
-				ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
-			} else {
-				arc->detectedPage = -2;
-			}
-		}
-
-		if (arc->detectedPage >= 0) {
+		if (arc->detectedPage == markerIndex) {
+			
 			int trackResult = ar2TrackingMod(arc->ar2Handle, arc->surfaceSet[arc->detectedPage], arc->videoFrame, trans, &err);
 
 			#if WITH_FILTERING
@@ -191,7 +157,7 @@ extern "C" {
 			}
 		}
 
-		if (arc->detectedPage >= 0) {
+		if (arc->detectedPage == markerIndex) {
 			EM_ASM_({
 				var $a = arguments;
 				var i = 0;
@@ -301,6 +267,29 @@ extern "C" {
 
 		KpmResult *kpmResult = NULL;
 		int kpmResultNum = -1;
+
+		if (arc->detectedPage == -2) {
+            kpmMatching( arc->kpmHandle, arc->videoLuma );
+            kpmGetResult( arc->kpmHandle, &kpmResult, &kpmResultNum );
+
+			#if WITH_FILTERING
+			arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
+			#endif
+
+			for(int i = 0; i < kpmResultNum; i++ ) {
+				if (kpmResult[i].camPoseF == 0 ) {
+
+                    float trans[3][4];
+                    arc->detectedPage = kpmResult[i].pageNo;
+                    for (int j = 0; j < 3; j++) {
+                        for (int k = 0; k < 4; k++) {
+                            trans[j][k] = kpmResult[i].camPose[j][k];
+                        }
+                    }
+                    ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
+                }
+            }
+        }
 		return kpmResultNum;
 	}
 
@@ -339,63 +328,11 @@ extern "C" {
 		return 0;
 	}
 
-	int loadNFTMarker(arController *arc, int surfaceSetCount, const char* datasetPathname) {
-		int i, pageNo, numIset;
-		KpmRefDataSet *refDataSet;
-
-		KpmHandle *kpmHandle = arc->kpmHandle;
-
-		refDataSet = NULL;
-
-		// Load KPM data.
-		KpmRefDataSet  *refDataSet2;
-		ARLOGi("Reading %s.fset3\n", datasetPathname);
-		if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0 ) {
-			ARLOGe("Error reading KPM data from %s.fset3\n", datasetPathname);
-			pageNo = -1;
-			return (FALSE);
-		}
-		pageNo = surfaceSetCount;
-		ARLOGi("  Assigned page no. %d.\n", surfaceSetCount);
-		if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages, surfaceSetCount) < 0) {
-		    ARLOGe("Error: kpmChangePageNoOfRefDataSet\n");
-		    return (FALSE);
-		}
-		if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0) {
-		    ARLOGe("Error: kpmMergeRefDataSet\n");
-		    return (FALSE);
-		}
-		ARLOGi("  Done.\n");
-
-		// Load AR2 data.
-		ARLOGi("Reading %s.fset\n", datasetPathname);
-
-		if ((arc->surfaceSet[surfaceSetCount] = ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL ) {
-		    ARLOGe("Error reading data from %s.fset\n", datasetPathname);
-		}
-
-		numIset = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->num;
-		arc->nft.width_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->xsize;
-		arc->nft.height_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->ysize;
-		arc->nft.dpi_NFT = arc->surfaceSet[surfaceSetCount]->surface[0].imageSet->scale[0]->dpi;
-
-		ARLOGi("NFT num. of ImageSet: %i\n", numIset);
-		ARLOGi("NFT marker width: %i\n", arc->nft.width_NFT);
-		ARLOGi("NFT marker height: %i\n", arc->nft.height_NFT);
-		ARLOGi("NFT marker dpi: %i\n", arc->nft.dpi_NFT);
-
-		ARLOGi("  Done.\n");
-
-	if (surfaceSetCount == PAGES_MAX) exit(-1);
-
-		if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
-		    ARLOGe("Error: kpmSetRefDataSet\n");
-		    return (FALSE);
-		}
-		kpmDeleteRefDataSet(&refDataSet);
-
-		ARLOGi("Loading of NFT data complete.\n");
-		return (TRUE);
+	nftMarker getNFTData(int id, int index) {
+		if (arControllers.find(id) == arControllers.end()) { return {}; }
+		arController *arc = &(arControllers[id]);
+		// get marker(s) nft data.
+		return arc->nftMarkers.at(index);
 	}
 
 	/***************
@@ -522,27 +459,89 @@ extern "C" {
 	* Marker loading *
 	*****************/
 
-	nftMarker addNFTMarker(int id, std::string datasetPathname) {
-		nftMarker nft;
-		if (arControllers.find(id) == arControllers.end()) { return nft; }
+	std::vector<int> addNFTMarkers(int id, std::vector<std::string> &datasetPathnames) {
+		if (arControllers.find(id) == arControllers.end()) { return {}; }
 		arController *arc = &(arControllers[id]);
 
-		// Load marker(s).
-		int patt_id = arc->surfaceSetCount;
-		if (!loadNFTMarker(arc, patt_id, datasetPathname.c_str())) {
-			ARLOGe("ARToolKitJS(): Unable to set up NFT marker.\n");
-			return nft;
-		}
+        KpmHandle *kpmHandle = arc->kpmHandle;
 
-		arc->surfaceSetCount++;
+        KpmRefDataSet *refDataSet;
+        refDataSet = NULL;
 
-		nft.id_NFT = patt_id;
-    nft.width_NFT = arc->nft.width_NFT;
-    nft.height_NFT = arc->nft.height_NFT;
-    nft.dpi_NFT = arc->nft.dpi_NFT;
+        if (datasetPathnames.size() >= PAGES_MAX) {
+            ARLOGe("Error exceed maximum pages\n");
+            exit(-1);
+        }
 
-		return nft;
-	}
+        std::vector<int> markerIds = {};
+
+        for (int i = 0; i < datasetPathnames.size(); i++) {
+			ARLOGi("datasetPathnames size: %i\n", datasetPathnames.size());
+            ARLOGi("add NFT marker- '%s' \n", datasetPathnames[i].c_str());
+
+            const char* datasetPathname = datasetPathnames[i].c_str();
+            int pageNo = i;
+            markerIds.push_back(i);
+
+            // Load KPM data.
+            KpmRefDataSet  *refDataSet2;
+            ARLOGi("Reading %s.fset3\n", datasetPathname);
+            if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0 ) {
+                ARLOGe("Error reading KPM data from %s.fset3\n", datasetPathname);
+                return {};
+            }
+            ARLOGi("  Assigned page no. %d.\n", pageNo);
+            if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages, pageNo) < 0) {
+                ARLOGe("Error: kpmChangePageNoOfRefDataSet\n");
+                return {};
+            }
+            if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0) {
+                ARLOGe("Error: kpmMergeRefDataSet\n");
+                return {};
+            }
+            ARLOGi("Done.\n");
+
+            // Load AR2 data.
+            ARLOGi("Reading %s.fset\n", datasetPathname);
+
+            if ((arc->surfaceSet[i] = ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL ) {
+                ARLOGe("Error reading data from %s.fset\n", datasetPathname);
+                return {};
+            }
+
+			int surfaceSetCount = arc->surfaceSetCount;
+			int numIset = arc->surfaceSet[i]->surface[0].imageSet->num;
+			arc->nft.width_NFT = arc->surfaceSet[i]->surface[0].imageSet->scale[0]->xsize;
+			arc->nft.height_NFT = arc->surfaceSet[i]->surface[0].imageSet->scale[0]->ysize;
+			arc->nft.dpi_NFT = arc->surfaceSet[i]->surface[0].imageSet->scale[0]->dpi;
+
+			ARLOGi("NFT num. of ImageSet: %i\n", numIset);
+			ARLOGi("NFT marker width: %i\n", arc->nft.width_NFT);
+			ARLOGi("NFT marker height: %i\n", arc->nft.height_NFT);
+			ARLOGi("NFT marker dpi: %i\n", arc->nft.dpi_NFT);
+
+			arc->nft.id_NFT = i;
+		    arc->nft.width_NFT = arc->nft.width_NFT;
+		    arc->nft.height_NFT = arc->nft.height_NFT;
+		    arc->nft.dpi_NFT = arc->nft.dpi_NFT;
+			arc->nftMarkers.push_back(arc->nft);
+
+            ARLOGi("Done.\n");
+			surfaceSetCount++;
+        }
+
+        if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
+            ARLOGe("Error: kpmSetRefDataSet\n");
+            return {};
+        }
+        kpmDeleteRefDataSet(&refDataSet);
+
+        ARLOGi("Loading of NFT data complete.\n");
+
+		arc->surfaceSetCount += markerIds.size();
+
+        return markerIds;
+    }
 
 	/**********************
 	* Setters and getters *
@@ -687,11 +686,11 @@ extern "C" {
 		arController *arc = &(arControllers[id]);
 
 		// Convert video frame to AR2VideoBufferT
-    AR2VideoBufferT buff = {0};
-    buff.buff = arc->videoFrame;
-    buff.fillFlag = 1;
+    	AR2VideoBufferT buff = {0};
+    	buff.buff = arc->videoFrame;
+    	buff.fillFlag = 1;
 
-    buff.buffLuma = arc->videoLuma;
+    	buff.buffLuma = arc->videoLuma;
 
 
 		return arDetectMarker( arc->arhandle, &buff);

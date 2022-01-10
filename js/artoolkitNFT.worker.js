@@ -17,6 +17,7 @@ self.onmessage = function (e) {
 var next = null;
 var ar = null;
 var markerResult = null;
+var marker;
 
 function load (msg) {
 
@@ -31,10 +32,12 @@ function load (msg) {
         markerResult = {type: "found", matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH)};
       });
 
-      ar.loadNFTMarker(msg.marker, function (nft) {
-        ar.trackNFTMarkerId(nft.id);
-        console.log("loadNFTMarker -> ", nft.id);
-        console.log("nftMarker struct: ", nft);
+      ar.loadNFTMarker(msg.marker, function (id) {
+        ar.trackNFTMarkerId(id)     
+        let marker = ar.getNFTData(ar.id, 0)
+        console.log("nftMarker data: ", marker)
+        postMessage({type: 'markerInfos', marker: marker})
+        console.log('loadNFTMarker -> ', id)
         postMessage({ type: 'endLoading', end: true }),
           function (err) {
           console.error('Error in loading marker on Worker', err);

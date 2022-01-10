@@ -89,10 +89,11 @@ interface delegateMethods {
     getThresholdMode: (id: number) => number;
     setThreshold: (id: number, threshold: number) => number;
     getThreshold: (id: number) => number;
-    addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
+    addNFTMarkers: (arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void) => [{id: number}];
     detectMarker: (id: number) => number;
     detectNFTMarker: (arId: number) => void;
     getNFTMarker: (id: number, markerIndex: number) => number;
+    getNFTData: (id: number, index: number) => object;
     setImageProcMode: (id: number, mode: number) => number;
     getImageProcMode: (id: number) => number;
 }
@@ -260,7 +261,9 @@ export default class ARControllerNFT {
     const MARKER_LOST_TIME = 200
 
     for (let i = 0; i < nftMarkerCount; i++) {
+      
       let nftMarkerInfo = this.getNFTMarker(i)
+      
       let markerType = ARToolkitNFT.NFT_MARKER
 
       if (nftMarkerInfo.found) {
@@ -382,6 +385,10 @@ export default class ARControllerNFT {
       return this.artoolkitNFT.NFTMarkerInfo;
     }
   };
+
+  getNFTData (id: number, index: number) {
+    return this.artoolkitNFT.getNFTData(id, index);
+  }
 
   // event handling
   //----------------------------------------------------------------------------
@@ -698,9 +705,23 @@ export default class ARControllerNFT {
    * Loads an NFT marker from the given URL or data string
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
   */
-  async loadNFTMarker (urlOrData: string) {
-    let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
-    this.nftMarkerCount = nft.id + 1
+   async loadNFTMarker (urlOrData: string, onSuccess: (ids: number) => void, onError: () => void) {
+    let nft = await this.artoolkitNFT.addNFTMarkers(this.id, [urlOrData],  (ids: any) => {
+      this.nftMarkerCount += ids.length;
+      onSuccess(ids);
+    }, onError)  
+    return nft
+  };
+
+  /**
+   * Loads an array of NFT markers from the given URLs or data string
+   * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
+  */
+   async loadNFTMarkers (urlOrData: Array<string>, onSuccess: (ids: number) => void, onError: () => void) {
+    let nft = await this.artoolkitNFT.addNFTMarkers(this.id, urlOrData, (ids: any) => {
+      this.nftMarkerCount += ids.length;
+      onSuccess(ids);
+    }, onError) 
     return nft
   };
 
