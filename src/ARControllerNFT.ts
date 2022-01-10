@@ -259,8 +259,6 @@ export default class ARControllerNFT {
 
     // in ms
     const MARKER_LOST_TIME = 200
-    //console.log(nftMarkerCount);
-    
 
     for (let i = 0; i < nftMarkerCount; i++) {
       
