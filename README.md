@@ -1,7 +1,7 @@
 ![github releases](https://flat.badgen.net/github/release/webarkit/jsartoolkitNFT)
 ![github stars](https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT)
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
-![npm package version](https://flat.badgen.net/npm/v/@kalwalt/jsartoolkit-nft)
+![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
 ![Dependabot Badge](https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot)
 
 
@@ -69,7 +69,7 @@ npm i @webarkit/jsartoolkit-nft
 then:
 
 ```javascript
-import { ARToolkitNFT, ARControllerNFT } from '@kalwalt/jsartoolkit-nft'
+import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
 ## Downloads
 
