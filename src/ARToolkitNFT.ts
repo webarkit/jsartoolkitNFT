@@ -33,16 +33,16 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import ModuleLoader from './ModuleLoader'
-import Utils from './Utils'
+import ModuleLoader from "./ModuleLoader";
+import Utils from "./Utils";
 
-const UNKNOWN_MARKER = -1
-const NFT_MARKER = 0
+const UNKNOWN_MARKER = -1;
+const NFT_MARKER = 0;
 
 declare global {
   namespace NodeJS {
     interface Global {
-       artoolkitNFT: any;
+      artoolkitNFT: any;
     }
   }
   interface Window {
@@ -55,8 +55,12 @@ interface runtimeInstanced {
 }
 
 export default class ARToolkitNFT {
-  static get UNKNOWN_MARKER () { return UNKNOWN_MARKER }
-  static get NFT_MARKER () { return NFT_MARKER }
+  static get UNKNOWN_MARKER() {
+    return UNKNOWN_MARKER;
+  }
+  static get NFT_MARKER() {
+    return NFT_MARKER;
+  }
 
   public instance: any;
   private markerNFTCount: number;
@@ -79,12 +83,12 @@ export default class ARToolkitNFT {
     framesize: number;
     videoLumaPointer: number;
     camera: number;
-    transform: number
-  }
-  public  NFTMarkerInfo: {
+    transform: number;
+  };
+  public NFTMarkerInfo: {
     error: number;
     found: number;
-    id: number,
+    id: number;
     pose: Float64Array;
   };
   public setProjectionNearPlane: (id: number, value: number) => void;
@@ -98,7 +102,6 @@ export default class ARToolkitNFT {
   public setImageProcMode: (id: number, mode: number) => number;
   public getImageProcMode: (id: number) => number;
 
-
   // construction
   /**
    * The ARToolkitNFT constructor. It has no arguments.
@@ -110,13 +113,13 @@ export default class ARToolkitNFT {
    * A message is displayed in the browser console during the intitialization, for example:
    * "ARToolkitNFT 0.9.6"
    */
-  constructor () {
+  constructor() {
     // reference to WASM module
-    this.instance
-    this.markerNFTCount = 0
-    this.cameraCount = 0
-    this.version = '0.9.7'
-    console.info('ARToolkitNFT ', this.version)
+    this.instance;
+    this.markerNFTCount = 0;
+    this.cameraCount = 0;
+    this.version = "0.9.7";
+    console.info("ARToolkitNFT ", this.version);
   }
 
   // ---------------------------------------------------------------------------
@@ -127,22 +130,24 @@ export default class ARToolkitNFT {
    * create a global artoolkitNFT variable.
    * @return {object} the this object
    */
-  public async init () {
-     const runtime: runtimeInstanced = await ModuleLoader.init.catch((err: string) => {
-      console.log(err);
-      return Promise.reject(err)
-    }).then((resolve: any) => {
-      return resolve;
-    })
+  public async init() {
+    const runtime: runtimeInstanced = await ModuleLoader.init
+      .catch((err: string) => {
+        console.log(err);
+        return Promise.reject(err);
+      })
+      .then((resolve: any) => {
+        return resolve;
+      });
 
     this.instance = runtime.instance;
 
-    this._decorate()
+    this._decorate();
 
-    let scope = (typeof window !== 'undefined') ? window : global
-    scope.artoolkitNFT = this
+    let scope = typeof window !== "undefined" ? window : global;
+    scope.artoolkitNFT = this;
 
-    return this
+    return this;
   }
 
   // private methods
@@ -151,54 +156,54 @@ export default class ARToolkitNFT {
    * ARToolkitNFT internal methods.
    * @return {void}
    */
-  private _decorate () {
+  private _decorate() {
     // add delegate methods
     [
-      'setup',
-      'teardown',
+      "setup",
+      "teardown",
 
-      'setupAR2',
+      "setupAR2",
 
-      'setLogLevel',
-      'getLogLevel',
+      "setLogLevel",
+      "getLogLevel",
 
-      'setDebugMode',
-      'getDebugMode',
+      "setDebugMode",
+      "getDebugMode",
 
-      'getProcessingImage',
+      "getProcessingImage",
 
-      'detectMarker',
-      'detectNFTMarker',
-      'getNFTMarker',
-      'getNFTData',
+      "detectMarker",
+      "detectNFTMarker",
+      "getNFTMarker",
+      "getNFTData",
 
-      'frameMalloc',
-      'NFTMarkerInfo',
+      "frameMalloc",
+      "NFTMarkerInfo",
 
-      'setProjectionNearPlane',
-      'getProjectionNearPlane',
+      "setProjectionNearPlane",
+      "getProjectionNearPlane",
 
-      'setProjectionFarPlane',
-      'getProjectionFarPlane',
+      "setProjectionFarPlane",
+      "getProjectionFarPlane",
 
-      'setThresholdMode',
-      'getThresholdMode',
+      "setThresholdMode",
+      "getThresholdMode",
 
-      'setThreshold',
-      'getThreshold',
+      "setThreshold",
+      "getThreshold",
 
-      'setImageProcMode',
-      'getImageProcMode',
+      "setImageProcMode",
+      "getImageProcMode",
 
-      'StringList'
-    ].forEach(method => {
-      this.converter()[method] = this.instance[method]
-    })
+      "StringList",
+    ].forEach((method) => {
+      this.converter()[method] = this.instance[method];
+    });
 
     // expose constants
     for (const co in this.instance) {
       if (co.match(/^AR/)) {
-        this.converter()[co] = this.instance[co]
+        this.converter()[co] = this.instance[co];
       }
     }
   }
@@ -208,7 +213,7 @@ export default class ARToolkitNFT {
    * @return {this} the this object
    */
   private converter(): any {
-    return this
+    return this;
   }
 
   // ---------------------------------------------------------------------------
@@ -220,23 +225,27 @@ export default class ARToolkitNFT {
    * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
    * @return {number} a number, the internal id.
    */
-  public async loadCamera (urlOrData: any): Promise<number> {
-    const target = '/camera_param_' + this.cameraCount++
+  public async loadCamera(urlOrData: any): Promise<number> {
+    const target = "/camera_param_" + this.cameraCount++;
 
-    let data
+    let data;
 
     if (urlOrData instanceof Uint8Array) {
       // assume preloaded camera params
-      data = urlOrData
+      data = urlOrData;
     } else {
       // fetch data via HTTP
-      try { data = await Utils.fetchRemoteData(urlOrData) } catch (error) { throw error }
+      try {
+        data = await Utils.fetchRemoteData(urlOrData);
+      } catch (error) {
+        throw error;
+      }
     }
 
-    this._storeDataFile(data, target)
+    this._storeDataFile(data, target);
 
     // return the internal marker ID
-    return this.instance._loadCamera(target)
+    return this.instance._loadCamera(target);
   }
 
   /**
@@ -247,51 +256,71 @@ export default class ARToolkitNFT {
    * @param {function} callback the callback to retrieve the ids.
    * @param {function} onError2 the error callback.
    */
-  public addNFTMarkers(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: ( errorNumber: any) => void): [{id: number}] {
+  public addNFTMarkers(
+    arId: number,
+    urls: Array<string>,
+    callback: (filename: any) => void,
+    onError2: (errorNumber: any) => void
+  ): [{ id: number }] {
     var prefixes: any = [];
     var pending = urls.length * 3;
     var onSuccess = (filename: any) => {
-        pending -= 1;
-        if (pending === 0) {
-            const vec = new this.instance.StringList();
-            const markerIds = [];
-            for (let i = 0; i < prefixes.length; i++) {
-                vec.push_back(prefixes[i]);
-            }
-            var ret = this.instance._addNFTMarkers(arId, vec);
-            for (let i = 0; i < ret.size(); i++) {
-                markerIds.push(ret.get(i));
-            }
-
-            console.log("add nft marker ids: ", markerIds);
-            if (callback) callback(markerIds);
+      pending -= 1;
+      if (pending === 0) {
+        const vec = new this.instance.StringList();
+        const markerIds = [];
+        for (let i = 0; i < prefixes.length; i++) {
+          vec.push_back(prefixes[i]);
         }
-    }
-    var onError = ( filename: any, errorNumber?: any) => {
-        console.log("failed to load: ", filename);
-        onError2(errorNumber);
-    }
+        var ret = this.instance._addNFTMarkers(arId, vec);
+        for (let i = 0; i < ret.size(); i++) {
+          markerIds.push(ret.get(i));
+        }
+
+        console.log("add nft marker ids: ", markerIds);
+        if (callback) callback(markerIds);
+      }
+    };
+    var onError = (filename: any, errorNumber?: any) => {
+      console.log("failed to load: ", filename);
+      onError2(errorNumber);
+    };
 
     for (var i = 0; i < urls.length; i++) {
-        var url = urls[i];
-        var prefix = '/markerNFT_' + this.markerNFTCount;
-        prefixes.push(prefix);
-        var filename1 = prefix + '.fset';
-        var filename2 = prefix + '.iset';
-        var filename3 = prefix + '.fset3';
+      var url = urls[i];
+      var prefix = "/markerNFT_" + this.markerNFTCount;
+      prefixes.push(prefix);
+      var filename1 = prefix + ".fset";
+      var filename2 = prefix + ".iset";
+      var filename3 = prefix + ".fset3";
 
-        this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
-        this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
-        this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
-        this.markerNFTCount += 1;
+      this.ajax(
+        url + ".fset",
+        filename1,
+        onSuccess.bind(filename1),
+        onError.bind(filename1)
+      );
+      this.ajax(
+        url + ".iset",
+        filename2,
+        onSuccess.bind(filename2),
+        onError.bind(filename2)
+      );
+      this.ajax(
+        url + ".fset3",
+        filename3,
+        onSuccess.bind(filename3),
+        onError.bind(filename3)
+      );
+      this.markerNFTCount += 1;
     }
     let Ids: any = [];
 
     for (var i = 0; i < urls.length; ++i) {
-      Ids.push(i)
+      Ids.push(i);
     }
 
-    return Ids
+    return Ids;
   }
 
   // ---------------------------------------------------------------------------
@@ -301,12 +330,12 @@ export default class ARToolkitNFT {
    * Used internally by LoadCamera method
    * @return {void}
    */
-  private _storeDataFile (data: Uint8Array, target: string) {
+  private _storeDataFile(data: Uint8Array, target: string) {
     // FS is provided by emscripten
     // Note: valid data must be in binary format encoded as Uint8Array
     this.instance.FS.writeFile(target, data, {
-      encoding: 'binary'
-    })
+      encoding: "binary",
+    });
   }
 
   /**
@@ -316,26 +345,34 @@ export default class ARToolkitNFT {
    * @param callback callback  to get the binary data.
    * @param errorCallback the error callback.
    */
-  private ajax(url: string, target: string, callback: (byteArray: Uint8Array) => void, errorCallback: (message: any) => void) {
+  private ajax(
+    url: string,
+    target: string,
+    callback: (byteArray: Uint8Array) => void,
+    errorCallback: (message: any) => void
+  ) {
     var oReq = new XMLHttpRequest();
-        oReq.open('GET', url, true);
-        oReq.responseType = 'arraybuffer'; // blob arraybuffer
-        const writeByteArrayToFS = (target: string, byteArray: Uint8Array, callback: (byteArray: Uint8Array) => void) => {
-          this.instance.FS.writeFile(target, byteArray, { encoding: 'binary' });
-          callback(byteArray);
-        }
+    oReq.open("GET", url, true);
+    oReq.responseType = "arraybuffer"; // blob arraybuffer
+    const writeByteArrayToFS = (
+      target: string,
+      byteArray: Uint8Array,
+      callback: (byteArray: Uint8Array) => void
+    ) => {
+      this.instance.FS.writeFile(target, byteArray, { encoding: "binary" });
+      callback(byteArray);
+    };
 
-        oReq.onload = function () {
-            if (this.status == 200) {
-                var arrayBuffer = oReq.response;
-                var byteArray = new Uint8Array(arrayBuffer);
-                writeByteArrayToFS(target, byteArray, callback);
-            }
-            else {
-                errorCallback(this.status);
-            }
-        };
+    oReq.onload = function () {
+      if (this.status == 200) {
+        var arrayBuffer = oReq.response;
+        var byteArray = new Uint8Array(arrayBuffer);
+        writeByteArrayToFS(target, byteArray, callback);
+      } else {
+        errorCallback(this.status);
+      }
+    };
 
-        oReq.send();
+    oReq.send();
   }
 }
