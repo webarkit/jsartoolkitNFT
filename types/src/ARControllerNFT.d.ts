@@ -1,4 +1,4 @@
-interface ImageObj {
+interface ImageObj extends HTMLCanvasElement {
     videoWidth: number;
     width: number;
     videoHeight: number;
