@@ -40,25 +40,25 @@ You can use raw.githack.com links:
 **WASM** version of the library:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
 ```
 
 **WASM** version of the library as a Module:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
 ```
 
 **NO WASM** minified:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
 ```
 
 or (recommended) use the **UMD** library:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
 ```
 
 or you can install with npm and use as a module:
