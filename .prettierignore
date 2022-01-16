@@ -6,7 +6,8 @@ examples
 types
 *.html
 *.json
-*.js
+build/*.js
+js/*.api.js
 *.lock
 *.md
 .github/**/*.yml
