@@ -154,7 +154,7 @@ extern "C" {
 				webarkitLOGi("Tracking lost. %d", trackResult);
 				arc->detectedPage = -2;
 			} else {
-				ARLOGi("Tracked page %d (max %d).",arc->surfaceSet[arc->detectedPage], arc->surfaceSetCount - 1);
+				ARLOGi("Tracked page %d (max %d).\n",arc->surfaceSet[arc->detectedPage], arc->surfaceSetCount - 1);
 			}
 		}
 
