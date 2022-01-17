@@ -1,7 +1,7 @@
 ![github releases](https://flat.badgen.net/github/release/webarkit/jsartoolkitNFT)
 ![github stars](https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT)
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
-![npm package version](https://flat.badgen.net/npm/v/@kalwalt/jsartoolkit-nft)
+![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
 ![Dependabot Badge](https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot)
 
 
@@ -21,6 +21,7 @@ Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html
 **JSARToolKitNFT** support only this types of markers:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
+- Multi NFT markers !!!
 
 ## WASM
 
@@ -40,25 +41,25 @@ You can use raw.githack.com links:
 **WASM** version of the library:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
 ```
 
 **WASM** version of the library as a Module:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
 ```
 
 **NO WASM** minified:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
 ```
 
 or (recommended) use the **UMD** library:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
 ```
 
 or you can install with npm and use as a module:
@@ -69,7 +70,7 @@ npm i @webarkit/jsartoolkit-nft
 then:
 
 ```javascript
-import { ARToolkitNFT, ARControllerNFT } from '@kalwalt/jsartoolkit-nft'
+import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
 ## Downloads
 
