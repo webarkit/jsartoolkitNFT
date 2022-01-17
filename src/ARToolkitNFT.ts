@@ -118,7 +118,7 @@ export default class ARToolkitNFT {
     this.instance;
     this.markerNFTCount = 0;
     this.cameraCount = 0;
-    this.version = "0.9.7";
+    this.version = "1.0.0";
     console.info("ARToolkitNFT ", this.version);
   }
 

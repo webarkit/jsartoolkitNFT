@@ -21,6 +21,7 @@ Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html
 **JSARToolKitNFT** support only this types of markers:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
+- Multi NFT markers !!!
 
 ## WASM
 
