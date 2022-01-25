@@ -35,8 +35,10 @@
  */
 import ARToolkitNFT from "./ARToolkitNFT";
 import ARControllerNFT from "./ARControllerNFT";
+import GrayScale from "./converters/GrayScale"
 
 export default {
   ARToolkitNFT,
   ARControllerNFT,
+  GrayScale
 };

@@ -127,6 +127,8 @@ export default class ARControllerNFT {
   private framesize: number;
   private dataHeap: Uint8Array;
   private videoLuma: Uint8Array;
+  private grayscaleEnabled: boolean;
+  private grayscaleSource: Uint8Array; 
   private camera_mat: Float64Array;
   private videoLumaPointer: number;
   private canvas: HTMLCanvasElement;
@@ -203,6 +205,7 @@ export default class ARControllerNFT {
     this.framesize = null;
     this.dataHeap = null;
     this.videoLuma = null;
+    this.grayscaleEnabled = false;
     this.camera_mat = null;
     this.videoLumaPointer = null;
 
@@ -813,6 +816,10 @@ export default class ARControllerNFT {
     return this.artoolkitNFT.getImageProcMode(this.id);
   }
 
+  setGrayData(data: any) {
+    return this.grayscaleSource = data
+  }
+
   // private accessors
   // ----------------------------------------------------------------------------
   /**
@@ -953,17 +960,21 @@ export default class ARControllerNFT {
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
     if (this.videoLuma) {
-      let q = 0;
+      if (!this.grayscaleEnabled) {
+        let q = 0;
 
-      // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
-      // see (ARToolKitJS.cpp L: 43)
-      for (let p = 0; p < this.videoSize; p++) {
-        let r = data[q + 0],
-          g = data[q + 1],
-          b = data[q + 2];
-        // @see https://stackoverflow.com/a/596241/5843642
-        this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
-        q += 4;
+        // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
+        // see (ARToolKitJS.cpp L: 43)
+        for (let p = 0; p < this.videoSize; p++) {
+          let r = data[q + 0],
+            g = data[q + 1],
+            b = data[q + 2];
+          // @see https://stackoverflow.com/a/596241/5843642
+          this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
+          q += 4;
+        }
+      } else {
+        this.videoLuma = this.grayscaleSource
       }
     }
 

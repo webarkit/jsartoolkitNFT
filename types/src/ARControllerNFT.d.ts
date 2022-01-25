@@ -28,6 +28,8 @@ export default class ARControllerNFT {
     private framesize;
     private dataHeap;
     private videoLuma;
+    private grayscaleEnabled;
+    private grayscaleSource;
     private camera_mat;
     private videoLumaPointer;
     private canvas;
@@ -84,6 +86,7 @@ export default class ARControllerNFT {
     }]>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
+    setGrayData(data: any): any;
     private converter;
     private _initialize;
     private _initNFT;

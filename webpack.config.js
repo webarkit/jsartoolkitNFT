@@ -35,6 +35,14 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.glsl$/i,
+        use: [
+          {
+            loader: path.resolve('webpack-glsl-minifier.js'),
+          }
+        ],
+      },
     ],
   },
   resolve: {
