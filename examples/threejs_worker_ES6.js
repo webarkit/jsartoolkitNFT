@@ -168,8 +168,6 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
     var imageData = context_process.getImageData(0, 0, pw, ph);
-    var grayscale = new ARToolkitNFT.GrayScale(WEBGLcontext, 320, 240);
-    var grayData = grayscale.getFrame(imageData)
     worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
   }
   var tick = function () {
