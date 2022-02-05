@@ -32,7 +32,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   renderer.setPixelRatio(window.devicePixelRatio);
   var scene = new THREE.Scene();
 
-  var gray = new GrayScale(scene, video);
+  var gray = new GrayScale(scene, video, input_width, input_height);
   gray.getFrame();
 
   var camera = new THREE.Camera();

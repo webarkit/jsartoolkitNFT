@@ -1,5 +1,10 @@
 class GrayScale {
-    constructor ( scene, source ) {     
+    constructor ( scene, source, rtWidth, rtHeight ) {  
+        this.webglRenderTarget = new THREE.WebGLRenderTarget(rtWidth, rtHeight);
+        const rtCamera = new THREE.OrthographicCamera(-1, 1, -1, 1, -1, 1);
+        rtCamera.position.z = 2;
+        this.rtScene = new THREE.Scene();
+        this.rtScene.background = new THREE.Color('red'); 
         this._texture = new THREE.VideoTexture( source );
         this._scene = scene;
         console.log('grayscale setup');
@@ -35,8 +40,9 @@ class GrayScale {
                 }'
         } );
 
-        const geometry = new THREE.PlaneGeometry(1,1,1,1);
+        const geometry = new THREE.PlaneBufferGeometry(2, 2);
         const mesh = new THREE.Mesh( geometry, shader_material );
+        this.rtScene.add( mesh );
         this._scene.add( mesh );
     }
 
