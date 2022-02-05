@@ -30,9 +30,10 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
-  var WEBGLcontext = renderer.getContext();
-
   var scene = new THREE.Scene();
+
+  var gray = new GrayScale(scene, video);
+  gray.getFrame();
 
   var camera = new THREE.Camera();
   camera.matrixAutoUpdate = false;

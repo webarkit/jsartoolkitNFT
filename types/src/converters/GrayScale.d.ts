@@ -1,7 +1,4 @@
 export default class GrayScale {
-    private _canvas;
-    private _width;
-    private _height;
     private _flipImageProg;
     private _grayscaleProg;
     glReady: boolean;
@@ -9,7 +6,7 @@ export default class GrayScale {
     private flipLocation;
     private pixelBuf;
     private grayBuf;
-    constructor(context: WebGLRenderingContext, width: number, height: number);
+    constructor(context: WebGLRenderingContext);
     initGL(vertShaderSource: any, fragShaderSource: any): void;
     getFrame(data: any): Uint8Array;
 }

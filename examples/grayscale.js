@@ -1,7 +1,8 @@
-export class GrayScale {
-    constructor (webglContext, source) {
-        this.gl = webglContext;
-        this._source = source;
+class GrayScale {
+    constructor ( scene, source ) {     
+        this._texture = new THREE.VideoTexture( source );
+        this._scene = scene;
+        console.log('grayscale setup');
     }
 
     getFrame() {
@@ -10,7 +11,7 @@ export class GrayScale {
             uniforms: {
         
                 flipY: { value: 1.0 },
-                u_image: this._source
+                u_image: {value: this._texture }
         
             },
         
@@ -33,8 +34,10 @@ export class GrayScale {
                     gl_FragColor = vec4(vec3(gray), 1.0);\
                 }'
         } );
+
+        const geometry = new THREE.PlaneGeometry(1,1,1,1);
+        const mesh = new THREE.Mesh( geometry, shader_material );
+        this._scene.add( mesh );
     }
 
 }
-
-    
