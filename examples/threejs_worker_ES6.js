@@ -30,15 +30,15 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
   var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
+
   var scene = new THREE.Scene();
-
-  var gray = new GrayScale(scene, video, input_width, input_height);
-  gray.getFrame();
-
   var camera = new THREE.Camera();
   camera.matrixAutoUpdate = false;
 
   scene.add(camera);
+
+  var gray = new GrayScale(scene, video, camera,renderer, input_width, input_height);
+  gray.getFrame();
 
   var sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 8, 8),
@@ -173,6 +173,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   }
   var tick = function () {
     draw();
+    gray.getImageData(640, 480)
     requestAnimationFrame(tick);
   };
 

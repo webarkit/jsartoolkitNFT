@@ -1,12 +1,14 @@
 class GrayScale {
-    constructor ( scene, source, rtWidth, rtHeight ) {  
+    constructor ( scene, source, camera, renderer, rtWidth, rtHeight ) {  
         this.webglRenderTarget = new THREE.WebGLRenderTarget(rtWidth, rtHeight);
-        const rtCamera = new THREE.OrthographicCamera(-1, 1, -1, 1, -1, 1);
-        rtCamera.position.z = 2;
+        this.rtCamera = new THREE.OrthographicCamera(-1, 1, -1, 1, -1, 1);
+        this.rtCamera.position.z = 2;
         this.rtScene = new THREE.Scene();
         this.rtScene.background = new THREE.Color('red'); 
         this._texture = new THREE.VideoTexture( source );
         this._scene = scene;
+        this._camera = camera;
+        this._renderer = renderer;
         console.log('grayscale setup');
     }
 
@@ -43,7 +45,25 @@ class GrayScale {
         const geometry = new THREE.PlaneBufferGeometry(2, 2);
         const mesh = new THREE.Mesh( geometry, shader_material );
         this.rtScene.add( mesh );
-        this._scene.add( mesh );
+        this._renderer.setRenderTarget(this.webglRenderTarget);
+        this._renderer.render(this.rtScene, this.rtCamera);
+        this._renderer.setRenderTarget(null);
+    }
+
+    getImageData(textureWidth, textureHeight){
+        const gl = this._renderer.getContext();
+        let pixels = new Uint8Array(textureWidth * textureHeight * 4);
+        gl.readPixels(0, 0, textureWidth, textureHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        let image = new ImageData(textureWidth, textureHeight);
+        //copy texture data to Image data where format is RGBA
+        let size = textureWidth * textureHeight * 4;
+        let j = 0;
+        for (let i = 0; i < size; i+=4) {
+           image.data[j] = pixels[i];
+           j++;
+        }
+        //console.log(image.data);
+        return image.data;
     }
 
 }
