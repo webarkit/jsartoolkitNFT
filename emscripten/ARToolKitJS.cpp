@@ -23,7 +23,7 @@
 #include <WebARKit/WebARKitLog.h>
 #include "trackingMod.h"
 
-#define PAGES_MAX               10          // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
+const int PAGES_MAX = 20;         // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
 struct nftMarker {
 	int id_NFT;
