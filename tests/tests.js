@@ -1,6 +1,7 @@
 QUnit.module("ARCameraParaNFT");
 QUnit.test("Create object and load camera parameter", function (assert) {
-  const cParaUrl = "./camera_para.dat";
+  const cParaUrl = "./base/tests/camera_para.dat";
+  //const cParaUrl = "./camera_para.dat";
   const done = assert.async();
   const success = function () {
     assert.ok(true, "Successfully loaded camera para");
@@ -68,7 +69,7 @@ QUnit.module("ARControllerNFT", {
   beforeEach: (assert) => {
     this.timeout = 5000;
     this.cleanUpTimeout = 500;
-    this.cParaUrl = "./camera_para.dat";
+    this.cParaUrl = "./base/tests/camera_para.dat";
     this.checkDefault = (arController) => {
       assert.ok(arController);
       assert.deepEqual(
