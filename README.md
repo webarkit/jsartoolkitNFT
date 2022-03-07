@@ -2,8 +2,8 @@
 ![github stars](https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT)
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
 ![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
-![Dependabot Badge](https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot)
-
+![Dependabot Badge](https://flat.badgen.net/github/dependabot/webarkit/jsartoolkit-nft)
+[![Tested with QUnit](https://img.shields.io/badge/tested_with-qunit-9c3493.svg)](https://qunitjs.com/)
 
 
 
