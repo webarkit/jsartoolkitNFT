@@ -36,4 +36,4 @@ jobs:
         run: npm ci
 
       - name: Tests
-        run: npm test-headless-browser
+        run: npm run test-headless-browser
