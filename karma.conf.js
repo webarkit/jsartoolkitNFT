@@ -66,7 +66,7 @@ module.exports = function(config) {
     browsers: [
       'Firefox', 
       'Chrome',
-      'ChromeHeadless',
+      (process.platform === 'linux') ? 'ChromiumHeadless' : 'ChromeHeadless',
       'FirefoxHeadless'
       ],
 
