@@ -58,7 +58,8 @@
     "build-ts": "webpack --mode production",
     "build": "node tools/makem.js; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
-    "test": "karma start",
+    "test-browser": "karma start --browsers Chrome,Firefox,ChromeHeadless,FirefoxHeadless",
+    "test-headless-browser": "karma start --browsers ChromeHeadless,FirefoxHeadless",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write ."
