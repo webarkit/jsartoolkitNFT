@@ -4,6 +4,8 @@
     var scope;
     if (typeof window !== 'undefined') {
         scope = window;
+    } else if (typeof global !== 'undefined') {
+        scope = global;
     } else {
         scope = self;
     }
@@ -35,17 +37,17 @@
         this.id = undefined;
         var w = width, h = height;
 
-        this.orientation = 'landscape';
+        //this.orientation = 'landscape';
 
         this.listeners = {};
 
-        if (typeof width !== 'number') {
+        /*if (typeof width !== 'number') {
             var image = width;
             cameraPara = height;
             w = image.videoWidth || image.width;
             h = image.videoHeight || image.height;
             this.image = image;
-        }
+        }*/
 
         this.width = w;
         this.height = h;
@@ -56,12 +58,12 @@
         this.transform_mat = new Float32Array(16);
         this.transformGL_RH = new Float64Array(16);
 
-        if (typeof document !== 'undefined') {
+        /*if (typeof document !== 'undefined') {
             this.canvas = document.createElement('canvas');
             this.canvas.width = w;
             this.canvas.height = h;
             this.ctx = this.canvas.getContext('2d');
-        }
+        }*/
 
         this.videoWidth = w;
         this.videoHeight = h;
@@ -790,7 +792,7 @@
 
             var imageData = image;
 
-        } else {
+        }/* else {
             this.ctx.save();
 
             if (this.orientation === 'portrait') {
@@ -804,7 +806,7 @@
             this.ctx.restore();
 
             var imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        }
+        }*/
         var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
