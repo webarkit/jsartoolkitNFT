@@ -28,5 +28,5 @@ jobs:
       - name: Install
         run: npm ci
 
-      #- name: Tests
-      #  run: npm run test-headless-browser
+      - name: Tests
+        run: npm test
