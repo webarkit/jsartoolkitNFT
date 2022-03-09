@@ -23,7 +23,7 @@ module.exports = function(config) {
     files: [
       { pattern: 'build/artoolkitNFT.min.js', included: true },
       { pattern: 'tests/*.js', included: true },
-      { pattern: 'tests/camera_para.dat', watched: false, included: false, served: true, nocache: false }
+      { pattern: 'examples/Data/camera_para.dat', watched: false, included: false, served: true, nocache: false }
     ],
 
 
@@ -64,8 +64,6 @@ module.exports = function(config) {
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
     browsers: [
-      //'Firefox', 
-      //'Chrome',
       (process.platform === 'linux') ? 'ChromiumHeadless' : 'ChromeHeadless',
       'FirefoxHeadless'
       ],
