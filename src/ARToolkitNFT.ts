@@ -33,7 +33,7 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import ModuleLoader from "./ModuleLoader";
+import artoolkitNFT from "../build/artoolkitNFT_ES6_wasm";
 import Utils from "./Utils";
 
 const UNKNOWN_MARKER = -1;
@@ -48,10 +48,6 @@ declare global {
   interface Window {
     artoolkitNFT: any;
   }
-}
-
-interface runtimeInstanced {
-  instance: any;
 }
 
 export default class ARToolkitNFT {
@@ -131,16 +127,7 @@ export default class ARToolkitNFT {
    * @return {object} the this object
    */
   public async init() {
-    const runtime: runtimeInstanced = await ModuleLoader.init
-      .catch((err: string) => {
-        console.log(err);
-        return Promise.reject(err);
-      })
-      .then((resolve: any) => {
-        return resolve;
-      });
-
-    this.instance = runtime.instance;
+    this.instance = await artoolkitNFT();
 
     this._decorate();
 

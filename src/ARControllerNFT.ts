@@ -68,6 +68,19 @@ interface delegateMethods {
     transform: number;
   };
   instance: {
+    frameMalloc: {
+      framepointer: number;
+      framesize: number;
+      videoLumaPointer: number;
+      camera: number;
+      transform: number;
+    };
+    NFTMarkerInfo: {
+      error: number;
+      found: number;
+      id: number;
+      pose: Float64Array;
+    };
     HEAPU8: {
       buffer: Uint8Array;
     };
@@ -293,7 +306,7 @@ export default class ARControllerNFT {
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo = this.getNFTMarker(i);
+      let nftMarkerInfo: delegateMethods['NFTMarkerInfo'] = this.getNFTMarker(i);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -413,7 +426,7 @@ export default class ARControllerNFT {
    */
   getNFTMarker(markerIndex: number) {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-      return this.artoolkitNFT.NFTMarkerInfo;
+      return this.artoolkitNFT.instance.NFTMarkerInfo;
     }
   }
 
@@ -848,7 +861,7 @@ export default class ARControllerNFT {
     this._initNFT();
 
     const params: delegateMethods["frameMalloc"] =
-      this.artoolkitNFT.frameMalloc;
+      this.artoolkitNFT.instance.frameMalloc;
     this.framepointer = params.framepointer;
     this.framesize = params.framesize;
     this.videoLumaPointer = params.videoLumaPointer;
