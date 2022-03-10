@@ -37,17 +37,7 @@
         this.id = undefined;
         var w = width, h = height;
 
-        //this.orientation = 'landscape';
-
         this.listeners = {};
-
-        /*if (typeof width !== 'number') {
-            var image = width;
-            cameraPara = height;
-            w = image.videoWidth || image.width;
-            h = image.videoHeight || image.height;
-            this.image = image;
-        }*/
 
         this.width = w;
         this.height = h;
@@ -57,13 +47,6 @@
         this.nftMarkers = {};
         this.transform_mat = new Float32Array(16);
         this.transformGL_RH = new Float64Array(16);
-
-        /*if (typeof document !== 'undefined') {
-            this.canvas = document.createElement('canvas');
-            this.canvas.width = w;
-            this.canvas.height = h;
-            this.ctx = this.canvas.getContext('2d');
-        }*/
 
         this.videoWidth = w;
         this.videoHeight = h;
@@ -216,10 +199,6 @@
                 });
             }
         }
-
-      /*  if (this._bwpointer) {
-            this.debugDraw();
-        }*/
     };
   /**
     Detects the NFT markers in the process() function,
@@ -311,14 +290,6 @@
 		The debug canvas is added to document.body.
 	*/
     ARControllerNFT.prototype.debugSetup = function () {
-        /*document.body.appendChild(this.canvas);
-
-        var lumaCanvas = document.createElement('canvas');
-        lumaCanvas.width = this.canvas.width;
-        lumaCanvas.height = this.canvas.height;
-        this._lumaCtx = lumaCanvas.getContext('2d');
-        document.body.appendChild(lumaCanvas);*/
-
         this.setDebugMode(true);
         this._bwpointer = this.getProcessingImage();
     };
@@ -701,41 +672,6 @@
         return artoolkitNFT.getImageProcMode(this.id);
     };
 
-
-	/**
-		Draw the black and white image and debug markers to the ARControllerNFT canvas.
-
-		See setDebugMode.
-    @return 0 (void)
-	*/
-  /*  ARControllerNFT.prototype.debugDraw = function () {
-        var debugBuffer = new Uint8ClampedArray(Module.HEAPU8.buffer, this._bwpointer, this.framesize);
-        var id = new ImageData(new Uint8ClampedArray(this.canvas.width * this.canvas.height * 4), this.canvas.width, this.canvas.height);
-        for (var i = 0, j = 0; i < debugBuffer.length; i++ , j += 4) {
-            var v = debugBuffer[i];
-            id.data[j + 0] = v;
-            id.data[j + 1] = v;
-            id.data[j + 2] = v;
-            id.data[j + 3] = 255;
-        }
-        this.ctx.putImageData(id, 0, 0)
-
-        //Debug Luma
-        var lumaBuffer = new Uint8ClampedArray(this.framesize);
-        lumaBuffer.set(this.videoLuma);
-        var lumaImageData = new ImageData(lumaBuffer, this.videoWidth, this.videoHeight);
-        this._lumaCtx.putImageData(lumaImageData, 0, 0);
-
-        var marker_num = this.getMarkerNum();
-        for (var i = 0; i < marker_num; i++) {
-            this._debugMarker(this.getMarker(i));
-        }
-        if (this.transform_mat && this.transformGL_RH) {
-            console.log("GL 4x4 Matrix: " + this.transform_mat);
-            console.log("GL_RH 4x4 Mat: " + this.transformGL_RH);
-        }
-    };*/
-
     // private methods
 
     /**
@@ -786,27 +722,14 @@
   */
     ARControllerNFT.prototype._copyImageToHeap = function (image) {
         if (!image) {
-            image = this.image;
+            console.error("Error: no provided imageData to ARControllerNFT");
+            return;
         }
         if (image.data) {
 
             var imageData = image;
 
-        }/* else {
-            this.ctx.save();
-
-            if (this.orientation === 'portrait') {
-                this.ctx.translate(this.canvas.width, 0);
-                this.ctx.rotate(Math.PI / 2);
-                this.ctx.drawImage(image, 0, 0, this.canvas.height, this.canvas.width); // draw video
-            } else {
-                this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height); // draw video
-            }
-
-            this.ctx.restore();
-
-            var imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        }*/
+        }
         var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
