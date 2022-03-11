@@ -72,11 +72,6 @@ QUnit.module("ARControllerNFT", {
     this.checkDefault = (arController) => {
       assert.ok(arController);
       assert.deepEqual(
-        arController.orientation,
-        "landscape",
-        "Check the default values: landscape"
-      );
-      assert.deepEqual(
         arController.listeners,
         {},
         "Check the default values: listeners"
@@ -86,8 +81,6 @@ QUnit.module("ARControllerNFT", {
         new Float32Array(16),
         "Check the default values: transform_mat"
       );
-      assert.ok(arController.canvas, "Check the default values: canvas");
-      assert.ok(arController.ctx, "Check the default values: ctx");
     };
   },
 });
@@ -123,20 +116,16 @@ QUnit.test("Create ARControllerNFT default", (assert) => {
         videoHeight,
         "Check the default values: videoHeight"
       );
-      assert.notOk(
-        arController.image,
-        "Check the default values: image === undefined"
-      );
 
       assert.deepEqual(
-        arController.canvas.width,
+        arController.width,
         videoWidth,
-        "Check the default values: canvas.width"
+        "Check the default values: width"
       );
       assert.deepEqual(
-        arController.canvas.height,
+        arController.height,
         videoHeight,
-        "Check the default values: canvas.height"
+        "Check the default values: height"
       );
       setTimeout(() => {
         arController.dispose();

@@ -6,12 +6,9 @@ interface ImageObj extends HTMLCanvasElement {
     data: Uint8ClampedArray;
 }
 export default class ARControllerNFT {
-    private options;
     private id;
     private width;
     private height;
-    private image;
-    private orientation;
     private cameraParam;
     private cameraId;
     private cameraLoaded;
@@ -30,16 +27,14 @@ export default class ARControllerNFT {
     private videoLuma;
     private camera_mat;
     private videoLumaPointer;
-    private canvas;
-    private ctx;
     private nftMarkerFound;
     private nftMarkerFoundTime;
     private nftMarkerCount;
     private defaultMarkerWidth;
     private _bwpointer;
-    constructor(width: number, height: number, cameraParam: string, options?: object);
-    static initWithDimensions(width: number, height: number, cameraParam: string, options?: object): Promise<ARControllerNFT>;
-    static initWithImage(image: ImageObj, cameraParam: string, options?: object): Promise<ARControllerNFT>;
+    constructor(width: number, height: number, cameraParam: string);
+    static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
+    static initWithImage(image: ImageObj, cameraParam: string): Promise<ARControllerNFT>;
     process(image: ImageObj): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): any;

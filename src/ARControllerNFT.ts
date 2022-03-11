@@ -35,11 +35,6 @@
  */
 import ARToolkitNFT from "./ARToolkitNFT";
 
-interface Options {
-  canvas: null;
-  orientation: string;
-}
-
 interface ImageObj extends HTMLCanvasElement {
   videoWidth: number;
   width: number;
@@ -118,12 +113,9 @@ interface delegateMethods {
 
 export default class ARControllerNFT {
   // private declarations
-  private options = {} as Options;
   private id: number;
   private width: number;
   private height: number;
-  private image: any;
-  private orientation: string;
   private cameraParam: string;
   private cameraId: number;
   private cameraLoaded: boolean;
@@ -142,8 +134,6 @@ export default class ARControllerNFT {
   private videoLuma: Uint8Array;
   private camera_mat: Float64Array;
   private videoLumaPointer: number;
-  private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
   private nftMarkerFound: boolean; // = false
   private nftMarkerFoundTime: number;
   private nftMarkerCount: number; // = 0
@@ -154,29 +144,19 @@ export default class ARControllerNFT {
   /**
    * The ARControllerNFT constructor. It has 4 params (see above).
    * These properties are initialized:
-   * options, id, width, height, image, orientation, cameraParam, cameraId,
+   * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
    * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
    * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
-   * @param {object} options
    */
   constructor(
     width: number,
     height: number,
-    cameraParam: string,
-    options?: object
+    cameraParam: string
   ) {
-    // read settings
-    this.options = {
-      ...{
-        canvas: null,
-        orientation: "landscape",
-      },
-      ...options,
-    };
 
     // no point in initializing a member as "undefined"
     // replaced it with -1
@@ -184,12 +164,6 @@ export default class ARControllerNFT {
 
     this.width = width;
     this.height = height;
-
-    // holds an image in case the instance was initialized with an image
-    this.image;
-
-    // default camera orientation
-    this.orientation = this.options.orientation;
 
     // this is a replacement for ARCameraParam
     this.cameraParam = cameraParam;
@@ -219,21 +193,6 @@ export default class ARControllerNFT {
     this.camera_mat = null;
     this.videoLumaPointer = null;
 
-    if (this.options.canvas) {
-      // in case you use Node.js, create a canvas with node-canvas
-      this.canvas = this.options.canvas;
-    } else if (typeof document !== "undefined") {
-      // try creating a canvas from document
-      this.canvas = document.createElement("canvas") as HTMLCanvasElement;
-    }
-    if (this.canvas) {
-      this.canvas.width = width;
-      this.canvas.height = height;
-      this.ctx = this.canvas.getContext("2d");
-    } else {
-      console.warn("No canvas available");
-    }
-
     // this is to workaround the introduction of "self" variable
     this.nftMarkerFound = false;
     this.nftMarkerFoundTime = 0;
@@ -246,23 +205,20 @@ export default class ARControllerNFT {
   static async initWithDimensions(
     width: number,
     height: number,
-    cameraParam: string,
-    options?: object
+    cameraParam: string
   ) {
     // directly init with given width / height
     const arControllerNFT = new ARControllerNFT(
       width,
       height,
-      cameraParam,
-      options
+      cameraParam
     );
     return await arControllerNFT._initialize();
   }
 
   static async initWithImage(
     image: ImageObj,
-    cameraParam: string,
-    options?: object
+    cameraParam: string
   ) {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
@@ -270,9 +226,7 @@ export default class ARControllerNFT {
       width,
       height,
       cameraParam,
-      options
     );
-    arControllerNFT.image = image;
     return await arControllerNFT._initialize();
   }
 
@@ -280,7 +234,7 @@ export default class ARControllerNFT {
    * This is one of the most important method inside ARControllerNFT. It detect the marker
    * and dispatch internally with the getNFTMarker event listener the NFTMarkerInfo
    * struct object of the tracked NFT Markers.
-   * @param {image} image or image data
+   * @param {image} image data
    * @return {void}
    */
   process(image: ImageObj) {
@@ -350,10 +304,6 @@ export default class ARControllerNFT {
         }
       }
     }
-
-    /*if (this._bwpointer) {
-      this.debugDraw()
-    }*/
   }
 
   /**
@@ -404,7 +354,7 @@ export default class ARControllerNFT {
    * structures with information on each detected marker, followed by a step in which
    * detected markers are possibly examined for some measure of goodness of match (e.g. by
    * examining the match confidence value) and pose extraction.
-   * @param {image} Image to be processed to detect markers.
+   * @param {image} Image data to be processed to detect markers.
    * @return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
    * A result of 0 does not however, imply any markers were detected.
    */
@@ -486,18 +436,9 @@ export default class ARControllerNFT {
   //----------------------------------------------------------------------------
 
   /**
-   * Sets up a debug canvas for the AR detection.
-   * Draws a red marker on top of each detected square in the image.
-   * The debug canvas is added to document.body.
+   * Sets up for debugging AR detection.
    */
   debugSetup() {
-    if (typeof document === "undefined") {
-      console.log("debugSetup() currently only supports Browser environments");
-      return;
-    }
-
-    document.body.appendChild(this.canvas);
-
     this.setDebugMode(true);
     this._bwpointer = this.getProcessingImage();
   }
@@ -916,7 +857,8 @@ export default class ARControllerNFT {
   private _copyImageToHeap(sourceImage: ImageObj) {
     if (!sourceImage) {
       // default to preloaded image
-      sourceImage = this.image;
+      console.error("Error: no provided imageData to ARControllerNFT");
+      return;
     }
 
     // this is of type Uint8ClampedArray:
@@ -928,40 +870,6 @@ export default class ARControllerNFT {
     if (sourceImage.data) {
       // directly use source image
       data = sourceImage.data;
-    } else {
-      this.ctx.save();
-
-      if (this.orientation === "portrait") {
-        this.ctx.translate(this.canvas.width, 0);
-        this.ctx.rotate(Math.PI / 2);
-        //@ts-ignore
-        this.ctx.drawImage(
-          sourceImage,
-          0,
-          0,
-          this.canvas.height,
-          this.canvas.width
-        ); // draw video
-      } else {
-        //@ts-ignore
-        this.ctx.drawImage(
-          sourceImage,
-          0,
-          0,
-          this.canvas.width,
-          this.canvas.height
-        ); // draw video
-      }
-
-      this.ctx.restore();
-
-      let imageData = this.ctx.getImageData(
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height
-      );
-      data = imageData.data;
     }
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
