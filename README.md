@@ -2,8 +2,10 @@
 ![github stars](https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT)
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
 ![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
-![Dependabot Badge](https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot)
-
+![Dependabot Badge](https://flat.badgen.net/github/dependabot/webarkit/jsartoolkit-nft)
+[![Tested with QUnit](https://img.shields.io/badge/tested_with-qunit-9c3493.svg)](https://qunitjs.com/)
+[![CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml)
+[![Build jsartoolkitNFT CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml)
 
 
 
@@ -74,7 +76,7 @@ import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
 ## Downloads
 
-You can download the build libs in the [releases page](https://github.com/webarkit/jsartoolkitNFT/releases). Starting from version 0.8.0 it is possible to download `dist` or `build` zip packages.
+You can download the build libs in the [releases page](https://github.com/webarkit/jsartoolkitNFT/releases). Starting from version 0.8.0 it is possible to download `dist` or `build` zip packages and from 0.9.6 version only single libs (no zipped).
 
 or you can clone the repository with git, follow the instructions below:
 
@@ -105,7 +107,7 @@ At this point you have build the docs in the `docs/` folder, you should run a se
 
 - `build/` (compiled debug and minified versions of JSARToolKitNFT)
 - `dist/` (compiled UMD lib with ES6 of JSARToolKitNFT)
-- `emscripten/` (source code for ARToolKitNFT)
+- `emscripten/` (C/C++ source code for ARToolKitNFT)
 - `examples/` (demos and examples using JSARToolKitNFT)
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
 - `src/` (source code of ARToolKitNFT with Typescript)
@@ -115,7 +117,7 @@ At this point you have build the docs in the `docs/` folder, you should run a se
 
 ## WebAssembly 👋
 
-**JSARToolKitNFT** supports WebAssembly. The library builds WebAssembly artifacts during the build process, **WASM** is embedded in a single file. This is `build/artoolkitNFT_wasm.js`. To use it, include the `artoolkit_wasm.js` into your html page like this:
+**JSARToolKitNFT** supports WebAssembly. The library builds WebAssembly artifacts during the build process, **WASM** is embedded in a single file. This is `build/artoolkitNFT_wasm.js`. To use it, include the `artoolkitNFT_wasm.js` into your html page like this:
 
 ```html
 <script src="../build/artoolkitNFT_wasm.js"></script>

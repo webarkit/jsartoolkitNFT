@@ -1,6 +1,6 @@
 QUnit.module("ARCameraParaNFT");
 QUnit.test("Create object and load camera parameter", function (assert) {
-  const cParaUrl = "./camera_para.dat";
+  const cParaUrl = "./base/examples/Data/camera_para.dat";
   const done = assert.async();
   const success = function () {
     assert.ok(true, "Successfully loaded camera para");
@@ -20,7 +20,7 @@ QUnit.test("Create object and load camera parameter", function (assert) {
 QUnit.test(
   "Create object and fail to load camera parameter",
   function (assert) {
-    const cParaUrl = "./camera_para_error.dat";
+    const cParaUrl = "./base/examples/Data/camera_para_error.dat";
     const done = assert.async();
     const success = function () {
       assert.ok(false, "Successfully loaded camera para");
@@ -34,26 +34,26 @@ QUnit.test(
   }
 );
 QUnit.test("Try to load twice", (assert) => {
-  const cParaUrl = "./camera_para_error.dat";
+  const cParaUrl = "./base/examples/Data/camera_para_error.dat";
   const success = function () {};
   const error = function () {};
   const cameraPara = new ARCameraParamNFT(cParaUrl, success, error);
 
   assert.throws(() => {
-    cameraPara.load("./camera_para.dat");
+    cameraPara.load("./base/examples/Data/camera_para.dat");
   }, "Throws an error that calibration tried to load twice");
 });
 QUnit.test(
   "Try to load twice but empty existing ARCameraParamNFT before loading",
   (assert) => {
-    const cParaUrl = "./camera_para_error.dat";
+    const cParaUrl = "./base/examples/Data/camera_para_error.dat";
     const success = function () {};
     const error = function () {};
     const cameraPara = new ARCameraParamNFT(cParaUrl, success, error);
     cameraPara.dispose();
     assert.deepEqual("", cameraPara.src);
 
-    const cameraParaString = "./camera_para.dat";
+    const cameraParaString = "./base/examples/Data/camera_para.dat";
     cameraPara.load(cameraParaString);
     assert.deepEqual(
       cameraParaString,
@@ -68,14 +68,9 @@ QUnit.module("ARControllerNFT", {
   beforeEach: (assert) => {
     this.timeout = 5000;
     this.cleanUpTimeout = 500;
-    this.cParaUrl = "./camera_para.dat";
+    this.cParaUrl = "./base/examples/Data/camera_para.dat";
     this.checkDefault = (arController) => {
       assert.ok(arController);
-      assert.deepEqual(
-        arController.orientation,
-        "landscape",
-        "Check the default values: landscape"
-      );
       assert.deepEqual(
         arController.listeners,
         {},
@@ -86,8 +81,6 @@ QUnit.module("ARControllerNFT", {
         new Float32Array(16),
         "Check the default values: transform_mat"
       );
-      assert.ok(arController.canvas, "Check the default values: canvas");
-      assert.ok(arController.ctx, "Check the default values: ctx");
     };
   },
 });
@@ -123,20 +116,16 @@ QUnit.test("Create ARControllerNFT default", (assert) => {
         videoHeight,
         "Check the default values: videoHeight"
       );
-      assert.notOk(
-        arController.image,
-        "Check the default values: image === undefined"
-      );
 
       assert.deepEqual(
-        arController.canvas.width,
+        arController.width,
         videoWidth,
-        "Check the default values: canvas.width"
+        "Check the default values: width"
       );
       assert.deepEqual(
-        arController.canvas.height,
+        arController.height,
         videoHeight,
-        "Check the default values: canvas.height"
+        "Check the default values: height"
       );
       setTimeout(() => {
         arController.dispose();
