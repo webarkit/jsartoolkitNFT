@@ -1,4 +1,5 @@
 const path = require("path");
+const webpack = require('webpack');
 
 module.exports = {
   entry: "./src/index.ts",
@@ -14,6 +15,12 @@ module.exports = {
     // @see: https://github.com/webpack/webpack/issues/6522
     globalObject: "typeof self !== 'undefined' ? self : this",
   },
+  target: 'node',
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {  NODE_ENV: JSON.stringify(process.env.NODE_ENV) }
+    })
+  ],
   module: {
     rules: [
       {
@@ -43,6 +50,7 @@ module.exports = {
     fallback: {
       fs: false,
       path: false,
+      process: false,
       crypto: false,
     },
   },
