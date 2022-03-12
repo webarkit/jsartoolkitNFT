@@ -2,6 +2,22 @@ const Module = require('../../build/artoolkitNFT_node_wasm.js');
 
 console.log('This is a test importing artoolkitNFT_node_wasm with Nodejs')
 
+var scope;
+if (typeof global !== 'undefined') {
+    scope = global;
+} else {
+    scope = self;
+}
+
+// ARToolKitNFT exported JS API
+//
+var artoolkitNFT = {
+
+    UNKNOWN_MARKER: -1,
+    NFT_MARKER: 0, // 0,
+
+};
+
 var FUNCTIONS = [
     'setup',
     'teardown',
@@ -47,10 +63,14 @@ function runWhenLoaded() {
             artoolkitNFT[m] = Module[m];
     }
 }
-Module.onRuntimeInitialized = async function(){
+
+/* Exports */
+scope.artoolkitNFT = artoolkitNFT;
+
+Module.onRuntimeInitialized = async function () {
     runWhenLoaded();
- 
+
     console.log(artoolkitNFT);
-    
+
     artoolkitNFT.setup(640, 480, 0);
 }

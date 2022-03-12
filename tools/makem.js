@@ -181,8 +181,8 @@ var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s EXPORT_NAME='artoo
 var PRE_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js") + " ";
 
-var PRE_NODE_FLAGS =
-  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_node.api.js") + " ";
+var NODE_FLAGS =
+  " -s ENVIRONMENT='node' ";
 
 FLAGS += " --bind ";
 
@@ -312,7 +312,7 @@ var compile_wasm_node = format(
     FLAGS +
     WASM_FLAGS +
     DEFINES +
-    PRE_NODE_FLAGS +
+    NODE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
