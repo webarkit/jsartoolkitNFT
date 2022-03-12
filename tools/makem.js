@@ -50,6 +50,7 @@ var OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
 
 var BUILD_DEBUG_FILE = "artoolkitNFT.debug.js";
 var BUILD_WASM_FILE = "artoolkitNFT_wasm.js";
+var BUILD_WASM_NODE_FILE = "artoolkitNFT_node_wasm.js";
 var BUILD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.js";
 var BUILD_MIN_FILE = "artoolkitNFT.min.js";
 
@@ -180,6 +181,9 @@ var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s EXPORT_NAME='artoo
 var PRE_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js") + " ";
 
+var PRE_NODE_FLAGS =
+  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_node.api.js") + " ";
+
 FLAGS += " --bind ";
 
 /* DEBUG FLAGS */
@@ -298,6 +302,23 @@ var compile_wasm = format(
   BUILD_WASM_FILE
 );
 
+var compile_wasm_node = format(
+  EMCC +
+    " " +
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    DEFINES +
+    PRE_NODE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_NODE_FILE
+);
+
 var compile_wasm_es6 = format(
   EMCC +
     " " +
@@ -357,6 +378,7 @@ addJob(clean_builds);
 addJob(compile_arlib);
 addJob(compile_combine);
 addJob(compile_wasm);
+addJob(compile_wasm_node);
 addJob(compile_wasm_es6);
 addJob(compile_combine_min);
 
