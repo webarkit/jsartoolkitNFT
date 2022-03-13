@@ -176,13 +176,13 @@ FLAGS += " -s EXPORTED_RUNTIME_METHODS='[\"FS\"]'";
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 
 var WASM_FLAGS = " -s SINGLE_FILE=1 ";
-var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s EXPORT_NAME='artoolkitNFT' -s MODULARIZE=1 ";
+var ES6_FLAGS =
+  " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s EXPORT_NAME='artoolkitNFT' -s MODULARIZE=1 ";
 
 var PRE_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js") + " ";
 
-var NODE_FLAGS =
-  " -s ENVIRONMENT='node' ";
+var NODE_FLAGS = " -s ENVIRONMENT='node' ";
 
 FLAGS += " --bind ";
 
