@@ -89,6 +89,7 @@ class ARToolKitNFT {
       // fetch data via HTTP
       try {
         data = await Utils.fetchRemoteData(urlOrData);
+        console.log(data);
       } catch (error) {
         throw error;
       }
@@ -106,10 +107,10 @@ class ARToolKitNFT {
       target,
       data,
       {
-        encoding: "binary",
+        encoding: "binary"
       },
       function (error) {
-        console.log(error);
+        console.log('Error from _storeDataFile: ',error);
       }
     );
   }
