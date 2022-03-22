@@ -1,9 +1,11 @@
 ![github releases](https://flat.badgen.net/github/release/webarkit/jsartoolkitNFT)
 ![github stars](https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT)
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
-![npm package version](https://flat.badgen.net/npm/v/@kalwalt/jsartoolkit-nft)
-![Dependabot Badge](https://flat.badgen.net/dependabot/thepracticaldev/dev.to?icon=dependabot)
-
+![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
+![Dependabot Badge](https://flat.badgen.net/github/dependabot/webarkit/jsartoolkit-nft)
+[![Tested with QUnit](https://img.shields.io/badge/tested_with-qunit-9c3493.svg)](https://qunitjs.com/)
+[![CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml)
+[![Build jsartoolkitNFT CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml)
 
 
 
@@ -21,6 +23,7 @@ Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html
 **JSARToolKitNFT** support only this types of markers:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
+- Multi NFT markers !!!
 
 ## WASM
 
@@ -40,25 +43,25 @@ You can use raw.githack.com links:
 **WASM** version of the library:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
 ```
 
 **WASM** version of the library as a Module:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
 ```
 
 **NO WASM** minified:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
 ```
 
 or (recommended) use the **UMD** library:
 
 ```html
-<script src="https://raw.githack.com/kalwalt/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/dist/ARToolkitNFT.js">
 ```
 
 or you can install with npm and use as a module:
@@ -69,11 +72,11 @@ npm i @webarkit/jsartoolkit-nft
 then:
 
 ```javascript
-import { ARToolkitNFT, ARControllerNFT } from '@kalwalt/jsartoolkit-nft'
+import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
 ## Downloads
 
-You can download the build libs in the [releases page](https://github.com/webarkit/jsartoolkitNFT/releases). Starting from version 0.8.0 it is possible to download `dist` or `build` zip packages.
+You can download the build libs in the [releases page](https://github.com/webarkit/jsartoolkitNFT/releases). Starting from version 0.8.0 it is possible to download `dist` or `build` zip packages and from 0.9.6 version only single libs (no zipped).
 
 or you can clone the repository with git, follow the instructions below:
 
@@ -104,7 +107,7 @@ At this point you have build the docs in the `docs/` folder, you should run a se
 
 - `build/` (compiled debug and minified versions of JSARToolKitNFT)
 - `dist/` (compiled UMD lib with ES6 of JSARToolKitNFT)
-- `emscripten/` (source code for ARToolKitNFT)
+- `emscripten/` (C/C++ source code for ARToolKitNFT)
 - `examples/` (demos and examples using JSARToolKitNFT)
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
 - `src/` (source code of ARToolKitNFT with Typescript)
@@ -114,7 +117,7 @@ At this point you have build the docs in the `docs/` folder, you should run a se
 
 ## WebAssembly 👋
 
-**JSARToolKitNFT** supports WebAssembly. The library builds WebAssembly artifacts during the build process, **WASM** is embedded in a single file. This is `build/artoolkitNFT_wasm.js`. To use it, include the `artoolkit_wasm.js` into your html page like this:
+**JSARToolKitNFT** supports WebAssembly. The library builds WebAssembly artifacts during the build process, **WASM** is embedded in a single file. This is `build/artoolkitNFT_wasm.js`. To use it, include the `artoolkitNFT_wasm.js` into your html page like this:
 
 ```html
 <script src="../build/artoolkitNFT_wasm.js"></script>

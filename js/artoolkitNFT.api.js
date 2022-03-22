@@ -4,6 +4,8 @@
     var scope;
     if (typeof window !== 'undefined') {
         scope = window;
+    } else if (typeof global !== 'undefined') {
+        scope = global;
     } else {
         scope = self;
     }
@@ -35,17 +37,7 @@
         this.id = undefined;
         var w = width, h = height;
 
-        this.orientation = 'landscape';
-
         this.listeners = {};
-
-        if (typeof width !== 'number') {
-            var image = width;
-            cameraPara = height;
-            w = image.videoWidth || image.width;
-            h = image.videoHeight || image.height;
-            this.image = image;
-        }
 
         this.width = w;
         this.height = h;
@@ -55,13 +47,6 @@
         this.nftMarkers = {};
         this.transform_mat = new Float32Array(16);
         this.transformGL_RH = new Float64Array(16);
-
-        if (typeof document !== 'undefined') {
-            this.canvas = document.createElement('canvas');
-            this.canvas.width = w;
-            this.canvas.height = h;
-            this.ctx = this.canvas.getContext('2d');
-        }
 
         this.videoWidth = w;
         this.videoHeight = h;
@@ -76,7 +61,7 @@
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '0.9.7';
+        this.version = '1.1.0';
         console.info('JsartoolkitNFT ', this.version);
 
         if (typeof cameraPara === 'string') {
@@ -214,10 +199,6 @@
                 });
             }
         }
-
-      /*  if (this._bwpointer) {
-            this.debugDraw();
-        }*/
     };
   /**
     Detects the NFT markers in the process() function,
@@ -309,14 +290,6 @@
 		The debug canvas is added to document.body.
 	*/
     ARControllerNFT.prototype.debugSetup = function () {
-        /*document.body.appendChild(this.canvas);
-
-        var lumaCanvas = document.createElement('canvas');
-        lumaCanvas.width = this.canvas.width;
-        lumaCanvas.height = this.canvas.height;
-        this._lumaCtx = lumaCanvas.getContext('2d');
-        document.body.appendChild(lumaCanvas);*/
-
         this.setDebugMode(true);
         this._bwpointer = this.getProcessingImage();
     };
@@ -326,17 +299,23 @@
 
 		ARControllerNFT.loadNFTMarker(markerURL, onSuccess, onError);
 
-		@param {string} markerURL - The URL prefix of the NFT markers to load.
+		@param {string} markerURLs - List of the URL prefix of the NFT markers to load.
 		@param {function} onSuccess - The success callback. Called with the id of the loaded marker on a successful load.
 		@param {function} onError - The error callback. Called with the encountered error if the load fails.
 	*/
-    ARControllerNFT.prototype.loadNFTMarker = function (markerURL, onSuccess, onError) {
+    ARControllerNFT.prototype.loadNFTMarkers = function (markerURLs, onSuccess, onError) {
         var self = this;
+        artoolkitNFT.addNFTMarkers(this.id, markerURLs, function(ids) {
+            self.nftMarkerCount += ids.length;
+            onSuccess(ids);
+        }, onError);
+    };
+
+    ARControllerNFT.prototype.loadNFTMarker = function (markerURL, onSuccess, onError) {
         if (markerURL) {
-          return artoolkitNFT.addNFTMarker(this.id, markerURL, function (nft) {
-              self.nftMarkerCount = nft.id + 1;
-              onSuccess(nft);
-          }, onError);
+            this.loadNFTMarkers([markerURL], function(ids) {
+              onSuccess(ids[0]);
+            }, onError);
         } else {
           if (onError) {
               onError("Marker URL needs to be defined and not equal empty string!");
@@ -456,23 +435,32 @@
         return -99;
     };
 
-  /**
-    Get the NFT marker info struct for the given NFT marker index in detected markers.
-    The returned object is the global artoolkit.NFTMarkerInfo object and will be overwritten
-    by subsequent calls.
+    /**
+        Get the NFT marker info struct for the given NFT marker index in detected markers.
+        The returned object is the global artoolkit.NFTMarkerInfo object and will be overwritten
+        by subsequent calls.
 
 		Returns undefined if no marker was found.
 
 		A markerIndex of -1 is used to access the global custom marker.
 
-    @param {number} markerIndex The index of the NFT marker to query.
-    @returns {Object} The NFTmarkerInfo struct.
-  */
+        @param {number} markerIndex The index of the NFT marker to query.
+        @returns {Object} The NFTmarkerInfo struct.
+    */
     ARControllerNFT.prototype.getNFTMarker = function (markerIndex) {
         if (0 === artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
             return artoolkitNFT.NFTMarkerInfo;
         }
     };
+
+    /**
+     * Get the NFT data (id, dpi, width and height) of the NFT marker.
+     * @returns {Object} nft object (id, dpi, width, height)
+     */    
+    ARControllerNFT.prototype.getNFTData = function (index) {
+        return artoolkitNFT.getNFTData(this.id, index);
+    };
+
 
 	/**
 		Returns the 16-element WebGL transformation matrix used by ARControllerNFT.process to
@@ -684,41 +672,6 @@
         return artoolkitNFT.getImageProcMode(this.id);
     };
 
-
-	/**
-		Draw the black and white image and debug markers to the ARControllerNFT canvas.
-
-		See setDebugMode.
-    @return 0 (void)
-	*/
-  /*  ARControllerNFT.prototype.debugDraw = function () {
-        var debugBuffer = new Uint8ClampedArray(Module.HEAPU8.buffer, this._bwpointer, this.framesize);
-        var id = new ImageData(new Uint8ClampedArray(this.canvas.width * this.canvas.height * 4), this.canvas.width, this.canvas.height);
-        for (var i = 0, j = 0; i < debugBuffer.length; i++ , j += 4) {
-            var v = debugBuffer[i];
-            id.data[j + 0] = v;
-            id.data[j + 1] = v;
-            id.data[j + 2] = v;
-            id.data[j + 3] = 255;
-        }
-        this.ctx.putImageData(id, 0, 0)
-
-        //Debug Luma
-        var lumaBuffer = new Uint8ClampedArray(this.framesize);
-        lumaBuffer.set(this.videoLuma);
-        var lumaImageData = new ImageData(lumaBuffer, this.videoWidth, this.videoHeight);
-        this._lumaCtx.putImageData(lumaImageData, 0, 0);
-
-        var marker_num = this.getMarkerNum();
-        for (var i = 0; i < marker_num; i++) {
-            this._debugMarker(this.getMarker(i));
-        }
-        if (this.transform_mat && this.transformGL_RH) {
-            console.log("GL 4x4 Matrix: " + this.transform_mat);
-            console.log("GL_RH 4x4 Mat: " + this.transformGL_RH);
-        }
-    };*/
-
     // private methods
 
     /**
@@ -769,26 +722,13 @@
   */
     ARControllerNFT.prototype._copyImageToHeap = function (image) {
         if (!image) {
-            image = this.image;
+            console.error("Error: no provided imageData to ARControllerNFT");
+            return;
         }
         if (image.data) {
 
             var imageData = image;
 
-        } else {
-            this.ctx.save();
-
-            if (this.orientation === 'portrait') {
-                this.ctx.translate(this.canvas.width, 0);
-                this.ctx.rotate(Math.PI / 2);
-                this.ctx.drawImage(image, 0, 0, this.canvas.height, this.canvas.width); // draw video
-            } else {
-                this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height); // draw video
-            }
-
-            this.ctx.restore();
-
-            var imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         }
         var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
@@ -912,7 +852,8 @@
         NFT_MARKER: 0, // 0,
 
         loadCamera: loadCamera,
-        addNFTMarker: addNFTMarker
+        addNFTMarker: addNFTMarker,
+        addNFTMarkers: addNFTMarkers
 
     };
 
@@ -933,6 +874,7 @@
         'detectMarker',
         'detectNFTMarker',
         'getNFTMarker',
+        'getNFTData',
 
         'setProjectionNearPlane',
         'getProjectionNearPlane',
@@ -977,6 +919,46 @@
                 }, function (errorNumber) { if (onError) onError(errorNumber); });
             }, function (errorNumber) { if (onError) onError(errorNumber); });
         }, function (errorNumber) { if (onError) onError(errorNumber); });
+    }
+
+    function addNFTMarkers(arId, urls, callback, onError) {
+        var prefixes = [];
+        var pending = urls.length * 3;
+        var onSuccess = (filename) => {
+            pending -= 1;
+            if (pending === 0) {
+                const vec = new Module.StringList();
+                const markerIds = [];
+                for (let i = 0; i < prefixes.length; i++) {
+                    vec.push_back(prefixes[i]);
+                }
+                var ret = Module._addNFTMarkers(arId, vec);
+                for (let i = 0; i < ret.size(); i++) {
+                    markerIds.push(ret.get(i));
+                }
+
+                console.log("add nft marker ids: ", markerIds);
+                if (callback) callback(markerIds);
+            }
+        }
+        var onError = (filename, errorNumber) => {
+            console.log("failed to load: ", filename);
+            onError(errorNumber);
+        }
+
+        for (var i = 0; i < urls.length; i++) {
+            var url = urls[i];
+            var prefix = '/markerNFT_' + marker_count;
+            prefixes.push(prefix);
+            var filename1 = prefix + '.fset';
+            var filename2 = prefix + '.iset';
+            var filename3 = prefix + '.fset3';
+
+            ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
+            ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
+            ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
+            marker_count += 1;
+        }
     }
 
     function bytesToString(array) {

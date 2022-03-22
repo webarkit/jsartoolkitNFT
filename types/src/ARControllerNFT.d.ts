@@ -1,4 +1,4 @@
-interface ImageObj {
+interface ImageObj extends HTMLCanvasElement {
     videoWidth: number;
     width: number;
     videoHeight: number;
@@ -6,12 +6,9 @@ interface ImageObj {
     data: Uint8ClampedArray;
 }
 export default class ARControllerNFT {
-    private options;
     private id;
     private width;
     private height;
-    private image;
-    private orientation;
     private cameraParam;
     private cameraId;
     private cameraLoaded;
@@ -30,16 +27,14 @@ export default class ARControllerNFT {
     private videoLuma;
     private camera_mat;
     private videoLumaPointer;
-    private canvas;
-    private ctx;
     private nftMarkerFound;
     private nftMarkerFoundTime;
     private nftMarkerCount;
     private defaultMarkerWidth;
     private _bwpointer;
-    constructor(width: number, height: number, cameraParam: string, options?: object);
-    static initWithDimensions(width: number, height: number, cameraParam: string, options?: object): Promise<ARControllerNFT>;
-    static initWithImage(image: ImageObj, cameraParam: string, options?: object): Promise<ARControllerNFT>;
+    constructor(width: number, height: number, cameraParam: string);
+    static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
+    static initWithImage(image: ImageObj, cameraParam: string): Promise<ARControllerNFT>;
     process(image: ImageObj): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): any;
@@ -50,6 +45,7 @@ export default class ARControllerNFT {
         id: number;
         pose: Float64Array;
     };
+    getNFTData(id: number, index: number): object;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
     dispatchEvent(event: {
@@ -75,9 +71,12 @@ export default class ARControllerNFT {
     getThresholdMode(): number;
     setThreshold(threshold: number): number;
     getThreshold(): number;
-    loadNFTMarker(urlOrData: string): Promise<{
+    loadNFTMarker(urlOrData: string, onSuccess: (ids: number) => void, onError: () => void): Promise<[{
         id: number;
-    }>;
+    }]>;
+    loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number) => void, onError: () => void): Promise<[{
+        id: number;
+    }]>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
     private converter;

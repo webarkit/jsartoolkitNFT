@@ -33,78 +33,89 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import ARToolkitNFT from './ARToolkitNFT'
+import ARToolkitNFT from "./ARToolkitNFT";
 
-interface Options {
-  canvas: null,
-  orientation: string,
-}
-
-interface ImageObj {
-  videoWidth: number,
-  width: number,
-  videoHeight: number,
-  height: number,
-  data: Uint8ClampedArray,
+interface ImageObj extends HTMLCanvasElement {
+  videoWidth: number;
+  width: number;
+  videoHeight: number;
+  height: number;
+  data: Uint8ClampedArray;
 }
 
 interface delegateMethods {
-    setup: {
-        (width: number, height: number, cameraId: number): number
-    }
-    setupAR2: {
-      (id: number): void
-    }
-    setDebugMode:  (id: number, mode: boolean) => number;
-    getDebugMode: (id: number) => boolean;
-    getProcessingImage: (id: number) => number;
-    setLogLevel: (mode: boolean) => number;
-    getLogLevel: () => number;
+  setup: {
+    (width: number, height: number, cameraId: number): number;
+  };
+  setupAR2: {
+    (id: number): void;
+  };
+  setDebugMode: (id: number, mode: boolean) => number;
+  getDebugMode: (id: number) => boolean;
+  getProcessingImage: (id: number) => number;
+  setLogLevel: (mode: boolean) => number;
+  getLogLevel: () => number;
+  frameMalloc: {
+    framepointer: number;
+    framesize: number;
+    videoLumaPointer: number;
+    camera: number;
+    transform: number;
+  };
+  instance: {
     frameMalloc: {
-       framepointer: number;
-       framesize: number;
-       videoLumaPointer: number;
-       camera: number;
-       transform: number
-    }
-    instance: {
-      HEAPU8: {
-        buffer: Uint8Array
-      };
-    }
+      framepointer: number;
+      framesize: number;
+      videoLumaPointer: number;
+      camera: number;
+      transform: number;
+    };
     NFTMarkerInfo: {
       error: number;
       found: number;
-      id: number,
+      id: number;
       pose: Float64Array;
     };
-    loadCamera: (cameraParam: string) => Promise<number>;
-    setProjectionNearPlane: {
-      (id: number, value: number): void;
-    }
-    getProjectionNearPlane: (id: number) => number;
-    setProjectionFarPlane: (id: number, value: number) => void;
-    getProjectionFarPlane: (id: number) => number;
-    setThresholdMode: (id: number, mode: number) => number;
-    getThresholdMode: (id: number) => number;
-    setThreshold: (id: number, threshold: number) => number;
-    getThreshold: (id: number) => number;
-    addNFTMarker: (arId: number, url: string) => Promise<{id: number}>;
-    detectMarker: (id: number) => number;
-    detectNFTMarker: (arId: number) => void;
-    getNFTMarker: (id: number, markerIndex: number) => number;
-    setImageProcMode: (id: number, mode: number) => number;
-    getImageProcMode: (id: number) => number;
+    HEAPU8: {
+      buffer: Uint8Array;
+    };
+  };
+  NFTMarkerInfo: {
+    error: number;
+    found: number;
+    id: number;
+    pose: Float64Array;
+  };
+  loadCamera: (cameraParam: string) => Promise<number>;
+  setProjectionNearPlane: {
+    (id: number, value: number): void;
+  };
+  getProjectionNearPlane: (id: number) => number;
+  setProjectionFarPlane: (id: number, value: number) => void;
+  getProjectionFarPlane: (id: number) => number;
+  setThresholdMode: (id: number, mode: number) => number;
+  getThresholdMode: (id: number) => number;
+  setThreshold: (id: number, threshold: number) => number;
+  getThreshold: (id: number) => number;
+  addNFTMarkers: (
+    arId: number,
+    urls: Array<string>,
+    callback: (filename: any) => void,
+    onError2: (errorNumber: any) => void
+  ) => [{ id: number }];
+  detectMarker: (id: number) => number;
+  detectNFTMarker: (arId: number) => void;
+  getNFTMarker: (id: number, markerIndex: number) => number;
+  getNFTData: (id: number, index: number) => object;
+  setImageProcMode: (id: number, mode: number) => number;
+  getImageProcMode: (id: number) => number;
 }
 
 export default class ARControllerNFT {
   // private declarations
-  private options = {} as Options;
   private id: number;
   private width: number;
   private height: number;
-  private image: any;
-  private orientation: string;
   private cameraParam: string;
   private cameraId: number;
   private cameraLoaded: boolean;
@@ -123,11 +134,9 @@ export default class ARControllerNFT {
   private videoLuma: Uint8Array;
   private camera_mat: Float64Array;
   private videoLumaPointer: number;
-  private canvas: HTMLCanvasElement;
-  private ctx: CanvasRenderingContext2D;
-  private nftMarkerFound: boolean;// = false
+  private nftMarkerFound: boolean; // = false
   private nftMarkerFoundTime: number;
-  private nftMarkerCount: number;// = 0
+  private nftMarkerCount: number; // = 0
   private defaultMarkerWidth: number;
 
   private _bwpointer: number;
@@ -135,178 +144,166 @@ export default class ARControllerNFT {
   /**
    * The ARControllerNFT constructor. It has 4 params (see above).
    * These properties are initialized:
-   * options, id, width, height, image, orientation, cameraParam, cameraId,
+   * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
    * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
    * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
-   * @param {object} options
    */
-  constructor (width: number, height: number, cameraParam: string, options?: object) {
-    // read settings
-    this.options = {...{
-        canvas: null,
-        orientation: 'landscape'
-      },...options};
+  constructor(
+    width: number,
+    height: number,
+    cameraParam: string
+  ) {
 
     // no point in initializing a member as "undefined"
     // replaced it with -1
-    this.id = -1
+    this.id = -1;
 
-    this.width = width
-    this.height = height
-
-    // holds an image in case the instance was initialized with an image
-    this.image
-
-    // default camera orientation
-    this.orientation = this.options.orientation
+    this.width = width;
+    this.height = height;
 
     // this is a replacement for ARCameraParam
-    this.cameraParam = cameraParam
-    this.cameraId = -1
-    this.cameraLoaded = false
+    this.cameraParam = cameraParam;
+    this.cameraId = -1;
+    this.cameraLoaded = false;
 
     // toolkit instance
-    this.artoolkitNFT
+    this.artoolkitNFT;
 
     // to register observers as event listeners
-    this.listeners = {}
+    this.listeners = {};
 
-    this.nftMarkers = {}
+    this.nftMarkers = {};
 
-    this.transform_mat = new Float64Array(16)
-    this.transformGL_RH = new Float64Array(16)
-    this.marker_transform_mat = null
+    this.transform_mat = new Float64Array(16);
+    this.transformGL_RH = new Float64Array(16);
+    this.marker_transform_mat = null;
 
-    this.videoWidth = width
-    this.videoHeight = height
-    this.videoSize = this.videoWidth * this.videoHeight
+    this.videoWidth = width;
+    this.videoHeight = height;
+    this.videoSize = this.videoWidth * this.videoHeight;
 
-    this.framepointer = null
-    this.framesize = null
-    this.dataHeap = null
-    this.videoLuma = null
-    this.camera_mat = null
-    this.videoLumaPointer = null
-
-    if (this.options.canvas) {
-      // in case you use Node.js, create a canvas with node-canvas
-      this.canvas = this.options.canvas
-    } else if (typeof document !== 'undefined') {
-      // try creating a canvas from document
-      this.canvas = document.createElement('canvas') as HTMLCanvasElement
-    }
-    if (this.canvas) {
-      this.canvas.width = width
-      this.canvas.height = height
-      this.ctx = this.canvas.getContext('2d')
-    } else {
-      console.warn('No canvas available')
-    }
+    this.framepointer = null;
+    this.framesize = null;
+    this.dataHeap = null;
+    this.videoLuma = null;
+    this.camera_mat = null;
+    this.videoLumaPointer = null;
 
     // this is to workaround the introduction of "self" variable
-    this.nftMarkerFound = false
-    this.nftMarkerFoundTime = 0
-    this.nftMarkerCount = 0
+    this.nftMarkerFound = false;
+    this.nftMarkerFoundTime = 0;
+    this.nftMarkerCount = 0;
 
-    this._bwpointer = null
-    this.defaultMarkerWidth = 1
+    this._bwpointer = null;
+    this.defaultMarkerWidth = 1;
   }
 
-  static async initWithDimensions (width: number, height: number, cameraParam: string, options?: object) {
+  static async initWithDimensions(
+    width: number,
+    height: number,
+    cameraParam: string
+  ) {
     // directly init with given width / height
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam, options)
-    return await arControllerNFT._initialize()
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam
+    );
+    return await arControllerNFT._initialize();
   }
 
-  static async initWithImage (image: ImageObj, cameraParam: string, options?: object) {
-    const width = image.videoWidth || image.width
-    const height = image.videoHeight || image.height
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam, options)
-    arControllerNFT.image = image
-    return await arControllerNFT._initialize()
+  static async initWithImage(
+    image: ImageObj,
+    cameraParam: string
+  ) {
+    const width = image.videoWidth || image.width;
+    const height = image.videoHeight || image.height;
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam,
+    );
+    return await arControllerNFT._initialize();
   }
 
   /**
    * This is one of the most important method inside ARControllerNFT. It detect the marker
    * and dispatch internally with the getNFTMarker event listener the NFTMarkerInfo
    * struct object of the tracked NFT Markers.
-   * @param {image} image or image data
+   * @param {image} image data
    * @return {void}
    */
-  process (image: ImageObj) {
-    let result = this.detectMarker(image)
+  process(image: ImageObj) {
+    let result = this.detectMarker(image);
     if (result != 0) {
-      console.error('[ARControllerNFT]', 'detectMarker error:', result)
+      console.error("[ARControllerNFT]", "detectMarker error:", result);
     }
 
-    let k, o
+    let k, o;
 
     // get NFT markers
     for (k in this.nftMarkers) {
-      o = this.converter().nftMarkers[k]
-      o.inPrevious = o.inCurrent
-      o.inCurrent = false
+      o = this.converter().nftMarkers[k];
+      o.inPrevious = o.inCurrent;
+      o.inCurrent = false;
     }
 
     // detect NFT markers
-    let nftMarkerCount = this.nftMarkerCount
-    this.detectNFTMarker()
+    let nftMarkerCount = this.nftMarkerCount;
+    this.detectNFTMarker();
 
     // in ms
-    const MARKER_LOST_TIME = 200
+    const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo = this.getNFTMarker(i)
-      let markerType = ARToolkitNFT.NFT_MARKER
+      let nftMarkerInfo: delegateMethods['NFTMarkerInfo'] = this.getNFTMarker(i);
+
+      let markerType = ARToolkitNFT.NFT_MARKER;
 
       if (nftMarkerInfo.found) {
         //@ts-ignore
-        this.nftMarkerFound = i
-        this.nftMarkerFoundTime = Date.now()
+        this.nftMarkerFound = i;
+        this.nftMarkerFoundTime = Date.now();
 
-        let visible = this.trackNFTMarkerId(i)
-        visible.matrix.set(nftMarkerInfo.pose)
-        visible.inCurrent = true
-        this.transMatToGLMat(visible.matrix, this.transform_mat)
-        this.transformGL_RH = this.arglCameraViewRHf(this.transform_mat)
+        let visible = this.trackNFTMarkerId(i);
+        visible.matrix.set(nftMarkerInfo.pose);
+        visible.inCurrent = true;
+        this.transMatToGLMat(visible.matrix, this.transform_mat);
+        this.transformGL_RH = this.arglCameraViewRHf(this.transform_mat);
         this.dispatchEvent({
-          name: 'getNFTMarker',
+          name: "getNFTMarker",
           target: this,
           data: {
             index: i,
             type: markerType,
             marker: nftMarkerInfo,
             matrix: this.transform_mat,
-            matrixGL_RH: this.transformGL_RH
-          }
-        })
-      //@ts-ignore
+            matrixGL_RH: this.transformGL_RH,
+          },
+        });
+        //@ts-ignore
       } else if (self.nftMarkerFound === i) {
         // for now this marker found/lost events handling is for one marker at a time
-        if ((Date.now() - this.nftMarkerFoundTime) > MARKER_LOST_TIME) {
-          this.nftMarkerFound = false
+        if (Date.now() - this.nftMarkerFoundTime > MARKER_LOST_TIME) {
+          this.nftMarkerFound = false;
           this.dispatchEvent({
-            name: 'lostNFTMarker',
+            name: "lostNFTMarker",
             target: this,
             data: {
               index: i,
               type: markerType,
               marker: nftMarkerInfo,
               matrix: this.transform_mat,
-              matrixGL_RH: this.transformGL_RH
-            }
-          })
-        };
+              matrixGL_RH: this.transformGL_RH,
+            },
+          });
+        }
       }
     }
-
-    /*if (this._bwpointer) {
-      this.debugDraw()
-    }*/
   }
 
   /**
@@ -314,8 +311,8 @@ export default class ARControllerNFT {
    * with the given tracked id.
    * @return {void}
    */
-  detectNFTMarker () {
-    this.artoolkitNFT.detectNFTMarker(this.id)
+  detectNFTMarker() {
+    this.artoolkitNFT.detectNFTMarker(this.id);
   }
 
   /**
@@ -328,22 +325,22 @@ export default class ARControllerNFT {
    * @param {number} markerWidth The width of the marker to track.
    * @return {Object} The marker tracking object.
    */
-  trackNFTMarkerId (id: number, markerWidth?: number) {
-    let obj = this.converter().nftMarkers[id]
+  trackNFTMarkerId(id: number, markerWidth?: number) {
+    let obj = this.converter().nftMarkers[id];
     if (!obj) {
       this.converter().nftMarkers[id] = obj = {
         inPrevious: false,
         inCurrent: false,
         matrix: new Float64Array(12),
         matrixGL_RH: new Float64Array(12),
-        markerWidth: markerWidth || this.defaultMarkerWidth
-      }
+        markerWidth: markerWidth || this.defaultMarkerWidth,
+      };
     }
     if (markerWidth) {
-      obj.markerWidth = markerWidth
+      obj.markerWidth = markerWidth;
     }
-    return obj
-  };
+    return obj;
+  }
 
   // marker detection routines
   // ----------------------------------------------------------------------------
@@ -357,16 +354,16 @@ export default class ARControllerNFT {
    * structures with information on each detected marker, followed by a step in which
    * detected markers are possibly examined for some measure of goodness of match (e.g. by
    * examining the match confidence value) and pose extraction.
-   * @param {image} Image to be processed to detect markers.
+   * @param {image} Image data to be processed to detect markers.
    * @return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
    * A result of 0 does not however, imply any markers were detected.
    */
-  detectMarker (image: any) {
+  detectMarker(image: any) {
     if (this._copyImageToHeap(image)) {
-      return this.artoolkitNFT.detectMarker(this.id)
+      return this.artoolkitNFT.detectMarker(this.id);
     }
-    return -99
-  };
+    return -99;
+  }
 
   /**
    * Get the NFT marker info struct for the given NFT marker index in detected markers.
@@ -377,11 +374,15 @@ export default class ARControllerNFT {
    * @param {number} markerIndex The index of the NFT marker to query.
    * @return {Object} The NFTmarkerInfo struct.
    */
-  getNFTMarker (markerIndex: number) {
+  getNFTMarker(markerIndex: number) {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-      return this.artoolkitNFT.NFTMarkerInfo;
+      return this.artoolkitNFT.instance.NFTMarkerInfo;
     }
-  };
+  }
+
+  getNFTData(id: number, index: number) {
+    return this.artoolkitNFT.getNFTData(id, index);
+  }
 
   // event handling
   //----------------------------------------------------------------------------
@@ -398,11 +399,11 @@ export default class ARControllerNFT {
    * @param {function} callback Callback function to call when an event with the given name is dispatched.
    */
   addEventListener(name: string, callback: object) {
-    if(!this.converter().listeners[name]) {
+    if (!this.converter().listeners[name]) {
       this.converter().listeners[name] = [];
     }
     this.converter().listeners[name].push(callback);
-  };
+  }
 
   /**
    * Remove an event listener from the named event.
@@ -410,13 +411,13 @@ export default class ARControllerNFT {
    * @param {function} callback Callback function to remove from the listeners of the named event.
    */
   removeEventListener(name: string, callback: object) {
-    if(this.converter().listeners[name]) {
+    if (this.converter().listeners[name]) {
       let index = this.converter().listeners[name].indexOf(callback);
-      if(index > -1) {
+      if (index > -1) {
         this.converter().listeners[name].splice(index, 1);
       }
     }
-  };
+  }
 
   /**
    * Dispatches the given event to all registered listeners on event.name.
@@ -424,33 +425,23 @@ export default class ARControllerNFT {
    */
   dispatchEvent(event: { name: string; target: any; data?: object }) {
     let listeners = this.converter().listeners[event.name];
-    if(listeners) {
-      for(let i = 0; i < listeners.length; i++) {
+    if (listeners) {
+      for (let i = 0; i < listeners.length; i++) {
         listeners[i].call(this, event);
       }
     }
-  };
+  }
 
   // debug stuff
   //----------------------------------------------------------------------------
 
-	/**
-	 * Sets up a debug canvas for the AR detection.
-   * Draws a red marker on top of each detected square in the image.
-	 * The debug canvas is added to document.body.
-	 */
+  /**
+   * Sets up for debugging AR detection.
+   */
   debugSetup() {
-
-    if(typeof document === 'undefined') {
-      console.log('debugSetup() currently only supports Browser environments');
-      return;
-    }
-
-    document.body.appendChild(this.canvas);
-
     this.setDebugMode(true);
     this._bwpointer = this.getProcessingImage();
-  };
+  }
 
   /**
    * Converts the given 3x4 marker transformation matrix in the 12-element transMat array
@@ -460,35 +451,35 @@ export default class ARControllerNFT {
    * @param {Float64Array} glMat The 4x4 GL transformation matrix.
    * @param {number} scale The scale for the transform.
    */
-  transMatToGLMat (transMat: Float64Array, glMat: Float64Array, scale?: number,) {
+  transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number) {
     if (glMat == undefined) {
-      glMat = new Float64Array(16)
+      glMat = new Float64Array(16);
     }
 
-    glMat[0 + 0 * 4] = transMat[0] // R1C1
-    glMat[0 + 1 * 4] = transMat[1] // R1C2
-    glMat[0 + 2 * 4] = transMat[2]
-    glMat[0 + 3 * 4] = transMat[3]
-    glMat[1 + 0 * 4] = transMat[4] // R2
-    glMat[1 + 1 * 4] = transMat[5]
-    glMat[1 + 2 * 4] = transMat[6]
-    glMat[1 + 3 * 4] = transMat[7]
-    glMat[2 + 0 * 4] = transMat[8] // R3
-    glMat[2 + 1 * 4] = transMat[9]
-    glMat[2 + 2 * 4] = transMat[10]
-    glMat[2 + 3 * 4] = transMat[11]
-    glMat[3 + 0 * 4] = 0.0
-    glMat[3 + 1 * 4] = 0.0
-    glMat[3 + 2 * 4] = 0.0
-    glMat[3 + 3 * 4] = 1.0
+    glMat[0 + 0 * 4] = transMat[0]; // R1C1
+    glMat[0 + 1 * 4] = transMat[1]; // R1C2
+    glMat[0 + 2 * 4] = transMat[2];
+    glMat[0 + 3 * 4] = transMat[3];
+    glMat[1 + 0 * 4] = transMat[4]; // R2
+    glMat[1 + 1 * 4] = transMat[5];
+    glMat[1 + 2 * 4] = transMat[6];
+    glMat[1 + 3 * 4] = transMat[7];
+    glMat[2 + 0 * 4] = transMat[8]; // R3
+    glMat[2 + 1 * 4] = transMat[9];
+    glMat[2 + 2 * 4] = transMat[10];
+    glMat[2 + 3 * 4] = transMat[11];
+    glMat[3 + 0 * 4] = 0.0;
+    glMat[3 + 1 * 4] = 0.0;
+    glMat[3 + 2 * 4] = 0.0;
+    glMat[3 + 3 * 4] = 1.0;
 
     if (scale != undefined && scale !== 0.0) {
-      glMat[12] *= scale
-      glMat[13] *= scale
-      glMat[14] *= scale
+      glMat[12] *= scale;
+      glMat[13] *= scale;
+      glMat[14] *= scale;
     }
-    return glMat
-  };
+    return glMat;
+  }
 
   /**
    * Converts the given 4x4 openGL matrix in the 16-element transMat array
@@ -498,41 +489,49 @@ export default class ARControllerNFT {
    * @param {Float64Array} [glRhMatrix] The 4x4 GL right hand transformation matrix.
    * @param {number} [scale] The scale for the transform.
    */
-  arglCameraViewRHf (glMatrix: Float64Array, glRhMatrix?: Float64Array, scale?: number) {
-    let m_modelview
-    if (glRhMatrix == undefined) { m_modelview = new Float64Array(16) } else { m_modelview = glRhMatrix }
-
-    // x
-    m_modelview[0] = glMatrix[0]
-    m_modelview[4] = glMatrix[4]
-    m_modelview[8] = glMatrix[8]
-    m_modelview[12] = glMatrix[12]
-    // y
-    m_modelview[1] = -glMatrix[1]
-    m_modelview[5] = -glMatrix[5]
-    m_modelview[9] = -glMatrix[9]
-    m_modelview[13] = -glMatrix[13]
-    // z
-    m_modelview[2] = -glMatrix[2]
-    m_modelview[6] = -glMatrix[6]
-    m_modelview[10] = -glMatrix[10]
-    m_modelview[14] = -glMatrix[14]
-
-    // 0 0 0 1
-    m_modelview[3] = 0
-    m_modelview[7] = 0
-    m_modelview[11] = 0
-    m_modelview[15] = 1
-
-    if (scale != undefined && scale !== 0.0) {
-      m_modelview[12] *= scale
-      m_modelview[13] *= scale
-      m_modelview[14] *= scale
+  arglCameraViewRHf(
+    glMatrix: Float64Array,
+    glRhMatrix?: Float64Array,
+    scale?: number
+  ) {
+    let m_modelview;
+    if (glRhMatrix == undefined) {
+      m_modelview = new Float64Array(16);
+    } else {
+      m_modelview = glRhMatrix;
     }
 
-    glRhMatrix = m_modelview
+    // x
+    m_modelview[0] = glMatrix[0];
+    m_modelview[4] = glMatrix[4];
+    m_modelview[8] = glMatrix[8];
+    m_modelview[12] = glMatrix[12];
+    // y
+    m_modelview[1] = -glMatrix[1];
+    m_modelview[5] = -glMatrix[5];
+    m_modelview[9] = -glMatrix[9];
+    m_modelview[13] = -glMatrix[13];
+    // z
+    m_modelview[2] = -glMatrix[2];
+    m_modelview[6] = -glMatrix[6];
+    m_modelview[10] = -glMatrix[10];
+    m_modelview[14] = -glMatrix[14];
 
-    return glRhMatrix
+    // 0 0 0 1
+    m_modelview[3] = 0;
+    m_modelview[7] = 0;
+    m_modelview[11] = 0;
+    m_modelview[15] = 1;
+
+    if (scale != undefined && scale !== 0.0) {
+      m_modelview[12] *= scale;
+      m_modelview[13] *= scale;
+      m_modelview[14] *= scale;
+    }
+
+    glRhMatrix = m_modelview;
+
+    return glRhMatrix;
   }
 
   /**
@@ -541,17 +540,17 @@ export default class ARControllerNFT {
    * Unique to each ARControllerNFT.
    * @return {Float64Array} The 16-element WebGL transformation matrix used by the ARControllerNFT.
    */
-   getTransformationMatrix () {
-    return this.transform_mat
-  };
+  getTransformationMatrix() {
+    return this.transform_mat;
+  }
 
   /**
    * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
    * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
    */
-   getCameraMatrix () {
-    return this.camera_mat
-  };
+  getCameraMatrix() {
+    return this.camera_mat;
+  }
 
   // Setter / Getter Proxies
   //----------------------------------------------------------------------------
@@ -565,7 +564,7 @@ export default class ARControllerNFT {
    */
   setDebugMode(mode: boolean) {
     return this.artoolkitNFT.setDebugMode(this.id, mode);
-  };
+  }
 
   /**
    * Returns whether debug mode is currently enabled.
@@ -574,65 +573,65 @@ export default class ARControllerNFT {
    */
   getDebugMode() {
     return this.artoolkitNFT.getDebugMode(this.id);
-  };
+  }
 
   /**
    * Returns the Emscripten HEAP offset to the debug processing image used by ARToolKit.
    * @return {number} HEAP offset to the debug processing image.
    */
-  getProcessingImage () {
-    return this.artoolkitNFT.getProcessingImage(this.id)
-  };
+  getProcessingImage() {
+    return this.artoolkitNFT.getProcessingImage(this.id);
+  }
 
   /**
    * Sets the logging level to use by ARToolKit.
    * @param {number} mode type for the log level.
    */
-  setLogLevel (mode: boolean) {
+  setLogLevel(mode: boolean) {
     return this.artoolkitNFT.setLogLevel(mode);
-  };
+  }
 
   /**
    * Gets the logging level used by ARToolKit.
    * @return {number} return the log level in use.
    */
-  getLogLevel () {
+  getLogLevel() {
     return this.artoolkitNFT.getLogLevel();
-  };
+  }
 
   /**
    * Sets the value of the near plane of the camera.
    * @param {number} value the value of the near plane
    * @return {number} 0 (void)
    */
-   setProjectionNearPlane (value: number) {
-    return this.artoolkitNFT.setProjectionNearPlane(this.id, value)
-  };
+  setProjectionNearPlane(value: number) {
+    return this.artoolkitNFT.setProjectionNearPlane(this.id, value);
+  }
 
   /**
    * Gets the value of the near plane of the camera with the give id.
    * @return {number} the value of the near plane.
    */
-  getProjectionNearPlane () {
-    return this.artoolkitNFT.getProjectionNearPlane(this.id)
-  };
+  getProjectionNearPlane() {
+    return this.artoolkitNFT.getProjectionNearPlane(this.id);
+  }
 
   /**
    * Sets the value of the far plane of the camera.
    * @param {number} value the value of the far plane
    * @return {number} 0 (void)
    */
-  setProjectionFarPlane (value: number) {
-    return this.artoolkitNFT.setProjectionFarPlane(this.id, value)
-  };
+  setProjectionFarPlane(value: number) {
+    return this.artoolkitNFT.setProjectionFarPlane(this.id, value);
+  }
 
   /**
    * Gets the value of the far plane of the camera with the give id.
    * @return {number} the value of the far plane.
    */
-  getProjectionFarPlane () {
-    return this.artoolkitNFT.getProjectionFarPlane(this.id)
-  };
+  getProjectionFarPlane() {
+    return this.artoolkitNFT.getProjectionFarPlane(this.id);
+  }
 
   /**
    * Set the labeling threshold mode (auto/manual).
@@ -645,7 +644,7 @@ export default class ARControllerNFT {
    */
   setThresholdMode(mode: number) {
     return this.artoolkitNFT.setThresholdMode(this.id, mode);
-  };
+  }
 
   /**
    * Gets the current threshold mode used for image binarization.
@@ -654,7 +653,7 @@ export default class ARControllerNFT {
    */
   getThresholdMode() {
     return this.artoolkitNFT.getThresholdMode(this.id);
-  };
+  }
 
   /**
    * Set the labeling threshold.
@@ -677,7 +676,7 @@ export default class ARControllerNFT {
    */
   setThreshold(threshold: number) {
     return this.artoolkitNFT.setThreshold(this.id, threshold);
-  };
+  }
 
   /**
    * Get the current labeling threshold.
@@ -692,17 +691,49 @@ export default class ARControllerNFT {
    */
   getThreshold() {
     return this.artoolkitNFT.getThreshold(this.id);
-  };
+  }
 
   /**
    * Loads an NFT marker from the given URL or data string
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
-  */
-  async loadNFTMarker (urlOrData: string) {
-    let nft = await this.artoolkitNFT.addNFTMarker(this.id, urlOrData)
-    this.nftMarkerCount = nft.id + 1
-    return nft
-  };
+   */
+  async loadNFTMarker(
+    urlOrData: string,
+    onSuccess: (ids: number) => void,
+    onError: () => void
+  ) {
+    let nft = await this.artoolkitNFT.addNFTMarkers(
+      this.id,
+      [urlOrData],
+      (ids: any) => {
+        this.nftMarkerCount += ids.length;
+        onSuccess(ids);
+      },
+      onError
+    );
+    return nft;
+  }
+
+  /**
+   * Loads an array of NFT markers from the given URLs or data string
+   * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
+   */
+  async loadNFTMarkers(
+    urlOrData: Array<string>,
+    onSuccess: (ids: number) => void,
+    onError: () => void
+  ) {
+    let nft = await this.artoolkitNFT.addNFTMarkers(
+      this.id,
+      urlOrData,
+      (ids: any) => {
+        this.nftMarkerCount += ids.length;
+        onSuccess(ids);
+      },
+      onError
+    );
+    return nft;
+  }
 
   /**
    * Set the image processing mode.
@@ -723,18 +754,18 @@ export default class ARControllerNFT {
    * AR_IMAGE_PROC_FIELD_IMAGE
    * The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
    */
-  setImageProcMode (mode: number) {
+  setImageProcMode(mode: number) {
     return this.artoolkitNFT.setImageProcMode(this.id, mode);
-  };
+  }
 
   /**
    * Get the image processing mode.
    * See arSetImageProcMode() for a complete description.
    * @return {number} The current image processing mode.
    */
-  getImageProcMode () {
+  getImageProcMode() {
     return this.artoolkitNFT.getImageProcMode(this.id);
-  };
+  }
 
   // private accessors
   // ----------------------------------------------------------------------------
@@ -751,61 +782,83 @@ export default class ARControllerNFT {
    * Don't call directly this but instead instantiate a new ARControllerNFT.
    * @return {ARControllerNFT} The initialized ARControllerNFT instance
    */
-  private async _initialize () {
+  private async _initialize() {
     // initialize the toolkit
     this.artoolkitNFT = await new ARToolkitNFT().init();
-    console.log('[ARControllerNFT]', 'ARToolkitNFT initialized');
+    console.log("[ARControllerNFT]", "ARToolkitNFT initialized");
 
     // load the camera
-    this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam)
-    console.log('[ARControllerNFT]', 'Camera params loaded with ID', this.cameraId)
+    this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
+    console.log(
+      "[ARControllerNFT]",
+      "Camera params loaded with ID",
+      this.cameraId
+    );
 
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
-    console.log('[ARControllerNFT]', 'Got ID from setup', this.id);
+    console.log("[ARControllerNFT]", "Got ID from setup", this.id);
 
     this._initNFT();
 
-    const params: delegateMethods['frameMalloc'] = this.artoolkitNFT.frameMalloc;
+    const params: delegateMethods["frameMalloc"] =
+      this.artoolkitNFT.instance.frameMalloc;
     this.framepointer = params.framepointer;
     this.framesize = params.framesize;
     this.videoLumaPointer = params.videoLumaPointer;
 
-    this.dataHeap = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.framepointer, this.framesize);
-    this.videoLuma = new Uint8Array(this.artoolkitNFT.instance.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4);
+    this.dataHeap = new Uint8Array(
+      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.framepointer,
+      this.framesize
+    );
+    this.videoLuma = new Uint8Array(
+      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.videoLumaPointer,
+      this.framesize / 4
+    );
 
-    this.camera_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.camera, 16);
-    this.marker_transform_mat = new Float64Array(this.artoolkitNFT.instance.HEAPU8.buffer, params.transform, 12);
+    this.camera_mat = new Float64Array(
+      this.artoolkitNFT.instance.HEAPU8.buffer,
+      params.camera,
+      16
+    );
+    this.marker_transform_mat = new Float64Array(
+      this.artoolkitNFT.instance.HEAPU8.buffer,
+      params.transform,
+      12
+    );
 
     this.setProjectionNearPlane(0.1);
     this.setProjectionFarPlane(1000);
 
     setTimeout(() => {
       this.dispatchEvent({
-        name: 'load',
-        target: this
-      })
+        name: "load",
+        target: this,
+      });
     }, 1);
 
     return this;
-  };
+  }
 
   /**
    * Init the necessary kpm handle for NFT and the settings for the CPU.
    * @return {number} 0 (void)
    */
-  private _initNFT () {
-    this.artoolkitNFT.setupAR2(this.id)
-  };
+  private _initNFT() {
+    this.artoolkitNFT.setupAR2(this.id);
+  }
 
   /**
    * Copy the Image data to the HEAP for the debugSetup function.
    * @return {number} 0 (void)
    */
-  private _copyImageToHeap (sourceImage: ImageObj) {
+  private _copyImageToHeap(sourceImage: ImageObj) {
     if (!sourceImage) {
-    // default to preloaded image
-      sourceImage = this.image
+      // default to preloaded image
+      console.error("Error: no provided imageData to ARControllerNFT");
+      return;
     }
 
     // this is of type Uint8ClampedArray:
@@ -816,45 +869,30 @@ export default class ARControllerNFT {
 
     if (sourceImage.data) {
       // directly use source image
-      data = sourceImage.data
-    } else {
-      this.ctx.save()
-
-      if (this.orientation === 'portrait') {
-        this.ctx.translate(this.canvas.width, 0)
-        this.ctx.rotate(Math.PI / 2)
-        //@ts-ignore
-        this.ctx.drawImage(sourceImage, 0, 0, this.canvas.height, this.canvas.width) // draw video
-      } else {
-        //@ts-ignore
-        this.ctx.drawImage(sourceImage, 0, 0, this.canvas.width, this.canvas.height) // draw video
-      }
-
-      this.ctx.restore()
-
-      let imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
-      data = imageData.data
+      data = sourceImage.data;
     }
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
     if (this.videoLuma) {
-      let q = 0
+      let q = 0;
 
       // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
       // see (ARToolKitJS.cpp L: 43)
-      for (let p = 0; p < this.videoSize; p++) {      
-        let r = data[q + 0], g = data[q + 1], b = data[q + 2];
-        // @see https://stackoverflow.com/a/596241/5843642    
-        this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3
-        q += 4
+      for (let p = 0; p < this.videoSize; p++) {
+        let r = data[q + 0],
+          g = data[q + 1],
+          b = data[q + 2];
+        // @see https://stackoverflow.com/a/596241/5843642
+        this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
+        q += 4;
       }
     }
 
     if (this.dataHeap) {
-      this.dataHeap.set(data)
-      return true
+      this.dataHeap.set(data);
+      return true;
     }
 
-    return false
-  };
+    return false;
+  }
 }
