@@ -73,82 +73,82 @@ let srcTest = path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/");
 
 let arSources, ar_sources;
 
-if (platform === 'win32') {
-    var glob = require("glob");
-    function match(pattern) {
-        var r = glob.sync('emscripten/WebARKitLib/lib/SRC/' + pattern);
-        return r;
+if (platform === "win32") {
+  var glob = require("glob");
+  function match(pattern) {
+    var r = glob.sync("emscripten/WebARKitLib/lib/SRC/" + pattern);
+    return r;
+  }
+  function matchAll(patterns, prefix = "") {
+    let r = [];
+    for (let pattern of patterns) {
+      r.push(...match(prefix + pattern));
     }
-    function matchAll(patterns, prefix="") {
-        let r = [];
-        for(let pattern of patterns) {
-            r.push(...(match(prefix + pattern)));
-        }
-        return r;
-    }
+    return r;
+  }
 
-    ar_sources = matchAll([
-        'AR/arLabelingSub/*.c',
-        'AR/*.c',
-        'ARICP/*.c',
-        'ARUtil/log.c',
-        'ARUtil/file_utils.c',
-    ]);
+  ar_sources = matchAll([
+    "AR/arLabelingSub/*.c",
+    "AR/*.c",
+    "ARICP/*.c",
+    "ARUtil/log.c",
+    "ARUtil/file_utils.c",
+  ]);
 } else {
-    ar_sources = [
-        'AR/arLabelingSub/*.c',
-        'AR/*.c',
-        'ARICP/*.c',
-        'ARUtil/log.c',
-        'ARUtil/file_utils.c',
-    ].map(function(src) {
-        return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/', src);
-    });
+  ar_sources = [
+    "AR/arLabelingSub/*.c",
+    "AR/*.c",
+    "ARICP/*.c",
+    "ARUtil/log.c",
+    "ARUtil/file_utils.c",
+  ].map(function (src) {
+    return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/", src);
+  });
 }
 
 var ar2_sources = [
-    'handle.c',
-    'imageSet.c',
-    'jpeg.c',
-    'marker.c',
-    'featureMap.c',
-    'featureSet.c',
-    'selectTemplate.c',
-    'surface.c',
-    'tracking.c',
-    'tracking2d.c',
-    'matching.c',
-    'matching2.c',
-    'template.c',
-    'searchPoint.c',
-    'coord.c',
-    'util.c',
-].map(function(src) {
-    return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/AR2/', src);
+  "handle.c",
+  "imageSet.c",
+  "jpeg.c",
+  "marker.c",
+  "featureMap.c",
+  "featureSet.c",
+  "selectTemplate.c",
+  "surface.c",
+  "tracking.c",
+  "tracking2d.c",
+  "matching.c",
+  "matching2.c",
+  "template.c",
+  "searchPoint.c",
+  "coord.c",
+  "util.c",
+].map(function (src) {
+  return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/AR2/", src);
 });
 
 var kpm_sources = [
-    'kpmHandle.cpp',
-    'kpmRefDataSet.cpp',
-    'kpmMatching.cpp',
-    'kpmResult.cpp',
-    'kpmUtil.cpp',
-    'kpmFopen.c',
-    'FreakMatcher/detectors/DoG_scale_invariant_detector.cpp',
-    'FreakMatcher/detectors/gaussian_scale_space_pyramid.cpp',
-    'FreakMatcher/detectors/gradients.cpp',
-    'FreakMatcher/detectors/harris.cpp',
-    'FreakMatcher/detectors/orientation_assignment.cpp',
-    'FreakMatcher/detectors/pyramid.cpp',
-    'FreakMatcher/facade/visual_database_facade.cpp',
-    'FreakMatcher/matchers/hough_similarity_voting.cpp',
-    'FreakMatcher/matchers/freak.cpp',
-    'FreakMatcher/framework/date_time.cpp',
-    'FreakMatcher/framework/image.cpp',
-    'FreakMatcher/framework/logger.cpp',
-    'FreakMatcher/framework/timers.cpp',
-].map(function(src) {
-    return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/', src);
+  "kpmHandle.cpp",
+  "kpmRefDataSet.cpp",
+  "kpmMatching.cpp",
+  "kpmResult.cpp",
+  "kpmUtil.cpp",
+  "kpmFopen.c",
+  "FreakMatcher/detectors/DoG_scale_invariant_detector.cpp",
+  "FreakMatcher/detectors/gaussian_scale_space_pyramid.cpp",
+  "FreakMatcher/detectors/gradients.cpp",
+  "FreakMatcher/detectors/harris.cpp",
+  "FreakMatcher/detectors/orientation_assignment.cpp",
+  "FreakMatcher/detectors/pyramid.cpp",
+  "FreakMatcher/facade/visual_database_facade.cpp",
+  "FreakMatcher/matchers/hough_similarity_voting.cpp",
+  "FreakMatcher/matchers/freak.cpp",
+  "FreakMatcher/framework/date_time.cpp",
+  "FreakMatcher/framework/image.cpp",
+  "FreakMatcher/framework/logger.cpp",
+  "FreakMatcher/framework/timers.cpp",
+].map(function (src) {
+  return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/", src);
 });
 
 var webarkit_sources = ["WebARKitLog.cpp"].map(function (src) {
@@ -156,29 +156,30 @@ var webarkit_sources = ["WebARKitLog.cpp"].map(function (src) {
 });
 
 if (HAVE_NFT) {
-    ar_sources = ar_sources
-        .concat(ar2_sources)
-        .concat(kpm_sources)
-        .concat(webarkit_sources);
+  ar_sources = ar_sources
+    .concat(ar2_sources)
+    .concat(kpm_sources)
+    .concat(webarkit_sources);
 }
 
-var DEFINES = ' ';
-if (HAVE_NFT) DEFINES += ' -D HAVE_NFT';
-DEFINES += ' -D WITH_FILTERING=' + WITH_FILTERING;
+var DEFINES = " ";
+if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
+DEFINES += " -D WITH_FILTERING=" + WITH_FILTERING;
 
-var FLAGS = '' + OPTIMIZE_FLAGS;
-FLAGS += ' -Wno-warn-absolute-paths';
-FLAGS += ' -s TOTAL_MEMORY=' + MEM + ' ';
-FLAGS += ' -s USE_ZLIB=1';
-FLAGS += ' -s USE_LIBJPEG=1';
-FLAGS += ' --memory-init-file 0'; // for memless file
-FLAGS += " -s EXPORTED_RUNTIME_METHODS=[\"FS\"]"
-FLAGS += ' -s ALLOW_MEMORY_GROWTH=1';
+var FLAGS = "" + OPTIMIZE_FLAGS;
+FLAGS += " -Wno-warn-absolute-paths";
+FLAGS += " -s TOTAL_MEMORY=" + MEM + " ";
+FLAGS += " -s USE_ZLIB=1";
+FLAGS += " -s USE_LIBJPEG=1";
+FLAGS += " --memory-init-file 0"; // for memless file
+FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
+FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 
-var WASM_FLAGS = ' -s SINGLE_FILE=1 -msimd128'
-var ES6_FLAGS = ' -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1';
+var WASM_FLAGS = " -s SINGLE_FILE=1 -msimd128";
+var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1";
 
-var PRE_FLAGS = ' --pre-js ' + path.resolve(__dirname, '../js/artoolkitNFT.api.js');
+var PRE_FLAGS =
+  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
 
 FLAGS += " --bind ";
 
@@ -243,7 +244,7 @@ var compile_arlib = format(
   OUTPUT_PATH
 );
 
-var ALL_BC = ' {OUTPUT_PATH}libar.bc ';
+var ALL_BC = " {OUTPUT_PATH}libar.bc ";
 
 var compile_combine = format(
   EMCC +
