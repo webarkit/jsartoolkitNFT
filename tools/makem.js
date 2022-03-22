@@ -151,10 +151,15 @@ var kpm_sources = [
     return path.resolve(__dirname, WEBARKITLIB_ROOT + '/lib/SRC/KPM/', src);
 });
 
+var webarkit_sources = ["WebARKitLog.cpp"].map(function (src) {
+  return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/WebARKit/", src);
+});
+
 if (HAVE_NFT) {
     ar_sources = ar_sources
         .concat(ar2_sources)
-        .concat(kpm_sources);
+        .concat(kpm_sources)
+        .concat(webarkit_sources);
 }
 
 var DEFINES = ' ';
@@ -238,7 +243,7 @@ var compile_arlib = format(
   OUTPUT_PATH
 );
 
-var ALL_BC = ' {OUTPUT_PATH}libar.bc';
+var ALL_BC = ' {OUTPUT_PATH}libar.bc ';
 
 var compile_combine = format(
   EMCC +
