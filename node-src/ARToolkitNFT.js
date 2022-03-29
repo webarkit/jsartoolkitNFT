@@ -88,14 +88,24 @@ class ARToolKitNFT {
     } else {
       // fetch data via HTTP
       try {
-        data = await Utils.fetchRemoteData(urlOrData);
-        console.log(data);
+        // data = await Utils.fetchRemoteData(urlOrData);
+        var self = this;
+        fs.readFile(urlOrData, {encoding: 'binary'}, function (err, data) {
+          console.log('data is: ',data);
+          let typedArray = new Uint8Array(data.length);
+          for(var i=0; i<=data.length; i++){
+            typedArray[i] = data[i]
+          }
+          console.log(typedArray);
+          self._storeDataFile(typedArray, target);
+          })
+       
       } catch (error) {
         throw error;
       }
     }
 
-    this._storeDataFile(data, target);
+    //this._storeDataFile(data, target);
 
     // return the internal marker ID
     return this.artoolkitNFT._loadCamera(target);
@@ -107,7 +117,8 @@ class ARToolKitNFT {
       target,
       data,
       {
-        encoding: "binary"
+        encoding: "binary",
+        flag: "w+"
       },
       function (error) {
         console.log('Error from _storeDataFile: ',error);
