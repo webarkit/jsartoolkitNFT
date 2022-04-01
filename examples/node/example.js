@@ -1,9 +1,14 @@
-const ARToolKitNFT = require('../../node-src/ARToolkitNFT.js')
+const ARControllerNFT = require ('../../node-src/ARControllerNFT.js')
 
 async function init(){
-    let ar = await new ARToolKitNFT().init();
-    const id = await ar.loadCamera('camera_para.dat');
-    ar.artoolkitNFT.setup(640, 480, id);
+    let arControllerNFT = await new ARControllerNFT(640, 480,'camera_para.dat');
+    arControllerNFT._initialize()
+    // to check if the ARControllerNFT is loaded...
+    arControllerNFT.addEventListener('load', function(){
+        console.log('loaded');
+        // we get an error because process need some video data...
+        arControllerNFT.process()
+    })
 }
 
 init()
