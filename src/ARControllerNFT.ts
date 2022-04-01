@@ -152,12 +152,7 @@ export default class ARControllerNFT {
    * @param {number} height
    * @param {string} cameraParam
    */
-  constructor(
-    width: number,
-    height: number,
-    cameraParam: string
-  ) {
-
+  constructor(width: number, height: number, cameraParam: string) {
     // no point in initializing a member as "undefined"
     // replaced it with -1
     this.id = -1;
@@ -208,25 +203,14 @@ export default class ARControllerNFT {
     cameraParam: string
   ) {
     // directly init with given width / height
-    const arControllerNFT = new ARControllerNFT(
-      width,
-      height,
-      cameraParam
-    );
+    const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     return await arControllerNFT._initialize();
   }
 
-  static async initWithImage(
-    image: ImageObj,
-    cameraParam: string
-  ) {
+  static async initWithImage(image: ImageObj, cameraParam: string) {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
-    const arControllerNFT = new ARControllerNFT(
-      width,
-      height,
-      cameraParam,
-    );
+    const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     return await arControllerNFT._initialize();
   }
 
@@ -260,7 +244,8 @@ export default class ARControllerNFT {
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: delegateMethods['NFTMarkerInfo'] = this.getNFTMarker(i);
+      let nftMarkerInfo: delegateMethods["NFTMarkerInfo"] =
+        this.getNFTMarker(i);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -376,7 +361,7 @@ export default class ARControllerNFT {
    */
   getNFTMarker(markerIndex: number) {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-      return this.artoolkitNFT.instance.NFTMarkerInfo;
+      return this.artoolkitNFT.NFTMarkerInfo;
     }
   }
 
@@ -802,7 +787,7 @@ export default class ARControllerNFT {
     this._initNFT();
 
     const params: delegateMethods["frameMalloc"] =
-      this.artoolkitNFT.instance.frameMalloc;
+      this.artoolkitNFT.frameMalloc;
     this.framepointer = params.framepointer;
     this.framesize = params.framesize;
     this.videoLumaPointer = params.videoLumaPointer;

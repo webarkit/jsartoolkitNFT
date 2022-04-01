@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
@@ -36,20 +36,20 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
+    "@babel/core": "^7.17.8",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
-    "babel-loader": "^8.2.3",
+    "babel-loader": "^8.2.4",
     "karma": "^6.3.17",
-    "karma-chrome-launcher": "^3.1.0",
+    "karma-chrome-launcher": "^3.1.1",
     "karma-firefox-launcher": "^2.1.2",
     "karma-qunit": "^4.1.2",
-    "prettier": "^2.5.1",
-    "qunit": "^2.18.0",
-    "ts-loader": "^9.2.6",
-    "typedoc": "^0.22.12",
-    "typescript": "^4.2.3",
-    "webpack": "^5.70.0",
+    "prettier": "^2.6.1",
+    "qunit": "^2.18.1",
+    "ts-loader": "^9.2.8",
+    "typedoc": "^0.22.13",
+    "typescript": "^4.6.3",
+    "webpack": "^5.71.0",
     "webpack-cli": "^4.9.2"
   },
   "scripts": {
@@ -66,7 +66,7 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.17.2",
+    "@babel/runtime": "^7.17.8",
     "axios": "^0.26.1"
   }
 }
