@@ -1,6 +1,4 @@
 const Module = require("../build/artoolkitNFT_node_wasm.js");
-const Utils = require("./Utils");
-const fs = require("fs");
 
 class ARToolKitNFT {
   constructor() {
@@ -71,6 +69,7 @@ class ARToolKitNFT {
       };
     });
   }
+
   async init() {
     this.artoolkitNFT = await this._initialize();
     let scope = typeof global !== "undefined" ? global : self;
@@ -78,52 +77,11 @@ class ARToolKitNFT {
     return this;
   }
 
-  async loadCamera(urlOrData) {
-    const target = "/camera_param_" + this.cameraCount++;
-    let data;
-
-    if (urlOrData instanceof Uint8Array) {
-      // assume preloaded camera params
-      data = urlOrData;
-    } else {
-      // fetch data via HTTP
-      try {
-        // data = await Utils.fetchRemoteData(urlOrData);
-        var self = this;
-        fs.readFile(urlOrData, {encoding: 'binary'}, function (err, data) {
-          console.log('data is: ',data);
-          let typedArray = new Uint8Array(data.length);
-          for(var i=0; i<=data.length; i++){
-            typedArray[i] = data[i]
-          }
-          console.log(typedArray);
-          self._storeDataFile(typedArray, target);
-          })
-       
-      } catch (error) {
-        throw error;
-      }
-    }
-
-    //this._storeDataFile(data, target);
-
-    // return the internal marker ID
-    return this.artoolkitNFT._loadCamera(target);
-  }
-  _storeDataFile(data, target) {
-    // FS is provided by NodeJS
-    // Note: valid data must be in binary format encoded as Uint8Array
-    fs.writeFile(
-      target,
-      data,
-      {
-        encoding: "binary",
-        flag: "w+"
-      },
-      function (error) {
-        console.log('Error from _storeDataFile: ',error);
-      }
-    );
+  async loadCamera(url) {
+    // Mount the FileSystem omn the /temp directory
+    Module.FS.mkdir('/temp'); 
+    Module.FS.mount(Module.NODEFS, { root: '.' }, '/temp');
+    return this.artoolkitNFT._loadCamera('/temp/'+ url);
   }
 }
 module.exports = ARToolKitNFT;

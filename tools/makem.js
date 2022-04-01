@@ -182,7 +182,7 @@ var ES6_FLAGS =
 var PRE_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js") + " ";
 
-var NODE_FLAGS = " -s ENVIRONMENT='node' ";
+var NODE_FLAGS = " -s ENVIRONMENT='node' -s FORCE_FILESYSTEM  -s EXPORTED_RUNTIME_METHODS='['NODEFS','FS']' -lnodefs.js";
 
 FLAGS += " --bind ";
 
