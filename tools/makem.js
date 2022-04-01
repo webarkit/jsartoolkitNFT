@@ -13,6 +13,7 @@ var exec = require("child_process").exec,
 const platform = os.platform();
 
 var NO_LIBAR = false;
+/* Filtering remote jitter, but makes the tracking swim */
 var WITH_FILTERING = 1;
 
 var arguments = process.argv;
@@ -162,23 +163,23 @@ if (HAVE_NFT) {
 }
 
 var DEFINES = " ";
-if (HAVE_NFT) DEFINES += " -D HAVE_NFT ";
-if (WITH_FILTERING) DEFINES += " -D WITH_FILTERING ";
+if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
+DEFINES += " -D WITH_FILTERING=" + WITH_FILTERING;
 
 var FLAGS = "" + OPTIMIZE_FLAGS;
-FLAGS += " -Wno-warn-absolute-paths ";
+FLAGS += " -Wno-warn-absolute-paths";
 FLAGS += " -s TOTAL_MEMORY=" + MEM + " ";
 FLAGS += " -s USE_ZLIB=1";
-FLAGS += " -s USE_LIBJPEG";
-FLAGS += " --memory-init-file 0 "; // for memless file
-FLAGS += " -s EXPORTED_RUNTIME_METHODS='[\"FS\"]'";
+FLAGS += " -s USE_LIBJPEG=1";
+FLAGS += " --memory-init-file 0"; // for memless file
+FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 
-var WASM_FLAGS = " -s SINGLE_FILE=1 ";
-var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s EXPORT_NAME='artoolkitNFT' -s MODULARIZE=1 ";
+var WASM_FLAGS = " -s SINGLE_FILE=1 -msimd128";
+var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1";
 
 var PRE_FLAGS =
-  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js") + " ";
+  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
 
 FLAGS += " --bind ";
 
