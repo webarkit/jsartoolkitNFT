@@ -983,7 +983,27 @@
         } else if (url.indexOf("\n") > -1) { // Or a string with the camera param
             writeStringToFS(filename, url, writeCallback);
         } else {
-            ajax(url, filename, writeCallback, errorCallback);
+            //ajax(url, filename, writeCallback, errorCallback);
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not OK');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    console.log(blob);
+                    console.log(blob.arrayBuffer());
+                    blob.arrayBuffer().then(buff => {
+                        console.log(buff);
+                        let buffer = new Uint8Array(buff)
+                        console.log(buffer);
+                        writeByteArrayToFS(filename, buffer, writeCallback);
+                    })
+                })
+                .catch(error => {
+                    errorCallback(error)
+                });
         }
     }
 
