@@ -361,7 +361,7 @@ export default class ARControllerNFT {
    */
   getNFTMarker(markerIndex: number) {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-      return this.artoolkitNFT.instance.NFTMarkerInfo;
+      return this.artoolkitNFT.NFTMarkerInfo;
     }
   }
 
@@ -787,7 +787,7 @@ export default class ARControllerNFT {
     this._initNFT();
 
     const params: delegateMethods["frameMalloc"] =
-      this.artoolkitNFT.instance.frameMalloc;
+      this.artoolkitNFT.frameMalloc;
     this.framepointer = params.framepointer;
     this.framesize = params.framesize;
     this.videoLumaPointer = params.videoLumaPointer;
