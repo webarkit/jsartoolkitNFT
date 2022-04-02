@@ -74,3 +74,4 @@ jobs:
           js/artoolkitNFT.worker.js
           js/artoolkitNFT.multi_worker.js
           dist/ARToolkitNFT.js
+          dist/ARToolkitNFT_simd.js
