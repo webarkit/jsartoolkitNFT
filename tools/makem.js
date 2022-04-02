@@ -71,9 +71,7 @@ MAIN_SOURCES = MAIN_SOURCES.map(function (src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(" ");
 
-let srcTest = path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/");
-
-let arSources, ar_sources;
+let ar_sources;
 
 if (platform === "win32") {
   var glob = require("glob");
@@ -221,13 +219,18 @@ function clean_builds() {
   try {
     var files = fs.readdirSync(OUTPUT_PATH);
     var filesLength = files.length;
-    if (filesLength > 0)
+    if (filesLength > 0) {
       if (NO_LIBAR == true) {
-        filesLength -= 1;
+        for (var i = 0; i < filesLength-2; i++) {
+          var filePath = OUTPUT_PATH + "/" + files[i];
+          if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
+        }
+      } else {
+        for (var i = 0; i < filesLength; i++) {
+          var filePath = OUTPUT_PATH + "/" + files[i];
+          if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
+        }
       }
-    for (var i = 0; i < filesLength; i++) {
-      var filePath = OUTPUT_PATH + "/" + files[i];
-      if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
     }
   } catch (e) {
     return console.log(e);
@@ -412,7 +415,7 @@ addJob(compile_simd_wasm_es6);
 addJob(compile_combine_min);
 
 if (NO_LIBAR == true) {
-  jobs.splice(1, 1);
+  jobs.splice(1, 2);
 }
 
 runJob();
