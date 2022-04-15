@@ -129,6 +129,12 @@ class ARControllerNFT {
         return -99;
     };
 
+    getNFTMarker(markerIndex) {
+        if (0 === this.artoolkitNFT.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
+            return this.artoolkitNFT.NFTMarkerInfo;
+        }
+    }
+
     detectNFTMarker() {
         this.artoolkitNFT.artoolkitNFT.detectNFTMarker(this.id);
     };
@@ -225,6 +231,91 @@ class ARControllerNFT {
             }
         }
     };
+
+   loadNFTMarkers(markerURLs, onSuccess, onError) {
+        var self = this;
+        this.addNFTMarkers(this.id, markerURLs, function(ids) {
+            self.nftMarkerCount += ids.length;
+            onSuccess(ids);
+        }, onError);
+    };
+
+    loadNFTMarker(markerURL, onSuccess, onError) {
+        if (markerURL) {
+            this.loadNFTMarkers([markerURL], function(ids) {
+              onSuccess(ids[0]);
+            }, onError);
+        } else {
+          if (onError) {
+              onError("Marker URL needs to be defined and not equal empty string!");
+          }
+          else {
+              console.error("Marker URL needs to be defined and not equal empty string!");
+          }
+        }
+
+    };
+    
+    addNFTMarker(arId, url, callback, onError) {
+        var mId = this.nftMarkerCount++;
+        var prefix = '/markerNFT_' + mId;
+        var filename1 = prefix + '.fset';
+        var filename2 = prefix + '.iset';
+        var filename3 = prefix + '.fset3';
+        this.ajax(url + '.fset', filename1, function () {
+            this.ajax(url + '.iset', filename2, function () {
+                this.ajax(url + '.fset3', filename3, function () {
+                    var nftMarker = this.artoolkitNFT.artoolkitNFT._addNFTMarker(arId, prefix);
+                    if (callback) callback(nftMarker);
+                }, function (errorNumber) { if (onError) onError(errorNumber); });
+            }, function (errorNumber) { if (onError) onError(errorNumber); });
+        }, function (errorNumber) { if (onError) onError(errorNumber); });
+    }
+
+    addNFTMarkers(arId, urls, callback, onError) {
+        var prefixes = [];
+        var pending = urls.length * 3;
+        var onSuccess = (filename) => {
+            pending -= 1;
+            if (pending === 0) {
+                const vec = new this.artoolkitNFT.artoolkitNFT.StringList();
+                const markerIds = [];
+                for (let i = 0; i < prefixes.length; i++) {
+                    vec.push_back(prefixes[i]);
+                }
+                var ret = this.artoolkitNFT.artoolkitNFT._addNFTMarkers(arId, vec);
+                for (let i = 0; i < ret.size(); i++) {
+                    markerIds.push(ret.get(i));
+                }
+
+                console.log("add nft marker ids: ", markerIds);
+                if (callback) callback(markerIds);
+            }
+        }
+        var onError = (filename, errorNumber) => {
+            console.log("failed to load: ", filename);
+            onError(errorNumber);
+        }
+
+        for (var i = 0; i < urls.length; i++) {
+            var url = urls[i];
+            var prefix = '/markerNFT_' + this.nftMarkerCount;
+            prefixes.push(prefix);
+            var filename1 = prefix + '.fset';
+            var filename2 = prefix + '.iset';
+            var filename3 = prefix + '.fset3';
+
+            this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
+            this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
+            this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
+            this.nftMarkerCount += 1;
+        }
+    }
+
+    ajax(url, target, callback, errorCallback) {
+
+    }
+
 
     setProjectionNearPlane(value) {
         return this.artoolkitNFT.artoolkitNFT.setProjectionNearPlane(this.id, value);
