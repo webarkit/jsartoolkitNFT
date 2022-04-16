@@ -1,15 +1,23 @@
-const ARControllerNFT = require ('../../node-src/ARControllerNFT.js')
+const ARControllerNFT = require('../../node-src/ARControllerNFT.js')
+const sharp = require('sharp')
 
-async function init(){
-    let arControllerNFT = await new ARControllerNFT(640, 480,'camera_para.dat');
+async function init() {
+    let arControllerNFT = await new ARControllerNFT(869, 587, 'camera_para.dat');
     arControllerNFT._initialize()
-    // to check if the ARControllerNFT is loaded...
-    arControllerNFT.addEventListener('load', function(){
-        console.log('loaded');
-        // we get an error because process need some video data...
-        arControllerNFT.loadNFTMarker('/DataNFT/pinball', function(data){ console.log(data)})
-        //arControllerNFT.process()
-    })
+        .then(ar => {
+            console.log(ar);
+            sharp("pinball-test.png")
+                .toBuffer()
+                .then(data => {
+                    var imageData = new Uint8Array(data)
+                    // we get an error because process need some video data...
+                    ar.loadNFTMarker('DataNFT/pinball', function (id) {
+                        console.log('marker id is: ', id);
+                        ar.trackNFTMarkerId(id);
+                    })
+                    ar.process(imageData)
+                })
+        })
 }
 
 init()

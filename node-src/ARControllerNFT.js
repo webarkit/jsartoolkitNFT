@@ -20,6 +20,9 @@ class ARControllerNFT {
 
         this.nftMarkers = {};
 
+        this.markerFound = false;
+        this.markerFoundTime = 0;
+
         this.transform_mat = new Float64Array(16);
         this.transformGL_RH = new Float64Array(16);
         this.marker_transform_mat = null;
@@ -62,8 +65,8 @@ class ARControllerNFT {
             var markerType = this.artoolkitNFT.NFT_MARKER;
 
             if (nftMarkerInfo.found) {
-                self.markerFound = i;
-                self.markerFoundTime = Date.now();
+                this.markerFound = i;
+                this.markerFoundTime = Date.now();
 
                 var visible = this.trackNFTMarkerId(i);
                 visible.matrix.set(nftMarkerInfo.pose);
@@ -81,14 +84,14 @@ class ARControllerNFT {
                         matrixGL_RH: this.transformGL_RH
                     }
                 });
-            } else if (self.markerFound === i) {
+            } else if (this.markerFound === i) {
                 // for now this marker found/lost events handling is for one marker at a time
-                if ((Date.now() - self.markerFoundTime) <= MARKER_LOST_TIME) {
+                if ((Date.now() - this.markerFoundTime) <= MARKER_LOST_TIME) {
                     // not handling marker lost for less than specified time
                     return;
                 }
 
-                delete self.markerFound;
+                delete this.markerFound;
 
                 this.dispatchEvent({
                     name: 'lostNFTMarker',
@@ -404,8 +407,8 @@ class ARControllerNFT {
             var imageData = image;
 
         }
-        var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
-
+        //var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
+        var data = image
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
         if (this.videoLuma) {
             var q = 0;

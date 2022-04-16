@@ -78,7 +78,7 @@ class ARToolKitNFT {
   }
 
   async loadCamera(url) {
-    // Mount the FileSystem omn the /temp directory
+    // Mount the FileSystem on /temp directory
     Module.FS.mkdir('/temp'); 
     Module.FS.mount(Module.NODEFS, { root: '.' }, '/temp');
     return this.artoolkitNFT._loadCamera('/temp/'+ url);
