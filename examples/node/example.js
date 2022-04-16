@@ -7,8 +7,8 @@ async function init(){
     arControllerNFT.addEventListener('load', function(){
         console.log('loaded');
         // we get an error because process need some video data...
-        arControllerNFT.loadNFTMarker('DataNFT/pinball', function(data){ console.log(data)})
-        arControllerNFT.process()
+        arControllerNFT.loadNFTMarker('/DataNFT/pinball', function(data){ console.log(data)})
+        //arControllerNFT.process()
     })
 }
 

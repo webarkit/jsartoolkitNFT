@@ -299,11 +299,13 @@ class ARControllerNFT {
 
         for (var i = 0; i < urls.length; i++) {
             var url = urls[i];
-            var prefix = '/markerNFT_' + this.nftMarkerCount;
+
+            var prefix = '/temp/' + url;
             prefixes.push(prefix);
-            var filename1 = prefix + '.fset';
-            var filename2 = prefix + '.iset';
-            var filename3 = prefix + '.fset3';
+
+            var filename1 = url + '.fset';
+            var filename2 = url + '.iset';
+            var filename3 = url + '.fset3';
 
             this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
             this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
@@ -313,7 +315,7 @@ class ARControllerNFT {
     }
 
     ajax(url, target, callback, errorCallback) {
-
+        callback("/temp/" + target);
     }
 
 
