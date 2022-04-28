@@ -15,7 +15,10 @@ async function init() {
                         console.log('marker id is: ', id);
                         ar.trackNFTMarkerId(id);
                     })
-                    ar.process(imageData)
+                    ar.process(imageData);
+                    ar.addEventListener('getNFTMarker', function(e){
+                      console.log(e);
+                    })
                 })
         })
 }

@@ -134,8 +134,17 @@ class ARControllerNFT {
 
     getNFTMarker(markerIndex) {
         if (0 === this.artoolkitNFT.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-            return this.artoolkitNFT.NFTMarkerInfo;
-        }
+            console.log('ok getNFTMarkerInfo')
+            return artoolkitNFT.NFTMarkerInfo;
+          } else {
+            var obj = {	id: 0,
+                      error: -1,
+                      found: 0,
+                      pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
+            }
+            console.log('default NFTMarkerInfo...');
+            return obj
+          }
     }
 
     detectNFTMarker() {
@@ -258,7 +267,7 @@ class ARControllerNFT {
         }
 
     };
-    
+
     addNFTMarker(arId, url, callback, onError) {
         var mId = this.nftMarkerCount++;
         var prefix = '/markerNFT_' + mId;
