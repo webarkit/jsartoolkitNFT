@@ -107,14 +107,14 @@ export default class ARToolkitNFT {
    * - cameraCount
    * - version
    * A message is displayed in the browser console during the intitialization, for example:
-   * "ARToolkitNFT 1.1.2"
+   * "ARToolkitNFT 1.1.3"
    */
   constructor() {
     // reference to WASM module
     this.instance;
     this.markerNFTCount = 0;
     this.cameraCount = 0;
-    this.version = "1.1.2";
+    this.version = "1.1.3";
     console.info("ARToolkitNFT ", this.version);
   }
 
@@ -245,7 +245,7 @@ export default class ARToolkitNFT {
    */
   public addNFTMarkers(
     arId: number,
-    urls: Array<string>,
+    urls: Array<string | Array<string>>,
     callback: (filename: any) => void,
     onError2: (errorNumber: any) => void
   ): [{ id: number }] {
@@ -273,39 +273,54 @@ export default class ARToolkitNFT {
       onError2(errorNumber);
     };
 
-    for (var i = 0; i < urls.length; i++) {
-      var url = urls[i];
-      var prefix = "/markerNFT_" + this.markerNFTCount;
-      prefixes.push(prefix);
-      var filename1 = prefix + ".fset";
-      var filename2 = prefix + ".iset";
-      var filename3 = prefix + ".fset3";
-
-      this.ajax(
-        url + ".fset",
-        filename1,
-        onSuccess.bind(filename1),
-        onError.bind(filename1)
-      );
-      this.ajax(
-        url + ".iset",
-        filename2,
-        onSuccess.bind(filename2),
-        onError.bind(filename2)
-      );
-      this.ajax(
-        url + ".fset3",
-        filename3,
-        onSuccess.bind(filename3),
-        onError.bind(filename3)
-      );
-      this.markerNFTCount += 1;
-    }
     let Ids: any = [];
 
-    for (var i = 0; i < urls.length; ++i) {
-      Ids.push(i);
-    }
+    urls.forEach((element,index) => {
+      var prefix = "/markerNFT_" + this.markerNFTCount;
+      prefixes.push(prefix);
+
+      if (Array.isArray(element)) {
+        element.forEach(url => {
+          const filename = prefix + "." + url.split('.').pop();;
+
+          this.ajax(
+            url,
+            filename,
+            onSuccess.bind(filename),
+            onError.bind(filename)
+          );
+        });
+
+        this.markerNFTCount += 1;
+      } else {
+        var filename1 = prefix + ".fset";
+        var filename2 = prefix + ".iset";
+        var filename3 = prefix + ".fset3";
+
+        this.ajax(
+          element + ".fset",
+          filename1,
+          onSuccess.bind(filename1),
+          onError.bind(filename1)
+        );
+        this.ajax(
+          element + ".iset",
+          filename2,
+          onSuccess.bind(filename2),
+          onError.bind(filename2)
+        );
+        this.ajax(
+          element + ".fset3",
+          filename3,
+          onSuccess.bind(filename3),
+          onError.bind(filename3)
+        );
+
+        this.markerNFTCount += 1;
+      }
+
+      Ids.push(index);
+    });
 
     return Ids;
   }
