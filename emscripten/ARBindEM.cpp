@@ -21,6 +21,8 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("detectNFTMarker", &detectNFTMarker);
 	function("getNFTMarker", &getNFTMarkerInfo);
 	function("getNFTData", &getNFTData);
+	function("setOEF", &setOEF);
+	function("filterOEF", &filterOEF);
 
 	/* nft marker struct */
 	value_object<nftMarker>("nftMarker")

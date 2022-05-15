@@ -21,6 +21,7 @@
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKit/WebARKitOEF.h>
 #include "trackingMod.h"
 
 const int PAGES_MAX = 20;         // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
@@ -73,6 +74,7 @@ struct arController {
 
 	ARdouble cameraLens[16];
 	AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
+	OneEuroFilter f{60};
 };
 
 std::unordered_map<int, arController> arControllers;
@@ -334,6 +336,23 @@ extern "C" {
 		arController *arc = &(arControllers[id]);
 		// get marker(s) nft data.
 		return arc->nftMarkers.at(index);
+	}
+
+	/****************
+	 * Set OEF filter
+     ****************/
+	int setOEF(int id, double freq, double mincutoff, double beta, double dcutoff) {
+		if (arControllers.find(id) == arControllers.end()) { return -1; }
+		arController *arc = &(arControllers[id]);
+		arc->f = {freq, mincutoff, beta, dcutoff};
+		return 0;
+	}
+
+	int filterOEF(int id, double value, double timestamp) {
+       if (arControllers.find(id) == arControllers.end()) { return -1; }
+		arController *arc = &(arControllers[id]);
+		arc->f.filter(value, timestamp);
+		return 0;
 	}
 
 	/***************
