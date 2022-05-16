@@ -74,7 +74,7 @@ struct arController {
 
 	ARdouble cameraLens[16];
 	AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
-	OneEuroFilter f{60};
+	OEF::OneEuroFilter f{60};
 };
 
 std::unordered_map<int, arController> arControllers;
@@ -354,6 +354,15 @@ extern "C" {
 		arc->f.filter(value, timestamp);
 		return 0;
 	}
+ 
+	int filterMatOEF(int id, ARdouble mat[3][4], double timestamp) {
+       if (arControllers.find(id) == arControllers.end()) { return -1; }
+		arController *arc = &(arControllers[id]);
+		arc->f.filterMat(mat, timestamp);
+		return 0;
+	}
+
+
 
 	/***************
 	 * Set Log Level
