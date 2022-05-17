@@ -411,6 +411,8 @@ extern "C" {
 			arc->videoFrameSize = 0;
 		}
 
+		arc->f = NULL;
+
 		deleteHandle(arc);
 
 		arControllers.erase(id);

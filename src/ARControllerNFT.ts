@@ -109,6 +109,7 @@ interface delegateMethods {
   getNFTData: (id: number, index: number) => object;
   setOEF: (id: number, frequency: number, mincutoff: number, beta: number, dcutoff: number) => number;
   filterOEF: (id: number, value: number, timestamp: number) => number;
+  filterMatOEF: (id: number, matrix: Array<Array<number>>, timestamp: number) => Array<Array<number>>;
   setImageProcMode: (id: number, mode: number) => number;
   getImageProcMode: (id: number) => number;
 }
@@ -440,6 +441,10 @@ export default class ARControllerNFT {
    */
   filterOEF(value: number, timestamp: number) {
     this.artoolkitNFT.filterOEF(this.id, value, timestamp);
+  }
+
+  filterMatOEF(matrix: Array<Array<number>>, timestamp: number) {
+    return this.artoolkitNFT.filterMatOEF(this.id, matrix, timestamp);
   }
 
   /**
