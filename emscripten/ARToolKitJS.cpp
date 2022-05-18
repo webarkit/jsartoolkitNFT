@@ -14,6 +14,7 @@
 #include <emscripten.h>
 #include <string>
 #include <vector>
+#include <time.h> 
 #include <unordered_map>
 #include <AR/config.h>
 #include <AR2/tracking.h>
@@ -151,6 +152,16 @@ extern "C" {
 
 			matrixLerp(transF, transFLerp, 0.95);
 			#endif
+
+		    ARdouble transOEF[3][4];
+
+			for (int j = 0; j < 3; j++) {
+				for (int k = 0; k < 4; k++) {
+					transOEF[j][k] = trans[j][k];
+				}
+			}
+
+			arc->f.filterMat2(transOEF, (ARdouble (*)[4])trans, clock());		
 
 			if( trackResult < 0 ) {
 				webarkitLOGi("Tracking lost. %d", trackResult);
