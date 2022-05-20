@@ -306,7 +306,7 @@
 	*/
     loadNFTMarkers(markerURLs, onSuccess, onError) {
         var self = this;
-        artoolkitNFT.addNFTMarkers(this.id, markerURLs, function(ids) {
+        artoolkitNFT.addNFTMarker(this.id, markerURLs, function(ids) {
             self.nftMarkerCount += ids.length;
             onSuccess(ids);
         }, onError);
@@ -854,7 +854,7 @@
         NFT_MARKER: 0, // 0,
 
         loadCamera: loadCamera,
-        addNFTMarker: addNFTMarker,
+        addNFTMarker: addNFTMarker2,
         addNFTMarkers: addNFTMarkers
 
     };
@@ -922,6 +922,41 @@
             }, function (errorNumber) { if (onError) onError(errorNumber); });
         }, function (errorNumber) { if (onError) onError(errorNumber); });
     }
+
+    async function addNFTMarker2(arId, url) {
+        // url doesn't need to be a valid url. Extensions to make it valid will be added here
+        const targetPrefix = '/markerNFT_' + marker_count++;
+        const extensions = ['fset', 'iset', 'fset3'];
+    
+        const storeMarker = async function (ext) {
+          const fullUrl = url + '.' + ext;
+          const target = targetPrefix + '.' + ext;
+          const data = await fetchRemoteData(fullUrl);
+          _storeDataFile(data, target);
+        };
+    
+        const promises = extensions.map(storeMarker, this);
+        await Promise.all(promises);
+    
+        // return the internal marker ID
+        //return Module._addNFTMarker(arId, targetPrefix);
+        return Module._addNFTMarkers(arId, targetPrefix);
+    }
+
+    function _storeDataFile(data, target) {
+        // FS is provided by emscripten
+        // Note: valid data must be in binary format encoded as Uint8Array
+        FS.writeFile(target, data, {
+          encoding: 'binary'
+        });
+      }
+
+    function fetchRemoteData(filename) {
+        return new Promise((resolve, reject) => {
+           resolve(filename);
+        })
+    };
+ 
 
     function addNFTMarkers(arId, urls, callback, onError) {
         var prefixes = [];
