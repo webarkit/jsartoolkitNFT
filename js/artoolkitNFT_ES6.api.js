@@ -923,10 +923,13 @@
         }, function (errorNumber) { if (onError) onError(errorNumber); });
     }
 
-    async function addNFTMarker2(arId, url) {
+    function addNFTMarker2(arId, url) {
         // url doesn't need to be a valid url. Extensions to make it valid will be added here
         const targetPrefix = '/markerNFT_' + marker_count++;
         const extensions = ['fset', 'iset', 'fset3'];
+        var prefixes = [];
+        const markerIds = [];
+        prefixes.push(targetPrefix);
     
         const storeMarker = async function (ext) {
           const fullUrl = url + '.' + ext;
@@ -936,11 +939,21 @@
         };
     
         const promises = extensions.map(storeMarker, this);
-        await Promise.all(promises);
-    
-        // return the internal marker ID
-        //return Module._addNFTMarker(arId, targetPrefix);
-        return Module._addNFTMarkers(arId, targetPrefix);
+        Promise.all(promises).then(() => {
+            const vec = new Module.StringList();
+            for (let i = 0; i < prefixes.length; i++) {
+                      vec.push_back(prefixes[i]);
+                  }
+            for (let i = 0; i < prefixes.length; i++) {
+                vec.push_back(prefixes[i]);
+            }
+            var ret = Module._addNFTMarkers(arId, vec);
+            for (let i = 0; i < ret.size(); i++) {
+               markerIds.push(ret.get(i));
+            }
+        });
+
+        return markerIds;
     }
 
     function _storeDataFile(data, target) {
@@ -996,6 +1009,7 @@
             ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
             marker_count += 1;
         }
+        console.log(prefixes);
     }
 
     function bytesToString(array) {
@@ -1027,12 +1041,12 @@
                     return response.blob();
                 })
                 .then(blob => {
-                    console.log(blob);
-                    console.log(blob.arrayBuffer());
+                    //console.log(blob);
+                    //console.log(blob.arrayBuffer());
                     blob.arrayBuffer().then(buff => {
                         console.log(buff);
                         let buffer = new Uint8Array(buff)
-                        console.log(buffer);
+                        //console.log(buffer);
                         writeByteArrayToFS(filename, buffer, writeCallback);
                     })
                 })
