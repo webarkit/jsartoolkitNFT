@@ -75,7 +75,7 @@ struct arController {
 
 	ARdouble cameraLens[16];
 	AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
-	OEF::OneEuroFilter f{60, 0.1, 0.1, 2};
+	OEF::OneEuroFilter f{120.0f, 0.1f, 0.1f, 0.5f};
 };
 
 std::unordered_map<int, arController> arControllers;
@@ -161,9 +161,15 @@ extern "C" {
 				}
 			}
 
-			if(arc->f.filterMat2(transOEF, (ARdouble (*)[4])trans, clock()) < 0) {
+			if(arc->f.filterMat2(transOEF, clock()) < 0) {
 				webarkitLOGe("Error with filterMat2!");
-			};		
+			};
+
+			for (int j = 0; j < 3; j++) {
+				for (int k = 0; k < 4; k++) {
+					trans[j][k] = transOEF[j][k];
+				}
+			}	
 
 			if( trackResult < 0 ) {
 				webarkitLOGi("Tracking lost. %d", trackResult);
