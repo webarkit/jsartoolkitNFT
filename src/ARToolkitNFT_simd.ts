@@ -35,6 +35,8 @@
  */
 import artoolkitNFT from "../build/artoolkitNFT_ES6_wasm.simd";
 import Utils from "./Utils";
+import packageJson from "../package.json";
+const { version } = packageJson;
 
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
@@ -107,7 +109,7 @@ export default class ARToolkitNFT {
     this.instance;
     this.markerNFTCount = 0;
     this.cameraCount = 0;
-    this.version = "1.1.2";
+    this.version = version;
     console.info("ARToolkitNFT ", this.version);
   }
 
