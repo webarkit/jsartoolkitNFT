@@ -250,7 +250,7 @@ export default class ARControllerNFT {
       let markerType = ARToolkitNFT.NFT_MARKER;
 
       if (nftMarkerInfo.found) {
-        this.nftMarkerFound = <boolean><unknown>i;
+        this.nftMarkerFound = <boolean>(<unknown>i);
         this.nftMarkerFoundTime = Date.now();
 
         let visible = this.trackNFTMarkerId(i);
@@ -269,7 +269,7 @@ export default class ARControllerNFT {
             matrixGL_RH: this.transformGL_RH,
           },
         });
-      } else if (this.nftMarkerFound === <boolean><unknown>i) {
+      } else if (this.nftMarkerFound === <boolean>(<unknown>i)) {
         // for now this marker found/lost events handling is for one marker at a time
         if (Date.now() - this.nftMarkerFoundTime > MARKER_LOST_TIME) {
           this.nftMarkerFound = false;
