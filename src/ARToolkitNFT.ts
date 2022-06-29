@@ -35,19 +35,14 @@
  */
 import artoolkitNFT from "../build/artoolkitNFT_ES6_wasm";
 import Utils from "./Utils";
+import packageJson from "../package.json";
+const { version } = packageJson;
 
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
 declare global {
-  namespace NodeJS {
-    interface Global {
-      artoolkitNFT: any;
-    }
-  }
-  interface Window {
-    artoolkitNFT: any;
-  }
+  var artoolkitNFT: any;
 }
 
 export default class ARToolkitNFT {
@@ -114,7 +109,7 @@ export default class ARToolkitNFT {
     this.instance;
     this.markerNFTCount = 0;
     this.cameraCount = 0;
-    this.version = "1.1.3";
+    this.version = version;
     console.info("ARToolkitNFT ", this.version);
   }
 
@@ -275,13 +270,13 @@ export default class ARToolkitNFT {
 
     let Ids: any = [];
 
-    urls.forEach((element,index) => {
+    urls.forEach((element, index) => {
       var prefix = "/markerNFT_" + this.markerNFTCount;
       prefixes.push(prefix);
 
       if (Array.isArray(element)) {
-        element.forEach(url => {
-          const filename = prefix + "." + url.split('.').pop();;
+        element.forEach((url) => {
+          const filename = prefix + "." + url.split(".").pop();
 
           this.ajax(
             url,
