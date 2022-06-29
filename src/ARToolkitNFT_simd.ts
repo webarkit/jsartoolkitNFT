@@ -270,13 +270,13 @@ export default class ARToolkitNFT {
 
     let Ids: any = [];
 
-    urls.forEach((element,index) => {
+    urls.forEach((element, index) => {
       var prefix = "/markerNFT_" + this.markerNFTCount;
       prefixes.push(prefix);
 
       if (Array.isArray(element)) {
-        element.forEach(url => {
-          const filename = prefix + "." + url.split('.').pop();;
+        element.forEach((url) => {
+          const filename = prefix + "." + url.split(".").pop();
 
           this.ajax(
             url,
@@ -285,7 +285,7 @@ export default class ARToolkitNFT {
             onError.bind(filename)
           );
         });
-      
+
         this.markerNFTCount += 1;
       } else {
         var filename1 = prefix + ".fset";

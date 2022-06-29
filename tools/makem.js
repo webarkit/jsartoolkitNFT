@@ -221,7 +221,7 @@ function clean_builds() {
     var filesLength = files.length;
     if (filesLength > 0) {
       if (NO_LIBAR == true) {
-        for (var i = 0; i < filesLength-2; i++) {
+        for (var i = 0; i < filesLength - 2; i++) {
           var filePath = OUTPUT_PATH + "/" + files[i];
           if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
         }
@@ -239,26 +239,26 @@ function clean_builds() {
 
 var compile_arlib = format(
   EMCC +
-  INCLUDES +
-  " " +
-  ar_sources.join(" ") +
-  FLAGS +
-  " " +
-  DEFINES +
-  " -r -o {OUTPUT_PATH}libar.bc ",
+    INCLUDES +
+    " " +
+    ar_sources.join(" ") +
+    FLAGS +
+    " " +
+    DEFINES +
+    " -r -o {OUTPUT_PATH}libar.bc ",
   OUTPUT_PATH
 );
 
 var compile_simd_arlib = format(
   EMCC +
-  INCLUDES +
-  " " +
-  ar_sources.join(" ") +
-  FLAGS +
-  SIMD128_FLAGS +
-  " " +
-  DEFINES +
-  " -r -o {OUTPUT_PATH}libar_simd.bc ",
+    INCLUDES +
+    " " +
+    ar_sources.join(" ") +
+    FLAGS +
+    SIMD128_FLAGS +
+    " " +
+    DEFINES +
+    " -r -o {OUTPUT_PATH}libar_simd.bc ",
   OUTPUT_PATH
 );
 
@@ -267,16 +267,16 @@ var SIMD_BC = " {OUTPUT_PATH}libar_simd.bc ";
 
 var compile_combine = format(
   EMCC +
-  INCLUDES +
-  " " +
-  ALL_BC +
-  MAIN_SOURCES +
-  FLAGS +
-  " -s WASM=0" +
-  " " +
-  DEBUG_FLAGS +
-  DEFINES +
-  " -o {OUTPUT_PATH}{BUILD_FILE} ",
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    " -s WASM=0" +
+    " " +
+    DEBUG_FLAGS +
+    DEFINES +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_DEBUG_FILE
@@ -284,16 +284,16 @@ var compile_combine = format(
 
 var compile_combine_min = format(
   EMCC +
-  INCLUDES +
-  " " +
-  ALL_BC +
-  MAIN_SOURCES +
-  FLAGS +
-  " -s WASM=0" +
-  " " +
-  DEFINES +
-  PRE_FLAGS +
-  " -o {OUTPUT_PATH}{BUILD_FILE} ",
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    " -s WASM=0" +
+    " " +
+    DEFINES +
+    PRE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_MIN_FILE
@@ -301,16 +301,16 @@ var compile_combine_min = format(
 
 var compile_wasm = format(
   EMCC +
-  INCLUDES +
-  " " +
-  ALL_BC +
-  MAIN_SOURCES +
-  FLAGS +
-  WASM_FLAGS +
-  SIMD128_FLAGS +
-  DEFINES +
-  PRE_FLAGS +
-  " -o {OUTPUT_PATH}{BUILD_FILE} ",
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    SIMD128_FLAGS +
+    DEFINES +
+    PRE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_WASM_FILE
@@ -318,16 +318,16 @@ var compile_wasm = format(
 
 var compile_simd_wasm = format(
   EMCC +
-  INCLUDES +
-  " " +
-  SIMD_BC +
-  MAIN_SOURCES +
-  FLAGS +
-  WASM_FLAGS +
-  SIMD128_FLAGS +
-  DEFINES +
-  PRE_FLAGS +
-  " -o {OUTPUT_PATH}{BUILD_FILE} ",
+    INCLUDES +
+    " " +
+    SIMD_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    SIMD128_FLAGS +
+    DEFINES +
+    PRE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_SIMD_WASM_FILE
@@ -335,15 +335,15 @@ var compile_simd_wasm = format(
 
 var compile_wasm_es6 = format(
   EMCC +
-  INCLUDES +
-  " " +
-  ALL_BC +
-  MAIN_SOURCES +
-  FLAGS +
-  WASM_FLAGS +
-  DEFINES +
-  ES6_FLAGS +
-  " -o {OUTPUT_PATH}{BUILD_FILE} ",
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    DEFINES +
+    ES6_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_WASM_ES6_FILE
@@ -351,16 +351,16 @@ var compile_wasm_es6 = format(
 
 var compile_simd_wasm_es6 = format(
   EMCC +
-  INCLUDES +
-  " " +
-  SIMD_BC +
-  MAIN_SOURCES +
-  FLAGS +
-  WASM_FLAGS +
-  SIMD128_FLAGS +
-  DEFINES +
-  ES6_FLAGS +
-  " -o {OUTPUT_PATH}{BUILD_FILE} ",
+    INCLUDES +
+    " " +
+    SIMD_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    SIMD128_FLAGS +
+    DEFINES +
+    ES6_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_SIMD_WASM_ES6_FILE
