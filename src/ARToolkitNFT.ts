@@ -40,14 +40,7 @@ const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
 declare global {
-  namespace NodeJS {
-    interface Global {
-      artoolkitNFT: any;
-    }
-  }
-  interface Window {
-    artoolkitNFT: any;
-  }
+  var artoolkitNFT: any;
 }
 
 export default class ARToolkitNFT {
