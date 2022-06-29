@@ -9,16 +9,16 @@ async function init() {
             sharp("pinball-test.png")
                 .toBuffer()
                 .then(data => {
-                    var imageData = new Uint8Array(data)
+                    var imageData = new Uint8Array(data);
+                    ar.on('getNFTMarker', function(e){
+                        console.log(e);
+                    })
                     // we get an error because process need some video data...
                     ar.loadNFTMarker('DataNFT/pinball', function (id) {
                         console.log('marker id is: ', id);
                         ar.trackNFTMarkerId(id);
                     })
                     ar.process(imageData);
-                    ar.addEventListener('getNFTMarker', function(e){
-                      console.log(e);
-                    })
                 })
         })
 }

@@ -1,4 +1,5 @@
 const ARToolkitNFT = require('./ARToolkitNFT.js')
+var emitter = require('events').EventEmitter;
 
 class ARControllerNFT {
     constructor(width, height, cameraParam) {
@@ -15,6 +16,7 @@ class ARControllerNFT {
 
         // to register observers as event listeners
         this.listeners = {};
+        this.em = new emitter();
 
         this.nftMarkerCount = 0;
 
@@ -62,9 +64,11 @@ class ARControllerNFT {
 
         for (var i = 0; i < nftMarkerCount; i++) {
             var nftMarkerInfo = this.getNFTMarker(i);
+            console.log(nftMarkerInfo);
             var markerType = this.artoolkitNFT.NFT_MARKER;
-
+            console.log('before found');
             if (nftMarkerInfo.found) {
+                console.log('found');
                 this.markerFound = i;
                 this.markerFoundTime = Date.now();
 
@@ -73,7 +77,14 @@ class ARControllerNFT {
                 visible.inCurrent = true;
                 this.transMatToGLMat(visible.matrix, this.transform_mat);
                 this.transformGL_RH = this.arglCameraViewRHf(this.transform_mat);
-                this.dispatchEvent({
+                this.em.emit('getNFTMarker',  {
+                    index: i,
+                    type: markerType,
+                    marker: nftMarkerInfo,
+                    matrix: this.transform_mat,
+                    matrixGL_RH: this.transformGL_RH
+                });
+                /*this.dispatchEvent({
                     name: 'getNFTMarker',
                     target: this,
                     data: {
@@ -83,7 +94,7 @@ class ARControllerNFT {
                         matrix: this.transform_mat,
                         matrixGL_RH: this.transformGL_RH
                     }
-                });
+                });*/
             } else if (this.markerFound === i) {
                 // for now this marker found/lost events handling is for one marker at a time
                 if ((Date.now() - this.markerFoundTime) <= MARKER_LOST_TIME) {
@@ -93,7 +104,7 @@ class ARControllerNFT {
 
                 delete this.markerFound;
 
-                this.dispatchEvent({
+                /*this.dispatchEvent({
                     name: 'lostNFTMarker',
                     target: this,
                     data: {
@@ -103,6 +114,13 @@ class ARControllerNFT {
                         matrix: this.transform_mat,
                         matrixGL_RH: this.transformGL_RH
                     }
+                });*/
+                this.em.emit('lostNFTMarker',  {
+                    index: i,
+                    type: markerType,
+                    marker: nftMarkerInfo,
+                    matrix: this.transform_mat,
+                    matrixGL_RH: this.transformGL_RH
                 });
             }
         }
@@ -135,7 +153,8 @@ class ARControllerNFT {
     getNFTMarker(markerIndex) {
         if (0 === this.artoolkitNFT.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
             console.log('ok getNFTMarkerInfo')
-            return artoolkitNFT.NFTMarkerInfo;
+            console.log(global.artoolkitNFT.NFTMarkerInfo);
+            return global.artoolkitNFT.NFTMarkerInfo;
           } else {
             var obj = {	id: 0,
                       error: -1,
@@ -226,6 +245,10 @@ class ARControllerNFT {
         this.listeners[name].push(callback);
     };
 
+    on(name, callback) {
+        this.em.on(name, callback);
+    }
+
     removeEventListener(name, callback) {
         if (this.listeners[name]) {
             var index = this.listeners[name].indexOf(callback);
@@ -244,7 +267,7 @@ class ARControllerNFT {
         }
     };
 
-   loadNFTMarkers(markerURLs, onSuccess, onError) {
+    loadNFTMarkers(markerURLs, onSuccess, onError) {
         var self = this;
         this.addNFTMarkers(this.id, markerURLs, function(ids) {
             self.nftMarkerCount += ids.length;
