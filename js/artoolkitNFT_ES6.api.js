@@ -36,12 +36,11 @@
     class ARControllerNFT {
         constructor(width, height, cameraPara) {
             this.id = undefined;
-            var w = width, h = height;
 
             this.listeners = {};
 
-            this.width = w;
-            this.height = h;
+            this.width = width;
+            this.height = height;
 
             this.nftMarkerCount = 0;
 
@@ -49,8 +48,8 @@
             this.transform_mat = new Float32Array(16);
             this.transformGL_RH = new Float64Array(16);
 
-            this.videoWidth = w;
-            this.videoHeight = h;
+            this.videoWidth = this.width;
+            this.videoHeight = this.height;
             this.videoSize = this.videoWidth * this.videoHeight;
 
             this.framepointer = null;
@@ -76,7 +75,7 @@
                 this.cameraParam = cameraPara;
                 this._initialize();
             }
-        };
+        }
 
 	/**
 		Destroys the ARControllerNFT instance and frees all associated resources.
@@ -93,7 +92,7 @@
         for (var t in this) {
             this[t] = null;
         }
-    };
+    }
 
 	/**
 		Detects markers in the given image. The process method dispatches marker detection events during its run.
