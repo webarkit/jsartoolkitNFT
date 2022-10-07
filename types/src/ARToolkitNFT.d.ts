@@ -1,12 +1,5 @@
 declare global {
-    namespace NodeJS {
-        interface Global {
-            artoolkitNFT: any;
-        }
-    }
-    interface Window {
-        artoolkitNFT: any;
-    }
+    var artoolkitNFT: any;
 }
 export default class ARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
