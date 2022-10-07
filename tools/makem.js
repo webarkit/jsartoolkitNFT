@@ -335,6 +335,7 @@ var compile_wasm_embed_ES6 = format(
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_WASM_EMBED_ES6_FILE
+);
 var compile_simd_wasm = format(
   EMCC +
     INCLUDES +
