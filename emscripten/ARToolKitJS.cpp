@@ -75,7 +75,7 @@ struct arController {
 
 	ARdouble cameraLens[16];
 	AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
-	OEF::OneEuroFilter f{120.0f, 0.1f, 0.1f, 0.5f};
+	OEF::OneEuroFilter f{120.0, 1.0, 1.0, 1.0};
 };
 
 std::unordered_map<int, arController> arControllers;
@@ -110,6 +110,18 @@ extern "C" {
 			}
 		}
 	}
+
+	double tick() {
+		double t = .000001;
+		while(t < 1.0) {
+			t += .000001;
+			if(t == .999999) {
+				t = .000001;
+			}
+		}
+		return t;
+	}
+
 
 	int getNFTMarkerInfo(int id, int markerIndex) {
 		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
@@ -161,7 +173,7 @@ extern "C" {
 				}
 			}
 
-			if(arc->f.filterMat2(transOEF, clock()) < 0) {
+			if(arc->f.filterMat2(transOEF, tick()) < 0) {
 				webarkitLOGe("Error with filterMat2!");
 			};
 
