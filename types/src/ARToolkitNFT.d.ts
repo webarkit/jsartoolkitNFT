@@ -1,12 +1,5 @@
 declare global {
-    namespace NodeJS {
-        interface Global {
-            artoolkitNFT: any;
-        }
-    }
-    interface Window {
-        artoolkitNFT: any;
-    }
+    var artoolkitNFT: any;
 }
 export default class ARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
@@ -55,7 +48,7 @@ export default class ARToolkitNFT {
     private _decorate;
     private converter;
     loadCamera(urlOrData: any): Promise<number>;
-    addNFTMarkers(arId: number, urls: Array<string>, callback: (filename: any) => void, onError2: (errorNumber: any) => void): [{
+    addNFTMarkers(arId: number, urls: Array<string | Array<string>>, callback: (filename: any) => void, onError2: (errorNumber: any) => void): [{
         id: number;
     }];
     private _storeDataFile;

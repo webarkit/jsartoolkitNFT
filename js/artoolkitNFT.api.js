@@ -61,7 +61,7 @@
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.1.1';
+        this.version = '1.1.5';
         console.info('JsartoolkitNFT ', this.version);
 
         if (typeof cameraPara === 'string') {
@@ -456,7 +456,7 @@
     /**
      * Get the NFT data (id, dpi, width and height) of the NFT marker.
      * @returns {Object} nft object (id, dpi, width, height)
-     */    
+     */
     ARControllerNFT.prototype.getNFTData = function (index) {
         return artoolkitNFT.getNFTData(this.id, index);
     };
