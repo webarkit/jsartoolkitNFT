@@ -54,6 +54,7 @@ function load(msg) {
 
   var onLoad = function (arController) {
     ar = arController;
+    arController.setOEF(120, 0.1, 0.1, 10);
     var cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {

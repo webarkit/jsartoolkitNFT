@@ -8,6 +8,8 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
     register_vector<int>("IntList");
 	register_vector<nftMarker>("nftMarkers");
 
+	value_array<std::array<std::array<int, 3>, 4>>("ArrayOfArray");
+
 	function("setup", &setup);
 	function("teardown", &teardown);
 
@@ -21,6 +23,9 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("detectNFTMarker", &detectNFTMarker);
 	function("getNFTMarker", &getNFTMarkerInfo);
 	function("getNFTData", &getNFTData);
+	function("setOEF", &setOEF);
+	function("filterOEF", &filterOEF);
+	function("filterMatOEF", &filterMatOEF, allow_raw_pointers());
 
 	/* nft marker struct */
 	value_object<nftMarker>("nftMarker")

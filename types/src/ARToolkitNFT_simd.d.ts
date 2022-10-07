@@ -18,6 +18,9 @@ export default class ARToolkitNFT {
     detectNFTMarker: (id: number) => number;
     getNFTMarker: (id: number, markerIndex: number) => number;
     getNFTData: (id: number, index: number) => object;
+    setOEF: (id: number, frequency: number, mincutoff: number, beta: number, dcutoff: number) => number;
+    filterOEF: (id: number, value: number, timestamp: number) => number;
+    filterMatOEF: (id: number, matrix: Array<Array<number>>, timestamp: number) => Array<Array<number>>;
     setLogLevel: (mode: boolean) => number;
     getLogLevel: () => number;
     frameMalloc: {

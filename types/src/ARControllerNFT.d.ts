@@ -54,6 +54,9 @@ export default class ARControllerNFT {
         data?: object;
     }): void;
     debugSetup(): void;
+    setOEF(frequency: number, mincutoff: number, beta: number, dcutoff: number): void;
+    filterOEF(value: number, timestamp: number): void;
+    filterMatOEF(matrix: Array<Array<number>>, timestamp: number): number[][];
     transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number): Float64Array;
     arglCameraViewRHf(glMatrix: Float64Array, glRhMatrix?: Float64Array, scale?: number): Float64Array;
     getTransformationMatrix(): Float64Array;

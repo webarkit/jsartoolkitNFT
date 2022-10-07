@@ -14,6 +14,7 @@
 #include <emscripten.h>
 #include <string>
 #include <vector>
+#include <time.h> 
 #include <unordered_map>
 #include <AR/config.h>
 #include <AR2/tracking.h>
@@ -21,6 +22,7 @@
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKit/WebARKitOEF.h>
 #include "trackingMod.h"
 
 const int PAGES_MAX = 20;         // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
@@ -73,6 +75,7 @@ struct arController {
 
 	ARdouble cameraLens[16];
 	AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
+	OEF::OneEuroFilter f{120.0, 1.0, 1.0, 1.0};
 };
 
 std::unordered_map<int, arController> arControllers;
@@ -107,6 +110,18 @@ extern "C" {
 			}
 		}
 	}
+
+	double tick() {
+		double t = .000001;
+		while(t < 1.0) {
+			t += .000001;
+			if(t == .999999) {
+				t = .000001;
+			}
+		}
+		return t;
+	}
+
 
 	int getNFTMarkerInfo(int id, int markerIndex) {
 		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
@@ -149,6 +164,24 @@ extern "C" {
 
 			matrixLerp(transF, transFLerp, 0.95);
 			#endif
+
+		    ARdouble transOEF[3][4];
+
+			for (int j = 0; j < 3; j++) {
+				for (int k = 0; k < 4; k++) {
+					transOEF[j][k] = trans[j][k];
+				}
+			}
+
+			if(arc->f.filterMat2(transOEF, tick()) < 0) {
+				webarkitLOGe("Error with filterMat2!");
+			};
+
+			for (int j = 0; j < 3; j++) {
+				for (int k = 0; k < 4; k++) {
+					trans[j][k] = transOEF[j][k];
+				}
+			}	
 
 			if( trackResult < 0 ) {
 				webarkitLOGi("Tracking lost. %d", trackResult);
@@ -336,6 +369,32 @@ extern "C" {
 		return arc->nftMarkers.at(index);
 	}
 
+	/****************
+	 * Set OEF filter
+     ****************/
+	int setOEF(int id, double freq, double mincutoff, double beta, double dcutoff) {
+		if (arControllers.find(id) == arControllers.end()) { return -1; }
+		arController *arc = &(arControllers[id]);
+		arc->f = {freq, mincutoff, beta, dcutoff};
+		return 0;
+	}
+
+	int filterOEF(int id, double value, double timestamp) {
+       if (arControllers.find(id) == arControllers.end()) { return -1; }
+		arController *arc = &(arControllers[id]);
+		arc->f.filter(value, timestamp);
+		return 0;
+	}
+ 
+	int filterMatOEF(int id, ARdouble mat[3][4], double timestamp) {
+       if (arControllers.find(id) == arControllers.end()) { return -1; }
+		arController *arc = &(arControllers[id]);
+		arc->f.filterMat(mat, timestamp);
+		return 0;
+	}
+
+
+
 	/***************
 	 * Set Log Level
 	 ****************/
@@ -382,6 +441,8 @@ extern "C" {
 			arc->videoFrame = NULL;
 			arc->videoFrameSize = 0;
 		}
+
+		arc->f = NULL;
 
 		deleteHandle(arc);
 

@@ -107,6 +107,9 @@ interface delegateMethods {
   detectNFTMarker: (arId: number) => void;
   getNFTMarker: (id: number, markerIndex: number) => number;
   getNFTData: (id: number, index: number) => object;
+  setOEF: (id: number, frequency: number, mincutoff: number, beta: number, dcutoff: number) => number;
+  filterOEF: (id: number, value: number, timestamp: number) => number;
+  filterMatOEF: (id: number, matrix: Array<Array<number>>, timestamp: number) => Array<Array<number>>;
   setImageProcMode: (id: number, mode: number) => number;
   getImageProcMode: (id: number) => number;
 }
@@ -424,6 +427,24 @@ export default class ARControllerNFT {
   debugSetup() {
     this.setDebugMode(true);
     this._bwpointer = this.getProcessingImage();
+  }
+
+  /**
+   * Set the OneEuroFilter constructor.
+   */
+  setOEF(frequency: number, mincutoff: number, beta: number, dcutoff: number ) {
+    this.artoolkitNFT.setOEF(this.id, frequency, mincutoff, beta, dcutoff);
+  }
+  
+  /**
+   * Filter the signal value with a timestamp, thanks to OEF.
+   */
+  filterOEF(value: number, timestamp: number) {
+    this.artoolkitNFT.filterOEF(this.id, value, timestamp);
+  }
+
+  filterMatOEF(matrix: Array<Array<number>>, timestamp: number) {
+    return this.artoolkitNFT.filterMatOEF(this.id, matrix, timestamp);
   }
 
   /**
