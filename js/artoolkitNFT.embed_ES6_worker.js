@@ -34,7 +34,7 @@ function load(msg) {
         };
       });
 
-      ar.loadNFTMarker(msg.marker, function (id) {
+      ar.loadNFTMarkerNew(msg.marker, function (id) {
         ar.trackNFTMarkerId(id);
         let marker = ar.getNFTData(ar.id, 0);
         console.log("nftMarker data: ", marker);
