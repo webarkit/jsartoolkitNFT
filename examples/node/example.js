@@ -13,12 +13,14 @@ async function init() {
                     ar.on('getNFTMarker', function(e){
                         console.log(e.data);
                     })
+                    var cameraMatrix = ar.getCameraMatrix();
                     // we get an error because process need some video data...
                     ar.loadNFTMarker('DataNFT/pinball', function (id) {
                         console.log('marker id is: ', id);
                         ar.trackNFTMarkerId(id);
                         let marker = ar.getNFTData(ar.id, 0);
                         console.log("nftMarker data: ", marker);
+                        console.log(cameraMatrix);
                     })
                     if (ar && ar.process) {
                         ar.process(imageData);

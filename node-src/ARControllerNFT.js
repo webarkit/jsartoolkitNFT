@@ -174,6 +174,10 @@ class ARControllerNFT {
         return this.artoolkitNFT.artoolkitNFT.getNFTData(this.id, index);
     };
 
+    getCameraMatrix () {
+        return this.camera_mat;
+    };
+
     transMatToGLMat(transMat, glMat, scale) {
         if (glMat == undefined) {
             glMat = new Float64Array(16);
