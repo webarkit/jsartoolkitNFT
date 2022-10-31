@@ -170,6 +170,10 @@ class ARControllerNFT {
         this.artoolkitNFT.artoolkitNFT.detectNFTMarker(this.id);
     };
 
+    getNFTData (index) {
+        return this.artoolkitNFT.artoolkitNFT.getNFTData(this.id, index);
+    };
+
     transMatToGLMat(transMat, glMat, scale) {
         if (glMat == undefined) {
             glMat = new Float64Array(16);
