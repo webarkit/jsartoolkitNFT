@@ -947,26 +947,41 @@
             var url = urls[i];
             var prefix = '/markerNFT_' + marker_count;
             prefixes.push(prefix);
+            console.log(prefixes);
+            const vec = new Module.StringList()
+            for (let i = 0; i < prefixes.length; i++) {
+                vec.push_back(prefixes[i]);
+                console.log(vec);
+            }
+           
 
             const storeMarker = async function (ext) {
                 pending -= 1;
+                //const vec = new Module.StringList()
                 if (pending === 0) {
                     const markerIds = [];
                     const target = prefix + '.' + ext;
                     const fullUrl = urls[i] + '.' + ext;
+                    console.log(fullUrl)
 
                     const data = await fetchRemoteData(fullUrl);
-                    const vec = new Module.StringList();
-                    for (let i = 0; i < prefixes.length; i++) {
+                    //const vec = new Module.StringList();
+                    /*for (let i = 0; i < prefixes.length; i++) {
                         vec.push_back(prefixes[i]);
-                    }
+                        console.log(vec);
+                    }*/
                     //console.log(data);
                     _storeDataFile(data, target);
-                    ret = Module._addNFTMarkers(arId, vec);
-                    for (let i = 0; i < ret.size(); i++) {
+                    //ret = Module._addNFTMarkers(arId, vec);
+                    /*for (let i = 0; i < ret.size(); i++) {
                         markerIds.push(ret.get(i));
-                    }
+                    }*/
                 }
+                ret = Module._addNFTMarkers(arId, vec);
+                for (let i = 0; i < ret.size(); i++) {
+                    markerIds.push(ret.get(i));
+                }
+                return ret;
             };
             marker_count++;
 
@@ -1132,6 +1147,12 @@
     // Eg.
     //	ajax('../bin/Data2/markers.dat', '/Data2/markers.dat', callback);
     //	ajax('../bin/Data/patt.hiro', '/patt.hiro', callback);
+
+    async function ajax2(url, target, callback, errorCallback) {
+        const data = await fetchRemoteData(url);
+        _storeDataFile(data, target);
+        callback()
+    }
 
     function ajax(url, target, callback, errorCallback) {
         var oReq = new XMLHttpRequest();
