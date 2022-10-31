@@ -153,8 +153,8 @@ class ARControllerNFT {
     getNFTMarker(markerIndex) {
         if (0 === this.artoolkitNFT.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
             console.log('ok getNFTMarkerInfo')
-            console.log(global.artoolkitNFT.NFTMarkerInfo);
-            return global.artoolkitNFT.NFTMarkerInfo;
+            console.log(artoolkitNFT.NFTMarkerInfo);
+            return artoolkitNFT.NFTMarkerInfo;
           } else {
             var obj = {	id: 0,
                       error: -1,
@@ -291,6 +291,8 @@ class ARControllerNFT {
 
     };
 
+    //marker_count = 0;
+
     addNFTMarker(arId, url, callback, onError) {
         var mId = this.nftMarkerCount++;
         var prefix = '/markerNFT_' + mId;
@@ -345,7 +347,7 @@ class ARControllerNFT {
             this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
             this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
             this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
-            this.nftMarkerCount += 1;
+            //this.marker_count += 1;
         }
     }
 
