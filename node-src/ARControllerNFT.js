@@ -458,10 +458,16 @@ class ARControllerNFT {
 
             for (var p = 0; p < this.videoSize; p++) {
                 var r = data[q + 0], g = data[q + 1], b = data[q + 2];
+                if(r>255) {
+                    console.error("not in range");
+                }
+                //console.log(r);
                 // videoLuma[p] = (r+r+b+g+g+g)/6;         // https://stackoverflow.com/a/596241/5843642
                 this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
                 q += 4;
+                console.log(this.videoLuma[p]);
             }
+            //console.log(this.videoLuma);
         }
 
         if (this.dataHeap) {
