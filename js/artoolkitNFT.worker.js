@@ -30,7 +30,7 @@ if (browser == "Apple Safari") {
   importScripts("../build/artoolkitNFT_wasm.simd.js");
 }
 // Import OneEuroFilter class into the worker.
-importScripts("./one-euro-filter.js")
+importScripts("./one-euro-filter.js");
 
 self.onmessage = function (e) {
   var msg = e.data;

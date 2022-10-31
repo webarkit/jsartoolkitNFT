@@ -29,6 +29,8 @@ if (browser == "Apple Safari") {
 } else {
   importScripts("../dist/ARToolkitNFT_simd.js");
 }
+// Import OneEuroFilter class into the worker.
+importScripts("./one-euro-filter.js");
 
 self.onmessage = function (e) {
   var msg = e.data;
@@ -49,6 +51,11 @@ var ar = null;
 var markerResult = null;
 var marker;
 
+// initialize the OneEuroFilter
+this.filterMinCF = 0.001;
+this.filterBeta = 1000;
+const filter = new OneEuroFilter({minCutOff: this.filterMinCF, beta: this.filterBeta})
+
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
@@ -57,9 +64,11 @@ function load(msg) {
     var cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
+      filter.reset();
+      var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
       markerResult = {
         type: "found",
-        matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
+        matrixGL_RH: JSON.stringify(mat),
       };
     });
 
