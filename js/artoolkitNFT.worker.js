@@ -53,9 +53,9 @@ var markerResult = null;
 var marker;
 
 // initialize the OneEuroFilter
-this.filterMinCF = 0.001;
-this.filterBeta = 1000;
-const filter = new OneEuroFilter({minCutOff: this.filterMinCF, beta: this.filterBeta})
+let filterMinCF = 0.001;
+let filterBeta = 1000;
+const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
 
 function load(msg) {
   self.addEventListener("artoolkitNFT-loaded", function () {
