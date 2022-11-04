@@ -52,9 +52,9 @@ var markerResult = null;
 var marker1, marker2, marker3;
 
 // initialize the OneEuroFilter
-this.filterMinCF = 0.001;
-this.filterBeta = 1000;
-const filter = new OneEuroFilter({minCutOff: this.filterMinCF, beta: this.filterBeta})
+let filterMinCF = 0.001;
+let filterBeta = 1000;
+const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
 
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
