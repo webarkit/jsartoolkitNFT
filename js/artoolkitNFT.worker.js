@@ -74,6 +74,10 @@ function load(msg) {
         };
       });
 
+      ar.addEventListener("lostNFTMarker", function(ev) {
+        filter.reset();
+      });
+
       ar.loadNFTMarker(msg.marker, function (id) {
         ar.trackNFTMarkerId(id);
         let marker = ar.getNFTData(ar.id, 0);
