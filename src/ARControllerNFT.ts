@@ -703,13 +703,13 @@ export default class ARControllerNFT {
    */
   async loadNFTMarkers(
     urlOrData: Array<string>,
-    onSuccess: (ids: number) => void,
+    onSuccess: (ids: number[]) => void,
     onError: () => void
   ) {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
       urlOrData,
-      (ids: any) => {
+      (ids: number[]) => {
         this.nftMarkerCount += ids.length;
         onSuccess(ids);
       },
