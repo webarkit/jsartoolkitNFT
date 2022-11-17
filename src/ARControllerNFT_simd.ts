@@ -102,7 +102,7 @@ interface delegateMethods {
     urls: Array<string>,
     callback: (ids: number[]) => void,
     onError2: (errorNumber: number) => void
-  ) => [{ id: number }];
+  ) =>Array<number>;
   detectMarker: (id: number) => number;
   detectNFTMarker: (arId: number) => void;
   getNFTMarker: (id: number, markerIndex: number) => number;

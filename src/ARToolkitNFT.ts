@@ -244,7 +244,7 @@ export default class ARToolkitNFT {
     urls: Array<string | Array<string>>,
     callback: (filename: number[]) => void,
     onError2: (errorNumber: number) => void
-  ): [{ id: number }] {
+  ): Array<number> {
     var prefixes: any = [];
     var pending = urls.length * 3;
     var onSuccess = (filename: Uint8Array) => {
@@ -269,7 +269,7 @@ export default class ARToolkitNFT {
       onError2(errorNumber);
     };
 
-    let Ids: [{id: number}];
+    let Ids: Array<number>;
 
     urls.forEach((element, index) => {
       var prefix = "/markerNFT_" + this.markerNFTCount;
@@ -314,8 +314,9 @@ export default class ARToolkitNFT {
 
         this.markerNFTCount += 1;
       }
+      console.log(Ids);
 
-      Ids.push({id: index});
+      Ids.push(index);
     });
 
     return Ids;
