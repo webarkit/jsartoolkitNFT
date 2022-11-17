@@ -41,7 +41,6 @@ const { version } = packageJson;
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
-
 declare global {
   var artoolkitNFT: any;
 }
@@ -314,7 +313,6 @@ export default class ARToolkitNFT {
 
         this.markerNFTCount += 1;
       }
-      console.log(Ids);
 
       Ids.push(index);
     });

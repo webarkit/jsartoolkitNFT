@@ -314,9 +314,6 @@ export default class ARToolkitNFT {
         this.markerNFTCount += 1;
       }
 
-
-      console.log(Ids);
-
       Ids.push(index);
     });
 
