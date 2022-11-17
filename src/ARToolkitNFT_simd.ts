@@ -241,12 +241,12 @@ export default class ARToolkitNFT {
   public addNFTMarkers(
     arId: number,
     urls: Array<string | Array<string>>,
-    callback: (filename: any) => void,
+    callback: (filename: number[]) => void,
     onError2: (errorNumber: any) => void
   ): [{ id: number }] {
     var prefixes: any = [];
     var pending = urls.length * 3;
-    var onSuccess = (filename: any) => {
+    var onSuccess = (filename: Uint8Array) => {
       pending -= 1;
       if (pending === 0) {
         const vec = new this.instance.StringList();
