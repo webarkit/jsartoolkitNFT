@@ -242,7 +242,7 @@ export default class ARToolkitNFT {
     arId: number,
     urls: Array<string | Array<string>>,
     callback: (filename: number[]) => void,
-    onError2: (errorNumber: any) => void
+    onError2: (errorNumber: number) => void
   ): [{ id: number }] {
     var prefixes: any = [];
     var pending = urls.length * 3;
@@ -263,7 +263,7 @@ export default class ARToolkitNFT {
         if (callback) callback(markerIds);
       }
     };
-    var onError = (filename: any, errorNumber?: any) => {
+    var onError = (filename: string, errorNumber?: number) => {
       console.log("failed to load: ", filename);
       onError2(errorNumber);
     };
@@ -346,7 +346,7 @@ export default class ARToolkitNFT {
     url: string,
     target: string,
     callback: (byteArray: Uint8Array) => void,
-    errorCallback: (message: any) => void
+    errorCallback: (url: string, message: number) => void
   ) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
@@ -366,7 +366,7 @@ export default class ARToolkitNFT {
         var byteArray = new Uint8Array(arrayBuffer);
         writeByteArrayToFS(target, byteArray, callback);
       } else {
-        errorCallback(this.status);
+        errorCallback(url, this.status);
       }
     };
 
