@@ -41,9 +41,6 @@ const { version } = packageJson;
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
-interface IIds {
-  id: number
-}
 
 declare global {
   var artoolkitNFT: any;
@@ -272,7 +269,7 @@ export default class ARToolkitNFT {
       onError2(errorNumber);
     };
 
-    let Ids: any = [];
+    let Ids: [{id: number}];
 
     urls.forEach((element, index) => {
       var prefix = "/markerNFT_" + this.markerNFTCount;
@@ -318,7 +315,7 @@ export default class ARToolkitNFT {
         this.markerNFTCount += 1;
       }
 
-      Ids.push(index);
+      Ids.push({id: index});
     });
 
     return Ids;

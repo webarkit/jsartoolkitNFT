@@ -100,8 +100,8 @@ interface delegateMethods {
   addNFTMarkers: (
     arId: number,
     urls: Array<string>,
-    callback: (filename: any) => void,
-    onError2: (errorNumber: any) => void
+    callback: (ids: number[]) => void,
+    onError2: (errorNumber: number) => void
   ) => [{ id: number }];
   detectMarker: (id: number) => number;
   detectNFTMarker: (arId: number) => void;
@@ -709,7 +709,7 @@ export default class ARControllerNFT {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
       urlOrData,
-      (ids: number[]) => {
+      (ids) => {
         this.nftMarkerCount += ids.length;
         onSuccess(ids);
       },

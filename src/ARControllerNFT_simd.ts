@@ -100,8 +100,8 @@ interface delegateMethods {
   addNFTMarkers: (
     arId: number,
     urls: Array<string>,
-    callback: (filename: any) => void,
-    onError2: (errorNumber: any) => void
+    callback: (ids: number[]) => void,
+    onError2: (errorNumber: number) => void
   ) => [{ id: number }];
   detectMarker: (id: number) => number;
   detectNFTMarker: (arId: number) => void;
