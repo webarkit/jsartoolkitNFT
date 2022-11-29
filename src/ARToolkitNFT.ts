@@ -102,7 +102,7 @@ export default class ARToolkitNFT {
    * - cameraCount
    * - version
    * A message is displayed in the browser console during the intitialization, for example:
-   * "ARToolkitNFT 1.1.3"
+   * "ARToolkitNFT 1.1.6"
    */
   constructor() {
     // reference to WASM module

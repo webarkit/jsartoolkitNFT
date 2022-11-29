@@ -15,7 +15,7 @@
 Emscripten port of [WebARKitLib](https://github.com/webarkit/WebARKitLib) to JavaScript.
 Modified and lighter version of [JSARToolKit5](https://github.com/artoolkitx/jsartoolkit5).
 
-Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html](https://kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html)
+Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://www.webarkit.org/examples/artoolkitnft_es6_example)
 
 ## Features
 ### Markers Types
