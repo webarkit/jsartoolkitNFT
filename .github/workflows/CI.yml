@@ -31,13 +31,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install Firefox Headless
-        run: |
-          sudo apt-get install firefox -y
-          sudo apt-get install xvfb
-          Xvfb :99 -ac -screen 0 1024x768x8 &
-          export DISPLAY=:99
-
       - name: Install
         run: npm ci
 
