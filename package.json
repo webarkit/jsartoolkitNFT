@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
