@@ -100,9 +100,9 @@ interface delegateMethods {
   addNFTMarkers: (
     arId: number,
     urls: Array<string>,
-    callback: (filename: any) => void,
-    onError2: (errorNumber: any) => void
-  ) => [{ id: number }];
+    callback: (ids: number[]) => void,
+    onError2: (errorNumber: number) => void
+  ) => Array<number>;
   detectMarker: (id: number) => number;
   detectNFTMarker: (arId: number) => void;
   getNFTMarker: (id: number, markerIndex: number) => number;
@@ -683,7 +683,7 @@ export default class ARControllerNFT {
   async loadNFTMarker(
     urlOrData: string,
     onSuccess: (ids: number) => void,
-    onError: () => void
+    onError: (err: number) => void
   ) {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
@@ -703,13 +703,13 @@ export default class ARControllerNFT {
    */
   async loadNFTMarkers(
     urlOrData: Array<string>,
-    onSuccess: (ids: number) => void,
-    onError: () => void
+    onSuccess: (ids: number[]) => void,
+    onError: (err: number) => void
   ) {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
       urlOrData,
-      (ids: any) => {
+      (ids) => {
         this.nftMarkerCount += ids.length;
         onSuccess(ids);
       },

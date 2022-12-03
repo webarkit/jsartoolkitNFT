@@ -48,9 +48,7 @@ export default class ARToolkitNFT {
     private _decorate;
     private converter;
     loadCamera(urlOrData: any): Promise<number>;
-    addNFTMarkers(arId: number, urls: Array<string | Array<string>>, callback: (filename: any) => void, onError2: (errorNumber: any) => void): [{
-        id: number;
-    }];
+    addNFTMarkers(arId: number, urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
     private _storeDataFile;
     private ajax;
 }

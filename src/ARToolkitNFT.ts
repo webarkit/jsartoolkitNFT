@@ -241,12 +241,12 @@ export default class ARToolkitNFT {
   public addNFTMarkers(
     arId: number,
     urls: Array<string | Array<string>>,
-    callback: (filename: any) => void,
-    onError2: (errorNumber: any) => void
-  ): [{ id: number }] {
+    callback: (filename: number[]) => void,
+    onError2: (errorNumber: number) => void
+  ): Array<number> {
     var prefixes: any = [];
     var pending = urls.length * 3;
-    var onSuccess = (filename: any) => {
+    var onSuccess = (filename: Uint8Array) => {
       pending -= 1;
       if (pending === 0) {
         const vec = new this.instance.StringList();
@@ -263,12 +263,12 @@ export default class ARToolkitNFT {
         if (callback) callback(markerIds);
       }
     };
-    var onError = (filename: any, errorNumber?: any) => {
+    var onError = (filename: string, errorNumber?: number) => {
       console.log("failed to load: ", filename);
       onError2(errorNumber);
     };
 
-    let Ids: any = [];
+    let Ids: Array<number> = [];
 
     urls.forEach((element, index) => {
       var prefix = "/markerNFT_" + this.markerNFTCount;
@@ -346,7 +346,7 @@ export default class ARToolkitNFT {
     url: string,
     target: string,
     callback: (byteArray: Uint8Array) => void,
-    errorCallback: (message: any) => void
+    errorCallback: (url: string, message: number) => void
   ) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
@@ -366,7 +366,7 @@ export default class ARToolkitNFT {
         var byteArray = new Uint8Array(arrayBuffer);
         writeByteArrayToFS(target, byteArray, callback);
       } else {
-        errorCallback(this.status);
+        errorCallback(url, this.status);
       }
     };
 
