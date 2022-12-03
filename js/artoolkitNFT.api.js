@@ -61,7 +61,7 @@
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.1.7';
+        this.version = '1.1.8';
         console.info('JsartoolkitNFT ', this.version);
 
         if (typeof cameraPara === 'string') {
