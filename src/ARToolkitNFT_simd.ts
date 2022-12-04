@@ -34,6 +34,7 @@
  *
  */
 import artoolkitNFT from "../build/artoolkitNFT_ES6_wasm.simd";
+import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
 import Utils from "./Utils";
 import packageJson from "../package.json";
 const { version } = packageJson;
@@ -42,10 +43,10 @@ const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
 declare global {
-  var artoolkitNFT: any;
+  var artoolkitNFT: IARToolkitNFT;
 }
 
-export default class ARToolkitNFT {
+export default class ARToolkitNFT implements IARToolkitNFT {
   static get UNKNOWN_MARKER() {
     return UNKNOWN_MARKER;
   }
