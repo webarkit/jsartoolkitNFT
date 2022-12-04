@@ -1,7 +1,8 @@
+import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
 declare global {
-    var artoolkitNFT: any;
+    var artoolkitNFT: IARToolkitNFT;
 }
-export default class ARToolkitNFT {
+export default class ARToolkitNFT implements IARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
     instance: any;

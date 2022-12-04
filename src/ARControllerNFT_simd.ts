@@ -34,6 +34,7 @@
  *
  */
 import ARToolkitNFT from "./ARToolkitNFT_simd";
+import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
 
 interface ImageObj extends HTMLCanvasElement {
   videoWidth: number;
@@ -41,74 +42,6 @@ interface ImageObj extends HTMLCanvasElement {
   videoHeight: number;
   height: number;
   data: Uint8ClampedArray;
-}
-
-interface delegateMethods {
-  setup: {
-    (width: number, height: number, cameraId: number): number;
-  };
-  setupAR2: {
-    (id: number): void;
-  };
-  setDebugMode: (id: number, mode: boolean) => number;
-  getDebugMode: (id: number) => boolean;
-  getProcessingImage: (id: number) => number;
-  setLogLevel: (mode: boolean) => number;
-  getLogLevel: () => number;
-  frameMalloc: {
-    framepointer: number;
-    framesize: number;
-    videoLumaPointer: number;
-    camera: number;
-    transform: number;
-  };
-  instance: {
-    frameMalloc: {
-      framepointer: number;
-      framesize: number;
-      videoLumaPointer: number;
-      camera: number;
-      transform: number;
-    };
-    NFTMarkerInfo: {
-      error: number;
-      found: number;
-      id: number;
-      pose: Float64Array;
-    };
-    HEAPU8: {
-      buffer: Uint8Array;
-    };
-  };
-  NFTMarkerInfo: {
-    error: number;
-    found: number;
-    id: number;
-    pose: Float64Array;
-  };
-  loadCamera: (cameraParam: string) => Promise<number>;
-  setProjectionNearPlane: {
-    (id: number, value: number): void;
-  };
-  getProjectionNearPlane: (id: number) => number;
-  setProjectionFarPlane: (id: number, value: number) => void;
-  getProjectionFarPlane: (id: number) => number;
-  setThresholdMode: (id: number, mode: number) => number;
-  getThresholdMode: (id: number) => number;
-  setThreshold: (id: number, threshold: number) => number;
-  getThreshold: (id: number) => number;
-  addNFTMarkers: (
-    arId: number,
-    urls: Array<string>,
-    callback: (ids: number[]) => void,
-    onError2: (errorNumber: number) => void
-  ) => Array<number>;
-  detectMarker: (id: number) => number;
-  detectNFTMarker: (arId: number) => void;
-  getNFTMarker: (id: number, markerIndex: number) => number;
-  getNFTData: (id: number, index: number) => object;
-  setImageProcMode: (id: number, mode: number) => number;
-  getImageProcMode: (id: number) => number;
 }
 
 export default class ARControllerNFT {
@@ -119,7 +52,7 @@ export default class ARControllerNFT {
   private cameraParam: string;
   private cameraId: number;
   private cameraLoaded: boolean;
-  private artoolkitNFT: delegateMethods;
+  private artoolkitNFT: IARToolkitNFT;
   private listeners: object;
   private nftMarkers: object;
   private transform_mat: Float64Array;
@@ -244,7 +177,7 @@ export default class ARControllerNFT {
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: delegateMethods["NFTMarkerInfo"] =
+      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] =
         this.getNFTMarker(i);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
@@ -784,7 +717,7 @@ export default class ARControllerNFT {
 
     this._initNFT();
 
-    const params: delegateMethods["frameMalloc"] =
+    const params: IARToolkitNFT["frameMalloc"] =
       this.artoolkitNFT.frameMalloc;
     this.framepointer = params.framepointer;
     this.framesize = params.framesize;
