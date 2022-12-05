@@ -35,16 +35,9 @@
  */
 import ARToolkitNFT from "./ARToolkitNFT_simd";
 import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
+import { IARControllerNFT, ImageObj } from "./interfaces/IARControllerNFT";
 
-interface ImageObj extends HTMLCanvasElement {
-  videoWidth: number;
-  width: number;
-  videoHeight: number;
-  height: number;
-  data: Uint8ClampedArray;
-}
-
-export default class ARControllerNFT {
+export default class ARControllerNFT implements IARControllerNFT {
   // private declarations
   private id: number;
   private width: number;

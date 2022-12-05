@@ -1,11 +1,5 @@
-interface ImageObj extends HTMLCanvasElement {
-    videoWidth: number;
-    width: number;
-    videoHeight: number;
-    height: number;
-    data: Uint8ClampedArray;
-}
-export default class ARControllerNFT {
+import { IARControllerNFT, ImageObj } from "./interfaces/IARControllerNFT";
+export default class ARControllerNFT implements IARControllerNFT {
     private id;
     private width;
     private height;
@@ -80,4 +74,3 @@ export default class ARControllerNFT {
     private _initNFT;
     private _copyImageToHeap;
 }
-export {};
