@@ -1,4 +1,4 @@
-export interface ImageObj extends HTMLCanvasElement {
+export interface IImageObj extends HTMLCanvasElement {
     videoWidth: number;
     width: number;
     videoHeight: number;

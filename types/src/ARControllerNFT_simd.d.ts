@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, ImageObj, INFTMarkers } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarkers } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 export default class ARControllerNFT implements AbstractARControllerNFT {
     private id;
@@ -29,11 +29,11 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private _bwpointer;
     constructor(width: number, height: number, cameraParam: string);
     static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
-    static initWithImage(image: ImageObj, cameraParam: string): Promise<ARControllerNFT>;
-    process(image: ImageObj): void;
+    static initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT>;
+    process(image: IImageObj): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarkers;
-    detectMarker(image: ImageObj): number;
+    detectMarker(image: IImageObj): number;
     getNFTMarker(markerIndex: number): INFTMarkerInfo;
     getNFTData(id: number, index: number): object;
     addEventListener(name: string, callback: object): void;
