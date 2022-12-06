@@ -514,7 +514,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @param {boolean} mode true to enable debug mode, false to disable debug mode
    * @see getDebugMode()
    */
-  setDebugMode(mode: boolean) {
+  setDebugMode(mode: boolean): number {
     return this.artoolkitNFT.setDebugMode(this.id, mode);
   }
 
@@ -523,7 +523,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @return {boolean} true when debug mode is enabled, false when debug mode is disabled
    * @see  setDebugMode()
    */
-  getDebugMode() {
+  getDebugMode(): boolean {
     return this.artoolkitNFT.getDebugMode(this.id);
   }
 
@@ -531,7 +531,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Returns the Emscripten HEAP offset to the debug processing image used by ARToolKit.
    * @return {number} HEAP offset to the debug processing image.
    */
-  getProcessingImage() {
+  getProcessingImage(): number {
     return this.artoolkitNFT.getProcessingImage(this.id);
   }
 
@@ -539,7 +539,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Sets the logging level to use by ARToolKit.
    * @param {number} mode type for the log level.
    */
-  setLogLevel(mode: boolean) {
+  setLogLevel(mode: boolean): number {
     return this.artoolkitNFT.setLogLevel(mode);
   }
 
@@ -547,7 +547,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Gets the logging level used by ARToolKit.
    * @return {number} return the log level in use.
    */
-  getLogLevel() {
+  getLogLevel(): number {
     return this.artoolkitNFT.getLogLevel();
   }
 
@@ -556,7 +556,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @param {number} value the value of the near plane
    * @return {number} 0 (void)
    */
-  setProjectionNearPlane(value: number) {
+  setProjectionNearPlane(value: number): void {
     return this.artoolkitNFT.setProjectionNearPlane(this.id, value);
   }
 
@@ -564,7 +564,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Gets the value of the near plane of the camera with the give id.
    * @return {number} the value of the near plane.
    */
-  getProjectionNearPlane() {
+  getProjectionNearPlane(): number {
     return this.artoolkitNFT.getProjectionNearPlane(this.id);
   }
 
@@ -573,7 +573,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @param {number} value the value of the far plane
    * @return {number} 0 (void)
    */
-  setProjectionFarPlane(value: number) {
+  setProjectionFarPlane(value: number): void {
     return this.artoolkitNFT.setProjectionFarPlane(this.id, value);
   }
 
@@ -581,7 +581,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Gets the value of the far plane of the camera with the give id.
    * @return {number} the value of the far plane.
    */
-  getProjectionFarPlane() {
+  getProjectionFarPlane(): number {
     return this.artoolkitNFT.getProjectionFarPlane(this.id);
   }
 
@@ -594,7 +594,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
    * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
    */
-  setThresholdMode(mode: number) {
+  setThresholdMode(mode: number): number {
     return this.artoolkitNFT.setThresholdMode(this.id, mode);
   }
 
@@ -603,7 +603,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @return {number} The current threshold mode
    * @see getVideoThresholdMode()
    */
-  getThresholdMode() {
+  getThresholdMode(): number {
     return this.artoolkitNFT.getThresholdMode(this.id);
   }
 
@@ -626,7 +626,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * and white portions of the markers in the image.
    * @param {number} threshold An integer in the range [0,255] (inclusive).
    */
-  setThreshold(threshold: number) {
+  setThreshold(threshold: number): number {
     return this.artoolkitNFT.setThreshold(this.id, threshold);
   }
 
@@ -641,7 +641,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
    * @return {number} The current threshold value.
    */
-  getThreshold() {
+  getThreshold(): number {
     return this.artoolkitNFT.getThreshold(this.id);
   }
 
@@ -653,7 +653,7 @@ export default class ARControllerNFT implements IARControllerNFT {
     urlOrData: string,
     onSuccess: (ids: number) => void,
     onError: (err: number) => void
-  ) {
+  ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
       [urlOrData],
@@ -674,7 +674,7 @@ export default class ARControllerNFT implements IARControllerNFT {
     urlOrData: Array<string>,
     onSuccess: (ids: number[]) => void,
     onError: (err: number) => void
-  ) {
+  ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
       urlOrData,
@@ -706,7 +706,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * AR_IMAGE_PROC_FIELD_IMAGE
    * The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
    */
-  setImageProcMode(mode: number) {
+  setImageProcMode(mode: number): number {
     return this.artoolkitNFT.setImageProcMode(this.id, mode);
   }
 
@@ -715,7 +715,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * See arSetImageProcMode() for a complete description.
    * @return {number} The current image processing mode.
    */
-  getImageProcMode() {
+  getImageProcMode(): number {
     return this.artoolkitNFT.getImageProcMode(this.id);
   }
 
