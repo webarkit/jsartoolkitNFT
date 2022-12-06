@@ -1,9 +1,4 @@
-export interface INFTMarkerInfo {
-    error: number;
-    found: number;
-    id: number;
-    pose: Float64Array;
-}
+import { INFTMarkerInfo } from "./CommonInterfaces";
 export interface IARToolkitNFT {
     setup: {
         (width: number, height: number, cameraId: number): number;

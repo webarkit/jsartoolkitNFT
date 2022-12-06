@@ -34,7 +34,7 @@
  *
  */
 import artoolkitNFT from "../build/artoolkitNFT_ES6_wasm.simd";
-import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
+import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import Utils from "./Utils";
 import packageJson from "../package.json";
 const { version } = packageJson;

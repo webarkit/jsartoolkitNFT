@@ -1,20 +1,7 @@
-export interface ImageObj extends HTMLCanvasElement {
-    videoWidth: number;
-    width: number;
-    videoHeight: number;
-    height: number;
-    data: Uint8ClampedArray;
-}
-export interface INFTMarkers {
-    inPrevious: boolean;
-    inCurrent: boolean;
-    matrix: Float64Array;
-    matrixGL_RH: Float64Array;
-    markerWidth: number;
-}
-export declare abstract class IARControllerNFT {
-    static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<IARControllerNFT>;
-    static initWithImage: (image: ImageObj, cameraParam: string) => Promise<any>;
+import { ImageObj } from "./CommonInterfaces";
+export declare abstract class AbstractARControllerNFT {
+    static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<AbstractARControllerNFT>;
+    static initWithImage: (image: ImageObj, cameraParam: string) => Promise<AbstractARControllerNFT>;
     process: (image: ImageObj) => void;
     detectNFTMarker: () => void;
     trackNFTMarkerId: (id: number, markerWidth?: number) => object;

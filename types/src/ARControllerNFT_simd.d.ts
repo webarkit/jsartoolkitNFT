@@ -1,6 +1,6 @@
-import { INFTMarkerInfo } from "./interfaces/IARToolkitNFT";
-import { IARControllerNFT, ImageObj, INFTMarkers } from "./interfaces/IARControllerNFT";
-export default class ARControllerNFT implements IARControllerNFT {
+import { INFTMarkerInfo, ImageObj, INFTMarkers } from "./abstractions/CommonInterfaces";
+import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
+export default class ARControllerNFT implements AbstractARControllerNFT {
     private id;
     private width;
     private height;
