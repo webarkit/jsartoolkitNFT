@@ -5,8 +5,16 @@ export interface ImageObj extends HTMLCanvasElement {
     height: number;
     data: Uint8ClampedArray;
 }
+
+export interface INFTMarkers {
+    inPrevious: boolean;
+    inCurrent: boolean;
+    matrix: Float64Array;
+    matrixGL_RH: Float64Array;
+    markerWidth: number;
+}
 export abstract class IARControllerNFT {
-    static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<any>;
+    static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<IARControllerNFT>;
     static initWithImage: (image: ImageObj, cameraParam: string) => Promise<any>;
     process: (image: ImageObj) => void;
     detectNFTMarker: () => void;
@@ -16,7 +24,7 @@ export abstract class IARControllerNFT {
     getNFTData: (id: number, index: number) => object;
     addEventListener: (name: string, callback: object) => void;
     removeEventListener: (name: string, callback: object) => void;
-    dispatchEvent: (event: { 
+    dispatchEvent: (event: {
         name: string;
         target: any;
         data?: object;

@@ -1,4 +1,4 @@
-import { IARControllerNFT, ImageObj } from "./interfaces/IARControllerNFT";
+import { IARControllerNFT, ImageObj, INFTMarkers } from "./interfaces/IARControllerNFT";
 export default class ARControllerNFT implements IARControllerNFT {
     private id;
     private width;
@@ -31,7 +31,7 @@ export default class ARControllerNFT implements IARControllerNFT {
     static initWithImage(image: ImageObj, cameraParam: string): Promise<ARControllerNFT>;
     process(image: ImageObj): void;
     detectNFTMarker(): void;
-    trackNFTMarkerId(id: number, markerWidth?: number): any;
+    trackNFTMarkerId(id: number, markerWidth?: number): INFTMarkers;
     detectMarker(image: any): number;
     getNFTMarker(markerIndex: number): {
         error: number;
