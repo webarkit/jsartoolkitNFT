@@ -1,3 +1,4 @@
+import { INFTMarkerInfo } from "./interfaces/IARToolkitNFT";
 import { IARControllerNFT, ImageObj, INFTMarkers } from "./interfaces/IARControllerNFT";
 export default class ARControllerNFT implements IARControllerNFT {
     private id;
@@ -32,13 +33,8 @@ export default class ARControllerNFT implements IARControllerNFT {
     process(image: ImageObj): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarkers;
-    detectMarker(image: any): number;
-    getNFTMarker(markerIndex: number): {
-        error: number;
-        found: number;
-        id: number;
-        pose: Float64Array;
-    };
+    detectMarker(image: ImageObj): number;
+    getNFTMarker(markerIndex: number): INFTMarkerInfo;
     getNFTData(id: number, index: number): object;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
