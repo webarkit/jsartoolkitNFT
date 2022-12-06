@@ -34,7 +34,7 @@
  *
  */
 import ARToolkitNFT from "./ARToolkitNFT";
-import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
+import { IARToolkitNFT, INFTMarkerInfo } from "./interfaces/IARToolkitNFT";
 import { IARControllerNFT, ImageObj, INFTMarkers } from "./interfaces/IARControllerNFT";
 
 export default class ARControllerNFT implements IARControllerNFT {
@@ -303,7 +303,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
    * A result of 0 does not however, imply any markers were detected.
    */
-  detectMarker(image: any) {
+  detectMarker(image: ImageObj): number {
     if (this._copyImageToHeap(image)) {
       return this.artoolkitNFT.detectMarker(this.id);
     }
@@ -317,14 +317,20 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Returns undefined if no marker was found.
    * A markerIndex of -1 is used to access the global custom marker.
    * @param {number} markerIndex The index of the NFT marker to query.
-   * @return {Object} The NFTmarkerInfo struct.
+   * @return {Object} The NFTMarkerInfo struct.
    */
-  getNFTMarker(markerIndex: number) {
+  getNFTMarker(markerIndex: number): INFTMarkerInfo {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
       return this.artoolkitNFT.NFTMarkerInfo;
     }
   }
 
+  /**
+   * **GetNFTData** will return the width. height and dpi of the NFT marker.
+   * @param id the internal id (this.id)
+   * @param index the index of the NFT marker, in case you have multi NFT markers.
+   * @returns {object}
+   */
   getNFTData(id: number, index: number) {
     return this.artoolkitNFT.getNFTData(id, index);
   }
@@ -336,14 +342,13 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Add an event listener on this ARControllerNFT for the named event, calling the callback function
    * whenever that event is dispatched.
    * Possible events are:
-   * - getMarker - dispatched whenever process() finds a square marker
-   * - getMultiMarker - dispatched whenever process() finds a visible registered multimarker
-   * - getMultiMarkerSub - dispatched by process() for each marker in a visible multimarker
+   * - getNFTMarker - dispatched whenever process() finds a NFT marker
+   * - lostNFTMarker - dispatched whenever process() lost a visible NFT marker
    * - load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
    * @param {string} name Name of the event to listen to.
    * @param {function} callback Callback function to call when an event with the given name is dispatched.
    */
-  addEventListener(name: string, callback: object) {
+  addEventListener(name: string, callback: object): void {
     if (!this.converter().listeners[name]) {
       this.converter().listeners[name] = [];
     }
@@ -355,7 +360,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @param {string} name Name of the event to stop listening to.
    * @param {function} callback Callback function to remove from the listeners of the named event.
    */
-  removeEventListener(name: string, callback: object) {
+  removeEventListener(name: string, callback: object): void {
     if (this.converter().listeners[name]) {
       let index = this.converter().listeners[name].indexOf(callback);
       if (index > -1) {
@@ -368,7 +373,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Dispatches the given event to all registered listeners on event.name.
    * @param {Object} event Event to dispatch.
    */
-  dispatchEvent(event: { name: string; target: any; data?: object }) {
+  dispatchEvent(event: { name: string; target: any; data?: object }): void {
     let listeners = this.converter().listeners[event.name];
     if (listeners) {
       for (let i = 0; i < listeners.length; i++) {
@@ -383,7 +388,7 @@ export default class ARControllerNFT implements IARControllerNFT {
   /**
    * Sets up for debugging AR detection.
    */
-  debugSetup() {
+  debugSetup(): void {
     this.setDebugMode(true);
     this._bwpointer = this.getProcessingImage();
   }
@@ -395,8 +400,9 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @param {Float64Array} transMat The 3x4 marker transformation matrix.
    * @param {Float64Array} glMat The 4x4 GL transformation matrix.
    * @param {number} scale The scale for the transform.
+   * @return {Float64Array} the modified matrix
    */
-  transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number) {
+  transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number): Float64Array {
     if (glMat == undefined) {
       glMat = new Float64Array(16);
     }
@@ -433,12 +439,13 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @param {Float64Array} glMatrix The 4x4 marker transformation matrix.
    * @param {Float64Array} [glRhMatrix] The 4x4 GL right hand transformation matrix.
    * @param {number} [scale] The scale for the transform.
+   * @return {Float64Array} the modified gl matrix
    */
   arglCameraViewRHf(
     glMatrix: Float64Array,
     glRhMatrix?: Float64Array,
     scale?: number
-  ) {
+  ): Float64Array {
     let m_modelview;
     if (glRhMatrix == undefined) {
       m_modelview = new Float64Array(16);
@@ -485,7 +492,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Unique to each ARControllerNFT.
    * @return {Float64Array} The 16-element WebGL transformation matrix used by the ARControllerNFT.
    */
-  getTransformationMatrix() {
+  getTransformationMatrix(): Float64Array {
     return this.transform_mat;
   }
 
@@ -493,7 +500,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
    * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
    */
-  getCameraMatrix() {
+  getCameraMatrix(): Float64Array {
     return this.camera_mat;
   }
 

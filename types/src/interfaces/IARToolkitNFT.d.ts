@@ -1,3 +1,9 @@
+export interface INFTMarkerInfo {
+    error: number;
+    found: number;
+    id: number;
+    pose: Float64Array;
+}
 export interface IARToolkitNFT {
     setup: {
         (width: number, height: number, cameraId: number): number;
@@ -25,22 +31,12 @@ export interface IARToolkitNFT {
             camera: number;
             transform: number;
         };
-        NFTMarkerInfo: {
-            error: number;
-            found: number;
-            id: number;
-            pose: Float64Array;
-        };
+        NFTMarkerInfo: INFTMarkerInfo;
         HEAPU8: {
             buffer: Uint8Array;
         };
     };
-    NFTMarkerInfo: {
-        error: number;
-        found: number;
-        id: number;
-        pose: Float64Array;
-    };
+    NFTMarkerInfo: INFTMarkerInfo;
     loadCamera: (cameraParam: string) => Promise<number>;
     setProjectionNearPlane: {
         (id: number, value: number): void;
