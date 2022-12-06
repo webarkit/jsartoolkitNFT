@@ -34,10 +34,11 @@
  *
  */
 import ARToolkitNFT from "./ARToolkitNFT";
-import { IARToolkitNFT, INFTMarkerInfo } from "./interfaces/IARToolkitNFT";
-import { IARControllerNFT, ImageObj, INFTMarkers } from "./interfaces/IARControllerNFT";
+import { INFTMarkerInfo, IImageObj, INFTMarkers } from "./abstractions/CommonInterfaces";
+import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
+import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 
-export default class ARControllerNFT implements IARControllerNFT {
+export default class ARControllerNFT implements AbstractARControllerNFT {
   // private declarations
   private id: number;
   private width: number;
@@ -169,7 +170,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    *    })
    *  ```
    */
-  static async initWithImage(image: ImageObj, cameraParam: string): Promise<ARControllerNFT> {
+  static async initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
@@ -183,7 +184,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @param {image} image data
    * @return {void}
    */
-  process(image: ImageObj): void {
+  process(image: IImageObj): void {
     let result = this.detectMarker(image);
     if (result != 0) {
       console.error("[ARControllerNFT]", "detectMarker error:", result);
@@ -303,7 +304,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * @return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
    * A result of 0 does not however, imply any markers were detected.
    */
-  detectMarker(image: ImageObj): number {
+  detectMarker(image: IImageObj): number {
     if (this._copyImageToHeap(image)) {
       return this.artoolkitNFT.detectMarker(this.id);
     }
@@ -806,7 +807,7 @@ export default class ARControllerNFT implements IARControllerNFT {
    * Copy the Image data to the HEAP for the debugSetup function.
    * @return {number} 0 (void)
    */
-  private _copyImageToHeap(sourceImage: ImageObj) {
+  private _copyImageToHeap(sourceImage: IImageObj) {
     if (!sourceImage) {
       // default to preloaded image
       console.error("Error: no provided imageData to ARControllerNFT");

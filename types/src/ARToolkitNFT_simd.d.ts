@@ -1,4 +1,4 @@
-import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
+import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 declare global {
     var artoolkitNFT: IARToolkitNFT;
 }
