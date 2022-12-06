@@ -35,9 +35,9 @@
  */
 import ARToolkitNFT from "./ARToolkitNFT";
 import { IARToolkitNFT } from "./interfaces/IARToolkitNFT";
-import { IARControllerNFT, ImageObj } from "./interfaces/IARControllerNFT";
+import { IARControllerNFT, ImageObj, INFTMarkers } from "./interfaces/IARControllerNFT";
 
-export default class ARControllerNFT implements IARControllerNFT{
+export default class ARControllerNFT implements IARControllerNFT {
   // private declarations
   private id: number;
   private width: number;
@@ -45,9 +45,9 @@ export default class ARControllerNFT implements IARControllerNFT{
   private cameraParam: string;
   private cameraId: number;
   private cameraLoaded: boolean;
-  private artoolkitNFT:  IARToolkitNFT;
+  private artoolkitNFT: IARToolkitNFT;
   private listeners: object;
-  private nftMarkers: object;
+  private nftMarkers: INFTMarkers;
   private transform_mat: Float64Array;
   private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
@@ -97,7 +97,13 @@ export default class ARControllerNFT implements IARControllerNFT{
     // to register observers as event listeners
     this.listeners = {};
 
-    this.nftMarkers = {};
+    this.nftMarkers = {
+      inPrevious: false,
+      inCurrent: false,
+      matrix: new Float64Array(12),
+      matrixGL_RH: new Float64Array(12),
+      markerWidth: 1
+    };
 
     this.transform_mat = new Float64Array(16);
     this.transformGL_RH = new Float64Array(16);
@@ -123,17 +129,47 @@ export default class ARControllerNFT implements IARControllerNFT{
     this.defaultMarkerWidth = 1;
   }
 
+  /** The static method **initWithDimensions** is the start of your app.
+   *  Define it with the width and height of the video stream 
+   *  and the camera parameter file path. It return a Promise with the ARControllerNFT object.
+   *  Use a thenable to load the NFT marker and all the code stuff.
+   *  Example:
+   *  ```js
+   *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
+   *    ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat").then(
+   *    (nft) => { 
+   *      nft.loadNFTMarker();
+   *      // other code...
+   *    })
+   *  ```
+   */
   static async initWithDimensions(
     width: number,
     height: number,
     cameraParam: string
-  ) {
+  ): Promise<ARControllerNFT> {
     // directly init with given width / height
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     return await arControllerNFT._initialize();
   }
 
-  static async initWithImage(image: ImageObj, cameraParam: string) {
+  /** The static method **initWithImage** is the start of your app.
+   *  Define it with an HTML element like a video or a static Image
+   *  and the camera parameter file path. As with **initWithDimensions** it return a Promise 
+   *  with the ARControllerNFT object.
+   *  Use a thenable to load the NFT marker and all the code stuff.
+   *  Example:
+   *  ```js
+   *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
+   *    const image = document.getElementById('image')
+   *    ARControllerNFT.initWithImage(image, "camera_para.dat").then(
+   *    (nft) => { 
+   *      nft.loadNFTMarker();
+   *      // other code...
+   *    })
+   *  ```
+   */
+  static async initWithImage(image: ImageObj, cameraParam: string): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
@@ -147,7 +183,7 @@ export default class ARControllerNFT implements IARControllerNFT{
    * @param {image} image data
    * @return {void}
    */
-  process(image: ImageObj) {
+  process(image: ImageObj): void {
     let result = this.detectMarker(image);
     if (result != 0) {
       console.error("[ARControllerNFT]", "detectMarker error:", result);
@@ -179,7 +215,7 @@ export default class ARControllerNFT implements IARControllerNFT{
         this.nftMarkerFound = <boolean>(<unknown>i);
         this.nftMarkerFoundTime = Date.now();
 
-        let visible = this.trackNFTMarkerId(i);
+        let visible: INFTMarkers = this.trackNFTMarkerId(i);
         visible.matrix.set(nftMarkerInfo.pose);
         visible.inCurrent = true;
         this.transMatToGLMat(visible.matrix, this.transform_mat);
@@ -220,7 +256,7 @@ export default class ARControllerNFT implements IARControllerNFT{
    * with the given tracked id.
    * @return {void}
    */
-  detectNFTMarker() {
+  detectNFTMarker(): void {
     this.artoolkitNFT.detectNFTMarker(this.id);
   }
 
@@ -234,7 +270,7 @@ export default class ARControllerNFT implements IARControllerNFT{
    * @param {number} markerWidth The width of the marker to track.
    * @return {Object} The marker tracking object.
    */
-  trackNFTMarkerId(id: number, markerWidth?: number) {
+  trackNFTMarkerId(id: number, markerWidth?: number): INFTMarkers {
     let obj = this.converter().nftMarkers[id];
     if (!obj) {
       this.converter().nftMarkers[id] = obj = {

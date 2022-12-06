@@ -5,8 +5,15 @@ export interface ImageObj extends HTMLCanvasElement {
     height: number;
     data: Uint8ClampedArray;
 }
+export interface INFTMarkers {
+    inPrevious: boolean;
+    inCurrent: boolean;
+    matrix: Float64Array;
+    matrixGL_RH: Float64Array;
+    markerWidth: number;
+}
 export declare abstract class IARControllerNFT {
-    static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<any>;
+    static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<IARControllerNFT>;
     static initWithImage: (image: ImageObj, cameraParam: string) => Promise<any>;
     process: (image: ImageObj) => void;
     detectNFTMarker: () => void;
