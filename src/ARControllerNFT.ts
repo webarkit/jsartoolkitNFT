@@ -193,11 +193,13 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     let k, o;
 
     // get NFT markers
-    for (k in this.nftMarkers) {
+    /*for (k in this.nftMarkers) {
       o = this.converter().nftMarkers[k];
-      o.inPrevious = o.inCurrent;
+      console.log(o);
+      
+      //o.inPrevious = o.inCurrent;
       o.inCurrent = false;
-    }
+    }*/
 
     // detect NFT markers
     let nftMarkerCount = this.nftMarkerCount;
