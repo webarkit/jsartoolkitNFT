@@ -48,7 +48,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private cameraLoaded: boolean;
   private artoolkitNFT: IARToolkitNFT;
   private listeners: object;
-  private nftMarkers: INFTMarkers;
+  private nftMarkers: INFTMarkers[];
   private transform_mat: Float64Array;
   private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
@@ -98,13 +98,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     // to register observers as event listeners
     this.listeners = {};
 
-    this.nftMarkers = {
-      inPrevious: false,
-      inCurrent: false,
-      matrix: new Float64Array(12),
-      matrixGL_RH: new Float64Array(12),
-      markerWidth: 1
-    };
+    this.nftMarkers = [];
 
     this.transform_mat = new Float64Array(16);
     this.transformGL_RH = new Float64Array(16);
@@ -190,16 +184,14 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
       console.error("[ARControllerNFT]", "detectMarker error:", result);
     }
 
-    let k, o;
+    let k, o: INFTMarkers;
 
     // get NFT markers
-    /*for (k in this.nftMarkers) {
+    for (k in this.converter().nftMarkers) {
       o = this.converter().nftMarkers[k];
-      console.log(o);
-      
-      //o.inPrevious = o.inCurrent;
+      o.inPrevious = o.inCurrent;
       o.inCurrent = false;
-    }*/
+    }
 
     // detect NFT markers
     let nftMarkerCount = this.nftMarkerCount;
@@ -274,7 +266,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @return {Object} The marker tracking object.
    */
   trackNFTMarkerId(id: number, markerWidth?: number): INFTMarkers {
-    let obj = this.converter().nftMarkers[id];
+    let obj: INFTMarkers = this.converter().nftMarkers[id];
     if (!obj) {
       this.converter().nftMarkers[id] = obj = {
         inPrevious: false,
