@@ -34,7 +34,11 @@
  *
  */
 import ARToolkitNFT from "./ARToolkitNFT";
-import { INFTMarkerInfo, IImageObj, INFTMarker } from "./abstractions/CommonInterfaces";
+import {
+  INFTMarkerInfo,
+  IImageObj,
+  INFTMarker,
+} from "./abstractions/CommonInterfaces";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 
@@ -125,14 +129,14 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /** The static method **initWithDimensions** is the start of your app.
-   *  Define it with the width and height of the video stream 
+   *  Define it with the width and height of the video stream
    *  and the camera parameter file path. It return a Promise with the ARControllerNFT object.
    *  Use a thenable to load the NFT marker and all the code stuff.
    *  Example:
    *  ```js
    *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
    *    ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat").then(
-   *    (nft) => { 
+   *    (nft) => {
    *      nft.loadNFTMarker();
    *      // other code...
    *    })
@@ -150,7 +154,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
   /** The static method **initWithImage** is the start of your app.
    *  Define it with an HTML element like a video or a static Image
-   *  and the camera parameter file path. As with **initWithDimensions** it return a Promise 
+   *  and the camera parameter file path. As with **initWithDimensions** it return a Promise
    *  with the ARControllerNFT object.
    *  Use a thenable to load the NFT marker and all the code stuff.
    *  Example:
@@ -158,13 +162,16 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
    *    const image = document.getElementById('image')
    *    ARControllerNFT.initWithImage(image, "camera_para.dat").then(
-   *    (nft) => { 
+   *    (nft) => {
    *      nft.loadNFTMarker();
    *      // other code...
    *    })
    *  ```
    */
-  static async initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT> {
+  static async initWithImage(
+    image: IImageObj,
+    cameraParam: string
+  ): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
@@ -201,8 +208,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] =
-        this.getNFTMarker(i);
+      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -397,7 +403,11 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} scale The scale for the transform.
    * @return {Float64Array} the modified matrix
    */
-  transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number): Float64Array {
+  transMatToGLMat(
+    transMat: Float64Array,
+    glMat: Float64Array,
+    scale?: number
+  ): Float64Array {
     if (glMat == undefined) {
       glMat = new Float64Array(16);
     }
@@ -748,8 +758,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     this._initNFT();
 
-    const params: IARToolkitNFT["frameMalloc"] =
-      this.artoolkitNFT.frameMalloc;
+    const params: IARToolkitNFT["frameMalloc"] = this.artoolkitNFT.frameMalloc;
     this.framepointer = params.framepointer;
     this.framesize = params.framesize;
     this.videoLumaPointer = params.videoLumaPointer;
