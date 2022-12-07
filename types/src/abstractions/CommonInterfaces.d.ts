@@ -5,7 +5,7 @@ export interface IImageObj extends HTMLCanvasElement {
     height: number;
     data: Uint8ClampedArray;
 }
-export interface INFTMarkers {
+export interface INFTMarker {
     inPrevious: boolean;
     inCurrent: boolean;
     matrix: Float64Array;
