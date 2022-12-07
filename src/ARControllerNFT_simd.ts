@@ -34,7 +34,7 @@
  *
  */
 import ARToolkitNFT from "./ARToolkitNFT_simd";
-import { INFTMarkerInfo, IImageObj, INFTMarkers } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker } from "./abstractions/CommonInterfaces";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 
@@ -48,7 +48,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private cameraLoaded: boolean;
   private artoolkitNFT: IARToolkitNFT;
   private listeners: object;
-  private nftMarkers: INFTMarkers[];
+  private nftMarkers: INFTMarker[];
   private transform_mat: Float64Array;
   private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
@@ -184,7 +184,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
       console.error("[ARControllerNFT]", "detectMarker error:", result);
     }
 
-    let k, o: INFTMarkers;
+    let k, o: INFTMarker;
 
     // get NFT markers
     for (k in this.converter().nftMarkers) {
@@ -210,7 +210,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
         this.nftMarkerFound = <boolean>(<unknown>i);
         this.nftMarkerFoundTime = Date.now();
 
-        let visible: INFTMarkers = this.trackNFTMarkerId(i);
+        let visible: INFTMarker = this.trackNFTMarkerId(i);
         visible.matrix.set(nftMarkerInfo.pose);
         visible.inCurrent = true;
         this.transMatToGLMat(visible.matrix, this.transform_mat);
@@ -265,8 +265,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} markerWidth The width of the marker to track.
    * @return {Object} The marker tracking object.
    */
-  trackNFTMarkerId(id: number, markerWidth?: number): INFTMarkers {
-    let obj: INFTMarkers = this.converter().nftMarkers[id];
+  trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker {
+    let obj: INFTMarker = this.converter().nftMarkers[id];
     if (!obj) {
       this.converter().nftMarkers[id] = obj = {
         inPrevious: false,
