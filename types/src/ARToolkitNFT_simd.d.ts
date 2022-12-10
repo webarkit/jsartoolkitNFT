@@ -5,7 +5,7 @@ declare global {
 export default class ARToolkitNFT implements IARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
-    instance: any;
+    private instance;
     private markerNFTCount;
     private cameraCount;
     private version;
@@ -28,6 +28,9 @@ export default class ARToolkitNFT implements IARToolkitNFT {
         camera: number;
         transform: number;
     };
+    HEAPU8: {
+        buffer: Uint8Array;
+    };
     NFTMarkerInfo: {
         error: number;
         found: number;
@@ -48,7 +51,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     init(): Promise<this>;
     private _decorate;
     private converter;
-    loadCamera(urlOrData: any): Promise<number>;
+    loadCamera(urlOrData: Uint8Array | string): Promise<number>;
     addNFTMarkers(arId: number, urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
     private _storeDataFile;
     private ajax;

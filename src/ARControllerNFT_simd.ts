@@ -764,23 +764,23 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     this.videoLumaPointer = params.videoLumaPointer;
 
     this.dataHeap = new Uint8Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       this.framepointer,
       this.framesize
     );
     this.videoLuma = new Uint8Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       this.videoLumaPointer,
       this.framesize / 4
     );
 
     this.camera_mat = new Float64Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       params.camera,
       16
     );
     this.marker_transform_mat = new Float64Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       params.transform,
       12
     );
