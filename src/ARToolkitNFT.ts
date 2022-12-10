@@ -182,6 +182,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
       "getImageProcMode",
 
       "StringList",
+      "HEAPU8",
     ].forEach((method: string) => {
       this.converter()[method] = this.instance[method];
     });
