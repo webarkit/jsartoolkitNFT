@@ -18,18 +18,8 @@ export interface IARToolkitNFT {
         camera: number;
         transform: number;
     };
-    instance: {
-        frameMalloc: {
-            framepointer: number;
-            framesize: number;
-            videoLumaPointer: number;
-            camera: number;
-            transform: number;
-        };
-        NFTMarkerInfo: INFTMarkerInfo;
-        HEAPU8: {
-            buffer: Uint8Array;
-        };
+    HEAPU8: {
+        buffer: Uint8Array;
     };
     NFTMarkerInfo: INFTMarkerInfo;
     loadCamera: (cameraParam: string) => Promise<number>;

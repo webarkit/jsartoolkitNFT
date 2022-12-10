@@ -54,7 +54,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     return NFT_MARKER;
   }
 
-  public instance: any;
+  private instance: any;
   private markerNFTCount: number;
   private cameraCount: number;
   private version: string;
@@ -76,6 +76,9 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     videoLumaPointer: number;
     camera: number;
     transform: number;
+  };
+  public HEAPU8: {
+    buffer: Uint8Array;
   };
   public NFTMarkerInfo: {
     error: number;
@@ -139,7 +142,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
    * ARToolkitNFT internal methods.
    * @return {void}
    */
-  private _decorate() {
+  private _decorate(): void {
     // add delegate methods
     [
       "setup",
@@ -179,7 +182,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
       "getImageProcMode",
 
       "StringList",
-    ].forEach((method) => {
+    ].forEach((method: string) => {
       this.converter()[method] = this.instance[method];
     });
 
@@ -208,10 +211,10 @@ export default class ARToolkitNFT implements IARToolkitNFT {
    * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
    * @return {number} a number, the internal id.
    */
-  public async loadCamera(urlOrData: any): Promise<number> {
+  public async loadCamera(urlOrData: Uint8Array | string): Promise<number> {
     const target = "/camera_param_" + this.cameraCount++;
 
-    let data;
+    let data: Uint8Array;
 
     if (urlOrData instanceof Uint8Array) {
       // assume preloaded camera params
