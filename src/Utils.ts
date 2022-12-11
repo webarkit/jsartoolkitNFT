@@ -33,17 +33,17 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 export default class Utils {
   static async fetchRemoteData(url: string) {
     try {
-      const response: any = await axios.get(url, {
+      const response: AxiosResponse<any> = await axios.get(url, {
         responseType: "arraybuffer",
       });
       return new Uint8Array(response.data);
     } catch (error) {
-      throw error;
+      throw new Error('Error in Utils.fetchRemoteData: ', error);
     }
   }
 
@@ -58,7 +58,7 @@ export default class Utils {
         });
       return response;
     } catch (error) {
-      throw error;
+      throw new Error('Error in Utils.fetchRemoteDataCallback: ', error);
     }
   }
 
