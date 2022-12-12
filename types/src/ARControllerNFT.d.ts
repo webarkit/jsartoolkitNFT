@@ -2,9 +2,9 @@ import { INFTMarkerInfo, IImageObj, INFTMarker } from "./abstractions/CommonInte
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 export default class ARControllerNFT implements AbstractARControllerNFT {
     private id;
-    private width;
-    private height;
-    private cameraParam;
+    private _width;
+    private _height;
+    private _cameraParam;
     private cameraId;
     private cameraLoaded;
     private artoolkitNFT;
@@ -27,9 +27,17 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private nftMarkerCount;
     private defaultMarkerWidth;
     private _bwpointer;
+    constructor();
+    constructor(width: number, height: number);
     constructor(width: number, height: number, cameraParam: string);
     static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
     static initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT>;
+    set width(width: number);
+    get width(): number;
+    set height(height: number);
+    get height(): number;
+    set cameraParam(cameraParam: string);
+    get cameraParam(): string;
     process(image: IImageObj): void;
     detectNFTMarker(): void;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;

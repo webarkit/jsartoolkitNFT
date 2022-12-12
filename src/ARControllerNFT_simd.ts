@@ -45,9 +45,9 @@ import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT"
 export default class ARControllerNFT implements AbstractARControllerNFT {
   // private declarations
   private id: number;
-  private width: number;
-  private height: number;
-  private cameraParam: string;
+  private _width: number;
+  private _height: number;
+  private _cameraParam: string;
   private cameraId: number;
   private cameraLoaded: boolean;
   private artoolkitNFT: IARToolkitNFT;
@@ -73,6 +73,26 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private _bwpointer: number;
 
   /**
+   * The ARControllerNFT default constructor. It has no params (see above).
+   * These properties are initialized:
+   * id, width, height, cameraParam, cameraId,
+   * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
+   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   */
+  constructor();
+  /**
+   * The ARControllerNFT default constructor. It has 2 params (see above).
+   * These properties are initialized:
+   * id, width, height, cameraParam, cameraId,
+   * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
+   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * @param {number} width
+   * @param {number} height
+   */
+  constructor(width: number, height: number);
+  /**
    * The ARControllerNFT constructor. It has 4 params (see above).
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
@@ -83,16 +103,17 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} height
    * @param {string} cameraParam
    */
-  constructor(width: number, height: number, cameraParam: string) {
+  constructor(width: number, height: number, cameraParam: string);
+  constructor(width?: number, height?: number, cameraParam?: string) {
     // no point in initializing a member as "undefined"
     // replaced it with -1
     this.id = -1;
 
-    this.width = width;
-    this.height = height;
+    this._width = width;
+    this._height = height;
 
     // this is a replacement for ARCameraParam
-    this.cameraParam = cameraParam;
+    this._cameraParam = cameraParam;
     this.cameraId = -1;
     this.cameraLoaded = false;
 
@@ -176,6 +197,31 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     const height = image.videoHeight || image.height;
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     return await arControllerNFT._initialize();
+  }
+
+   // getters and setters
+   set width(width: number) {
+    this._width = width;
+  }
+
+  get width() {
+    return this._width;
+  }
+
+  set height(height: number) {
+    this._height = height;
+  }
+
+  get height() {
+    return this._height;
+  }
+
+  set cameraParam(cameraParam: string) {
+    this._cameraParam = cameraParam;
+  }
+
+  get cameraParam() {
+    return this._cameraParam;
   }
 
   /**
@@ -745,7 +791,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     console.log("[ARControllerNFT]", "ARToolkitNFT initialized");
 
     // load the camera
-    this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
+    this.cameraId = await this.artoolkitNFT.loadCamera(this._cameraParam);
     console.log(
       "[ARControllerNFT]",
       "Camera params loaded with ID",
@@ -753,7 +799,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     );
 
     // setup
-    this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
+    this.id = this.artoolkitNFT.setup(this._width, this._height, this.cameraId);
     console.log("[ARControllerNFT]", "Got ID from setup", this.id);
 
     this._initNFT();
