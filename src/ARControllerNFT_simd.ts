@@ -162,6 +162,10 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    *      // other code...
    *    })
    *  ```
+   * @param {number} width
+   * @param {number} height
+   * @param {string} cameraParam
+   * @return {Promise<ARControllerNFT>} this 
    */
   static async initWithDimensions(
     width: number,
@@ -188,6 +192,9 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    *      // other code...
    *    })
    *  ```
+   * @param {image} image
+   * @param {string} cameraParam
+   * @return {Promise<ARControllerNFT>} this 
    */
   static async initWithImage(
     image: IImageObj,
@@ -199,8 +206,45 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     return await arControllerNFT._initialize();
   }
 
-   // getters and setters
-   set width(width: number) {
+  /** The static method **customInit** is the start of your app.
+   *  This method is only for advanced users.
+   *  Define it with the width and height of the video stream,
+   *  the camera parameter file path and the callback function where you define custom behaviours. 
+   *  As with **initWithDimensions** it return a Promise
+   *  with the ARControllerNFT object.
+   *  Use a thenable to load the NFT marker and all the code stuff.
+   *  Example:
+   *  ```js
+   *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
+   *    ARControllerNFT.customInit(
+   *    640, 
+   *    480, 
+   *    "camera_para.dat", 
+   *    function() { // your code here }
+   *    ).then(
+   *    (nft) => {
+   *      nft.loadNFTMarker();
+   *      // other code...
+   *    })
+   *  ```
+   * @param {number} width
+   * @param {number} height
+   * @param {string} cameraParam
+   * @param {function} callback
+   * @return {Promise<ARControllerNFT>} this
+   */
+   static async customInit(
+    width: number,
+    height: number,
+    cameraParam: string,
+    callback: () => void): Promise<ARControllerNFT> {
+    const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
+    callback();
+    return await arControllerNFT._initialize();
+  }
+
+  // getters and setters
+  set width(width: number) {
     this._width = width;
   }
 
