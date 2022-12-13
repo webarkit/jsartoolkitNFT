@@ -32,6 +32,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     constructor(width: number, height: number, cameraParam: string);
     static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
     static initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT>;
+    static customInit(width: number, height: number, cameraParam: string, callback: () => void): Promise<ARControllerNFT>;
     set width(width: number);
     get width(): number;
     set height(height: number);
