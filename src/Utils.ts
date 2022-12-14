@@ -43,7 +43,7 @@ export default class Utils {
       });
       return new Uint8Array(response.data);
     } catch (error) {
-      throw new Error('Error in Utils.fetchRemoteData: ', error);
+      throw new Error("Error in Utils.fetchRemoteData: ", error);
     }
   }
 
@@ -58,7 +58,7 @@ export default class Utils {
         });
       return response;
     } catch (error) {
-      throw new Error('Error in Utils.fetchRemoteDataCallback: ', error);
+      throw new Error("Error in Utils.fetchRemoteDataCallback: ", error);
     }
   }
 

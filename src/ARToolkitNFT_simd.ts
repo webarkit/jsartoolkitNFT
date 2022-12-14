@@ -225,7 +225,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
       try {
         data = await Utils.fetchRemoteData(urlOrData);
       } catch (error) {
-        throw new Error('Error in loadCamera function: ', error);
+        throw new Error("Error in loadCamera function: ", error);
       }
     }
 
