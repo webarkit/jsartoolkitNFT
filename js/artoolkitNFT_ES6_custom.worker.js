@@ -88,8 +88,8 @@ function load(msg) {
     msg.pw,
     msg.ph,
     msg.camera_para,
-    function(){
-      console.log('Message from the callback.');
+    function () {
+      console.log("Message from the callback.");
     }
   )
     .then(onLoad)

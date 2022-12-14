@@ -165,7 +165,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
-   * @return {Promise<ARControllerNFT>} this 
+   * @return {Promise<ARControllerNFT>} this
    */
   static async initWithDimensions(
     width: number,
@@ -209,7 +209,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   /** The static method **customInit** is the start of your app.
    *  This method is only for advanced users.
    *  Define it with the width and height of the video stream,
-   *  the camera parameter file path and the callback function where you define custom behaviours. 
+   *  the camera parameter file path and the callback function where you define custom behaviours.
    *  As with **initWithDimensions** it return a Promise
    *  with the ARControllerNFT object.
    *  Use a thenable to load the NFT marker and all the code stuff.
@@ -217,9 +217,9 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    *  ```js
    *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
    *    ARControllerNFT.customInit(
-   *    640, 
-   *    480, 
-   *    "camera_para.dat", 
+   *    640,
+   *    480,
+   *    "camera_para.dat",
    *    function() { // your code here }
    *    ).then(
    *    (nft) => {
@@ -237,7 +237,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     width: number,
     height: number,
     cameraParam: string,
-    callback: () => void): Promise<ARControllerNFT> {
+    callback: () => void
+  ): Promise<ARControllerNFT> {
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     callback();
     return await arControllerNFT._initialize();
