@@ -51,10 +51,13 @@ var ar = null;
 var markerResult = null;
 var marker;
 
+const WARM_UP_TOLERANCE = 5;
+let tickCount = 0;
+
 // initialize the OneEuroFilter
 let filterMinCF = 0.001;
 let filterBeta = 1000;
-const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
+const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
@@ -65,14 +68,17 @@ function load(msg) {
 
     ar.addEventListener("getNFTMarker", function (ev) {
       filter.reset();
-      var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
-      markerResult = {
-        type: "found",
-        matrixGL_RH: JSON.stringify(mat),
-      };
+      tickCount += 1;
+      if (tickCount > WARM_UP_TOLERANCE) {
+        var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
+        markerResult = {
+          type: "found",
+          matrixGL_RH: JSON.stringify(mat),
+        };
+      }
     });
 
-    ar.addEventListener("lostNFTMarker", function(ev) {
+    ar.addEventListener("lostNFTMarker", function (ev) {
       filter.reset();
     });
 
