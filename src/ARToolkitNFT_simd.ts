@@ -34,6 +34,7 @@
  *
  */
 import artoolkitNFT from "../build/artoolkitNFT_ES6_wasm.simd";
+import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import Utils from "./Utils";
 import packageJson from "../package.json";
 const { version } = packageJson;
@@ -42,10 +43,10 @@ const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
 declare global {
-  var artoolkitNFT: any;
+  var artoolkitNFT: IARToolkitNFT;
 }
 
-export default class ARToolkitNFT {
+export default class ARToolkitNFT implements IARToolkitNFT {
   static get UNKNOWN_MARKER() {
     return UNKNOWN_MARKER;
   }
@@ -53,7 +54,7 @@ export default class ARToolkitNFT {
     return NFT_MARKER;
   }
 
-  public instance: any;
+  private instance: any;
   private markerNFTCount: number;
   private cameraCount: number;
   private version: string;
@@ -75,6 +76,9 @@ export default class ARToolkitNFT {
     videoLumaPointer: number;
     camera: number;
     transform: number;
+  };
+  public HEAPU8: {
+    buffer: Uint8Array;
   };
   public NFTMarkerInfo: {
     error: number;
@@ -102,7 +106,7 @@ export default class ARToolkitNFT {
    * - cameraCount
    * - version
    * A message is displayed in the browser console during the intitialization, for example:
-   * "ARToolkitNFT 1.1.5"
+   * "ARToolkitNFT 1.2.0"
    */
   constructor() {
     // reference to WASM module
@@ -138,7 +142,7 @@ export default class ARToolkitNFT {
    * ARToolkitNFT internal methods.
    * @return {void}
    */
-  private _decorate() {
+  private _decorate(): void {
     // add delegate methods
     [
       "setup",
@@ -178,7 +182,8 @@ export default class ARToolkitNFT {
       "getImageProcMode",
 
       "StringList",
-    ].forEach((method) => {
+      "HEAPU8",
+    ].forEach((method: string) => {
       this.converter()[method] = this.instance[method];
     });
 
@@ -207,10 +212,10 @@ export default class ARToolkitNFT {
    * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
    * @return {number} a number, the internal id.
    */
-  public async loadCamera(urlOrData: any): Promise<number> {
+  public async loadCamera(urlOrData: Uint8Array | string): Promise<number> {
     const target = "/camera_param_" + this.cameraCount++;
 
-    let data;
+    let data: Uint8Array;
 
     if (urlOrData instanceof Uint8Array) {
       // assume preloaded camera params
@@ -220,7 +225,7 @@ export default class ARToolkitNFT {
       try {
         data = await Utils.fetchRemoteData(urlOrData);
       } catch (error) {
-        throw error;
+        throw new Error("Error in loadCamera function: ", error);
       }
     }
 
@@ -241,12 +246,12 @@ export default class ARToolkitNFT {
   public addNFTMarkers(
     arId: number,
     urls: Array<string | Array<string>>,
-    callback: (filename: any) => void,
-    onError2: (errorNumber: any) => void
-  ): [{ id: number }] {
+    callback: (filename: number[]) => void,
+    onError2: (errorNumber: number) => void
+  ): Array<number> {
     var prefixes: any = [];
     var pending = urls.length * 3;
-    var onSuccess = (filename: any) => {
+    var onSuccess = (filename: Uint8Array) => {
       pending -= 1;
       if (pending === 0) {
         const vec = new this.instance.StringList();
@@ -263,12 +268,12 @@ export default class ARToolkitNFT {
         if (callback) callback(markerIds);
       }
     };
-    var onError = (filename: any, errorNumber?: any) => {
+    var onError = (filename: string, errorNumber?: number) => {
       console.log("failed to load: ", filename);
       onError2(errorNumber);
     };
 
-    let Ids: any = [];
+    let Ids: Array<number> = [];
 
     urls.forEach((element, index) => {
       var prefix = "/markerNFT_" + this.markerNFTCount;
@@ -346,7 +351,7 @@ export default class ARToolkitNFT {
     url: string,
     target: string,
     callback: (byteArray: Uint8Array) => void,
-    errorCallback: (message: any) => void
+    errorCallback: (url: string, message: number) => void
   ) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
@@ -366,7 +371,7 @@ export default class ARToolkitNFT {
         var byteArray = new Uint8Array(arrayBuffer);
         writeByteArrayToFS(target, byteArray, callback);
       } else {
-        errorCallback(this.status);
+        errorCallback(url, this.status);
       }
     };
 

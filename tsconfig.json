@@ -32,10 +32,12 @@
     },
     "typedocOptions": {
     "entryPoints": [
+      "src/index_simd.ts",
       "src/index.ts",
+      "src/ARControllerNFT_simd.ts",
       "src/ARControllerNFT.ts",
+      "src/ARToolkitNFT_simd.ts",
       "src/ARToolkitNFT.ts",
-      "src/ModuleLoader.ts",
       "src/Utils.ts"
     ],
     "out": "docs"

@@ -1,15 +1,10 @@
-interface ImageObj extends HTMLCanvasElement {
-    videoWidth: number;
-    width: number;
-    videoHeight: number;
-    height: number;
-    data: Uint8ClampedArray;
-}
-export default class ARControllerNFT {
+import { INFTMarkerInfo, IImageObj, INFTMarker } from "./abstractions/CommonInterfaces";
+import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
+export default class ARControllerNFT implements AbstractARControllerNFT {
     private id;
-    private width;
-    private height;
-    private cameraParam;
+    private _width;
+    private _height;
+    private _cameraParam;
     private cameraId;
     private cameraLoaded;
     private artoolkitNFT;
@@ -32,19 +27,23 @@ export default class ARControllerNFT {
     private nftMarkerCount;
     private defaultMarkerWidth;
     private _bwpointer;
+    constructor();
+    constructor(width: number, height: number);
     constructor(width: number, height: number, cameraParam: string);
     static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
-    static initWithImage(image: ImageObj, cameraParam: string): Promise<ARControllerNFT>;
-    process(image: ImageObj): void;
+    static initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT>;
+    static customInit(width: number, height: number, cameraParam: string, callback: () => void): Promise<ARControllerNFT>;
+    set width(width: number);
+    get width(): number;
+    set height(height: number);
+    get height(): number;
+    set cameraParam(cameraParam: string);
+    get cameraParam(): string;
+    process(image: IImageObj): void;
     detectNFTMarker(): void;
-    trackNFTMarkerId(id: number, markerWidth?: number): any;
-    detectMarker(image: any): number;
-    getNFTMarker(markerIndex: number): {
-        error: number;
-        found: number;
-        id: number;
-        pose: Float64Array;
-    };
+    trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
+    detectMarker(image: IImageObj): number;
+    getNFTMarker(markerIndex: number): INFTMarkerInfo;
     getNFTData(id: number, index: number): object;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
@@ -71,12 +70,8 @@ export default class ARControllerNFT {
     getThresholdMode(): number;
     setThreshold(threshold: number): number;
     getThreshold(): number;
-    loadNFTMarker(urlOrData: string, onSuccess: (ids: number) => void, onError: () => void): Promise<[{
-        id: number;
-    }]>;
-    loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number) => void, onError: () => void): Promise<[{
-        id: number;
-    }]>;
+    loadNFTMarker(urlOrData: string, onSuccess: (ids: number) => void, onError: (err: number) => void): Promise<number[]>;
+    loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number[]) => void, onError: (err: number) => void): Promise<number[]>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
     private converter;
@@ -84,4 +79,3 @@ export default class ARControllerNFT {
     private _initNFT;
     private _copyImageToHeap;
 }
-export {};

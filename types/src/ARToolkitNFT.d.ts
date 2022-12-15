@@ -1,10 +1,11 @@
+import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 declare global {
-    var artoolkitNFT: any;
+    var artoolkitNFT: IARToolkitNFT;
 }
-export default class ARToolkitNFT {
+export default class ARToolkitNFT implements IARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
-    instance: any;
+    private instance;
     private markerNFTCount;
     private cameraCount;
     private version;
@@ -27,6 +28,9 @@ export default class ARToolkitNFT {
         camera: number;
         transform: number;
     };
+    HEAPU8: {
+        buffer: Uint8Array;
+    };
     NFTMarkerInfo: {
         error: number;
         found: number;
@@ -47,10 +51,8 @@ export default class ARToolkitNFT {
     init(): Promise<this>;
     private _decorate;
     private converter;
-    loadCamera(urlOrData: any): Promise<number>;
-    addNFTMarkers(arId: number, urls: Array<string | Array<string>>, callback: (filename: any) => void, onError2: (errorNumber: any) => void): [{
-        id: number;
-    }];
+    loadCamera(urlOrData: Uint8Array | string): Promise<number>;
+    addNFTMarkers(arId: number, urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
     private _storeDataFile;
     private ajax;
 }

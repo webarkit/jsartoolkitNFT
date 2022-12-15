@@ -34,94 +34,25 @@
  *
  */
 import ARToolkitNFT from "./ARToolkitNFT";
+import {
+  INFTMarkerInfo,
+  IImageObj,
+  INFTMarker,
+} from "./abstractions/CommonInterfaces";
+import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
+import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 
-interface ImageObj extends HTMLCanvasElement {
-  videoWidth: number;
-  width: number;
-  videoHeight: number;
-  height: number;
-  data: Uint8ClampedArray;
-}
-
-interface delegateMethods {
-  setup: {
-    (width: number, height: number, cameraId: number): number;
-  };
-  setupAR2: {
-    (id: number): void;
-  };
-  setDebugMode: (id: number, mode: boolean) => number;
-  getDebugMode: (id: number) => boolean;
-  getProcessingImage: (id: number) => number;
-  setLogLevel: (mode: boolean) => number;
-  getLogLevel: () => number;
-  frameMalloc: {
-    framepointer: number;
-    framesize: number;
-    videoLumaPointer: number;
-    camera: number;
-    transform: number;
-  };
-  instance: {
-    frameMalloc: {
-      framepointer: number;
-      framesize: number;
-      videoLumaPointer: number;
-      camera: number;
-      transform: number;
-    };
-    NFTMarkerInfo: {
-      error: number;
-      found: number;
-      id: number;
-      pose: Float64Array;
-    };
-    HEAPU8: {
-      buffer: Uint8Array;
-    };
-  };
-  NFTMarkerInfo: {
-    error: number;
-    found: number;
-    id: number;
-    pose: Float64Array;
-  };
-  loadCamera: (cameraParam: string) => Promise<number>;
-  setProjectionNearPlane: {
-    (id: number, value: number): void;
-  };
-  getProjectionNearPlane: (id: number) => number;
-  setProjectionFarPlane: (id: number, value: number) => void;
-  getProjectionFarPlane: (id: number) => number;
-  setThresholdMode: (id: number, mode: number) => number;
-  getThresholdMode: (id: number) => number;
-  setThreshold: (id: number, threshold: number) => number;
-  getThreshold: (id: number) => number;
-  addNFTMarkers: (
-    arId: number,
-    urls: Array<string>,
-    callback: (filename: any) => void,
-    onError2: (errorNumber: any) => void
-  ) => [{ id: number }];
-  detectMarker: (id: number) => number;
-  detectNFTMarker: (arId: number) => void;
-  getNFTMarker: (id: number, markerIndex: number) => number;
-  getNFTData: (id: number, index: number) => object;
-  setImageProcMode: (id: number, mode: number) => number;
-  getImageProcMode: (id: number) => number;
-}
-
-export default class ARControllerNFT {
+export default class ARControllerNFT implements AbstractARControllerNFT {
   // private declarations
   private id: number;
-  private width: number;
-  private height: number;
-  private cameraParam: string;
+  private _width: number;
+  private _height: number;
+  private _cameraParam: string;
   private cameraId: number;
   private cameraLoaded: boolean;
-  private artoolkitNFT: delegateMethods;
+  private artoolkitNFT: IARToolkitNFT;
   private listeners: object;
-  private nftMarkers: object;
+  private nftMarkers: INFTMarker[];
   private transform_mat: Float64Array;
   private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
@@ -142,6 +73,26 @@ export default class ARControllerNFT {
   private _bwpointer: number;
 
   /**
+   * The ARControllerNFT default constructor. It has no params (see above).
+   * These properties are initialized:
+   * id, width, height, cameraParam, cameraId,
+   * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
+   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   */
+  constructor();
+  /**
+   * The ARControllerNFT default constructor. It has 2 params (see above).
+   * These properties are initialized:
+   * id, width, height, cameraParam, cameraId,
+   * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
+   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * @param {number} width
+   * @param {number} height
+   */
+  constructor(width: number, height: number);
+  /**
    * The ARControllerNFT constructor. It has 4 params (see above).
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
@@ -152,16 +103,17 @@ export default class ARControllerNFT {
    * @param {number} height
    * @param {string} cameraParam
    */
-  constructor(width: number, height: number, cameraParam: string) {
+  constructor(width: number, height: number, cameraParam: string);
+  constructor(width?: number, height?: number, cameraParam?: string) {
     // no point in initializing a member as "undefined"
     // replaced it with -1
     this.id = -1;
 
-    this.width = width;
-    this.height = height;
+    this._width = width;
+    this._height = height;
 
     // this is a replacement for ARCameraParam
-    this.cameraParam = cameraParam;
+    this._cameraParam = cameraParam;
     this.cameraId = -1;
     this.cameraLoaded = false;
 
@@ -171,7 +123,7 @@ export default class ARControllerNFT {
     // to register observers as event listeners
     this.listeners = {};
 
-    this.nftMarkers = {};
+    this.nftMarkers = [];
 
     this.transform_mat = new Float64Array(16);
     this.transformGL_RH = new Float64Array(16);
@@ -197,21 +149,124 @@ export default class ARControllerNFT {
     this.defaultMarkerWidth = 1;
   }
 
+  /** The static method **initWithDimensions** is the start of your app.
+   *  Define it with the width and height of the video stream
+   *  and the camera parameter file path. It return a Promise with the ARControllerNFT object.
+   *  Use a thenable to load the NFT marker and all the code stuff.
+   *  Example:
+   *  ```js
+   *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
+   *    ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat").then(
+   *    (nft) => {
+   *      nft.loadNFTMarker();
+   *      // other code...
+   *    })
+   *  ```
+   * @param {number} width
+   * @param {number} height
+   * @param {string} cameraParam
+   * @return {Promise<ARControllerNFT>} this
+   */
   static async initWithDimensions(
     width: number,
     height: number,
     cameraParam: string
-  ) {
+  ): Promise<ARControllerNFT> {
     // directly init with given width / height
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     return await arControllerNFT._initialize();
   }
 
-  static async initWithImage(image: ImageObj, cameraParam: string) {
+  /** The static method **initWithImage** is the start of your app.
+   *  Define it with an HTML element like a video or a static Image
+   *  and the camera parameter file path. As with **initWithDimensions** it return a Promise
+   *  with the ARControllerNFT object.
+   *  Use a thenable to load the NFT marker and all the code stuff.
+   *  Example:
+   *  ```js
+   *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
+   *    const image = document.getElementById('image')
+   *    ARControllerNFT.initWithImage(image, "camera_para.dat").then(
+   *    (nft) => {
+   *      nft.loadNFTMarker();
+   *      // other code...
+   *    })
+   *  ```
+   * @param {image} image
+   * @param {string} cameraParam
+   * @return {Promise<ARControllerNFT>} this
+   */
+  static async initWithImage(
+    image: IImageObj,
+    cameraParam: string
+  ): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     return await arControllerNFT._initialize();
+  }
+
+  /** The static method **customInit** is the start of your app.
+   *  This method is only for advanced users.
+   *  Define it with the width and height of the video stream,
+   *  the camera parameter file path and the callback function where you define custom behaviours.
+   *  As with **initWithDimensions** it return a Promise
+   *  with the ARControllerNFT object.
+   *  Use a thenable to load the NFT marker and all the code stuff.
+   *  Example:
+   *  ```js
+   *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
+   *    ARControllerNFT.customInit(
+   *    640,
+   *    480,
+   *    "camera_para.dat",
+   *    function() { // your code here }
+   *    ).then(
+   *    (nft) => {
+   *      nft.loadNFTMarker();
+   *      // other code...
+   *    })
+   *  ```
+   * @param {number} width
+   * @param {number} height
+   * @param {string} cameraParam
+   * @param {function} callback
+   * @return {Promise<ARControllerNFT>} this
+   */
+  static async customInit(
+    width: number,
+    height: number,
+    cameraParam: string,
+    callback: () => void
+  ): Promise<ARControllerNFT> {
+    const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
+    callback();
+    return await arControllerNFT._initialize();
+  }
+
+  // getters and setters
+  set width(width: number) {
+    this._width = width;
+  }
+
+  get width() {
+    return this._width;
+  }
+
+  set height(height: number) {
+    this._height = height;
+  }
+
+  get height() {
+    return this._height;
+  }
+
+  set cameraParam(cameraParam: string) {
+    this._cameraParam = cameraParam;
+  }
+
+  get cameraParam() {
+    return this._cameraParam;
   }
 
   /**
@@ -221,16 +276,16 @@ export default class ARControllerNFT {
    * @param {image} image data
    * @return {void}
    */
-  process(image: ImageObj) {
+  process(image: IImageObj): void {
     let result = this.detectMarker(image);
     if (result != 0) {
       console.error("[ARControllerNFT]", "detectMarker error:", result);
     }
 
-    let k, o;
+    let k, o: INFTMarker;
 
     // get NFT markers
-    for (k in this.nftMarkers) {
+    for (k in this.converter().nftMarkers) {
       o = this.converter().nftMarkers[k];
       o.inPrevious = o.inCurrent;
       o.inCurrent = false;
@@ -244,8 +299,7 @@ export default class ARControllerNFT {
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: delegateMethods["NFTMarkerInfo"] =
-        this.getNFTMarker(i);
+      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -253,7 +307,7 @@ export default class ARControllerNFT {
         this.nftMarkerFound = <boolean>(<unknown>i);
         this.nftMarkerFoundTime = Date.now();
 
-        let visible = this.trackNFTMarkerId(i);
+        let visible: INFTMarker = this.trackNFTMarkerId(i);
         visible.matrix.set(nftMarkerInfo.pose);
         visible.inCurrent = true;
         this.transMatToGLMat(visible.matrix, this.transform_mat);
@@ -294,7 +348,7 @@ export default class ARControllerNFT {
    * with the given tracked id.
    * @return {void}
    */
-  detectNFTMarker() {
+  detectNFTMarker(): void {
     this.artoolkitNFT.detectNFTMarker(this.id);
   }
 
@@ -308,8 +362,8 @@ export default class ARControllerNFT {
    * @param {number} markerWidth The width of the marker to track.
    * @return {Object} The marker tracking object.
    */
-  trackNFTMarkerId(id: number, markerWidth?: number) {
-    let obj = this.converter().nftMarkers[id];
+  trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker {
+    let obj: INFTMarker = this.converter().nftMarkers[id];
     if (!obj) {
       this.converter().nftMarkers[id] = obj = {
         inPrevious: false,
@@ -341,7 +395,7 @@ export default class ARControllerNFT {
    * @return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
    * A result of 0 does not however, imply any markers were detected.
    */
-  detectMarker(image: any) {
+  detectMarker(image: IImageObj): number {
     if (this._copyImageToHeap(image)) {
       return this.artoolkitNFT.detectMarker(this.id);
     }
@@ -355,14 +409,20 @@ export default class ARControllerNFT {
    * Returns undefined if no marker was found.
    * A markerIndex of -1 is used to access the global custom marker.
    * @param {number} markerIndex The index of the NFT marker to query.
-   * @return {Object} The NFTmarkerInfo struct.
+   * @return {Object} The NFTMarkerInfo struct.
    */
-  getNFTMarker(markerIndex: number) {
+  getNFTMarker(markerIndex: number): INFTMarkerInfo {
     if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
       return this.artoolkitNFT.NFTMarkerInfo;
     }
   }
 
+  /**
+   * **GetNFTData** will return the width. height and dpi of the NFT marker.
+   * @param id the internal id (this.id)
+   * @param index the index of the NFT marker, in case you have multi NFT markers.
+   * @returns {object}
+   */
   getNFTData(id: number, index: number) {
     return this.artoolkitNFT.getNFTData(id, index);
   }
@@ -374,14 +434,13 @@ export default class ARControllerNFT {
    * Add an event listener on this ARControllerNFT for the named event, calling the callback function
    * whenever that event is dispatched.
    * Possible events are:
-   * - getMarker - dispatched whenever process() finds a square marker
-   * - getMultiMarker - dispatched whenever process() finds a visible registered multimarker
-   * - getMultiMarkerSub - dispatched by process() for each marker in a visible multimarker
+   * - getNFTMarker - dispatched whenever process() finds a NFT marker
+   * - lostNFTMarker - dispatched whenever process() lost a visible NFT marker
    * - load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
    * @param {string} name Name of the event to listen to.
    * @param {function} callback Callback function to call when an event with the given name is dispatched.
    */
-  addEventListener(name: string, callback: object) {
+  addEventListener(name: string, callback: object): void {
     if (!this.converter().listeners[name]) {
       this.converter().listeners[name] = [];
     }
@@ -393,7 +452,7 @@ export default class ARControllerNFT {
    * @param {string} name Name of the event to stop listening to.
    * @param {function} callback Callback function to remove from the listeners of the named event.
    */
-  removeEventListener(name: string, callback: object) {
+  removeEventListener(name: string, callback: object): void {
     if (this.converter().listeners[name]) {
       let index = this.converter().listeners[name].indexOf(callback);
       if (index > -1) {
@@ -406,7 +465,7 @@ export default class ARControllerNFT {
    * Dispatches the given event to all registered listeners on event.name.
    * @param {Object} event Event to dispatch.
    */
-  dispatchEvent(event: { name: string; target: any; data?: object }) {
+  dispatchEvent(event: { name: string; target: any; data?: object }): void {
     let listeners = this.converter().listeners[event.name];
     if (listeners) {
       for (let i = 0; i < listeners.length; i++) {
@@ -421,7 +480,7 @@ export default class ARControllerNFT {
   /**
    * Sets up for debugging AR detection.
    */
-  debugSetup() {
+  debugSetup(): void {
     this.setDebugMode(true);
     this._bwpointer = this.getProcessingImage();
   }
@@ -433,8 +492,13 @@ export default class ARControllerNFT {
    * @param {Float64Array} transMat The 3x4 marker transformation matrix.
    * @param {Float64Array} glMat The 4x4 GL transformation matrix.
    * @param {number} scale The scale for the transform.
+   * @return {Float64Array} the modified matrix
    */
-  transMatToGLMat(transMat: Float64Array, glMat: Float64Array, scale?: number) {
+  transMatToGLMat(
+    transMat: Float64Array,
+    glMat: Float64Array,
+    scale?: number
+  ): Float64Array {
     if (glMat == undefined) {
       glMat = new Float64Array(16);
     }
@@ -471,12 +535,13 @@ export default class ARControllerNFT {
    * @param {Float64Array} glMatrix The 4x4 marker transformation matrix.
    * @param {Float64Array} [glRhMatrix] The 4x4 GL right hand transformation matrix.
    * @param {number} [scale] The scale for the transform.
+   * @return {Float64Array} the modified gl matrix
    */
   arglCameraViewRHf(
     glMatrix: Float64Array,
     glRhMatrix?: Float64Array,
     scale?: number
-  ) {
+  ): Float64Array {
     let m_modelview;
     if (glRhMatrix == undefined) {
       m_modelview = new Float64Array(16);
@@ -523,7 +588,7 @@ export default class ARControllerNFT {
    * Unique to each ARControllerNFT.
    * @return {Float64Array} The 16-element WebGL transformation matrix used by the ARControllerNFT.
    */
-  getTransformationMatrix() {
+  getTransformationMatrix(): Float64Array {
     return this.transform_mat;
   }
 
@@ -531,7 +596,7 @@ export default class ARControllerNFT {
    * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
    * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
    */
-  getCameraMatrix() {
+  getCameraMatrix(): Float64Array {
     return this.camera_mat;
   }
 
@@ -545,7 +610,7 @@ export default class ARControllerNFT {
    * @param {boolean} mode true to enable debug mode, false to disable debug mode
    * @see getDebugMode()
    */
-  setDebugMode(mode: boolean) {
+  setDebugMode(mode: boolean): number {
     return this.artoolkitNFT.setDebugMode(this.id, mode);
   }
 
@@ -554,7 +619,7 @@ export default class ARControllerNFT {
    * @return {boolean} true when debug mode is enabled, false when debug mode is disabled
    * @see  setDebugMode()
    */
-  getDebugMode() {
+  getDebugMode(): boolean {
     return this.artoolkitNFT.getDebugMode(this.id);
   }
 
@@ -562,7 +627,7 @@ export default class ARControllerNFT {
    * Returns the Emscripten HEAP offset to the debug processing image used by ARToolKit.
    * @return {number} HEAP offset to the debug processing image.
    */
-  getProcessingImage() {
+  getProcessingImage(): number {
     return this.artoolkitNFT.getProcessingImage(this.id);
   }
 
@@ -570,7 +635,7 @@ export default class ARControllerNFT {
    * Sets the logging level to use by ARToolKit.
    * @param {number} mode type for the log level.
    */
-  setLogLevel(mode: boolean) {
+  setLogLevel(mode: boolean): number {
     return this.artoolkitNFT.setLogLevel(mode);
   }
 
@@ -578,7 +643,7 @@ export default class ARControllerNFT {
    * Gets the logging level used by ARToolKit.
    * @return {number} return the log level in use.
    */
-  getLogLevel() {
+  getLogLevel(): number {
     return this.artoolkitNFT.getLogLevel();
   }
 
@@ -587,7 +652,7 @@ export default class ARControllerNFT {
    * @param {number} value the value of the near plane
    * @return {number} 0 (void)
    */
-  setProjectionNearPlane(value: number) {
+  setProjectionNearPlane(value: number): void {
     return this.artoolkitNFT.setProjectionNearPlane(this.id, value);
   }
 
@@ -595,7 +660,7 @@ export default class ARControllerNFT {
    * Gets the value of the near plane of the camera with the give id.
    * @return {number} the value of the near plane.
    */
-  getProjectionNearPlane() {
+  getProjectionNearPlane(): number {
     return this.artoolkitNFT.getProjectionNearPlane(this.id);
   }
 
@@ -604,7 +669,7 @@ export default class ARControllerNFT {
    * @param {number} value the value of the far plane
    * @return {number} 0 (void)
    */
-  setProjectionFarPlane(value: number) {
+  setProjectionFarPlane(value: number): void {
     return this.artoolkitNFT.setProjectionFarPlane(this.id, value);
   }
 
@@ -612,7 +677,7 @@ export default class ARControllerNFT {
    * Gets the value of the far plane of the camera with the give id.
    * @return {number} the value of the far plane.
    */
-  getProjectionFarPlane() {
+  getProjectionFarPlane(): number {
     return this.artoolkitNFT.getProjectionFarPlane(this.id);
   }
 
@@ -625,7 +690,7 @@ export default class ARControllerNFT {
    * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
    * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
    */
-  setThresholdMode(mode: number) {
+  setThresholdMode(mode: number): number {
     return this.artoolkitNFT.setThresholdMode(this.id, mode);
   }
 
@@ -634,7 +699,7 @@ export default class ARControllerNFT {
    * @return {number} The current threshold mode
    * @see getVideoThresholdMode()
    */
-  getThresholdMode() {
+  getThresholdMode(): number {
     return this.artoolkitNFT.getThresholdMode(this.id);
   }
 
@@ -657,7 +722,7 @@ export default class ARControllerNFT {
    * and white portions of the markers in the image.
    * @param {number} threshold An integer in the range [0,255] (inclusive).
    */
-  setThreshold(threshold: number) {
+  setThreshold(threshold: number): number {
     return this.artoolkitNFT.setThreshold(this.id, threshold);
   }
 
@@ -672,7 +737,7 @@ export default class ARControllerNFT {
    * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
    * @return {number} The current threshold value.
    */
-  getThreshold() {
+  getThreshold(): number {
     return this.artoolkitNFT.getThreshold(this.id);
   }
 
@@ -683,8 +748,8 @@ export default class ARControllerNFT {
   async loadNFTMarker(
     urlOrData: string,
     onSuccess: (ids: number) => void,
-    onError: () => void
-  ) {
+    onError: (err: number) => void
+  ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
       [urlOrData],
@@ -703,13 +768,13 @@ export default class ARControllerNFT {
    */
   async loadNFTMarkers(
     urlOrData: Array<string>,
-    onSuccess: (ids: number) => void,
-    onError: () => void
-  ) {
+    onSuccess: (ids: number[]) => void,
+    onError: (err: number) => void
+  ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       this.id,
       urlOrData,
-      (ids: any) => {
+      (ids) => {
         this.nftMarkerCount += ids.length;
         onSuccess(ids);
       },
@@ -737,7 +802,7 @@ export default class ARControllerNFT {
    * AR_IMAGE_PROC_FIELD_IMAGE
    * The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
    */
-  setImageProcMode(mode: number) {
+  setImageProcMode(mode: number): number {
     return this.artoolkitNFT.setImageProcMode(this.id, mode);
   }
 
@@ -746,7 +811,7 @@ export default class ARControllerNFT {
    * See arSetImageProcMode() for a complete description.
    * @return {number} The current image processing mode.
    */
-  getImageProcMode() {
+  getImageProcMode(): number {
     return this.artoolkitNFT.getImageProcMode(this.id);
   }
 
@@ -784,30 +849,29 @@ export default class ARControllerNFT {
 
     this._initNFT();
 
-    const params: delegateMethods["frameMalloc"] =
-      this.artoolkitNFT.frameMalloc;
+    const params: IARToolkitNFT["frameMalloc"] = this.artoolkitNFT.frameMalloc;
     this.framepointer = params.framepointer;
     this.framesize = params.framesize;
     this.videoLumaPointer = params.videoLumaPointer;
 
     this.dataHeap = new Uint8Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       this.framepointer,
       this.framesize
     );
     this.videoLuma = new Uint8Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       this.videoLumaPointer,
       this.framesize / 4
     );
 
     this.camera_mat = new Float64Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       params.camera,
       16
     );
     this.marker_transform_mat = new Float64Array(
-      this.artoolkitNFT.instance.HEAPU8.buffer,
+      this.artoolkitNFT.HEAPU8.buffer,
       params.transform,
       12
     );
@@ -837,7 +901,7 @@ export default class ARControllerNFT {
    * Copy the Image data to the HEAP for the debugSetup function.
    * @return {number} 0 (void)
    */
-  private _copyImageToHeap(sourceImage: ImageObj) {
+  private _copyImageToHeap(sourceImage: IImageObj) {
     if (!sourceImage) {
       // default to preloaded image
       console.error("Error: no provided imageData to ARControllerNFT");
