@@ -20,6 +20,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private framesize;
     private dataHeap;
     private videoLuma;
+    private grayscaleEnabled;
+    private grayscaleSource;
     private camera_mat;
     private videoLumaPointer;
     private nftMarkerFound;
@@ -74,6 +76,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number[]) => void, onError: (err: number) => void): Promise<number[]>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
+    setGrayData(data: Uint8Array): void;
     private converter;
     private _initialize;
     private _initNFT;
