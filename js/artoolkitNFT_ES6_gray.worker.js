@@ -105,7 +105,7 @@ function process() {
   markerResult = null;
 
   if (ar && ar.process) {
-    imgproc.grayscale(next.data, 640, 480, img_u8);
+    imgproc.grayscale(next.data, 320, 240, img_u8);
     var r = radius | 0;
     var kernel_size = (r + 1) << 1;
     imgproc.gaussian_blur(img_u8, img_u8, kernel_size, sigma);
