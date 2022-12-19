@@ -63,6 +63,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private framesize: number;
   private dataHeap: Uint8Array;
   private videoLuma: Uint8Array;
+  private grayscaleEnabled: boolean;
+  private grayscaleSource: Uint8Array;
   private camera_mat: Float64Array;
   private videoLumaPointer: number;
   private nftMarkerFound: boolean; // = false
@@ -137,6 +139,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     this.framesize = null;
     this.dataHeap = null;
     this.videoLuma = null;
+    this.grayscaleEnabled = false;
     this.camera_mat = null;
     this.videoLumaPointer = null;
 
@@ -815,6 +818,17 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     return this.artoolkitNFT.getImageProcMode(this.id);
   }
 
+  /**
+   * Set the custom gray data (videoLuma) in case you want to add additional
+   * trasnformation to gray data: for example gaussianblur or boxblur
+   * with external libs.
+   * @param data Uint8Array
+   */
+  setGrayData(data: Uint8Array) {
+    this.grayscaleEnabled = true;
+    this.grayscaleSource = data;
+  }
+
   // private accessors
   // ----------------------------------------------------------------------------
   /**
@@ -920,18 +934,28 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
+    console.log(this.videoLuma);
+    
     if (this.videoLuma) {
-      let q = 0;
+      console.log(this.grayscaleEnabled);
+      if (this.grayscaleEnabled == false) {
+        console.log("gray not enabled!");
 
-      // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
-      // see (ARToolKitJS.cpp L: 43)
-      for (let p = 0; p < this.videoSize; p++) {
-        let r = data[q + 0],
-          g = data[q + 1],
-          b = data[q + 2];
-        // @see https://stackoverflow.com/a/596241/5843642
-        this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
-        q += 4;
+        let q = 0;
+
+        // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
+        // see (ARToolKitJS.cpp L: 43)
+        for (let p = 0; p < this.videoSize; p++) {
+          let r = data[q + 0],
+            g = data[q + 1],
+            b = data[q + 2];
+          // @see https://stackoverflow.com/a/596241/5843642
+          this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
+          q += 4;
+        }
+      } else if (this.grayscaleEnabled == true) {
+        console.log("gray enabled!");
+        this.videoLuma = this.grayscaleSource;
       }
     }
 
