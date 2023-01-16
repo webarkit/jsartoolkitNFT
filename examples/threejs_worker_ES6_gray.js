@@ -1,4 +1,4 @@
-function isMobile () {
+function isMobile() {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
@@ -14,6 +14,13 @@ var setMatrix = function (matrix, value) {
   }
 };
 
+var gui, options;
+
+var demo_opt = function(){
+  this.radius = 2;
+  this.sigma = 0;
+}
+
 function start(markerUrl, video, input_width, input_height, render_update, track_update) {
   var vw, vh;
   var sw, sh;
@@ -27,6 +34,14 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   var canvas_process = document.createElement('canvas');
   var context_process = canvas_process.getContext('2d');
   var targetCanvas = document.querySelector("#canvas");
+
+  // gui to modfy gaussian options interactively.
+  gui = new dat.GUI();
+
+  options = new demo_opt();
+
+  gui.add(options, 'radius', 1, 11).step(1);
+  gui.add(options, 'sigma', 0, 10).step(0.5);
 
   var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -79,7 +94,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     worker = new Worker('../js/artoolkitNFT_ES6_gray.worker.js')
 
-    worker.postMessage({ type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: markerUrl });
+    worker.postMessage({ type: "load", pw: pw, ph: ph, radius: options.radius, sigma: options.sigma, camera_para: camera_para, marker: markerUrl });
 
     worker.onmessage = function (ev) {
       var msg = ev.data;
@@ -105,7 +120,7 @@ function start(markerUrl, video, input_width, input_height, render_update, track
             var loader = document.getElementById('loading');
             if (loader) {
               loader.querySelector('.loading-text').innerText = 'Start the tracking!';
-              setTimeout(function(){
+              setTimeout(function () {
                 loader.parentElement.removeChild(loader);
               }, 2000);
             }
