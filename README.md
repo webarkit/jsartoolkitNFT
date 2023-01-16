@@ -99,6 +99,10 @@ npm run docs
 ```
 At this point you have build the docs in the `docs/` folder, you should run a server and then go to `docs/` folder.
 
+## Using with React
+
+Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific project that use JsartoolkitNFT with React and Three.js.
+
 ## ARnft library
 
 **JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small libary that help developers to create **WebAR** apps.
