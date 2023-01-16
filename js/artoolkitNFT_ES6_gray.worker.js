@@ -55,10 +55,13 @@ var radius = 2;
 var sigma = 3.5;
 const jsfeat = jsfeatNext.jsfeatNext;
 const imgproc = new jsfeat.imgproc();
-var img_u8 = new jsfeat.matrix_t(320, 240, jsfeat.U8_t | jsfeat.C1_t);
+var img_u8, width, height;
 
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
+  width = msg.pw;
+  height = msg.ph;
+  img_u8 = new jsfeat.matrix_t(width, height, jsfeat.U8_t | jsfeat.C1_t);
 
   var onLoad = function (arController) {
     ar = arController;
@@ -93,8 +96,8 @@ function load(msg) {
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
   ARToolkitNFT.ARControllerNFT.initWithDimensions(
-    msg.pw,
-    msg.ph,
+    width,
+    height,
     msg.camera_para
   )
     .then(onLoad)
@@ -105,7 +108,7 @@ function process() {
   markerResult = null;
 
   if (ar && ar.process) {
-    imgproc.grayscale(next.data, 320, 240, img_u8);
+    imgproc.grayscale(next.data, width, height, img_u8);
     var r = radius | 0;
     var kernel_size = (r + 1) << 1;
     imgproc.gaussian_blur(img_u8, img_u8, kernel_size, sigma);
