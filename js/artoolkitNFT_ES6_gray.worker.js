@@ -51,8 +51,8 @@ var ar = null;
 var markerResult = null;
 var marker;
 // jsfeatNext settings
-var radius = 1;
-var sigma = 0.5;
+var radius = 2;
+var sigma = 3.5;
 const jsfeat = jsfeatNext.jsfeatNext;
 const imgproc = new jsfeat.imgproc();
 var img_u8 = new jsfeat.matrix_t(320, 240, jsfeat.U8_t | jsfeat.C1_t);

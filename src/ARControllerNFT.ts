@@ -935,10 +935,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API  
     if (this.videoLuma) {
-      console.log(this.grayscaleEnabled);
       if (this.grayscaleEnabled == false) {
-        console.log("gray not enabled!");
-
         let q = 0;
 
         // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
@@ -952,7 +949,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
           q += 4;
         }
       } else if (this.grayscaleEnabled == true) {
-        console.log("gray enabled!");
         this.videoLuma.set(this.grayscaleSource);
       }
     }
