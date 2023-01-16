@@ -51,8 +51,8 @@ var ar = null;
 var markerResult = null;
 var marker;
 // jsfeatNext settings
-var radius = 2;
-var sigma = 3.5;
+var radius;
+var sigma;
 const jsfeat = jsfeatNext.jsfeatNext;
 const imgproc = new jsfeat.imgproc();
 var img_u8, width, height;
@@ -61,6 +61,8 @@ function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
   width = msg.pw;
   height = msg.ph;
+  radius = msg.radius;
+  sigma = msg.sigma;
   img_u8 = new jsfeat.matrix_t(width, height, jsfeat.U8_t | jsfeat.C1_t);
 
   var onLoad = function (arController) {
