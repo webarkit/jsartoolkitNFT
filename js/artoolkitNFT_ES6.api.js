@@ -862,7 +862,6 @@
         NFT_MARKER: 0, // 0,
 
         loadCamera: loadCamera,
-        //addNFTMarkerNew: addNFTMarkerNew,
         addNFTMarker: addNFTMarker,
         addNFTMarkers: addNFTMarkers
 
@@ -1058,19 +1057,5 @@
     scope.artoolkitNFT = artoolkitNFT;
     scope.ARControllerNFT = ARControllerNFT;
     scope.ARCameraParamNFT = ARCameraParamNFT;
-
-    if (scope.Module) {
-        scope.Module.onRuntimeInitialized = function () {
-            runWhenLoaded();
-            var event = new Event('artoolkitNFT-loaded');
-            scope.dispatchEvent(event);
-        };
-    } else {
-        scope.Module = {
-            onRuntimeInitialized: function () {
-                runWhenLoaded();
-            }
-        };
-    }
 
 })();
