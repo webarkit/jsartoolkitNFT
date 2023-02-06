@@ -1,4 +1,5 @@
-importScripts("../build/artoolkitNFT_embed_ES6_wasm.js");
+import ARToolkitNFT from "../build/artoolkitNFT_embed_ES6_wasm.js"
+
 self.onmessage = function (e) {
   var msg = e.data;
   switch (msg.type) {
@@ -19,12 +20,15 @@ var ar = null;
 var markerResult = null;
 var marker;
 
-function load(msg) {
-  self.addEventListener("artoolkitNFT-loaded", function () {
+async function load(msg) {
+  const arTK = await ARToolkitNFT();
+  //self.addEventListener("artoolkitNFT-loaded", function () {
     console.debug("Loading marker at: ", msg.marker);
+    console.log(arTK);
 
     var onLoad = function () {
-      ar = new ARControllerNFT(msg.pw, msg.ph, param);
+      ar = new arTK.ARControllerNFT(msg.pw, msg.ph, param);
+      console.log(ar);
       var cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
@@ -36,7 +40,7 @@ function load(msg) {
 
       ar.loadNFTMarker(msg.marker, function (id) {
         ar.trackNFTMarkerId(id);
-        let marker = ar.getNFTData(ar.id, 0);
+        let marker = ar.getNFTData(id, 0);
         console.log("nftMarker data: ", marker);
         postMessage({ type: "markerInfos", marker: marker });
         console.log("loadNFTMarker -> ", id);
@@ -56,8 +60,8 @@ function load(msg) {
     console.debug("Loading camera at:", msg.camera_para);
 
     // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-    var param = new ARCameraParamNFT(msg.camera_para, onLoad, onError);
-  });
+    var param = new arTK.ARCameraParamNFT(msg.camera_para, onLoad, onError);
+  //});//event listener
 }
 
 function process() {

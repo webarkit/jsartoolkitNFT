@@ -1,5 +1,5 @@
-; (() => {
-    'use strict'
+//; (() => {
+//    'use strict'
 
     var scope;
     if (typeof window !== 'undefined') {
@@ -969,7 +969,6 @@
             ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
             marker_count += 1;
         }
-        console.log(prefixes);
     }
 
     function bytesToString(array) {
@@ -1001,7 +1000,6 @@
                 })
                 .then(blob => {
                     blob.arrayBuffer().then(buff => {
-                        console.log(buff);
                         let buffer = new Uint8Array(buff)
                         writeByteArrayToFS(filename, buffer, writeCallback);
                     })
@@ -1054,8 +1052,23 @@
     }
 
     /* Exports */
-    scope.artoolkitNFT = artoolkitNFT;
-    scope.ARControllerNFT = ARControllerNFT;
-    scope.ARCameraParamNFT = ARCameraParamNFT;
+    scope.artoolkitNFT = Module.artoolkitNFT = artoolkitNFT;
+    scope.ARControllerNFT = Module.ARControllerNFT = ARControllerNFT;
+    scope.ARCameraParamNFT = Module.ARCameraParamNFT = ARCameraParamNFT;
+    scope.Module = Module;
 
-})();
+    if (scope.Module) {
+        scope.Module.onRuntimeInitialized = function () {
+            runWhenLoaded();
+            var event = new Event('artoolkitNFT-loaded');
+            scope.dispatchEvent(event);
+        };
+    } else {
+        scope.Module = {
+            onRuntimeInitialized: function () {
+                runWhenLoaded();
+            }
+        };
+    }
+
+//})();
