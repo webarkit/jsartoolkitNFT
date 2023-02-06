@@ -179,7 +179,7 @@ FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 var WASM_FLAGS = " -s SINGLE_FILE=1";
 var SIMD128_FLAGS = " -msimd128";
 var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1";
-var ES6_EMBED_ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1";
+var ES6_EMBED_ES6_FLAGS = " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
 
 var PRE_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
@@ -331,8 +331,8 @@ var compile_wasm_embed_ES6 = format(
     FLAGS +
     WASM_FLAGS +
     DEFINES +
-    PRE_ES6_FLAGS +
     ES6_EMBED_ES6_FLAGS +
+    PRE_ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
