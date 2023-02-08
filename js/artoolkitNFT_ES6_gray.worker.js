@@ -31,6 +31,7 @@ if (browser == "Apple Safari") {
 }
 
 importScripts("../examples/js/third_party/jsfeatNext/jsfeatNext.js");
+importScripts("./utils.js");
 
 self.onmessage = function (e) {
   var msg = e.data;
@@ -70,15 +71,16 @@ function load(msg) {
     var cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
+      let matrixGL_RH = _applyMarkerData(ev.data.matrixGL_RH, marker)
       markerResult = {
         type: "found",
-        matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
+        matrixGL_RH: JSON.stringify(matrixGL_RH),
       };
     });
 
     ar.loadNFTMarker(msg.marker, function (id) {
       ar.trackNFTMarkerId(id);
-      let marker = ar.getNFTData(ar.id, 0);
+      marker = ar.getNFTData(ar.id, 0);
       console.log("nftMarker data: ", marker);
       postMessage({ type: "markerInfos", marker: marker });
       console.log("loadNFTMarker -> ", id);

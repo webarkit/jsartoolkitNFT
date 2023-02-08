@@ -178,24 +178,18 @@ function isMobile () {
     } else {
         if (index == 0) {
             sphere.visible = true;
-            sphere.position.y = ((marker1.height / marker1.dpi) * 2.54 * 10) / 2.0;
-            sphere.position.x = ((marker1.width / marker1.dpi) * 2.54 * 10) / 2.0;
             cube.visible = false;
             cone.visible = false;
         }
         else if(index == 1) {
             sphere.visible = false;
             cube.visible = true;
-            cube.position.y = ((marker2.height / marker2.dpi) * 2.54 * 10) / 2.0;
-            cube.position.x = ((marker2.width / marker2.dpi) * 2.54 * 10) / 2.0;
             cone.visible = false;
         }
         else if(index == 2) {
             sphere.visible = false;
             cube.visible = false;
             cone.visible = true;
-            cone.position.y = ((marker3.height / marker3.dpi) * 2.54 * 10) / 2.0;
-            cone.position.x = ((marker3.width / marker3.dpi) * 2.54 * 10) / 2.0;
         }
         // set matrix of 'root' by detected 'world' matrix
         setMatrix(root.matrix, world);

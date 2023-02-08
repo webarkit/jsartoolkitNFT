@@ -29,7 +29,7 @@ if (browser == "Apple Safari") {
 } else {
   importScripts("../build/artoolkitNFT_wasm.simd.js");
 }
-importScripts("./utils.js")
+importScripts("./utils.js");
 
 self.onmessage = function (e) {
   var msg = e.data;
