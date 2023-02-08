@@ -152,8 +152,6 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
       sphere.visible = false;
     } else {
       sphere.visible = true;
-      sphere.position.y = ((marker.height / marker.dpi) * 2.54 * 10) / 2.0;
-      sphere.position.x = ((marker.width / marker.dpi) * 2.54 * 10) / 2.0;
       // set matrix of 'root' by detected 'world' matrix
       setMatrix(root.matrix, world);
     }

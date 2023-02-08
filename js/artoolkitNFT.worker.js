@@ -29,6 +29,7 @@ if (browser == "Apple Safari") {
 } else {
   importScripts("../build/artoolkitNFT_wasm.simd.js");
 }
+importScripts("./utils.js")
 
 self.onmessage = function (e) {
   var msg = e.data;
@@ -49,6 +50,7 @@ var next = null;
 var ar = null;
 var markerResult = null;
 var marker;
+var markerData;
 
 function load(msg) {
   self.addEventListener("artoolkitNFT-loaded", function () {
@@ -59,15 +61,17 @@ function load(msg) {
       var cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
+        let matrixGL_RH = _applyMarkerData(ev.data.matrixGL_RH, markerData)
         markerResult = {
           type: "found",
-          matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
+          matrixGL_RH: JSON.stringify(matrixGL_RH),
         };
       });
 
       ar.loadNFTMarker(msg.marker, function (id) {
         ar.trackNFTMarkerId(id);
         let marker = ar.getNFTData(ar.id, 0);
+        markerData = marker;
         console.log("nftMarker data: ", marker);
         postMessage({ type: "markerInfos", marker: marker });
         console.log("loadNFTMarker -> ", id);
