@@ -29,6 +29,7 @@ if (browser == "Apple Safari") {
 } else {
   importScripts("../build/artoolkitNFT_wasm.simd.js");
 }
+importScripts("./utils.js")
 
 self.onmessage = function (e) {
   var msg = e.data;
@@ -59,10 +60,25 @@ function load(msg) {
       var cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
+        let matrixGL_RH;
+        let index = ev.data.index;
+        switch (index) {
+          case (0):
+            matrixGL_RH = _applyMarkerData(ev.data.matrixGL_RH, marker1)
+            break;
+          case (1):
+            matrixGL_RH = _applyMarkerData(ev.data.matrixGL_RH, marker2);
+            break;
+          case (2):
+            matrixGL_RH = _applyMarkerData(ev.data.matrixGL_RH, marker3);
+            break;
+          default:
+            console.error("Error with marker index!");
+        }
         markerResult = {
           type: "found",
           index: JSON.stringify(ev.data.index),
-          matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
+          matrixGL_RH: JSON.stringify(matrixGL_RH),
         };
       });
 
