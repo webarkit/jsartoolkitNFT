@@ -67,7 +67,6 @@ function load(msg) {
     var cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
-      filter.reset();
       tickCount += 1;
       if (tickCount > WARM_UP_TOLERANCE) {
         var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
