@@ -63,6 +63,7 @@
 
         this.version = '1.3.0';
         console.info('JsartoolkitNFT ', this.version);
+        console.warn("This library is deprecated, use the ES6 version instead!! It will be removed in a future release.")
 
         if (typeof cameraPara === 'string') {
             this.cameraParam = new ARCameraParamNFT(cameraPara, function () {
