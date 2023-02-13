@@ -415,9 +415,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @return {Object} The NFTMarkerInfo struct.
    */
   getNFTMarker(markerIndex: number): INFTMarkerInfo {
-    if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-      return this.artoolkitNFT.NFTMarkerInfo;
-    }
+    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex)
   }
 
   /**

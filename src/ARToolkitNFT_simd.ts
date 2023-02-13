@@ -35,6 +35,7 @@
  */
 import artoolkitNFT from "../build/artoolkitNFT_ES6_wasm.simd";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
+import { INFTMarkerInfo } from "./abstractions/CommonInterfaces";
 import Utils from "./Utils";
 import packageJson from "../package.json";
 const { version } = packageJson;
@@ -66,7 +67,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
   public getProcessingImage: (id: number) => number;
   public detectMarker: (id: number) => number;
   public detectNFTMarker: (id: number) => number;
-  public getNFTMarker: (id: number, markerIndex: number) => number;
+  public getNFTMarker: (id: number, markerIndex: number) => INFTMarkerInfo;
   public getNFTData: (id: number, index: number) => object;
   public setLogLevel: (mode: boolean) => number;
   public getLogLevel: () => number;
