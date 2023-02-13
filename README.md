@@ -52,7 +52,13 @@ You can use raw.githack.com links:
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
 ```
 
-**NO WASM** minified:
+**WASM** version of the library as a Module with new ES6 feature:
+
+```html
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_embed_ES6_wasm.js">
+```
+
+**NO WASM** minified (deprecated):
 
 ```html
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
