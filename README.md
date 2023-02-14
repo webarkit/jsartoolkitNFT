@@ -20,7 +20,7 @@ Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://
 ## Features
 ### Markers Types
 
-**JSARToolKitNFT** support only this types of markers:
+**JSARToolKitNFT** support only this type of markers:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 - Multi NFT markers !!!
@@ -40,7 +40,7 @@ has **WASM** embedded in a single file!
 ## Using the library 💥
 You can use raw.githack.com links:
 
-**WASM** version of the library:
+**WASM** version of the library (deprecated it will be removed in a future release):
 
 ```html
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
@@ -58,7 +58,7 @@ You can use raw.githack.com links:
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_embed_ES6_wasm.js">
 ```
 
-**NO WASM** minified (deprecated):
+**NO WASM** minified (deprecated it will be removed in a future release):
 
 ```html
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
@@ -93,7 +93,7 @@ or you can clone the repository with git, follow the instructions below:
 
   - create a link in the `jsartoolkitNFT/emscripten/` directory that points to WebARKitLib (`jsartoolkitNFT/emscripten/WebARKitLib`) (Linux and macOS only)
   - or, set the `WEBARKITLIB_ROOT` environment variable to point to your WebARKitLib clone
-  - or, change the `tools/makem.js` file to point to your WebARKitLib clone (line 32)
+  - or, change the `tools/makem.js` file to point to your WebARKitLib clone (line 32-33)
 
 ## Documentation
 
