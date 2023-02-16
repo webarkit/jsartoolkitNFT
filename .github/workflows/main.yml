@@ -62,6 +62,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
+          build/artoolkitNFT_embed_ES6_wasm.js
           build/artoolkitNFT_ES6_wasm.js
           build/artoolkitNFT_ES6_wasm.simd.js
           build/artoolkitNFT_wasm.js
@@ -71,6 +72,7 @@ jobs:
           js/artoolkitNFT_ES6.worker.js
           js/artoolkitNFT_multi_ES6.worker.js
           js/artoolkitNFT.api.js
+          js/artoolkitNFT_ES6.api.js
           js/artoolkitNFT.worker.js
           js/artoolkitNFT.multi_worker.js
           dist/ARToolkitNFT.js
