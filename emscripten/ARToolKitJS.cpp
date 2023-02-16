@@ -662,9 +662,8 @@ extern "C" {
 			arc->videoFrame,
 			arc->videoFrameSize,
 			arc->cameraLens,
-			arc->videoLuma          //$5
+			arc->videoLuma          //$4
 		);
-
 
 		return arc->id;
 	}
