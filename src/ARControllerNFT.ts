@@ -54,7 +54,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private listeners: object;
   private nftMarkers: INFTMarker[];
   private transform_mat: Float64Array;
-  private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
   private videoWidth: number;
   private videoHeight: number;
@@ -79,7 +78,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
-   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * transformGL_RH, videoWidth, videoHeight, videoSize,
    * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
    */
   constructor();
@@ -88,7 +87,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
-   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * transformGL_RH, videoWidth, videoHeight, videoSize,
    * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
    * @param {number} width
    * @param {number} height
@@ -99,7 +98,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
-   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
+   * transformGL_RH, videoWidth, videoHeight, videoSize,
    * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
    * @param {number} width
    * @param {number} height
@@ -129,7 +128,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     this.transform_mat = new Float64Array(16);
     this.transformGL_RH = new Float64Array(16);
-    this.marker_transform_mat = null;
 
     this.videoWidth = width;
     this.videoHeight = height;
@@ -881,11 +879,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
       this.artoolkitNFT.HEAPU8.buffer,
       params.camera,
       16
-    );
-    this.marker_transform_mat = new Float64Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      params.transform,
-      12
     );
 
     this.setProjectionNearPlane(0.1);

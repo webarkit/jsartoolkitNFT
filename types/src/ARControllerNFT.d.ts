@@ -11,7 +11,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private listeners;
     private nftMarkers;
     private transform_mat;
-    private marker_transform_mat;
     private transformGL_RH;
     private videoWidth;
     private videoHeight;

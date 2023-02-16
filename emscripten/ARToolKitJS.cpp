@@ -84,8 +84,6 @@ std::unordered_map<int, ARParam> cameraParams;
 //	Global variables
 // ============================================================================
 
-static ARdouble	gTransform[3][4];
-
 static int gARControllerID = 0;
 static int gCameraID = 0;
 
@@ -658,14 +656,12 @@ extern "C" {
 			frameMalloc["framepointer"] = $1;
 			frameMalloc["framesize"] = $2;
 			frameMalloc["camera"] = $3;
-			frameMalloc["transform"] = $4;
-			frameMalloc["videoLumaPointer"] = $5;
+			frameMalloc["videoLumaPointer"] = $4;
 		},
 			arc->id,
 			arc->videoFrame,
 			arc->videoFrameSize,
 			arc->cameraLens,
-			gTransform,
 			arc->videoLuma          //$5
 		);
 
