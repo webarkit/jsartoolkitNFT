@@ -107,11 +107,11 @@ At this point you have build the docs in the `docs/` folder, you should run a se
 
 ## Using with React
 
-Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific project that use JsartoolkitNFT with React and Three.js.
+Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific project that uses JsartoolkitNFT with React and Three.js.
 
 ## ARnft library
 
-**JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small libary that help developers to create **WebAR** apps.
+**JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small library that helps developers to create **WebAR** apps.
 
 ## Project Structure 📂
 
