@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <AR/ar.h>
 #include <emscripten.h>
+#include <emscripten/val.h>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -83,8 +84,6 @@ std::unordered_map<int, ARParam> cameraParams;
 //	Global variables
 // ============================================================================
 
-static ARdouble	gTransform[3][4];
-
 static int gARControllerID = 0;
 static int gCameraID = 0;
 
@@ -108,12 +107,15 @@ extern "C" {
 		}
 	}
 
-	int getNFTMarkerInfo(int id, int markerIndex) {
-		if (arControllers.find(id) == arControllers.end()) { return ARCONTROLLER_NOT_FOUND; }
+	emscripten::val getNFTMarkerInfo(int id, int markerIndex) {
+		if (arControllers.find(id) == arControllers.end()) { return emscripten::val(ARCONTROLLER_NOT_FOUND); }
 		arController *arc = &(arControllers[id]);
 
+		emscripten::val NFTMarkerInfo = emscripten::val::object();
+		emscripten::val pose = emscripten::val::array();
+
 		if (arc->surfaceSetCount <= markerIndex) {
-			return MARKER_INDEX_OUT_OF_BOUNDS;
+			return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
 		}
 
 		float trans[3][4];
@@ -159,107 +161,36 @@ extern "C" {
 		}
 
 		if (arc->detectedPage == markerIndex) {
-			EM_ASM_({
-				var $a = arguments;
-				var i = 0;
-				if (!artoolkitNFT["NFTMarkerInfo"]) {
-					artoolkitNFT["NFTMarkerInfo"] = ({
-						id: 0,
-						error: -1,
-						found: 0,
-						pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
-					});
-				}
-				var markerInfo = artoolkitNFT["NFTMarkerInfo"];
-				markerInfo["id"] = $a[i++];
-				markerInfo["error"] = $a[i++];
-				markerInfo["found"] = 1;
-				markerInfo["pose"][0] = $a[i++];
-				markerInfo["pose"][1] = $a[i++];
-				markerInfo["pose"][2] = $a[i++];
-				markerInfo["pose"][3] = $a[i++];
-				markerInfo["pose"][4] = $a[i++];
-				markerInfo["pose"][5] = $a[i++];
-				markerInfo["pose"][6] = $a[i++];
-				markerInfo["pose"][7] = $a[i++];
-				markerInfo["pose"][8] = $a[i++];
-				markerInfo["pose"][9] = $a[i++];
-				markerInfo["pose"][10] = $a[i++];
-				markerInfo["pose"][11] = $a[i++];
-			},
-				markerIndex,
-				err,
-
-				#if WITH_FILTERING
-
-				transFLerp[0][0],
-				transFLerp[0][1],
-				transFLerp[0][2],
-				transFLerp[0][3],
-
-				transFLerp[1][0],
-				transFLerp[1][1],
-				transFLerp[1][2],
-				transFLerp[1][3],
-
-				transFLerp[2][0],
-				transFLerp[2][1],
-				transFLerp[2][2],
-				transFLerp[2][3]
-
-				#else
-
-				trans[0][0],
-				trans[0][1],
-				trans[0][2],
-				trans[0][3],
-
-				trans[1][0],
-				trans[1][1],
-				trans[1][2],
-				trans[1][3],
-
-				trans[2][0],
-				trans[2][1],
-				trans[2][2],
-				trans[2][3]
-
-				#endif
-			);
+			NFTMarkerInfo.set("id", markerIndex);
+			NFTMarkerInfo.set("error", err);
+			NFTMarkerInfo.set("found", 1);
+			#if WITH_FILTERING
+			for (auto x = 0; x < 3; x++) {
+                for (auto y = 0; y < 4; y++) {
+                    pose.call<void>("push", transFLerp[x][y]);
+                }
+            }
+			#else
+            for (auto x = 0; x < 3; x++) {
+                for (auto y = 0; y < 4; y++) {
+                    pose.call<void>("push", trans[x][y]);
+                }
+            }
+			#endif
+			NFTMarkerInfo.set("pose", pose);
         } else {
-			EM_ASM_({
-				var $a = arguments;
-				var i = 0;
-				if (!artoolkitNFT["NFTMarkerInfo"]) {
-					artoolkitNFT["NFTMarkerInfo"] = ({
-						id: 0,
-						error: -1,
-						found: 0,
-						pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
-					});
-				}
-				var markerInfo = artoolkitNFT["NFTMarkerInfo"];
-				markerInfo["id"] = $a[i++];
-				markerInfo["error"] = -1;
-				markerInfo["found"] = 0;
-				markerInfo["pose"][0] = 0;
-				markerInfo["pose"][1] = 0;
-				markerInfo["pose"][2] = 0;
-				markerInfo["pose"][3] = 0;
-				markerInfo["pose"][4] = 0;
-				markerInfo["pose"][5] = 0;
-				markerInfo["pose"][6] = 0;
-				markerInfo["pose"][7] = 0;
-				markerInfo["pose"][8] = 0;
-				markerInfo["pose"][9] = 0;
-				markerInfo["pose"][10] = 0;
-				markerInfo["pose"][11] = 0;
-			},
-				markerIndex
-			);
+			NFTMarkerInfo.set("id", markerIndex);
+			NFTMarkerInfo.set("error", -1);
+			NFTMarkerInfo.set("found", 0);
+            for (auto x = 0; x < 3; x++) {
+                for (auto y = 0; y < 4; y++) {
+                    pose.call<void>("push", 0);
+                }
+            }
+			NFTMarkerInfo.set("pose", pose);
         }
 
-		return 0;
+		return NFTMarkerInfo;
 	}
 
 	int detectNFTMarker(int id) {
@@ -725,17 +656,14 @@ extern "C" {
 			frameMalloc["framepointer"] = $1;
 			frameMalloc["framesize"] = $2;
 			frameMalloc["camera"] = $3;
-			frameMalloc["transform"] = $4;
-			frameMalloc["videoLumaPointer"] = $5;
+			frameMalloc["videoLumaPointer"] = $4;
 		},
 			arc->id,
 			arc->videoFrame,
 			arc->videoFrameSize,
 			arc->cameraLens,
-			gTransform,
-			arc->videoLuma          //$5
+			arc->videoLuma          //$4
 		);
-
 
 		return arc->id;
 	}

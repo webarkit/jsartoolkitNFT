@@ -1,4 +1,5 @@
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
+import { INFTMarkerInfo } from "./abstractions/CommonInterfaces";
 declare global {
     var artoolkitNFT: IARToolkitNFT;
 }
@@ -17,7 +18,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     getProcessingImage: (id: number) => number;
     detectMarker: (id: number) => number;
     detectNFTMarker: (id: number) => number;
-    getNFTMarker: (id: number, markerIndex: number) => number;
+    getNFTMarker: (id: number, markerIndex: number) => INFTMarkerInfo;
     getNFTData: (id: number, index: number) => object;
     setLogLevel: (mode: boolean) => number;
     getLogLevel: () => number;

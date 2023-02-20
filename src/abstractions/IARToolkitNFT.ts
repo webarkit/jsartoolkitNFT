@@ -41,7 +41,7 @@ export interface IARToolkitNFT {
   ) => Array<number>;
   detectMarker: (id: number) => number;
   detectNFTMarker: (arId: number) => void;
-  getNFTMarker: (id: number, markerIndex: number) => number;
+  getNFTMarker: (id: number, markerIndex: number) => INFTMarkerInfo;
   getNFTData: (id: number, index: number) => object;
   setImageProcMode: (id: number, mode: number) => number;
   getImageProcMode: (id: number) => number;
