@@ -454,9 +454,7 @@ class ARControllerNFT {
         @returns {Object} The NFTmarkerInfo struct.
     */
     getNFTMarker(markerIndex) {
-        if (0 === artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-            return artoolkitNFT.NFTMarkerInfo;
-        }
+        return artoolkitNFT.getNFTMarker(this.id, markerIndex);
     };
 
     /**
