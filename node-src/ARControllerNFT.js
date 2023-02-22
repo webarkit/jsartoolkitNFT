@@ -64,7 +64,7 @@ class ARControllerNFT {
 
         for (var i = 0; i < nftMarkerCount; i++) {
             var nftMarkerInfo = this.getNFTMarker(i);
-            console.log(nftMarkerInfo);
+            console.log("nftMarkerInfo: ", nftMarkerInfo);
             var markerType = this.artoolkitNFT.NFT_MARKER;
             console.log('before found');
             if (nftMarkerInfo.found) {
@@ -77,7 +77,7 @@ class ARControllerNFT {
                 visible.inCurrent = true;
                 this.transMatToGLMat(visible.matrix, this.transform_mat);
                 this.transformGL_RH = this.arglCameraViewRHf(this.transform_mat);
-                this.em.emit('getNFTMarker',  {
+                this.em.emit('getNFTMarker', {
                     index: i,
                     type: markerType,
                     marker: nftMarkerInfo,
@@ -115,7 +115,7 @@ class ARControllerNFT {
                         matrixGL_RH: this.transformGL_RH
                     }
                 });*/
-                this.em.emit('lostNFTMarker',  {
+                this.em.emit('lostNFTMarker', {
                     index: i,
                     type: markerType,
                     marker: nftMarkerInfo,
@@ -151,30 +151,18 @@ class ARControllerNFT {
     };
 
     getNFTMarker(markerIndex) {
-        if (0 === this.artoolkitNFT.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-            console.log('ok getNFTMarkerInfo')
-            console.log(artoolkitNFT.NFTMarkerInfo);
-            return artoolkitNFT.NFTMarkerInfo;
-          } else {
-            var obj = {	id: 0,
-                      error: -1,
-                      found: 0,
-                      pose: [0,0,0,0, 0,0,0,0, 0,0,0,0]
-            }
-            console.log('default NFTMarkerInfo...');
-            return obj
-          }
+        return this.artoolkitNFT.artoolkitNFT.getNFTMarker(this.id, markerIndex);
     }
 
     detectNFTMarker() {
         this.artoolkitNFT.artoolkitNFT.detectNFTMarker(this.id);
     };
 
-    getNFTData (index) {
+    getNFTData(index) {
         return this.artoolkitNFT.artoolkitNFT.getNFTData(this.id, index);
     };
 
-    getCameraMatrix () {
+    getCameraMatrix() {
         return this.camera_mat;
     };
 
@@ -277,7 +265,7 @@ class ARControllerNFT {
 
     loadNFTMarkers(markerURLs, onSuccess, onError) {
         var self = this;
-        this.addNFTMarkers(this.id, markerURLs, function(ids) {
+        this.addNFTMarkers(this.id, markerURLs, function (ids) {
             self.nftMarkerCount += ids.length;
             onSuccess(ids);
         }, onError);
@@ -285,16 +273,16 @@ class ARControllerNFT {
 
     loadNFTMarker(markerURL, onSuccess, onError) {
         if (markerURL) {
-            this.loadNFTMarkers([markerURL], function(ids) {
-              onSuccess(ids[0]);
+            this.loadNFTMarkers([markerURL], function (ids) {
+                onSuccess(ids[0]);
             }, onError);
         } else {
-          if (onError) {
-              onError("Marker URL needs to be defined and not equal empty string!");
-          }
-          else {
-              console.error("Marker URL needs to be defined and not equal empty string!");
-          }
+            if (onError) {
+                onError("Marker URL needs to be defined and not equal empty string!");
+            }
+            else {
+                console.error("Marker URL needs to be defined and not equal empty string!");
+            }
         }
 
     };
@@ -458,14 +446,14 @@ class ARControllerNFT {
 
             for (var p = 0; p < this.videoSize; p++) {
                 var r = data[q + 0], g = data[q + 1], b = data[q + 2];
-                if(r>255) {
+                if (r > 255) {
                     console.error("not in range");
                 }
                 //console.log(r);
                 // videoLuma[p] = (r+r+b+g+g+g)/6;         // https://stackoverflow.com/a/596241/5843642
                 this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
                 q += 4;
-                console.log(this.videoLuma[p]);
+                //console.log(this.videoLuma[p]);
             }
             //console.log(this.videoLuma);
         }
