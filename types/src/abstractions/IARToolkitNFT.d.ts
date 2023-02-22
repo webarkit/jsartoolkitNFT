@@ -34,9 +34,9 @@ export interface IARToolkitNFT {
     setThreshold: (id: number, threshold: number) => number;
     getThreshold: (id: number) => number;
     addNFTMarkers: (arId: number, urls: Array<string>, callback: (ids: number[]) => void, onError2: (errorNumber: number) => void) => Array<number>;
-    detectMarker: (id: number) => number;
-    detectNFTMarker: (arId: number) => void;
-    getNFTMarker: (id: number, markerIndex: number) => INFTMarkerInfo;
+    detectMarker: (id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array) => number;
+    detectNFTMarker: (arId: number, videoLuma: Uint8Array) => void;
+    getNFTMarker: (id: number, markerIndex: number, videoFrame: Uint8ClampedArray) => INFTMarkerInfo;
     getNFTData: (id: number, index: number) => object;
     setImageProcMode: (id: number, mode: number) => number;
     getImageProcMode: (id: number) => number;

@@ -294,13 +294,13 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     // detect NFT markers
     let nftMarkerCount = this.nftMarkerCount;
-    this.detectNFTMarker();
+    this.detectNFTMarker(this.videoLuma);
 
     // in ms
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i);
+      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i, image.data);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -349,8 +349,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * with the given tracked id.
    * @return {void}
    */
-  detectNFTMarker(): void {
-    this.artoolkitNFT.detectNFTMarker(this.id);
+  detectNFTMarker(videoLuma: any): void {
+    this.artoolkitNFT.detectNFTMarker(this.id, videoLuma);
   }
 
   /**
@@ -398,7 +398,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    */
   detectMarker(image: IImageObj): number {
     if (this._copyImageToHeap(image)) {
-      return this.artoolkitNFT.detectMarker(this.id);
+      return this.artoolkitNFT.detectMarker(this.id, image.data, this.videoLuma);
     }
     return -99;
   }
@@ -412,8 +412,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} markerIndex The index of the NFT marker to query.
    * @return {Object} The NFTMarkerInfo struct.
    */
-  getNFTMarker(markerIndex: number): INFTMarkerInfo {
-    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex);
+  getNFTMarker(markerIndex: number, videoFrame: any): INFTMarkerInfo {
+    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex, videoFrame);
   }
 
   /**

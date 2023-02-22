@@ -3,10 +3,10 @@ export declare abstract class AbstractARControllerNFT {
     static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<AbstractARControllerNFT>;
     static initWithImage: (image: IImageObj, cameraParam: string) => Promise<AbstractARControllerNFT>;
     process: (image: IImageObj) => void;
-    detectNFTMarker: () => void;
+    detectNFTMarker: (videoLuma: any) => void;
     trackNFTMarkerId: (id: number, markerWidth?: number) => object;
     detectMarker: (image: any) => number;
-    getNFTMarker: (markerIndex: number) => object;
+    getNFTMarker: (markerIndex: number, videoFrame: any) => object;
     getNFTData: (id: number, index: number) => object;
     addEventListener: (name: string, callback: object) => void;
     removeEventListener: (name: string, callback: object) => void;

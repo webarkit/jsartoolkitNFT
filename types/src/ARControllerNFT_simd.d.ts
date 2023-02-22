@@ -41,10 +41,10 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     set cameraParam(cameraParam: string);
     get cameraParam(): string;
     process(image: IImageObj): void;
-    detectNFTMarker(): void;
+    detectNFTMarker(videoLuma: any): void;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
     detectMarker(image: IImageObj): number;
-    getNFTMarker(markerIndex: number): INFTMarkerInfo;
+    getNFTMarker(markerIndex: number, videoFrame: any): INFTMarkerInfo;
     getNFTData(id: number, index: number): object;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
