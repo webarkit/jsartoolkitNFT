@@ -13,6 +13,7 @@ var exec = require("child_process").exec,
 const platform = os.platform();
 
 var NO_LIBAR = false;
+/* Filtering remote jitter, but makes the tracking swim */
 var WITH_FILTERING = 1;
 
 var arguments = process.argv;
@@ -40,8 +41,8 @@ if (!EMSCRIPTEN_ROOT) {
   );
 }
 
-var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc") : "emcc";
-var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++") : "em++";
+var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc ") : "emcc ";
+var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++ ") : "em++ ";
 var OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
 var MEM = 256 * 1024 * 1024; // 64MB
 
@@ -51,7 +52,10 @@ var OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
 var BUILD_DEBUG_FILE = "artoolkitNFT.debug.js";
 var BUILD_WASM_FILE = "artoolkitNFT_wasm.js";
 var BUILD_WASM_NODE_FILE = "artoolkitNFT_node_wasm.js";
+var BUILD_WASM_EMBED_ES6_FILE = "artoolkitNFT_embed_ES6_wasm.js";
+var BUILD_SIMD_WASM_FILE = "artoolkitNFT_wasm.simd.js";
 var BUILD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.js";
+var BUILD_SIMD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.simd.js";
 var BUILD_MIN_FILE = "artoolkitNFT.min.js";
 
 var MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c"];
@@ -69,9 +73,7 @@ MAIN_SOURCES = MAIN_SOURCES.map(function (src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(" ");
 
-let srcTest = path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/");
-
-let arSources, ar_sources;
+let ar_sources;
 
 if (platform === "win32") {
   var glob = require("glob");
@@ -163,24 +165,29 @@ if (HAVE_NFT) {
 }
 
 var DEFINES = " ";
-if (HAVE_NFT) DEFINES += " -D HAVE_NFT ";
-if (WITH_FILTERING) DEFINES += " -D WITH_FILTERING ";
+if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
+DEFINES += " -D WITH_FILTERING=" + WITH_FILTERING;
 
 var FLAGS = "" + OPTIMIZE_FLAGS;
-FLAGS += " -Wno-warn-absolute-paths ";
+FLAGS += " -Wno-warn-absolute-paths";
 FLAGS += " -s TOTAL_MEMORY=" + MEM + " ";
 FLAGS += " -s USE_ZLIB=1";
-FLAGS += " -s USE_LIBJPEG";
-FLAGS += " --memory-init-file 0 "; // for memless file
-FLAGS += " -s EXPORTED_RUNTIME_METHODS='[\"FS\"]'";
+FLAGS += " -s USE_LIBJPEG=1";
+FLAGS += " --memory-init-file 0"; // for memless file
+FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 
-var WASM_FLAGS = " -s SINGLE_FILE=1 ";
-var ES6_FLAGS =
-  " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s EXPORT_NAME='artoolkitNFT' -s MODULARIZE=1 ";
+var WASM_FLAGS = " -s SINGLE_FILE=1";
+var SIMD128_FLAGS = " -msimd128";
+var ES6_FLAGS = " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1";
+var ES6_EMBED_ES6_FLAGS =
+  " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
 
 var PRE_FLAGS =
-  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js") + " ";
+  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
+
+var PRE_ES6_FLAGS =
+  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
 
 var NODE_FLAGS = " -s ENVIRONMENT='node' -s FORCE_FILESYSTEM  -s EXPORTED_RUNTIME_METHODS='['NODEFS','FS']' -lnodefs.js";
 
@@ -221,13 +228,18 @@ function clean_builds() {
   try {
     var files = fs.readdirSync(OUTPUT_PATH);
     var filesLength = files.length;
-    if (filesLength > 0)
+    if (filesLength > 0) {
       if (NO_LIBAR == true) {
-        filesLength -= 1;
+        for (var i = 0; i < filesLength - 2; i++) {
+          var filePath = OUTPUT_PATH + "/" + files[i];
+          if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
+        }
+      } else {
+        for (var i = 0; i < filesLength; i++) {
+          var filePath = OUTPUT_PATH + "/" + files[i];
+          if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
+        }
       }
-    for (var i = 0; i < filesLength; i++) {
-      var filePath = OUTPUT_PATH + "/" + files[i];
-      if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
     }
   } catch (e) {
     return console.log(e);
@@ -236,7 +248,6 @@ function clean_builds() {
 
 var compile_arlib = format(
   EMCC +
-    " " +
     INCLUDES +
     " " +
     ar_sources.join(" ") +
@@ -247,11 +258,24 @@ var compile_arlib = format(
   OUTPUT_PATH
 );
 
+var compile_simd_arlib = format(
+  EMCC +
+    INCLUDES +
+    " " +
+    ar_sources.join(" ") +
+    FLAGS +
+    SIMD128_FLAGS +
+    " " +
+    DEFINES +
+    " -r -o {OUTPUT_PATH}libar_simd.bc ",
+  OUTPUT_PATH
+);
+
 var ALL_BC = " {OUTPUT_PATH}libar.bc ";
+var SIMD_BC = " {OUTPUT_PATH}libar_simd.bc ";
 
 var compile_combine = format(
   EMCC +
-    " " +
     INCLUDES +
     " " +
     ALL_BC +
@@ -269,7 +293,6 @@ var compile_combine = format(
 
 var compile_combine_min = format(
   EMCC +
-    " " +
     INCLUDES +
     " " +
     ALL_BC +
@@ -287,13 +310,13 @@ var compile_combine_min = format(
 
 var compile_wasm = format(
   EMCC +
-    " " +
     INCLUDES +
     " " +
     ALL_BC +
     MAIN_SOURCES +
     FLAGS +
     WASM_FLAGS +
+    SIMD128_FLAGS +
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
@@ -319,9 +342,43 @@ var compile_wasm_node = format(
   BUILD_WASM_NODE_FILE
 );
 
-var compile_wasm_es6 = format(
+var compile_wasm_embed_ES6 = format(
   EMCC +
     " " +
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    DEFINES +
+    ES6_EMBED_ES6_FLAGS +
+    PRE_ES6_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_EMBED_ES6_FILE
+);
+
+var compile_simd_wasm = format(
+  EMCC +
+    INCLUDES +
+    " " +
+    SIMD_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    SIMD128_FLAGS +
+    DEFINES +
+    PRE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_SIMD_WASM_FILE
+);
+
+var compile_wasm_es6 = format(
+  EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -334,6 +391,23 @@ var compile_wasm_es6 = format(
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_WASM_ES6_FILE
+);
+
+var compile_simd_wasm_es6 = format(
+  EMCC +
+    INCLUDES +
+    " " +
+    SIMD_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    SIMD128_FLAGS +
+    DEFINES +
+    ES6_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_SIMD_WASM_ES6_FILE
 );
 
 /*
@@ -376,14 +450,18 @@ function addJob(job) {
 
 addJob(clean_builds);
 addJob(compile_arlib);
+addJob(compile_simd_arlib);
 addJob(compile_combine);
 addJob(compile_wasm);
 addJob(compile_wasm_node);
+addJob(compile_wasm_embed_ES6);
+addJob(compile_simd_wasm);
 addJob(compile_wasm_es6);
+addJob(compile_simd_wasm_es6);
 addJob(compile_combine_min);
 
 if (NO_LIBAR == true) {
-  jobs.splice(1, 1);
+  jobs.splice(1, 2);
 }
 
 runJob();

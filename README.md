@@ -15,12 +15,12 @@
 Emscripten port of [WebARKitLib](https://github.com/webarkit/WebARKitLib) to JavaScript.
 Modified and lighter version of [JSARToolKit5](https://github.com/artoolkitx/jsartoolkit5).
 
-Try the example !! [kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html](https://kalwalt.github.io/jsartoolkitNFT/examples/arNFT_example.html)
+Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://www.webarkit.org/examples/artoolkitnft_es6_example)
 
 ## Features
 ### Markers Types
 
-**JSARToolKitNFT** support only this types of markers:
+**JSARToolKitNFT** support only this type of markers:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 - Multi NFT markers !!!
@@ -40,7 +40,7 @@ has **WASM** embedded in a single file!
 ## Using the library 💥
 You can use raw.githack.com links:
 
-**WASM** version of the library:
+**WASM** version of the library (deprecated it will be removed in a future release):
 
 ```html
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_wasm.js">
@@ -52,7 +52,13 @@ You can use raw.githack.com links:
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_ES6_wasm.js">
 ```
 
-**NO WASM** minified:
+**WASM** version of the library as a Module with new ES6 feature:
+
+```html
+<script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT_embed_ES6_wasm.js">
+```
+
+**NO WASM** minified (deprecated it will be removed in a future release):
 
 ```html
 <script src="https://raw.githack.com/webarkit/jsartoolkitNFT/master/build/artoolkitNFT.min.js">
@@ -87,7 +93,7 @@ or you can clone the repository with git, follow the instructions below:
 
   - create a link in the `jsartoolkitNFT/emscripten/` directory that points to WebARKitLib (`jsartoolkitNFT/emscripten/WebARKitLib`) (Linux and macOS only)
   - or, set the `WEBARKITLIB_ROOT` environment variable to point to your WebARKitLib clone
-  - or, change the `tools/makem.js` file to point to your WebARKitLib clone (line 32)
+  - or, change the `tools/makem.js` file to point to your WebARKitLib clone (line 32-33)
 
 ## Documentation
 
@@ -99,9 +105,13 @@ npm run docs
 ```
 At this point you have build the docs in the `docs/` folder, you should run a server and then go to `docs/` folder.
 
+## Using with React
+
+Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific project that uses JsartoolkitNFT with React and Three.js.
+
 ## ARnft library
 
-**JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small libary that help developers to create **WebAR** apps.
+**JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small library that helps developers to create **WebAR** apps.
 
 ## Project Structure 📂
 
