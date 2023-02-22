@@ -16,9 +16,9 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     setDebugMode: (id: number, mode: boolean) => number;
     getDebugMode: (id: number) => boolean;
     getProcessingImage: (id: number) => number;
-    detectMarker: (id: number) => number;
-    detectNFTMarker: (id: number) => number;
-    getNFTMarker: (id: number, markerIndex: number) => INFTMarkerInfo;
+    detectMarker: (id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array) => number;
+    detectNFTMarker: (id: number, videoLuma: Uint8Array) => number;
+    getNFTMarker: (id: number, markerIndex: number, videoFrame: Uint8ClampedArray) => INFTMarkerInfo;
     getNFTData: (id: number, index: number) => object;
     setLogLevel: (mode: boolean) => number;
     getLogLevel: () => number;
