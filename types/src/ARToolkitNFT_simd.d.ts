@@ -22,16 +22,6 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     getNFTData: (id: number, index: number) => object;
     setLogLevel: (mode: boolean) => number;
     getLogLevel: () => number;
-    frameMalloc: {
-        framepointer: number;
-        framesize: number;
-        videoLumaPointer: number;
-        camera: number;
-        transform: number;
-    };
-    HEAPU8: {
-        buffer: Uint8Array;
-    };
     NFTMarkerInfo: {
         error: number;
         found: number;
@@ -48,6 +38,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     getThreshold: (id: number) => number;
     setImageProcMode: (id: number, mode: number) => number;
     getImageProcMode: (id: number) => number;
+    getCameraLens: (cameraId: number) => any;
     constructor();
     init(): Promise<this>;
     private _decorate;

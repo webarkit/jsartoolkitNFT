@@ -1,5 +1,6 @@
 import { INFTMarkerInfo } from "./CommonInterfaces";
 export interface IARToolkitNFT {
+  getCameraLens: (cameraId: number) => any;
   setup: {
     (width: number, height: number, cameraId: number): number;
   };
@@ -11,16 +12,6 @@ export interface IARToolkitNFT {
   getProcessingImage: (id: number) => number;
   setLogLevel: (mode: boolean) => number;
   getLogLevel: () => number;
-  frameMalloc: {
-    framepointer: number;
-    framesize: number;
-    videoLumaPointer: number;
-    camera: number;
-    transform: number;
-  };
-  HEAPU8: {
-    buffer: Uint8Array;
-  };
   NFTMarkerInfo: INFTMarkerInfo;
   loadCamera: (cameraParam: string) => Promise<number>;
   setProjectionNearPlane: {
