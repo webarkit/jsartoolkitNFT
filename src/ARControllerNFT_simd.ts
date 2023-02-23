@@ -294,7 +294,10 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i, image.data);
+      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(
+        i,
+        image.data
+      );
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -392,7 +395,11 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    */
   detectMarker(image: IImageObj): number {
     if (this._copyImageToHeap(image)) {
-      return this.artoolkitNFT.detectMarker(this.id, image.data, this.videoLuma);
+      return this.artoolkitNFT.detectMarker(
+        this.id,
+        image.data,
+        this.videoLuma
+      );
     }
     return -99;
   }
@@ -854,11 +861,9 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     this._initNFT();
 
     this.framesize = this._width * this._height;
-  
-    this.videoLuma = new Uint8Array(
-      this.framesize / 4, 
-    );
-    
+
+    this.videoLuma = new Uint8Array(this.framesize / 4);
+
     this.camera_mat = this.artoolkitNFT.getCameraLens(this.id);
 
     this.setProjectionNearPlane(0.1);
