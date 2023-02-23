@@ -13,7 +13,7 @@ export abstract class AbstractARControllerNFT {
   detectNFTMarker: (videoLuma: any) => void;
   trackNFTMarkerId: (id: number, markerWidth?: number) => object;
   detectMarker: (image: any) => number;
-  getNFTMarker: (markerIndex: number, videoFrame: any) => object;
+  getNFTMarker: (markerIndex: number) => object;
   getNFTData: (id: number, index: number) => object;
   addEventListener: (name: string, callback: object) => void;
   removeEventListener: (name: string, callback: object) => void;
