@@ -48,6 +48,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     getThreshold: (id: number) => number;
     setImageProcMode: (id: number, mode: number) => number;
     getImageProcMode: (id: number) => number;
+    getCameraLens: (cameraId: number) => any;
     constructor();
     init(): Promise<this>;
     private _decorate;

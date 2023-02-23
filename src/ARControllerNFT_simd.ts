@@ -58,14 +58,11 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private videoWidth: number;
   private videoHeight: number;
   private videoSize: number;
-  private framepointer: number;
   private framesize: number;
-  private dataHeap: Uint8Array;
   private videoLuma: Uint8Array;
   private grayscaleEnabled: boolean;
   private grayscaleSource: Uint8Array;
   private camera_mat: Float64Array;
-  private videoLumaPointer: number;
   private nftMarkerFound: boolean; // = false
   private nftMarkerFoundTime: number;
   private nftMarkerCount: number; // = 0
@@ -133,13 +130,10 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     this.videoHeight = height;
     this.videoSize = this.videoWidth * this.videoHeight;
 
-    this.framepointer = null;
     this.framesize = null;
-    this.dataHeap = null;
     this.videoLuma = null;
     this.grayscaleEnabled = false;
     this.camera_mat = null;
-    this.videoLumaPointer = null;
 
     // this is to workaround the introduction of "self" variable
     this.nftMarkerFound = false;
@@ -349,7 +343,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * with the given tracked id.
    * @return {void}
    */
-  detectNFTMarker(videoLuma: any): void {
+  detectNFTMarker(videoLuma: Uint8Array): void {
     this.artoolkitNFT.detectNFTMarker(this.id, videoLuma);
   }
 
@@ -859,31 +853,13 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     this._initNFT();
 
-    const params: IARToolkitNFT["frameMalloc"] = this.artoolkitNFT.frameMalloc;
-    this.framepointer = params.framepointer;
-    //this.framesize = params.framesize;
     this.framesize = this._width * this._height;
-    this.videoLumaPointer = params.videoLumaPointer;
-
-    this.dataHeap = new Uint8Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      this.framepointer,
-      this.framesize
-    );
-    /*this.videoLuma = new Uint8Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      this.videoLumaPointer,
-      this.framesize / 4
-    );*/
+  
     this.videoLuma = new Uint8Array(
-      this.framesize / 4
+      this.framesize / 4, 
     );
-
-    this.camera_mat = new Float64Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      params.camera,
-      16
-    );
+    
+    this.camera_mat = this.artoolkitNFT.getCameraLens(this.id);
 
     this.setProjectionNearPlane(0.1);
     this.setProjectionFarPlane(1000);
@@ -948,8 +924,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
       }
     }
 
-    if (this.dataHeap) {
-      this.dataHeap.set(data);
+    if (this.videoLuma) {
       return true;
     }
 

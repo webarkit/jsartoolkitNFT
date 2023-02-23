@@ -15,14 +15,11 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private videoWidth;
     private videoHeight;
     private videoSize;
-    private framepointer;
     private framesize;
-    private dataHeap;
     private videoLuma;
     private grayscaleEnabled;
     private grayscaleSource;
     private camera_mat;
-    private videoLumaPointer;
     private nftMarkerFound;
     private nftMarkerFoundTime;
     private nftMarkerCount;
@@ -41,7 +38,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     set cameraParam(cameraParam: string);
     get cameraParam(): string;
     process(image: IImageObj): void;
-    detectNFTMarker(videoLuma: any): void;
+    detectNFTMarker(videoLuma: Uint8Array): void;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
     detectMarker(image: IImageObj): number;
     getNFTMarker(markerIndex: number, videoFrame: any): INFTMarkerInfo;
