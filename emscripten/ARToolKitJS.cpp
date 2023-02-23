@@ -117,20 +117,24 @@ extern "C"
     }
   }
 
-  void passVideoData(int id, emscripten::val videoFrame, emscripten::val videoLuma)
+  int passVideoData(int id, emscripten::val videoFrame, emscripten::val videoLuma)
   {
     if (arControllers.find(id) == arControllers.end())
     {
-      return;
+      return -1;
     }
+
+    arController *arc = &(arControllers[id]);
+
     std::vector<uint8_t> vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
     std::vector<uint8_t> vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
-    arController *arc = &(arControllers[id]);
-    memcpy(arc->videoFrame, vf.data(), arc->videoFrameSize);
-    memcpy(arc->videoLuma, vl.data(), arc->videoFrameSize / 4);
+
+    memcpy(arc->videoFrame, vf.data(), sizeof(uint8_t) * arc->videoFrameSize);
+    memcpy(arc->videoLuma, vl.data(), sizeof(uint8_t) * arc->videoFrameSize/4);
+    return 0;
   }
 
-  emscripten::val getNFTMarkerInfo(int id, int markerIndex, emscripten::val videoFrame)
+  emscripten::val getNFTMarkerInfo(int id, int markerIndex)
   {
     if (arControllers.find(id) == arControllers.end())
     {
@@ -140,8 +144,6 @@ extern "C"
 
     emscripten::val NFTMarkerInfo = emscripten::val::object();
     emscripten::val pose = emscripten::val::array();
-
-    std::vector<uint8_t> vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
 
     if (arc->surfaceSetCount <= markerIndex)
     {
@@ -162,7 +164,7 @@ extern "C"
 
       int trackResult =
           ar2TrackingMod(arc->ar2Handle, arc->surfaceSet[arc->detectedPage],
-                         vf.data(), trans, &err);
+                         arc->videoFrame, trans, &err);
 
 #if WITH_FILTERING
       for (int j = 0; j < 3; j++)
@@ -245,14 +247,13 @@ extern "C"
     return NFTMarkerInfo;
   }
 
-  int detectNFTMarker(int id, emscripten::val videoLuma)
+  int detectNFTMarker(int id)
   {
     if (arControllers.find(id) == arControllers.end())
     {
       return -1;
     }
-    std::vector<uint8_t> vl =
-        emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+
     arController *arc = &(arControllers[id]);
 
     KpmResult *kpmResult = NULL;
@@ -260,7 +261,7 @@ extern "C"
 
     if (arc->detectedPage == -2)
     {
-      kpmMatching(arc->kpmHandle, vl.data());
+      kpmMatching(arc->kpmHandle, arc->videoLuma);
       kpmGetResult(arc->kpmHandle, &kpmResult, &kpmResultNum);
 
 #if WITH_FILTERING
@@ -807,8 +808,7 @@ extern "C"
     }
   }
 
-  int detectMarker(int id, emscripten::val videoFrame,
-                   emscripten::val videoLuma)
+  int detectMarker(int id)
   {
     if (arControllers.find(id) == arControllers.end())
     {
@@ -816,18 +816,12 @@ extern "C"
     }
     arController *arc = &(arControllers[id]);
 
-    std::vector<uint8_t> vf =
-        emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
-
-    std::vector<uint8_t> vl =
-        emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
-
     // Convert video frame to AR2VideoBufferT
     AR2VideoBufferT buff = {0};
-    buff.buff = vf.data();
+    buff.buff = arc->videoFrame;
     buff.fillFlag = 1;
 
-    buff.buffLuma = vl.data();
+    buff.buffLuma = arc->videoLuma;
 
     return arDetectMarker(arc->arhandle, &buff);
   }
@@ -845,13 +839,13 @@ extern "C"
     arc->width = width;
     arc->height = height;
 
-    // arc->videoFrameSize = width * height * 4 * sizeof(ARUint8);
-    // arc->videoFrame = (ARUint8 *)malloc(arc->videoFrameSize);
-    // arc->videoLuma = (ARUint8 *)malloc(arc->videoFrameSize / 4);
+    arc->videoFrameSize = width * height * 4 * sizeof(ARUint8);
+    arc->videoFrame = (ARUint8 *)malloc(arc->videoFrameSize);
+    arc->videoLuma = (ARUint8 *)malloc(arc->videoFrameSize / 4);
 
     setCamera(id, cameraID);
 
-    // webarkitLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
+    webarkitLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
 
     return arc->id;
   }

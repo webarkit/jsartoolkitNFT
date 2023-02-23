@@ -288,16 +288,13 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     // detect NFT markers
     let nftMarkerCount = this.nftMarkerCount;
-    this.detectNFTMarker(this.videoLuma);
+    this.detectNFTMarker();
 
     // in ms
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(
-        i,
-        image.data
-      );
+      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -346,8 +343,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * with the given tracked id.
    * @return {void}
    */
-  detectNFTMarker(videoLuma: Uint8Array): void {
-    this.artoolkitNFT.detectNFTMarker(this.id, videoLuma);
+  detectNFTMarker(): void {
+    this.artoolkitNFT.detectNFTMarker(this.id);
   }
 
   /**
@@ -395,11 +392,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    */
   detectMarker(image: IImageObj): number {
     if (this._copyImageToHeap(image)) {
-      return this.artoolkitNFT.detectMarker(
-        this.id,
-        image.data,
-        this.videoLuma
-      );
+      return this.artoolkitNFT.detectMarker(this.id);
     }
     return -99;
   }
@@ -413,8 +406,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} markerIndex The index of the NFT marker to query.
    * @return {Object} The NFTMarkerInfo struct.
    */
-  getNFTMarker(markerIndex: number, videoFrame: any): INFTMarkerInfo {
-    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex, videoFrame);
+  getNFTMarker(markerIndex: number): INFTMarkerInfo {
+    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex);
   }
 
   /**
@@ -930,6 +923,9 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     if (this.videoLuma) {
+      console.log("videoLuma");
+
+      this.artoolkitNFT.passVideoData(this.id, data, this.videoLuma);
       return true;
     }
 
