@@ -76,7 +76,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
    * transformGL_RH, videoWidth, videoHeight, videoSize,
-   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * videoLuma, framesize, camera_mat.
    */
   constructor();
   /**
@@ -85,7 +85,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
    * transformGL_RH, videoWidth, videoHeight, videoSize,
-   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * videoLuma, framesize, camera_mat.
    * @param {number} width
    * @param {number} height
    */
@@ -96,7 +96,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
    * transformGL_RH, videoWidth, videoHeight, videoSize,
-   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * framesize, camera_mat.
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam

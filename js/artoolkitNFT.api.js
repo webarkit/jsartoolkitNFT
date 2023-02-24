@@ -683,15 +683,11 @@
 
         this._initNFT();
 
-        var params = artoolkitNFT.frameMalloc;
-        this.framepointer = params.framepointer;
-        this.framesize = params.framesize;
-        this.videoLumaPointer = params.videoLumaPointer;
+        this.framesize = this.width * this.height;
 
-        this.dataHeap = new Uint8Array(Module.HEAPU8.buffer, this.framepointer, this.framesize);
-        this.videoLuma = new Uint8Array(Module.HEAPU8.buffer, this.videoLumaPointer, this.framesize / 4);
+        this.videoLuma = new Uint8Array(this.framesize / 4);
 
-        this.camera_mat = new Float64Array(Module.HEAPU8.buffer, params.camera, 16);
+        this.camera_mat = artoolkitNFT.getCameraLens(this.id);
 
         this.setProjectionNearPlane(0.1);
         this.setProjectionFarPlane(1000);
@@ -744,10 +740,11 @@
             }
         }
 
-        if (this.dataHeap) {
-            this.dataHeap.set(data);
+        if (this.videoLuma) {
+            artoolkitNFT.passVideoData(this.id, data, this.videoLuma);
             return true;
         }
+
         return false;
     };
 
@@ -889,6 +886,9 @@
 
         'setImageProcMode',
         'getImageProcMode',
+
+        "getCameraLens",
+        "passVideoData",
     ];
 
     function runWhenLoaded() {
