@@ -918,7 +918,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
           q += 4;
         }
       } else if (this.grayscaleEnabled == true) {
-        this.videoLuma.set(this.grayscaleSource);
+        this.videoLuma = this.grayscaleSource;
       }
     }
 
