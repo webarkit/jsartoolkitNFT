@@ -1,7 +1,11 @@
 import { INFTMarkerInfo } from "./CommonInterfaces";
 export interface IARToolkitNFT {
   getCameraLens: (cameraId: number) => any;
-  passVideoData: (id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array) => void;
+  passVideoData: (
+    id: number,
+    videoFrame: Uint8ClampedArray,
+    videoLuma: Uint8Array
+  ) => void;
   setup: {
     (width: number, height: number, cameraId: number): number;
   };
@@ -33,10 +37,7 @@ export interface IARToolkitNFT {
   ) => Array<number>;
   detectMarker: (id: number) => number;
   detectNFTMarker: (arId: number) => void;
-  getNFTMarker: (
-    id: number,
-    markerIndex: number,
-  ) => INFTMarkerInfo;
+  getNFTMarker: (id: number, markerIndex: number) => INFTMarkerInfo;
   getNFTData: (id: number, index: number) => object;
   setImageProcMode: (id: number, mode: number) => number;
   getImageProcMode: (id: number) => number;
