@@ -43,10 +43,6 @@ const { version } = packageJson;
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
-declare global {
-  var artoolkitNFT: IARToolkitNFT;
-}
-
 export default class ARToolkitNFT implements IARToolkitNFT {
   static get UNKNOWN_MARKER() {
     return UNKNOWN_MARKER;
@@ -127,8 +123,8 @@ export default class ARToolkitNFT implements IARToolkitNFT {
 
     this._decorate();
 
-    let scope = typeof window !== "undefined" ? window : global;
-    scope.artoolkitNFT = this;
+    //let scope = typeof window !== "undefined" ? window : global;
+    //scope.artoolkitNFT = this;
 
     return this;
   }

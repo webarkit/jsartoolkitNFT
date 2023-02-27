@@ -1,8 +1,5 @@
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { INFTMarkerInfo } from "./abstractions/CommonInterfaces";
-declare global {
-    var artoolkitNFT: IARToolkitNFT;
-}
 export default class ARToolkitNFT implements IARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
