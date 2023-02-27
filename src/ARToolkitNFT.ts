@@ -67,10 +67,7 @@ export default class ARToolkitNFT implements IARToolkitNFT {
   public getProcessingImage: (id: number) => number;
   public detectMarker: (id: number) => number;
   public detectNFTMarker: (id: number) => number;
-  public getNFTMarker: (
-    id: number,
-    markerIndex: number,
-  ) => INFTMarkerInfo;
+  public getNFTMarker: (id: number, markerIndex: number) => INFTMarkerInfo;
   public getNFTData: (id: number, index: number) => object;
   public setLogLevel: (mode: boolean) => number;
   public getLogLevel: () => number;
@@ -91,8 +88,12 @@ export default class ARToolkitNFT implements IARToolkitNFT {
   public setImageProcMode: (id: number, mode: number) => number;
   public getImageProcMode: (id: number) => number;
   public getCameraLens: (cameraId: number) => any;
-  public passVideoData: (id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array) => void;
-  
+  public passVideoData: (
+    id: number,
+    videoFrame: Uint8ClampedArray,
+    videoLuma: Uint8Array
+  ) => void;
+
   // construction
   /**
    * The ARToolkitNFT constructor. It has no arguments.
