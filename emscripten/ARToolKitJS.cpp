@@ -793,21 +793,6 @@ extern "C"
     return -1;
   }
 
-  /*
-   * Marker processing
-   */
-
-  void matrixCopy(ARdouble src[3][4], ARdouble dst[3][4])
-  {
-    for (int i = 0; i < 3; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        dst[i][j] = src[i][j];
-      }
-    }
-  }
-
   int detectMarker(int id)
   {
     if (arControllers.find(id) == arControllers.end())
