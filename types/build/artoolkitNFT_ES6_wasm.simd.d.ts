@@ -1,2 +1,2 @@
 export default Module;
-declare function Module(Module: any): any;
+declare function Module(Module?: {}): any;

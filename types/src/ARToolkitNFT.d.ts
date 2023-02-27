@@ -1,8 +1,5 @@
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { INFTMarkerInfo } from "./abstractions/CommonInterfaces";
-declare global {
-    var artoolkitNFT: IARToolkitNFT;
-}
 export default class ARToolkitNFT implements IARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
@@ -22,16 +19,6 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     getNFTData: (id: number, index: number) => object;
     setLogLevel: (mode: boolean) => number;
     getLogLevel: () => number;
-    frameMalloc: {
-        framepointer: number;
-        framesize: number;
-        videoLumaPointer: number;
-        camera: number;
-        transform: number;
-    };
-    HEAPU8: {
-        buffer: Uint8Array;
-    };
     NFTMarkerInfo: {
         error: number;
         found: number;
@@ -48,6 +35,8 @@ export default class ARToolkitNFT implements IARToolkitNFT {
     getThreshold: (id: number) => number;
     setImageProcMode: (id: number, mode: number) => number;
     getImageProcMode: (id: number) => number;
+    getCameraLens: (cameraId: number) => any;
+    passVideoData: (id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array) => void;
     constructor();
     init(): Promise<this>;
     private _decorate;
