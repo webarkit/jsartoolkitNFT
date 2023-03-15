@@ -54,17 +54,15 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private listeners: object;
   private nftMarkers: INFTMarker[];
   private transform_mat: Float64Array;
-  private marker_transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
   private videoWidth: number;
   private videoHeight: number;
   private videoSize: number;
-  private framepointer: number;
   private framesize: number;
-  private dataHeap: Uint8Array;
   private videoLuma: Uint8Array;
+  private grayscaleEnabled: boolean;
+  private grayscaleSource: Uint8Array;
   private camera_mat: Float64Array;
-  private videoLumaPointer: number;
   private nftMarkerFound: boolean; // = false
   private nftMarkerFoundTime: number;
   private nftMarkerCount: number; // = 0
@@ -77,8 +75,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
-   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
-   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * transformGL_RH, videoWidth, videoHeight, videoSize,
+   *  framesize, videoLuma, camera_mat.
    */
   constructor();
   /**
@@ -86,8 +84,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
-   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
-   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * transformGL_RH, videoWidth, videoHeight, videoSize,
+   * framesize, videoLuma, camera_mat.
    * @param {number} width
    * @param {number} height
    */
@@ -97,8 +95,8 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * These properties are initialized:
    * id, width, height, cameraParam, cameraId,
    * cameraLoaded, artoolkitNFT, listeners, nftMarkers, transform_mat,
-   * transformGL_RH, marker_transform_mat, videoWidth, videoHeight, videoSize,
-   * framepointer, framesize, dataHeap, videoLuma, camera_mat, videoLumaPointer
+   * transformGL_RH, videoWidth, videoHeight, videoSize,
+   * framesize, videoLuma, camera_mat.
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
@@ -127,18 +125,15 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     this.transform_mat = new Float64Array(16);
     this.transformGL_RH = new Float64Array(16);
-    this.marker_transform_mat = null;
 
     this.videoWidth = width;
     this.videoHeight = height;
     this.videoSize = this.videoWidth * this.videoHeight;
 
-    this.framepointer = null;
     this.framesize = null;
-    this.dataHeap = null;
     this.videoLuma = null;
+    this.grayscaleEnabled = false;
     this.camera_mat = null;
-    this.videoLumaPointer = null;
 
     // this is to workaround the introduction of "self" variable
     this.nftMarkerFound = false;
@@ -412,9 +407,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    * @return {Object} The NFTMarkerInfo struct.
    */
   getNFTMarker(markerIndex: number): INFTMarkerInfo {
-    if (0 === this.artoolkitNFT.getNFTMarker(this.id, markerIndex)) {
-      return this.artoolkitNFT.NFTMarkerInfo;
-    }
+    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex);
   }
 
   /**
@@ -815,6 +808,17 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     return this.artoolkitNFT.getImageProcMode(this.id);
   }
 
+  /**
+   * Set the custom gray data (videoLuma) in case you want to add additional
+   * trasnformation to gray data: for example gaussianblur or boxblur
+   * with external libs.
+   * @param data Uint8Array
+   */
+  setGrayData(data: Uint8Array) {
+    this.grayscaleEnabled = true;
+    this.grayscaleSource = data;
+  }
+
   // private accessors
   // ----------------------------------------------------------------------------
   /**
@@ -849,32 +853,11 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     this._initNFT();
 
-    const params: IARToolkitNFT["frameMalloc"] = this.artoolkitNFT.frameMalloc;
-    this.framepointer = params.framepointer;
-    this.framesize = params.framesize;
-    this.videoLumaPointer = params.videoLumaPointer;
+    this.framesize = this._width * this._height;
 
-    this.dataHeap = new Uint8Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      this.framepointer,
-      this.framesize
-    );
-    this.videoLuma = new Uint8Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      this.videoLumaPointer,
-      this.framesize / 4
-    );
+    this.videoLuma = new Uint8Array(this.framesize / 4);
 
-    this.camera_mat = new Float64Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      params.camera,
-      16
-    );
-    this.marker_transform_mat = new Float64Array(
-      this.artoolkitNFT.HEAPU8.buffer,
-      params.transform,
-      12
-    );
+    this.camera_mat = this.artoolkitNFT.getCameraLens(this.id);
 
     this.setProjectionNearPlane(0.1);
     this.setProjectionFarPlane(1000);
@@ -921,22 +904,26 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
     if (this.videoLuma) {
-      let q = 0;
+      if (this.grayscaleEnabled == false) {
+        let q = 0;
 
-      // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
-      // see (ARToolKitJS.cpp L: 43)
-      for (let p = 0; p < this.videoSize; p++) {
-        let r = data[q + 0],
-          g = data[q + 1],
-          b = data[q + 2];
-        // @see https://stackoverflow.com/a/596241/5843642
-        this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
-        q += 4;
+        // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
+        // see (ARToolKitJS.cpp L: 43)
+        for (let p = 0; p < this.videoSize; p++) {
+          let r = data[q + 0],
+            g = data[q + 1],
+            b = data[q + 2];
+          // @see https://stackoverflow.com/a/596241/5843642
+          this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
+          q += 4;
+        }
+      } else if (this.grayscaleEnabled == true) {
+        this.videoLuma = this.grayscaleSource;
       }
     }
 
-    if (this.dataHeap) {
-      this.dataHeap.set(data);
+    if (this.videoLuma) {
+      this.artoolkitNFT.passVideoData(this.id, data, this.videoLuma);
       return true;
     }
 

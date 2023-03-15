@@ -10,7 +10,7 @@ export abstract class AbstractARControllerNFT {
     cameraParam: string
   ) => Promise<AbstractARControllerNFT>;
   process: (image: IImageObj) => void;
-  detectNFTMarker: () => void;
+  detectNFTMarker: (videoLuma: any) => void;
   trackNFTMarkerId: (id: number, markerWidth?: number) => object;
   detectMarker: (image: any) => number;
   getNFTMarker: (markerIndex: number) => object;
