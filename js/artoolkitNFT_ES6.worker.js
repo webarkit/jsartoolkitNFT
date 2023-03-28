@@ -56,8 +56,8 @@ let tickCount = 0;
 
 // initialize the OneEuroFilter
 var oef = true;
-let filterMinCF = 0.001;
-let filterBeta = 1000;
+let filterMinCF = 0.0001;
+let filterBeta = 0.01;
 const filter = new OneEuroFilter({
   minCutOff: filterMinCF,
   beta: filterBeta

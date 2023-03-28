@@ -55,8 +55,8 @@ const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
 
 // initialize the OneEuroFilter
-let filterMinCF = 0.001;
-let filterBeta = 1000;
+let filterMinCF = 0.0001;
+let filterBeta = 0.01;
 const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
 
 function load(msg) {
