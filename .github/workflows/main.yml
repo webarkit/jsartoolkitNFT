@@ -27,7 +27,8 @@ jobs:
           ${{ runner.os }}-node-
     - name: Set output
       id: vars
-      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      #run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      run: echo name=tag::${GITHUB_REF#refs/*/} >> $GITHUB_OUTPUT
     - name: Check output
       env:
         RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
@@ -69,11 +70,14 @@ jobs:
           build/artoolkitNFT_wasm.simd.js
           build/artoolkitNFT.debug.js
           build/artoolkitNFT.min.js
+          js/artoolkitNFT_ES6_custom.worker.js
+          js/artoolkitNFT_ES6_gray.worker.js
           js/artoolkitNFT_ES6.worker.js
           js/artoolkitNFT_multi_ES6.worker.js
           js/artoolkitNFT.api.js
           js/artoolkitNFT_ES6.api.js
           js/artoolkitNFT.worker.js
+          js/artoolkitNFT.embed_ES6_worker.js
           js/artoolkitNFT.multi_worker.js
           dist/ARToolkitNFT.js
           dist/ARToolkitNFT_simd.js
