@@ -29,6 +29,8 @@ if (browser == "Apple Safari") {
 } else {
   importScripts("../build/artoolkitNFT_wasm.simd.js");
 }
+// Import OneEuroFilter class into the worker.
+importScripts("./one-euro-filter.js");
 
 self.onmessage = function (e) {
   var msg = e.data;
@@ -50,6 +52,14 @@ var ar = null;
 var markerResult = null;
 var marker1, marker2, marker3;
 
+const WARM_UP_TOLERANCE = 5;
+let tickCount = 0;
+
+// initialize the OneEuroFilter
+let filterMinCF = 0.0001;
+let filterBeta = 0.01;
+const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
+
 function load(msg) {
   self.addEventListener("artoolkitNFT-loaded", function () {
     console.debug("Loading marker at: ", msg.marker);
@@ -59,11 +69,19 @@ function load(msg) {
       var cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
-        markerResult = {
-          type: "found",
-          index: JSON.stringify(ev.data.index),
-          matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
-        };
+        tickCount += 1;
+        if (tickCount > WARM_UP_TOLERANCE) {
+          var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
+          markerResult = {
+            type: "found",
+            index: JSON.stringify(ev.data.index),
+            matrixGL_RH: JSON.stringify(mat),
+          };
+        }
+      });
+
+      ar.addEventListener("lostNFTMarker", function(ev) {
+        filter.reset();
       });
 
       ar.loadNFTMarkers(msg.marker, function (ids) {
