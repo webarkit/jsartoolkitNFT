@@ -25,9 +25,9 @@ var browser = (function () {
 })();
 
 if (browser == "Apple Safari") {
-  importScripts("../dist/ARToolkitNFT.js");
+  importScripts("../dist/ARToolkitNFT_im.js");
 } else {
-  importScripts("../dist/ARToolkitNFT_simd.js");
+  importScripts("../dist/ARToolkitNFT_im.js");
 }
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
@@ -79,7 +79,9 @@ function load(msg) {
 
   var onLoad = function (arController) {
     ar = arController;
+    console.log(ar);
     var cameraMatrix = ar.getCameraMatrix();
+    console.log(cameraMatrix);
 
     ar.addEventListener("getNFTMarker", function (ev) {
       var mat;
@@ -100,7 +102,7 @@ function load(msg) {
 
     ar.loadNFTMarker(msg.marker, function (id) {
       ar.trackNFTMarkerId(id);
-      let marker = ar.getNFTData(ar.id, 0);
+      let marker = ar.getNFTData(0);
       console.log("nftMarker data: ", marker);
       postMessage({
         type: "markerInfos",
@@ -128,6 +130,7 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
+  console.log(ARToolkitNFT);
   ARToolkitNFT.ARControllerNFT.initWithDimensions(
       msg.pw,
       msg.ph,
