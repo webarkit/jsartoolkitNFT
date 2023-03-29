@@ -25,6 +25,9 @@ struct nftMarker
 
 static int gARControllerID = 0;
 static int gCameraID = 0;
+
+static int MARKER_INDEX_OUT_OF_BOUNDS = -3;
+
 std::unordered_map<int, ARParam> cameraParams;
 
 class ARToolKitNFT
@@ -34,15 +37,28 @@ public:
     {
         webarkitLOGi("init ARToolKitNFT constructor...");
     };
-    //~ARToolKitNFT();
+    //~ARToolKitNFT(); 
+    emscripten::val getNFTMarkerInfo(int markerIndex);
+    int detectNFTMarker();
+    int getKpmImageWidth(KpmHandle *kpmHandle);
+    int getKpmImageHeight(KpmHandle *kpmHandle);
+    int setupAR2();
+   
+    void setLogLevel(int level);
+    int getLogLevel();
 
+    int teardown();
     int loadCamera(std::string cparam_name);
     int setCamera(int id, int cameraID);
+    emscripten::val getCameraLens();
+    std::vector<int> addNFTMarkers(std::vector<std::string> &datasetPathnames);
+    int detectMarker();
     int setup(int width, int height, int cameraID);
-    void deleteHandle();
 
 private:
     KpmHandle *createKpmHandle(ARParamLT *cparamLT);
+    void deleteHandle();
+   
 
     int id;
 
