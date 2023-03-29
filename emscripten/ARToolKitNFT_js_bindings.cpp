@@ -10,6 +10,23 @@ EMSCRIPTEN_BINDINGS(constant_bindings)
 
     class_<ARToolKitNFT>("ARToolKitNFT")
     .constructor()
+    .function("detectMarker", &ARToolKitNFT::detectMarker)
+    .function("detectNFTMarker", &ARToolKitNFT::detectNFTMarker)
+    .function("getNFTMarker", &ARToolKitNFT::getNFTMarkerInfo)
+    .function("setLogLevel", &ARToolKitNFT::setLogLevel)
+	.function("getLogLevel", &ARToolKitNFT::getLogLevel)
+    .function("setupAR2", &ARToolKitNFT::setupAR2)
+    .function("teardown", &ARToolKitNFT::teardown)
+    .function("loadCamera", &ARToolKitNFT::loadCamera)
     .function("setup", &ARToolKitNFT::setup)
-    .function("loadCamera", &ARToolKitNFT::loadCamera);
+    .function("getCameraLens", &ARToolKitNFT::getCameraLens)
+    .function("_addNFTMarkers", &ARToolKitNFT::addNFTMarkers);
+
+    /* nft marker struct */
+	value_object<nftMarker>("nftMarker")
+	.field("id", &nftMarker::id_NFT)
+	.field("width", &nftMarker::width_NFT)
+	.field("height", &nftMarker::height_NFT)
+	.field("dpi", &nftMarker::dpi_NFT);
+    
 };
