@@ -36,6 +36,6 @@
 
 import ARControllerNFT from "./ARControllerNFT_improved";
 
-export default {
+export {
   ARControllerNFT,
-};
+}
