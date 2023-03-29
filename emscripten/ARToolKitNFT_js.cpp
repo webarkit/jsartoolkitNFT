@@ -9,6 +9,19 @@ void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
   }
 }
 
+int ARToolKitNFT::passVideoData(emscripten::val videoFrame,
+                                emscripten::val videoLuma) {
+  std::vector<uint8_t> vf =
+      emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
+  std::vector<uint8_t> vl =
+      emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+
+  memcpy(this->videoFrame, vf.data(), sizeof(uint8_t) * this->videoFrameSize);
+  memcpy(this->videoLuma, vl.data(),
+         sizeof(uint8_t) * this->videoFrameSize / 4);
+  return 0;
+}
+
 emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
   emscripten::val NFTMarkerInfo = emscripten::val::object();
   emscripten::val pose = emscripten::val::array();
@@ -159,12 +172,10 @@ int ARToolKitNFT::setupAR2() {
   return 0;
 }
 
-/***************
- * Set Log Level
- ****************/
-void ARToolKitNFT::setLogLevel(int level) { arLogLevel = level; }
-
-int ARToolKitNFT::getLogLevel() { return arLogLevel; }
+nftMarker ARToolKitNFT::getNFTData(int index) {
+  // get marker(s) nft data.
+  return this->nftMarkers.at(index);
+}
 
 /***********
  * Teardown *
@@ -378,6 +389,104 @@ int ARToolKitNFT::detectMarker() {
   buff.buffLuma = this->videoLuma;
 
   return arDetectMarker(this->arhandle, &buff);
+}
+
+/**********************
+ * Setters and getters *
+ **********************/
+
+/***************
+ * Set Log Level
+ ****************/
+void ARToolKitNFT::setLogLevel(int level) { arLogLevel = level; }
+
+int ARToolKitNFT::getLogLevel() { return arLogLevel; }
+
+void ARToolKitNFT::setProjectionNearPlane(const ARdouble projectionNearPlane) {
+  this->nearPlane = projectionNearPlane;
+}
+
+ARdouble ARToolKitNFT::getProjectionNearPlane() { return this->nearPlane; }
+
+void ARToolKitNFT::setProjectionFarPlane(const ARdouble projectionFarPlane) {
+  this->farPlane = projectionFarPlane;
+}
+
+ARdouble ARToolKitNFT::getProjectionFarPlane() { return this->farPlane; }
+
+void ARToolKitNFT::setThreshold(int threshold) {
+  if (threshold < 0 || threshold > 255)
+    return;
+  if (arSetLabelingThresh(this->arhandle, threshold) == 0) {
+    webarkitLOGi("Threshold set to %d", threshold);
+  };
+  // default 100
+  // arSetLabelingThreshMode
+  // AR_LABELING_THRESH_MODE_MANUAL, AR_LABELING_THRESH_MODE_AUTO_MEDIAN,
+  // AR_LABELING_THRESH_MODE_AUTO_OTSU, AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE
+}
+
+int ARToolKitNFT::getThreshold() {
+  int threshold;
+  if (arGetLabelingThresh(this->arhandle, &threshold) == 0) {
+    return threshold;
+  };
+
+  return -1;
+}
+
+void ARToolKitNFT::setThresholdMode(int mode) {
+  AR_LABELING_THRESH_MODE thresholdMode = (AR_LABELING_THRESH_MODE)mode;
+
+  if (arSetLabelingThreshMode(this->arhandle, thresholdMode) == 0) {
+    webarkitLOGi("Threshold mode set to %d", (int)thresholdMode);
+  }
+}
+
+int ARToolKitNFT::getThresholdMode() {
+  AR_LABELING_THRESH_MODE thresholdMode;
+
+  if (arGetLabelingThreshMode(this->arhandle, &thresholdMode) == 0) {
+    return thresholdMode;
+  }
+
+  return -1;
+}
+
+int ARToolKitNFT::setDebugMode(int enable) {
+  arSetDebugMode(this->arhandle, enable ? AR_DEBUG_ENABLE : AR_DEBUG_DISABLE);
+  webarkitLOGi("Debug mode set to %s", enable ? "on." : "off.");
+
+  return enable;
+}
+
+int ARToolKitNFT::getProcessingImage() {
+
+  return (int)this->arhandle->labelInfo.bwImage;
+}
+
+int ARToolKitNFT::getDebugMode() {
+  int enable;
+
+  arGetDebugMode(this->arhandle, &enable);
+  return enable;
+}
+
+void ARToolKitNFT::setImageProcMode(int mode) {
+
+  int imageProcMode = mode;
+  if (arSetImageProcMode(this->arhandle, mode) == 0) {
+    webarkitLOGi("Image proc. mode set to %d.", imageProcMode);
+  }
+}
+
+int ARToolKitNFT::getImageProcMode() {
+  int imageProcMode;
+  if (arGetImageProcMode(this->arhandle, &imageProcMode) == 0) {
+    return imageProcMode;
+  }
+
+  return -1;
 }
 
 int ARToolKitNFT::setup(int width, int height, int cameraID) {
