@@ -38,36 +38,10 @@ module.exports = (env, argv) => {
         //path: path.resolve('dist'),
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT.js",
-        library: "ARToolkitNFT",
+        //library: "ARToolkitNFT",
         libraryTarget: "umd",
         // @see: https://github.com/webpack/webpack/issues/3929
-        libraryExport: "default",
-        // @see: https://github.com/webpack/webpack/issues/6522
-        globalObject: "typeof self !== 'undefined' ? self : this",
-      },
-      resolve: {
-        extensions: [".tsx", ".ts", ".js"],
-        // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
-        fallback: {
-          fs: false,
-          path: false,
-          crypto: false,
-        },
-      },
-      module,
-    },
-    {
-      name: "improved",
-      devtool,
-      entry: "./src/index_improved.ts",
-      output: {
-        //path: path.resolve('dist'),
-        path: path.resolve(__dirname, "dist"),
-        filename: "ARToolkitNFT_im.js",
-        library: "ARToolkitNFT",
-        libraryTarget: "umd",
-        // @see: https://github.com/webpack/webpack/issues/3929
-        ///libraryExport: "default",
+        //libraryExport: "default",
         // @see: https://github.com/webpack/webpack/issues/6522
         globalObject: "typeof self !== 'undefined' ? self : this",
       },

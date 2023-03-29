@@ -1,6 +1,6 @@
 import { INFTMarkerInfo, IImageObj, INFTMarker } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
-export default class ARControllerNFT implements AbstractARControllerNFT {
+export declare class ARControllerNFT implements AbstractARControllerNFT {
     private id;
     private _width;
     private _height;
@@ -10,7 +10,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private cameraId;
     private cameraLoaded;
     private artoolkitNFT;
-    private artoolkitNFT2;
     private FS;
     private StringList;
     private listeners;

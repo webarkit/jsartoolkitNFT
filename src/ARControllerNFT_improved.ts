@@ -33,7 +33,7 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import ARToolkitNFT from "../build/artoolkitNFT_improved_ES6";
+import { initARToolkitNFT } from "./factoryFunctions/initARToolkitNFT";
 import {
   INFTMarkerInfo,
   IImageObj,
@@ -43,7 +43,7 @@ import { IARToolkitNFT } from "./abstractions/IARToolkitNFT_improved";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 import Utils from "./Utils";
 
-export default class ARControllerNFT implements AbstractARControllerNFT {
+export class ARControllerNFT implements AbstractARControllerNFT {
   // private declarations
   private id: number;
   private _width: number;
@@ -54,7 +54,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
   private cameraId: number;
   private cameraLoaded: boolean;
   private artoolkitNFT: IARToolkitNFT;
-  private artoolkitNFT2: IARToolkitNFT;
   private FS: any;
   private StringList: any;
   private listeners: object;
@@ -960,7 +959,7 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
    */
   private async _initialize() {
     // initialize the toolkit
-    const artoolkitNFT = await ARToolkitNFT();
+    const artoolkitNFT = await initARToolkitNFT();
     this.artoolkitNFT = new artoolkitNFT.ARToolKitNFT();
 
     this.FS = artoolkitNFT.FS;

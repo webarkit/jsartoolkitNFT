@@ -25,9 +25,9 @@ var browser = (function () {
 })();
 
 if (browser == "Apple Safari") {
-  importScripts("../dist/ARToolkitNFT_im.js");
+  importScripts("../dist/ARToolkitNFT.js");
 } else {
-  importScripts("../dist/ARToolkitNFT_im.js");
+  importScripts("../dist/ARToolkitNFT.js");
 }
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
@@ -130,8 +130,11 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  console.log(ARToolkitNFT);
-  ARToolkitNFT.ARControllerNFT.initWithDimensions(
+  console.log({ARToolkitNFT});
+  new ARToolkitNFT().init().then((ar) => {
+    console.log(ar);
+  })
+  ARControllerNFT.initWithDimensions(
       msg.pw,
       msg.ph,
       msg.camera_para
