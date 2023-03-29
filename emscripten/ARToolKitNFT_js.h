@@ -38,11 +38,13 @@ public:
         webarkitLOGi("init ARToolKitNFT constructor...");
     };
     //~ARToolKitNFT(); 
+    int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
     int detectNFTMarker();
     int getKpmImageWidth(KpmHandle *kpmHandle);
     int getKpmImageHeight(KpmHandle *kpmHandle);
     int setupAR2();
+    nftMarker getNFTData(int index);
    
     void setLogLevel(int level);
     int getLogLevel();
@@ -53,6 +55,21 @@ public:
     emscripten::val getCameraLens();
     std::vector<int> addNFTMarkers(std::vector<std::string> &datasetPathnames);
     int detectMarker();
+
+    // setters and getters
+    void setProjectionNearPlane(const ARdouble projectionNearPlane);
+    ARdouble getProjectionNearPlane();
+    void setProjectionFarPlane(const ARdouble projectionFarPlane);
+    ARdouble getProjectionFarPlane();
+    void setThreshold(int threshold);
+    int getThreshold();
+    void setThresholdMode(int mode);
+    int getThresholdMode();
+    int setDebugMode(int enable);
+    int getProcessingImage();
+    int getDebugMode();
+    void setImageProcMode(int mode);
+    int getImageProcMode();
     int setup(int width, int height, int cameraID);
 
 private:
