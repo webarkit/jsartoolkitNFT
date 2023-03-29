@@ -29,6 +29,8 @@ if (browser == "Apple Safari") {
 } else {
   importScripts("../dist/ARToolkitNFT_simd.js");
 }
+// Import OneEuroFilter class into the worker.
+importScripts("./one-euro-filter.js");
 
 self.onmessage = function (e) {
   var msg = e.data;
@@ -49,6 +51,29 @@ var ar = null;
 var markerResult = null;
 var marker;
 
+const WARM_UP_TOLERANCE = 5;
+let tickCount = 0;
+
+// initialize the OneEuroFilter
+var oef = true;
+let filterMinCF = 0.0001;
+let filterBeta = 0.01;
+const filter = new OneEuroFilter({
+  minCutOff: filterMinCF,
+  beta: filterBeta
+});
+
+function oefFilter(matrixGL_RH) {
+  tickCount += 1;
+  var mat;
+  if (tickCount > WARM_UP_TOLERANCE) {
+    mat = filter.filter(Date.now(), matrixGL_RH);
+  } else {
+    mat = matrixGL_RH;
+  }
+  return mat;
+}
+
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
@@ -57,24 +82,43 @@ function load(msg) {
     var cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
+      var mat;
+      if (oef == true) {
+        mat = oefFilter(ev.data.matrixGL_RH)
+      } else {
+        mat = ev.data.matrixGL_RH
+      }
       markerResult = {
         type: "found",
-        matrixGL_RH: JSON.stringify(ev.data.matrixGL_RH),
+        matrixGL_RH: JSON.stringify(mat),
       };
+    });
+
+    ar.addEventListener("lostNFTMarker", function (ev) {
+      filter.reset();
     });
 
     ar.loadNFTMarker(msg.marker, function (id) {
       ar.trackNFTMarkerId(id);
       let marker = ar.getNFTData(ar.id, 0);
       console.log("nftMarker data: ", marker);
-      postMessage({ type: "markerInfos", marker: marker });
+      postMessage({
+        type: "markerInfos",
+        marker: marker
+      });
       console.log("loadNFTMarker -> ", id);
-      postMessage({ type: "endLoading", end: true });
+      postMessage({
+        type: "endLoading",
+        end: true
+      });
     }).catch(function (err) {
       console.log("Error in loading marker on Worker", err);
     });
 
-    postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
+    postMessage({
+      type: "loaded",
+      proj: JSON.stringify(cameraMatrix)
+    });
   };
 
   var onError = function (error) {
@@ -85,10 +129,10 @@ function load(msg) {
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
   ARToolkitNFT.ARControllerNFT.initWithDimensions(
-    msg.pw,
-    msg.ph,
-    msg.camera_para
-  )
+      msg.pw,
+      msg.ph,
+      msg.camera_para
+    )
     .then(onLoad)
     .catch(onError);
 }
@@ -103,7 +147,9 @@ function process() {
   if (markerResult) {
     postMessage(markerResult);
   } else {
-    postMessage({ type: "not found" });
+    postMessage({
+      type: "not found"
+    });
   }
 
   next = null;

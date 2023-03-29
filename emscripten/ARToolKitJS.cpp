@@ -112,7 +112,7 @@ extern "C"
     {
       for (int j = 0; j < 4; j++)
       {
-        dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) / interpolationFactor;
+        dst[i][j] = (1 - interpolationFactor) * src[i][j] + dst[i][j] * interpolationFactor;
       }
     }
   }
