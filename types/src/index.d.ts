@@ -1,3 +1,3 @@
-import { ARToolkitNFT } from "./ARToolkitNFT_improved";
-import { ARControllerNFT } from "./ARControllerNFT_improved";
+import { ARToolkitNFT } from "./ARToolkitNFT";
+import { ARControllerNFT } from "./ARControllerNFT";
 export { ARToolkitNFT, ARControllerNFT, };

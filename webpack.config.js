@@ -64,10 +64,10 @@ module.exports = (env, argv) => {
         //path: path.resolve('dist'),
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT_simd.js",
-        library: "ARToolkitNFT",
+        //library: "ARToolkitNFT",
         libraryTarget: "umd",
         // @see: https://github.com/webpack/webpack/issues/3929
-        libraryExport: "default",
+        //libraryExport: "default",
         // @see: https://github.com/webpack/webpack/issues/6522
         globalObject: "typeof self !== 'undefined' ? self : this",
       },

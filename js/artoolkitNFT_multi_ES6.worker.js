@@ -57,7 +57,7 @@ let tickCount = 0;
 // initialize the OneEuroFilter
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
-const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
+const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
@@ -78,7 +78,7 @@ function load(msg) {
       }
     });
 
-    ar.addEventListener("lostNFTMarker", function(ev) {
+    ar.addEventListener("lostNFTMarker", function (ev) {
       filter.reset();
     });
 

@@ -1,6 +1,6 @@
 import ARToolkitNFT from "../build/artoolkitNFT_embed_ES6_wasm.js";
 // Import OneEuroFilter class into the worker.
-import { OneEuroFilter } from "./one-euro-filter-ES6.js"
+import { OneEuroFilter } from "./one-euro-filter-ES6.js";
 
 self.onmessage = function (e) {
   var msg = e.data;
@@ -56,9 +56,9 @@ async function load(msg) {
     ar.addEventListener("getNFTMarker", function (ev) {
       var mat;
       if (oef == true) {
-        mat = oefFilter(ev.data.matrixGL_RH)
+        mat = oefFilter(ev.data.matrixGL_RH);
       } else {
-        mat = ev.data.matrixGL_RH
+        mat = ev.data.matrixGL_RH;
       }
       markerResult = {
         type: "found",
