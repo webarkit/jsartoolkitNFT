@@ -42,7 +42,7 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     set cameraParam(cameraParam: string);
     get cameraParam(): string;
     process(image: IImageObj): void;
-    detectNFTMarker(): void;
+    detectNFTMarker(): number;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
     detectMarker(image: IImageObj): number;
     getNFTMarker(markerIndex: number): INFTMarkerInfo;
@@ -74,8 +74,6 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     getThreshold(): number;
     loadNFTMarker(urlOrData: string, onSuccess: (ids: number) => void, onError: (err: number) => void): Promise<number[]>;
     loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number[]) => void, onError: (err: number) => void): Promise<number[]>;
-    loadCamera(urlOrData: Uint8Array | string): Promise<number>;
-    addNFTMarkers(urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
     setGrayData(data: Uint8Array): void;
@@ -83,6 +81,4 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private _initialize;
     private _initNFT;
     private _copyImageToHeap;
-    private _storeDataFile;
-    private ajax;
 }

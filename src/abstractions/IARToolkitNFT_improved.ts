@@ -17,7 +17,7 @@ export interface IARToolkitNFT {
   setLogLevel: (mode: boolean) => number;
   getLogLevel: () => number;
   NFTMarkerInfo: INFTMarkerInfo;
-  _loadCamera: (cameraParam: string) => Promise<number>;
+  loadCamera: (cameraParam: string) => Promise<number>;
   setProjectionNearPlane: {
     (value: number): void;
   };
@@ -28,14 +28,14 @@ export interface IARToolkitNFT {
   getThresholdMode: () => number;
   setThreshold: (threshold: number) => number;
   getThreshold: () => number;
-  _addNFTMarkers(vec: any): void;
+  //_addNFTMarkers(vec: any): void;
   addNFTMarkers: (
     urls: Array<string>,
     callback: (ids: number[]) => void,
     onError2: (errorNumber: number) => void
   ) => Array<number>;
   detectMarker: () => number;
-  detectNFTMarker: () => void;
+  detectNFTMarker: () => number;
   getNFTMarker: (markerIndex: number) => INFTMarkerInfo;
   getNFTData: (index: number) => object;
   setImageProcMode: (mode: number) => number;
