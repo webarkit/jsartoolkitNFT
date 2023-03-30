@@ -33,13 +33,13 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import { initARToolkitNFT } from "./factoryFunctions/initARToolkitNFT";
 import {
   INFTMarkerInfo,
   IImageObj,
   INFTMarker,
 } from "./abstractions/CommonInterfaces";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT_improved";
+import { ARToolkitNFT  } from "./ARToolkitNFT_improved";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 import Utils from "./Utils";
 
@@ -347,10 +347,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   /**
    * Detects the NFT markers in the process() function,
    * with the given tracked id.
-   * @return {void}
+   * @return {number}
    */
-  detectNFTMarker(): void {
-    this.artoolkitNFT.detectNFTMarker();
+  detectNFTMarker(): number {
+    return this.artoolkitNFT.detectNFTMarker();
   }
 
   /**
@@ -749,7 +749,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     onSuccess: (ids: number) => void,
     onError: (err: number) => void
   ): Promise<number[]> {
-    let nft = await this.addNFTMarkers(
+    let nft = await this.artoolkitNFT.addNFTMarkers(
       [urlOrData],
       (ids: any) => {
         this.nftMarkerCount += ids.length;
@@ -769,9 +769,9 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     onSuccess: (ids: number[]) => void,
     onError: (err: number) => void
   ): Promise<number[]> {
-    let nft = await this.addNFTMarkers(
+    let nft = await this.artoolkitNFT.addNFTMarkers(
       urlOrData,
-      (ids) => {
+      (ids: any) => {
         this.nftMarkerCount += ids.length;
         onSuccess(ids);
       },
@@ -779,125 +779,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     );
     return nft;
   }
-
-  /**
-    * Load the camera, this is an important and required step, Internally fill
-    * the ARParam struct.
-    * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
-    * @return {number} a number, the internal id.
-    */
-  public async loadCamera(urlOrData: Uint8Array | string): Promise<number> {
-    const target = "/camera_param_" + this.cameraCount++;
-
-    let data: Uint8Array;
-
-    if (urlOrData instanceof Uint8Array) {
-      // assume preloaded camera params
-      data = urlOrData;
-    } else {
-      // fetch data via HTTP
-      try {
-        data = await Utils.fetchRemoteData(urlOrData);
-      } catch (error) {
-        throw new Error("Error in loadCamera function: ", error);
-      }
-    }
-
-    this._storeDataFile(data, target);
-
-    // return the internal marker ID
-    return this.artoolkitNFT._loadCamera(target);
-  }
-
-  /**
-     * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
-     * the url of the file without the extension. If fails to load it raise an error.
-     * @param {number} arId internal id
-     * @param {Array<string>} urls  array of urls of the descriptors files without ext
-     * @param {function} callback the callback to retrieve the ids.
-     * @param {function} onError2 the error callback.
-     */
-  public addNFTMarkers(
-    urls: Array<string | Array<string>>,
-    callback: (filename: number[]) => void,
-    onError2: (errorNumber: number) => void
-  ): Array<number> {
-    var prefixes: any = [];
-    var pending = urls.length * 3;
-    var onSuccess = (filename: Uint8Array) => {
-      pending -= 1;
-      if (pending === 0) {
-        const vec = new this.StringList();
-        const markerIds = [];
-        for (let i = 0; i < prefixes.length; i++) {
-          vec.push_back(prefixes[i]);
-        }
-        var ret: any = this.artoolkitNFT._addNFTMarkers(vec);
-        for (let i = 0; i < ret.size(); i++) {
-          markerIds.push(ret.get(i));
-        }
-
-        console.log("add nft marker ids: ", markerIds);
-        if (callback) callback(markerIds);
-      }
-    };
-    var onError = (filename: string, errorNumber?: number) => {
-      console.log("failed to load: ", filename);
-      onError2(errorNumber);
-    };
-
-    let Ids: Array<number> = [];
-
-    urls.forEach((element, index) => {
-      var prefix = "/markerNFT_" + this.markerNFTCount;
-      prefixes.push(prefix);
-
-      if (Array.isArray(element)) {
-        element.forEach((url) => {
-          const filename = prefix + "." + url.split(".").pop();
-
-          this.ajax(
-            url,
-            filename,
-            onSuccess.bind(filename),
-            onError.bind(filename)
-          );
-        });
-
-        this.markerNFTCount += 1;
-      } else {
-        var filename1 = prefix + ".fset";
-        var filename2 = prefix + ".iset";
-        var filename3 = prefix + ".fset3";
-
-        this.ajax(
-          element + ".fset",
-          filename1,
-          onSuccess.bind(filename1),
-          onError.bind(filename1)
-        );
-        this.ajax(
-          element + ".iset",
-          filename2,
-          onSuccess.bind(filename2),
-          onError.bind(filename2)
-        );
-        this.ajax(
-          element + ".fset3",
-          filename3,
-          onSuccess.bind(filename3),
-          onError.bind(filename3)
-        );
-
-        this.markerNFTCount += 1;
-      }
-
-      Ids.push(index);
-    });
-
-    return Ids;
-  }
-
 
   /**
    * Set the image processing mode.
@@ -959,16 +840,15 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   private async _initialize() {
     // initialize the toolkit
-    const artoolkitNFT = await initARToolkitNFT();
-    this.artoolkitNFT = new artoolkitNFT.ARToolKitNFT();
+    this.artoolkitNFT = await new ARToolkitNFT().init()
 
-    this.FS = artoolkitNFT.FS;
-    this.StringList = artoolkitNFT.StringList;
+    this.FS = this.artoolkitNFT.FS;
+    this.StringList = this.artoolkitNFT.StringList;
 
     console.log("[ARControllerNFT]", "ARToolkitNFT initialized");
 
     // load the camera
-    this.cameraId = await this.loadCamera(this.cameraParam);
+    this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
     console.log(
       "[ARControllerNFT]",
       "Camera params loaded with ID",
@@ -1056,55 +936,5 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     return false;
-  }
-  // implementation
-  /**
-   * Used internally by LoadCamera method
-   * @return {void}
-   */
-  private _storeDataFile(data: Uint8Array, target: string) {
-    // FS is provided by emscripten
-    // Note: valid data must be in binary format encoded as Uint8Array
-    this.FS.writeFile(target, data, {
-      encoding: "binary",
-    });
-  }
-
-  /**
-  * Used internally by the addNFTMarkers method
-  * @param url url of the marker.
-  * @param target the target of the marker.
-  * @param callback callback  to get the binary data.
-  * @param errorCallback the error callback.
-  */
-  private ajax(
-    url: string,
-    target: string,
-    callback: (byteArray: Uint8Array) => void,
-    errorCallback: (url: string, message: number) => void
-  ) {
-    var oReq = new XMLHttpRequest();
-    oReq.open("GET", url, true);
-    oReq.responseType = "arraybuffer"; // blob arraybuffer
-    const writeByteArrayToFS = (
-      target: string,
-      byteArray: Uint8Array,
-      callback: (byteArray: Uint8Array) => void
-    ) => {
-      this.FS.writeFile(target, byteArray, { encoding: "binary" });
-      callback(byteArray);
-    };
-
-    oReq.onload = function () {
-      if (this.status == 200) {
-        var arrayBuffer = oReq.response;
-        var byteArray = new Uint8Array(arrayBuffer);
-        writeByteArrayToFS(target, byteArray, callback);
-      } else {
-        errorCallback(url, this.status);
-      }
-    };
-
-    oReq.send();
   }
 }
