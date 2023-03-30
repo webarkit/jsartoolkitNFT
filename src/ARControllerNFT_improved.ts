@@ -41,7 +41,6 @@ import {
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT_improved";
 import { ARToolkitNFT  } from "./ARToolkitNFT_improved";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
-import Utils from "./Utils";
 
 export class ARControllerNFT implements AbstractARControllerNFT {
   // private declarations
@@ -49,17 +48,19 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private _width: number;
   private _height: number;
   private _cameraParam: string;
-  private cameraCount: number;
-  private markerNFTCount: number
   private cameraId: number;
-  private cameraLoaded: boolean;
+
   private artoolkitNFT: IARToolkitNFT;
   private FS: any;
   private StringList: any;
+
   private listeners: object;
   private nftMarkers: INFTMarker[];
+
   private transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
+  private camera_mat: Float64Array;
+
   private videoWidth: number;
   private videoHeight: number;
   private videoSize: number;
@@ -67,7 +68,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private videoLuma: Uint8Array;
   private grayscaleEnabled: boolean;
   private grayscaleSource: Uint8Array;
-  private camera_mat: Float64Array;
+ 
   private nftMarkerFound: boolean; // = false
   private nftMarkerFoundTime: number;
   private nftMarkerCount: number; // = 0
@@ -118,7 +119,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     // this is a replacement for ARCameraParam
     this._cameraParam = cameraParam;
     this.cameraId = -1;
-    this.cameraLoaded = false;
 
     // toolkit instance
     this.artoolkitNFT;
@@ -751,9 +751,9 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       [urlOrData],
-      (ids: any) => {
+      (ids: number[]) => {
         this.nftMarkerCount += ids.length;
-        onSuccess(ids);
+        onSuccess(ids[0]);
       },
       onError
     );
@@ -771,7 +771,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       urlOrData,
-      (ids: any) => {
+      (ids: number[]) => {
         this.nftMarkerCount += ids.length;
         onSuccess(ids);
       },

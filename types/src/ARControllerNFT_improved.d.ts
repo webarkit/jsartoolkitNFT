@@ -5,10 +5,7 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private _width;
     private _height;
     private _cameraParam;
-    private cameraCount;
-    private markerNFTCount;
     private cameraId;
-    private cameraLoaded;
     private artoolkitNFT;
     private FS;
     private StringList;
@@ -16,6 +13,7 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private nftMarkers;
     private transform_mat;
     private transformGL_RH;
+    private camera_mat;
     private videoWidth;
     private videoHeight;
     private videoSize;
@@ -23,7 +21,6 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private videoLuma;
     private grayscaleEnabled;
     private grayscaleSource;
-    private camera_mat;
     private nftMarkerFound;
     private nftMarkerFoundTime;
     private nftMarkerCount;
