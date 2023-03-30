@@ -27,7 +27,7 @@ var browser = (function () {
 if (browser == "Apple Safari") {
   importScripts("../dist/ARToolkitNFT.js");
 } else {
-  importScripts("../dist/ARToolkitNFT.js");
+  importScripts("../dist/ARToolkitNFT_simd.js");
 }
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
@@ -60,7 +60,7 @@ let filterMinCF = 0.0001;
 let filterBeta = 0.01;
 const filter = new OneEuroFilter({
   minCutOff: filterMinCF,
-  beta: filterBeta
+  beta: filterBeta,
 });
 
 function oefFilter(matrixGL_RH) {
@@ -84,9 +84,9 @@ function load(msg) {
     ar.addEventListener("getNFTMarker", function (ev) {
       var mat;
       if (oef == true) {
-        mat = oefFilter(ev.data.matrixGL_RH)
+        mat = oefFilter(ev.data.matrixGL_RH);
       } else {
-        mat = ev.data.matrixGL_RH
+        mat = ev.data.matrixGL_RH;
       }
       markerResult = {
         type: "found",
@@ -104,12 +104,12 @@ function load(msg) {
       console.log("nftMarker data: ", marker);
       postMessage({
         type: "markerInfos",
-        marker: marker
+        marker: marker,
       });
       console.log("loadNFTMarker -> ", id);
       postMessage({
         type: "endLoading",
-        end: true
+        end: true,
       });
     }).catch(function (err) {
       console.log("Error in loading marker on Worker", err);
@@ -117,7 +117,7 @@ function load(msg) {
 
     postMessage({
       type: "loaded",
-      proj: JSON.stringify(cameraMatrix)
+      proj: JSON.stringify(cameraMatrix),
     });
   };
 
@@ -128,11 +128,7 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARControllerNFT.initWithDimensions(
-      msg.pw,
-      msg.ph,
-      msg.camera_para
-    )
+  ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para)
     .then(onLoad)
     .catch(onError);
 }
@@ -148,7 +144,7 @@ function process() {
     postMessage(markerResult);
   } else {
     postMessage({
-      type: "not found"
+      type: "not found",
     });
   }
 
