@@ -111,6 +111,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
 
   public FS: any;
   public StringList: any;
+  public nftMarkers: any;
 
   // construction
   /**
@@ -146,6 +147,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
 
     this.FS = instance.FS;
     this.StringList = instance.StringList;
+    this.nftMarkers = instance.nftMarkers;
 
     ARToolkitNFT.ERROR_MARKER_INDEX_OUT_OF_BOUNDS =
       instance.ERROR_MARKER_INDEX_OUT_OF_BOUNDS;
