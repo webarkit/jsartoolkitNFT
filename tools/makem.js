@@ -57,9 +57,6 @@ var BUILD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.js";
 var BUILD_SIMD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.simd.js";
 var BUILD_MIN_FILE = "artoolkitNFT.min.js";
 
-var BUILD_IMPROVED_ES6_FILE = "artoolkitNFT_improved_ES6.js";
-var BUILD_SIMD_IMPROVED_ES6_FILE = "artoolkitNFT_improved_ES6.simd.js";
-
 var MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c"];
 
 var MAIN_SOURCES_IMPROVED_ES6 = [
@@ -375,7 +372,7 @@ var compile_wasm_es6 = format(
     INCLUDES +
     " " +
     ALL_BC +
-    MAIN_SOURCES +
+    MAIN_SOURCES_IMPROVED_ES6 +
     FLAGS +
     WASM_FLAGS +
     DEFINES +
@@ -391,7 +388,7 @@ var compile_simd_wasm_es6 = format(
     INCLUDES +
     " " +
     SIMD_BC +
-    MAIN_SOURCES +
+    MAIN_SOURCES_IMPROVED_ES6 +
     FLAGS +
     WASM_FLAGS +
     SIMD128_FLAGS +
@@ -401,39 +398,6 @@ var compile_simd_wasm_es6 = format(
   OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_SIMD_WASM_ES6_FILE
-);
-
-var compile_improved_es6 = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ALL_BC +
-    MAIN_SOURCES_IMPROVED_ES6 +
-    FLAGS +
-    WASM_FLAGS +
-    DEFINES +
-    ES6_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_IMPROVED_ES6_FILE
-);
-
-var compile_simd_improved_es6 = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    SIMD_BC +
-    MAIN_SOURCES_IMPROVED_ES6 +
-    FLAGS +
-    WASM_FLAGS +
-    SIMD128_FLAGS +
-    DEFINES +
-    ES6_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_SIMD_IMPROVED_ES6_FILE
 );
 
 /*
@@ -484,8 +448,6 @@ addJob(compile_simd_wasm);
 addJob(compile_wasm_es6);
 addJob(compile_simd_wasm_es6);
 addJob(compile_combine_min);
-addJob(compile_improved_es6);
-addJob(compile_simd_improved_es6);
 
 if (NO_LIBAR == true) {
   jobs.splice(1, 2);
