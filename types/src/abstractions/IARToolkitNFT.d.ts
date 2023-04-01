@@ -28,4 +28,5 @@ export interface IARToolkitNFT {
     getImageProcMode(): number;
     FS: any;
     StringList: any;
+    nftMarkers: any;
 }

@@ -44,6 +44,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     };
     FS: any;
     StringList: any;
+    nftMarkers: any;
     constructor();
     init(): Promise<this>;
     setup(width: number, height: number, cameraId: number): number;
