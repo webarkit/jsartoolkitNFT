@@ -25,7 +25,7 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
   var camera_para = './../examples/Data/camera_para.dat'
 
   var canvas_process = document.createElement('canvas');
-  var context_process = canvas_process.getContext('2d');
+  var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
 
   var renderer = new THREE.WebGLRenderer({ canvas: canvas_draw, alpha: true, antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
