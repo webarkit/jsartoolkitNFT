@@ -33,10 +33,7 @@ std::unordered_map<int, ARParam> cameraParams;
 class ARToolKitNFT
 {
 public:
-    ARToolKitNFT()
-    {
-        webarkitLOGi("init ARToolKitNFT constructor...");
-    };
+    ARToolKitNFT();
     //~ARToolKitNFT(); 
     int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
@@ -75,21 +72,20 @@ public:
 private:
     KpmHandle *createKpmHandle(ARParamLT *cparamLT);
     void deleteHandle();
-   
 
     int id;
 
     ARParam param;
-    ARParamLT *paramLT = NULL;
+    ARParamLT *paramLT;
 
-    ARUint8 *videoFrame = NULL;
+    ARUint8 *videoFrame;
     int videoFrameSize;
-    ARUint8 *videoLuma = NULL;
+    ARUint8 *videoLuma;
 
-    int width = 0;
-    int height = 0;
+    int width;
+    int height;
 
-    ARHandle *arhandle = NULL;
+    ARHandle *arhandle;
     AR3DHandle *ar3DHandle;
 
     KpmHandle *kpmHandle;
@@ -97,23 +93,23 @@ private:
 
 #if WITH_FILTERING
     ARFilterTransMatInfo *ftmi;
-    ARdouble filterCutoffFrequency = 60.0;
-    ARdouble filterSampleRate = 120.0;
+    ARdouble filterCutoffFrequency;
+    ARdouble filterSampleRate;
 #endif
 
-    int detectedPage = -2; // -2 Tracking not inited, -1 tracking inited OK, >= 0 tracking online on page.
+    int detectedPage;
 
-    int surfaceSetCount = 0; // Running NFT marker id
+    int surfaceSetCount;
     AR2SurfaceSetT *surfaceSet[PAGES_MAX];
     std::unordered_map<int, AR2SurfaceSetT *> surfaceSets;
     // nftMarker struct inside arController
     nftMarker nft;
     std::vector<nftMarker> nftMarkers;
 
-    ARdouble nearPlane = 0.0001;
-    ARdouble farPlane = 1000.0;
+    ARdouble nearPlane;
+    ARdouble farPlane;
 
-    int patt_id = 0; // Running pattern marker id
+    int patt_id;
 
     ARdouble cameraLens[16];
     AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;

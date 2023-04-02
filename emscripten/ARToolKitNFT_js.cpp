@@ -1,5 +1,31 @@
 #include "ARToolKitNFT_js.h"
 
+ARToolKitNFT::ARToolKitNFT() 
+:id(0),
+paramLT(NULL),
+videoFrame(NULL),
+videoFrameSize(0),
+videoLuma(NULL),
+width(0),
+height(0),
+detectedPage(-2), // -2 Tracking not inited, -1 tracking inited OK, >= 0 tracking online on page.
+surfaceSetCount(0), // Running NFT marker id
+arhandle(NULL),
+ar3DHandle(NULL),
+kpmHandle(NULL),
+ar2Handle(NULL),
+#if WITH_FILTERING
+ftmi(NULL),
+filterCutoffFrequency(60.0),
+filterSampleRate(120.0),
+#endif
+nearPlane(0.0001),
+farPlane(1000.0),
+patt_id(0) // Running pattern marker id
+{
+  webarkitLOGi("init ARToolKitNFT constructor...");
+}
+
 void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
                 float interpolationFactor) {
   for (int i = 0; i < 3; i++) {
