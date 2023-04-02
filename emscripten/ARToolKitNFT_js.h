@@ -34,7 +34,7 @@ class ARToolKitNFT
 {
 public:
     ARToolKitNFT();
-    //~ARToolKitNFT(); 
+    ~ARToolKitNFT(); 
     int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
     int detectNFTMarker();
