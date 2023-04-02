@@ -16,6 +16,10 @@ ARToolKitNFT::ARToolKitNFT()
   webarkitLOGi("init ARToolKitNFT constructor...");
 }
 
+ARToolKitNFT::~ARToolKitNFT() {
+  teardown();
+}
+
 void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
                 float interpolationFactor) {
   for (int i = 0; i < 3; i++) {
