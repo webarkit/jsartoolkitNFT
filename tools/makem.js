@@ -185,13 +185,12 @@ FLAGS += " -s USE_LIBJPEG=1";
 FLAGS += " --memory-init-file 0"; // for memless file
 FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
-FLAGS += " -s ASSERTIONS=2";
 
 var WASM_FLAGS = " -s SINGLE_FILE=1";
 var SIMD128_FLAGS = " -msimd128";
 var ES6_FLAGS =
   " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web ";
-  ES6_FLAGS +=  " -gsource-map -s ASSERTIONS=2 -fsanitize=address ";
+
 var ES6_EMBED_ES6_FLAGS =
   " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
 
