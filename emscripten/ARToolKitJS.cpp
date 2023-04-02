@@ -129,8 +129,9 @@ extern "C"
     std::vector<uint8_t> vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
     std::vector<uint8_t> vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
 
-    memcpy(arc->videoFrame, vf.data(), sizeof(uint8_t) * arc->videoFrameSize);
-    memcpy(arc->videoLuma, vl.data(), sizeof(uint8_t) * arc->videoFrameSize/4);
+    arc->videoFrame = vf.data();
+    arc->videoLuma = vl.data();
+
     return 0;
   }
 

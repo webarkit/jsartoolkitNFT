@@ -1,27 +1,17 @@
 #include "ARToolKitNFT_js.h"
 
-ARToolKitNFT::ARToolKitNFT() 
-:id(0),
-paramLT(NULL),
-videoFrame(NULL),
-videoFrameSize(0),
-videoLuma(NULL),
-width(0),
-height(0),
-detectedPage(-2), // -2 Tracking not inited, -1 tracking inited OK, >= 0 tracking online on page.
-surfaceSetCount(0), // Running NFT marker id
-arhandle(NULL),
-ar3DHandle(NULL),
-kpmHandle(NULL),
-ar2Handle(NULL),
+ARToolKitNFT::ARToolKitNFT()
+    : id(0), paramLT(NULL), videoFrame(NULL), videoFrameSize(0),
+      videoLuma(NULL), width(0), height(0),
+      detectedPage(-2),   // -2 Tracking not inited, -1 tracking inited OK, >= 0
+                          // tracking online on page.
+      surfaceSetCount(0), // Running NFT marker id
+      arhandle(NULL), ar3DHandle(NULL), kpmHandle(NULL), ar2Handle(NULL),
 #if WITH_FILTERING
-ftmi(NULL),
-filterCutoffFrequency(60.0),
-filterSampleRate(120.0),
+      ftmi(NULL), filterCutoffFrequency(60.0), filterSampleRate(120.0),
 #endif
-nearPlane(0.0001),
-farPlane(1000.0),
-patt_id(0) // Running pattern marker id
+      nearPlane(0.0001), farPlane(1000.0),
+      patt_id(0) // Running pattern marker id
 {
   webarkitLOGi("init ARToolKitNFT constructor...");
 }
@@ -35,16 +25,15 @@ void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
   }
 }
 
-int ARToolKitNFT::passVideoData(emscripten::val videoFrame,
-                                emscripten::val videoLuma) {
+int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val videoLuma) {
   std::vector<uint8_t> vf =
       emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
   std::vector<uint8_t> vl =
       emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
 
-  memcpy(this->videoFrame, vf.data(), sizeof(uint8_t) * this->videoFrameSize);
-  memcpy(this->videoLuma, vl.data(),
-         sizeof(uint8_t) * this->videoFrameSize / 4);
+  this->videoFrame = vf.data();
+  this->videoLuma = vl.data();
+
   return 0;
 }
 
