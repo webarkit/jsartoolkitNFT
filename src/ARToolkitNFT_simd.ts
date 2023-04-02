@@ -1,5 +1,5 @@
 /*
- *  ARToolkitNFT.ts
+ *  ARToolkitNFT_simd.ts
  *  JSARToolKitNFT
  *
  *  This file is part of JSARToolKitNFT - WebARKit.
