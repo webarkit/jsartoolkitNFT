@@ -53,6 +53,9 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	function("setImageProcMode", &setImageProcMode);
 	function("getImageProcMode", &getImageProcMode);
 
+	function("getCameraLens", &getCameraLens);
+	function("passVideoData", &passVideoData);
+
 	/* errors */
 	constant("ERROR_ARCONTROLLER_NOT_FOUND", ARCONTROLLER_NOT_FOUND);
 	constant("ERROR_MULTIMARKER_NOT_FOUND", MULTIMARKER_NOT_FOUND);

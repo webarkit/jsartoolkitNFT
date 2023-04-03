@@ -34,7 +34,7 @@
  *
  */
 import ARToolkitNFT from "./ARToolkitNFT_simd";
-import ARControllerNFT from "./ARControllerNFT";
+import ARControllerNFT from "./ARControllerNFT_simd";
 
 export default {
   ARToolkitNFT,

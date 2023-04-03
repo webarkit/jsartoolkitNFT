@@ -15,14 +15,11 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private videoWidth;
     private videoHeight;
     private videoSize;
-    private framepointer;
     private framesize;
-    private dataHeap;
     private videoLuma;
     private grayscaleEnabled;
     private grayscaleSource;
     private camera_mat;
-    private videoLumaPointer;
     private nftMarkerFound;
     private nftMarkerFoundTime;
     private nftMarkerCount;

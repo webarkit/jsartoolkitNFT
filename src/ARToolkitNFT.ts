@@ -43,10 +43,6 @@ const { version } = packageJson;
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
-declare global {
-  var artoolkitNFT: IARToolkitNFT;
-}
-
 export default class ARToolkitNFT implements IARToolkitNFT {
   static get UNKNOWN_MARKER() {
     return UNKNOWN_MARKER;
@@ -71,16 +67,6 @@ export default class ARToolkitNFT implements IARToolkitNFT {
   public getNFTData: (id: number, index: number) => object;
   public setLogLevel: (mode: boolean) => number;
   public getLogLevel: () => number;
-  public frameMalloc: {
-    framepointer: number;
-    framesize: number;
-    videoLumaPointer: number;
-    camera: number;
-    transform: number;
-  };
-  public HEAPU8: {
-    buffer: Uint8Array;
-  };
   public NFTMarkerInfo: {
     error: number;
     found: number;
@@ -97,6 +83,12 @@ export default class ARToolkitNFT implements IARToolkitNFT {
   public getThreshold: (id: number) => number;
   public setImageProcMode: (id: number, mode: number) => number;
   public getImageProcMode: (id: number) => number;
+  public getCameraLens: (cameraId: number) => any;
+  public passVideoData: (
+    id: number,
+    videoFrame: Uint8ClampedArray,
+    videoLuma: Uint8Array
+  ) => void;
 
   // construction
   /**
@@ -131,8 +123,8 @@ export default class ARToolkitNFT implements IARToolkitNFT {
 
     this._decorate();
 
-    let scope = typeof window !== "undefined" ? window : global;
-    scope.artoolkitNFT = this;
+    //let scope = typeof window !== "undefined" ? window : global;
+    //scope.artoolkitNFT = this;
 
     return this;
   }
@@ -164,7 +156,6 @@ export default class ARToolkitNFT implements IARToolkitNFT {
       "getNFTMarker",
       "getNFTData",
 
-      "frameMalloc",
       "NFTMarkerInfo",
 
       "setProjectionNearPlane",
@@ -182,8 +173,10 @@ export default class ARToolkitNFT implements IARToolkitNFT {
       "setImageProcMode",
       "getImageProcMode",
 
+      "getCameraLens",
+      "passVideoData",
+
       "StringList",
-      "HEAPU8",
     ].forEach((method: string) => {
       this.converter()[method] = this.instance[method];
     });
