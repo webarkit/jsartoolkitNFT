@@ -44,7 +44,7 @@ if (!EMSCRIPTEN_ROOT) {
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc ") : "emcc ";
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++ ") : "em++ ";
 var OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
-var MEM = 256 * 1024 * 1024; // 64MB
+var MEM = 128 * 1024 * 1024; // 64MB
 
 var SOURCE_PATH = path.resolve(__dirname, "../emscripten/") + "/";
 var OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
