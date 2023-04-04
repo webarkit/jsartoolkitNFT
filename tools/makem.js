@@ -44,7 +44,7 @@ if (!EMSCRIPTEN_ROOT) {
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc ") : "emcc ";
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++ ") : "em++ ";
 var OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
-var MEM = 256 * 1024 * 1024; // 64MB
+var MEM = 128 * 1024 * 1024; // 64MB
 
 var SOURCE_PATH = path.resolve(__dirname, "../emscripten/") + "/";
 var OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
@@ -59,6 +59,12 @@ var BUILD_MIN_FILE = "artoolkitNFT.min.js";
 
 var MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c"];
 
+var MAIN_SOURCES_IMPROVED_ES6 = [
+  "ARToolKitNFT_js.cpp",
+  "trackingMod.c",
+  "trackingMod2d.c",
+];
+
 if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
   console.log("Renaming and moving config.h.in to config.h");
   fs.copyFileSync(
@@ -69,6 +75,10 @@ if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
 }
 
 MAIN_SOURCES = MAIN_SOURCES.map(function (src) {
+  return path.resolve(SOURCE_PATH, src);
+}).join(" ");
+
+var MAIN_SOURCES_IMPROVED_ES6 = MAIN_SOURCES_IMPROVED_ES6.map(function (src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(" ");
 
@@ -180,6 +190,7 @@ var WASM_FLAGS = " -s SINGLE_FILE=1";
 var SIMD128_FLAGS = " -msimd128";
 var ES6_FLAGS =
   " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web ";
+
 var ES6_EMBED_ES6_FLAGS =
   " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
 
@@ -362,7 +373,7 @@ var compile_wasm_es6 = format(
     INCLUDES +
     " " +
     ALL_BC +
-    MAIN_SOURCES +
+    MAIN_SOURCES_IMPROVED_ES6 +
     FLAGS +
     WASM_FLAGS +
     DEFINES +
@@ -378,7 +389,7 @@ var compile_simd_wasm_es6 = format(
     INCLUDES +
     " " +
     SIMD_BC +
-    MAIN_SOURCES +
+    MAIN_SOURCES_IMPROVED_ES6 +
     FLAGS +
     WASM_FLAGS +
     SIMD128_FLAGS +

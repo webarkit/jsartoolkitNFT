@@ -95,9 +95,9 @@ function load(msg) {
     ar.addEventListener("getNFTMarker", function (ev) {
       var mat;
       if (oef == true) {
-        mat = oefFilter(ev.data.matrixGL_RH)
+        mat = oefFilter(ev.data.matrixGL_RH);
       } else {
-        mat = ev.data.matrixGL_RH
+        mat = ev.data.matrixGL_RH;
       }
       markerResult = {
         type: "found",
@@ -130,7 +130,7 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARToolkitNFT.ARControllerNFT.initWithDimensions(
+  ARControllerNFT.initWithDimensions(
     width,
     height,
     msg.camera_para

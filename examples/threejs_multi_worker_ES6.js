@@ -25,7 +25,7 @@ function isMobile () {
     var camera_para = './../examples/Data/camera_para.dat'
   
     var canvas_process = document.createElement('canvas');
-    var context_process = canvas_process.getContext('2d');
+    var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
     var targetCanvas = document.querySelector("#canvas");
   
     var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });

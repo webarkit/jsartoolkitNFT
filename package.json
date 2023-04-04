@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
@@ -36,9 +36,9 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.3",
-    "@babel/plugin-transform-runtime": "^7.21.0",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/core": "^7.21.4",
+    "@babel/plugin-transform-runtime": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
     "babel-loader": "^9.1.2",
     "karma": "^6.4.1",
     "karma-chrome-launcher": "^3.1.1",
@@ -48,8 +48,8 @@
     "qunit": "^2.19.4",
     "ts-loader": "^9.4.2",
     "typedoc": "^0.23.28",
-    "typescript": "^5.0.2",
-    "webpack": "^5.76.3",
+    "typescript": "^5.0.3",
+    "webpack": "^5.77.0",
     "webpack-cli": "^5.0.1"
   },
   "scripts": {
