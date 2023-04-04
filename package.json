@@ -36,9 +36,9 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.3",
-    "@babel/plugin-transform-runtime": "^7.21.0",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/core": "^7.21.4",
+    "@babel/plugin-transform-runtime": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
     "babel-loader": "^9.1.2",
     "karma": "^6.4.1",
     "karma-chrome-launcher": "^3.1.1",
