@@ -51,6 +51,7 @@ var OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
 
 var BUILD_DEBUG_FILE = "artoolkitNFT.debug.js";
 var BUILD_WASM_FILE = "artoolkitNFT_wasm.js";
+var BUILD_WASM_NODE_FILE = "artoolkitNFT_node_wasm.js";
 var BUILD_WASM_EMBED_ES6_FILE = "artoolkitNFT_embed_ES6_wasm.js";
 var BUILD_SIMD_WASM_FILE = "artoolkitNFT_wasm.simd.js";
 var BUILD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.js";
@@ -189,6 +190,8 @@ var PRE_FLAGS =
 var PRE_ES6_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
 
+var NODE_FLAGS = " -s ENVIRONMENT='node' -s FORCE_FILESYSTEM  -s EXPORTED_RUNTIME_METHODS='['NODEFS','FS']' -lnodefs.js";
+
 FLAGS += " --bind ";
 
 /* DEBUG FLAGS */
@@ -323,6 +326,23 @@ var compile_wasm = format(
   BUILD_WASM_FILE
 );
 
+var compile_wasm_node = format(
+  EMCC +
+    " " +
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    DEFINES +
+    NODE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_NODE_FILE
+);
+
 var compile_wasm_embed_ES6 = format(
   EMCC +
     " " +
@@ -340,6 +360,7 @@ var compile_wasm_embed_ES6 = format(
   OUTPUT_PATH,
   BUILD_WASM_EMBED_ES6_FILE
 );
+
 var compile_simd_wasm = format(
   EMCC +
     INCLUDES +
@@ -433,6 +454,7 @@ addJob(compile_arlib);
 addJob(compile_simd_arlib);
 addJob(compile_combine);
 addJob(compile_wasm);
+addJob(compile_wasm_node);
 addJob(compile_wasm_embed_ES6);
 addJob(compile_simd_wasm);
 addJob(compile_wasm_es6);

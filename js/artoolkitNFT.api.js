@@ -840,7 +840,7 @@
 
 
 
-    // ARToolKit exported JS API
+    // ARToolKitNFT exported JS API
     //
     var artoolkitNFT = {
 
