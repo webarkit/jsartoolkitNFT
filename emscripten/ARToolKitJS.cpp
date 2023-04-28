@@ -18,6 +18,7 @@
 #include <AR2/tracking.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKitUtil/WebARKitLog.h>
 #include <emscripten.h>
 #include <emscripten/val.h>
 #include <stdio.h>
@@ -445,6 +446,7 @@ extern "C"
     {
       ARLOGw("*** Camera Parameter resized from %d, %d. ***\n", arc->param.xsize,
              arc->param.ysize);
+      WEBARKITLOGi("Test message from WEBARKITLOG...");
       arParamChangeSize(&(arc->param), arc->width, arc->height, &(arc->param));
     }
 

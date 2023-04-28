@@ -211,6 +211,7 @@ DEBUG_FLAGS += "  -s DEMANGLE_SUPPORT=1 ";
 
 var INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
+  path.resolve(__dirname, WEBARKITLIB_ROOT + "/WebARKit"),
   OUTPUT_PATH,
   SOURCE_PATH,
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),
