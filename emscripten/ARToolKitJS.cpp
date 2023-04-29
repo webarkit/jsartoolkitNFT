@@ -189,7 +189,7 @@ extern "C"
 
       if (arFilterTransMat(arc->ftmi, transF, reset) < 0)
       {
-        webarkitLOGe("arFilterTransMat error with marker %d.", markerIndex);
+        WEBARKITLOGe("arFilterTransMat error with marker %d.", markerIndex);
       }
 
       matrixLerp(transF, transFLerp, 0.95);
@@ -197,7 +197,7 @@ extern "C"
 
       if (trackResult < 0)
       {
-        webarkitLOGi("Tracking lost. %d", trackResult);
+        WEBARKITLOGi("Tracking lost. %d", trackResult);
         arc->detectedPage = -2;
       }
       else
@@ -320,7 +320,7 @@ extern "C"
     if ((arc->ar2Handle = ar2CreateHandleMod(arc->paramLT, arc->pixFormat)) ==
         NULL)
     {
-      webarkitLOGe("Error: ar2CreateHandle.");
+      WEBARKITLOGe("Error: ar2CreateHandle.");
       kpmDeleteHandle(&arc->kpmHandle);
     }
     // Settings for devices with single-core CPUs.
@@ -417,7 +417,7 @@ extern "C"
     ARParam param;
     if (arParamLoad(cparam_name.c_str(), 1, &param) < 0)
     {
-      webarkitLOGe("loadCamera(): Error loading parameter file %s for camera.",
+      WEBARKITLOGe("loadCamera(): Error loading parameter file %s for camera.",
                    cparam_name.c_str());
       return -1;
     }
@@ -447,6 +447,7 @@ extern "C"
       ARLOGw("*** Camera Parameter resized from %d, %d. ***\n", arc->param.xsize,
              arc->param.ysize);
       WEBARKITLOGi("Test message from WEBARKITLOG...");
+      WEBARKITLOGe("setCamera(): Error: arParamLTCreate.");
       arParamChangeSize(&(arc->param), arc->width, arc->height, &(arc->param));
     }
 
@@ -458,7 +459,7 @@ extern "C"
     if ((arc->paramLT = arParamLTCreate(&(arc->param),
                                         AR_PARAM_LT_DEFAULT_OFFSET)) == NULL)
     {
-      webarkitLOGe("setCamera(): Error: arParamLTCreate.");
+      WEBARKITLOGe("setCamera(): Error: arParamLTCreate.");
       return -1;
     }
 
@@ -468,7 +469,7 @@ extern "C"
     // setup camera
     if ((arc->arhandle = arCreateHandle(arc->paramLT)) == NULL)
     {
-      webarkitLOGe("setCamera(): Error: arCreateHandle.");
+      WEBARKITLOGe("setCamera(): Error: arCreateHandle.");
       return -1;
     }
     // AR_DEFAULT_PIXEL_FORMAT
@@ -477,7 +478,7 @@ extern "C"
     arc->ar3DHandle = ar3DCreateHandle(&(arc->param));
     if (arc->ar3DHandle == NULL)
     {
-      webarkitLOGe("setCamera(): Error creating 3D handle");
+      WEBARKITLOGe("setCamera(): Error creating 3D handle");
       return -1;
     }
 
@@ -526,7 +527,7 @@ extern "C"
 
     if (datasetPathnames.size() >= PAGES_MAX)
     {
-      webarkitLOGe("Error exceed maximum pages.");
+      WEBARKITLOGe("Error exceed maximum pages.");
       exit(-1);
     }
 
@@ -534,8 +535,8 @@ extern "C"
 
     for (int i = 0; i < datasetPathnames.size(); i++)
     {
-      webarkitLOGi("datasetPathnames size: %i", datasetPathnames.size());
-      webarkitLOGi("add NFT marker-> '%s'", datasetPathnames[i].c_str());
+      WEBARKITLOGi("datasetPathnames size: %i", datasetPathnames.size());
+      WEBARKITLOGi("add NFT marker-> %s", datasetPathnames[i].c_str());
 
       const char *datasetPathname = datasetPathnames[i].c_str();
       int pageNo = i;
@@ -543,33 +544,33 @@ extern "C"
 
       // Load KPM data.
       KpmRefDataSet *refDataSet2;
-      webarkitLOGi("Reading %s.fset3", datasetPathname);
+      WEBARKITLOGi("Reading %s.fset3", datasetPathname);
       if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0)
       {
-        webarkitLOGe("Error reading KPM data from %s.fset3", datasetPathname);
+        WEBARKITLOGe("Error reading KPM data from %s.fset3", datasetPathname);
         return {};
       }
-      webarkitLOGi("Assigned page no. %d.", pageNo);
+      WEBARKITLOGi("Assigned page no. %d.", pageNo);
       if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages,
                                       pageNo) < 0)
       {
-        webarkitLOGe("Error: kpmChangePageNoOfRefDataSet");
+        WEBARKITLOGe("Error: kpmChangePageNoOfRefDataSet");
         return {};
       }
       if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0)
       {
-        webarkitLOGe("Error: kpmMergeRefDataSet");
+        WEBARKITLOGe("Error: kpmMergeRefDataSet");
         return {};
       }
-      webarkitLOGi("Done.");
+      WEBARKITLOGi("Done.");
 
       // Load AR2 data.
-      webarkitLOGi("Reading %s.fset", datasetPathname);
+      WEBARKITLOGi("Reading %s.fset", datasetPathname);
 
       if ((arc->surfaceSet[i] =
                ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL)
       {
-        webarkitLOGe("Error reading data from %s.fset", datasetPathname);
+        WEBARKITLOGe("Error reading data from %s.fset", datasetPathname);
         return {};
       }
 
@@ -581,10 +582,10 @@ extern "C"
           arc->surfaceSet[i]->surface[0].imageSet->scale[0]->ysize;
       arc->nft.dpi_NFT = arc->surfaceSet[i]->surface[0].imageSet->scale[0]->dpi;
 
-      webarkitLOGi("NFT num. of ImageSet: %i", numIset);
-      webarkitLOGi("NFT marker width: %i", arc->nft.width_NFT);
-      webarkitLOGi("NFT marker height: %i", arc->nft.height_NFT);
-      webarkitLOGi("NFT marker dpi: %i", arc->nft.dpi_NFT);
+      WEBARKITLOGi("NFT num. of ImageSet: %i", numIset);
+      WEBARKITLOGi("NFT marker width: %i", arc->nft.width_NFT);
+      WEBARKITLOGi("NFT marker height: %i", arc->nft.height_NFT);
+      WEBARKITLOGi("NFT marker dpi: %i", arc->nft.dpi_NFT);
 
       arc->nft.id_NFT = i;
       arc->nft.width_NFT = arc->nft.width_NFT;
@@ -592,18 +593,18 @@ extern "C"
       arc->nft.dpi_NFT = arc->nft.dpi_NFT;
       arc->nftMarkers.push_back(arc->nft);
 
-      webarkitLOGi("Done.");
+      WEBARKITLOGi("Done.");
       surfaceSetCount++;
     }
 
     if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0)
     {
-      webarkitLOGe("Error: kpmSetRefDataSet");
+      WEBARKITLOGe("Error: kpmSetRefDataSet");
       return {};
     }
     kpmDeleteRefDataSet(&refDataSet);
 
-    webarkitLOGi("Loading of NFT data complete.");
+    WEBARKITLOGi("Loading of NFT data complete.");
 
     arc->surfaceSetCount += markerIds.size();
 
@@ -666,7 +667,7 @@ extern "C"
       return;
     if (arSetLabelingThresh(arc->arhandle, threshold) == 0)
     {
-      webarkitLOGi("Threshold set to %d", threshold);
+      WEBARKITLOGi("Threshold set to %d", threshold);
     };
     // default 100
     // arSetLabelingThreshMode
@@ -703,7 +704,7 @@ extern "C"
 
     if (arSetLabelingThreshMode(arc->arhandle, thresholdMode) == 0)
     {
-      webarkitLOGi("Threshold mode set to %d", (int)thresholdMode);
+      WEBARKITLOGi("Threshold mode set to %d", (int)thresholdMode);
     }
   }
 
@@ -734,7 +735,7 @@ extern "C"
     arController *arc = &(arControllers[id]);
 
     arSetDebugMode(arc->arhandle, enable ? AR_DEBUG_ENABLE : AR_DEBUG_DISABLE);
-    webarkitLOGi("Debug mode set to %s", enable ? "on." : "off.");
+    WEBARKITLOGi("Debug mode set to %s", enable ? "on." : "off.");
 
     return enable;
   }
@@ -775,7 +776,7 @@ extern "C"
     int imageProcMode = mode;
     if (arSetImageProcMode(arc->arhandle, mode) == 0)
     {
-      webarkitLOGi("Image proc. mode set to %d.", imageProcMode);
+      WEBARKITLOGi("Image proc. mode set to %d.", imageProcMode);
     }
   }
 
@@ -833,7 +834,7 @@ extern "C"
 
     setCamera(id, cameraID);
 
-    webarkitLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
+    WEBARKITLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
 
     return arc->id;
   }
