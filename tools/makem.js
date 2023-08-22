@@ -43,7 +43,7 @@ if (!EMSCRIPTEN_ROOT) {
 
 var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc ") : "emcc ";
 var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++ ") : "em++ ";
-var OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
+var OPTIMIZE_FLAGS = " -O1 "; // -Oz for smallest size
 var MEM = 128 * 1024 * 1024; // 64MB
 
 var SOURCE_PATH = path.resolve(__dirname, "../emscripten/") + "/";
@@ -185,6 +185,11 @@ FLAGS += " -s USE_LIBJPEG=1";
 FLAGS += " --memory-init-file 0"; // for memless file
 FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
+
+FLAGS += " -g2 ";
+FLAGS += "  -s DEMANGLE_SUPPORT=1 ";
+FLAGS += " --profiling ";
+FLAGS += " -s ASSERTIONS=2 ";
 
 var WASM_FLAGS = " -s SINGLE_FILE=1";
 var SIMD128_FLAGS = " -msimd128";
@@ -443,13 +448,13 @@ function addJob(job) {
 addJob(clean_builds);
 addJob(compile_arlib);
 addJob(compile_simd_arlib);
-addJob(compile_combine);
+//addJob(compile_combine);
 addJob(compile_wasm);
 addJob(compile_wasm_embed_ES6);
 addJob(compile_simd_wasm);
 addJob(compile_wasm_es6);
 addJob(compile_simd_wasm_es6);
-addJob(compile_combine_min);
+//addJob(compile_combine_min);
 
 if (NO_LIBAR == true) {
   jobs.splice(1, 2);

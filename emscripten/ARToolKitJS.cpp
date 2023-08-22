@@ -447,7 +447,7 @@ extern "C"
       ARLOGw("*** Camera Parameter resized from %d, %d. ***\n", arc->param.xsize,
              arc->param.ysize);
       WEBARKITLOGi("Test message from WEBARKITLOG...");
-      WEBARKITLOGe("setCamera(): Error: arParamLTCreate.");
+      //WEBARKITLOGe("setCamera(): Error: arParamLTCreate.");
       arParamChangeSize(&(arc->param), arc->width, arc->height, &(arc->param));
     }
 
