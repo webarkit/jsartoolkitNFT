@@ -51,6 +51,7 @@ var OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
 
 var BUILD_DEBUG_FILE = "artoolkitNFT.debug.js";
 var BUILD_WASM_FILE = "artoolkitNFT_wasm.js";
+var BUILD_THREAD_FILE = "artoolkitNFT_thread.js";
 var BUILD_WASM_EMBED_ES6_FILE = "artoolkitNFT_embed_ES6_wasm.js";
 var BUILD_SIMD_WASM_FILE = "artoolkitNFT_wasm.simd.js";
 var BUILD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.js";
@@ -58,6 +59,9 @@ var BUILD_SIMD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.simd.js";
 var BUILD_MIN_FILE = "artoolkitNFT.min.js";
 
 var MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c"];
+
+// testing threaded version of the library.
+var MAIN_SOURCES_TD = ["ARToolKitJS_td.cpp", "trackingSub.c"];
 
 var MAIN_SOURCES_IMPROVED_ES6 = [
   "ARToolKitNFT_js.cpp",
@@ -78,11 +82,15 @@ MAIN_SOURCES = MAIN_SOURCES.map(function (src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(" ");
 
+MAIN_SOURCES_TD = MAIN_SOURCES_TD.map(function (src) {
+  return path.resolve(SOURCE_PATH, src);
+}).join(" ");
+
 var MAIN_SOURCES_IMPROVED_ES6 = MAIN_SOURCES_IMPROVED_ES6.map(function (src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(" ");
 
-let ar_sources;
+let ar_sources, ar_sources_threaded;
 
 if (platform === "win32") {
   var glob = require("glob");
@@ -105,6 +113,15 @@ if (platform === "win32") {
     "ARUtil/log.c",
     "ARUtil/file_utils.c",
   ]);
+
+  ar_sources_threaded = matchAll([
+    "AR/arLabelingSub/*.c",
+    "AR/*.c",
+    "ARICP/*.c",
+    "ARUtil/log.c",
+    "ARUtil/file_utils.c",
+    "ARUtil/thread_sub.c",
+  ]);
 } else {
   ar_sources = [
     "AR/arLabelingSub/*.c",
@@ -112,6 +129,17 @@ if (platform === "win32") {
     "ARICP/*.c",
     "ARUtil/log.c",
     "ARUtil/file_utils.c",
+  ].map(function (src) {
+    return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/", src);
+  });
+
+  ar_sources_threaded = [
+    "AR/arLabelingSub/*.c",
+    "AR/*.c",
+    "ARICP/*.c",
+    "ARUtil/log.c",
+    "ARUtil/file_utils.c",
+    "ARUtil/thread_sub.c",
   ].map(function (src) {
     return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/", src);
   });
@@ -168,6 +196,11 @@ var webarkit_sources = ["WebARKitLog.cpp"].map(function (src) {
 
 if (HAVE_NFT) {
   ar_sources = ar_sources
+    .concat(ar2_sources)
+    .concat(kpm_sources)
+    .concat(webarkit_sources);
+
+  ar_sources_threaded = ar_sources_threaded
     .concat(ar2_sources)
     .concat(kpm_sources)
     .concat(webarkit_sources);
@@ -267,6 +300,18 @@ var compile_arlib = format(
   OUTPUT_PATH
 );
 
+var compile_thread_arlib = format(
+  EMCC +
+    INCLUDES +
+    " " +
+    ar_sources_threaded.join(" ") +
+    FLAGS +
+    " " + "-pthread " +
+    DEFINES +
+    " -r -o {OUTPUT_PATH}libar_td.bc ",
+  OUTPUT_PATH
+);
+
 var compile_simd_arlib = format(
   EMCC +
     INCLUDES +
@@ -281,6 +326,7 @@ var compile_simd_arlib = format(
 );
 
 var ALL_BC = " {OUTPUT_PATH}libar.bc ";
+var THREAD_BC = " {OUTPUT_PATH}libar_td.bc ";
 var SIMD_BC = " {OUTPUT_PATH}libar_simd.bc ";
 
 var compile_combine = format(
@@ -334,6 +380,23 @@ var compile_wasm = format(
   BUILD_WASM_FILE
 );
 
+var compile_wasm_thread = format(
+  EMCC +
+    INCLUDES +
+    " " +
+    THREAD_BC +
+    MAIN_SOURCES_TD +
+    FLAGS + "-pthread " +
+    WASM_FLAGS +
+    SIMD128_FLAGS +
+    DEFINES +
+    PRE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_THREAD_FILE
+);
+
 var compile_wasm_embed_ES6 = format(
   EMCC +
     " " +
@@ -351,6 +414,7 @@ var compile_wasm_embed_ES6 = format(
   OUTPUT_PATH,
   BUILD_WASM_EMBED_ES6_FILE
 );
+
 var compile_simd_wasm = format(
   EMCC +
     INCLUDES +
@@ -441,9 +505,11 @@ function addJob(job) {
 
 addJob(clean_builds);
 addJob(compile_arlib);
+addJob(compile_thread_arlib);
 addJob(compile_simd_arlib);
 addJob(compile_combine);
 addJob(compile_wasm);
+addJob(compile_wasm_thread);
 addJob(compile_wasm_embed_ES6);
 addJob(compile_simd_wasm);
 addJob(compile_wasm_es6);
