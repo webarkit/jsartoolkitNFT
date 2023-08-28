@@ -242,7 +242,7 @@ int detectNFTMarker(int id) {
   KpmResult *kpmResult = NULL;
   int kpmResultNum = -1;
 
-  if (arc->detectedPage == -2) {
+  /*if (arc->detectedPage == -2) {
     kpmMatching(arc->kpmHandle, arc->videoLuma);
     kpmGetResult(arc->kpmHandle, &kpmResult, &kpmResultNum);
 
@@ -264,7 +264,7 @@ int detectNFTMarker(int id) {
         ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
       }
     }
-  }
+  }*/
   return kpmResultNum;
 }
 
@@ -374,6 +374,8 @@ int teardown(int id) {
   arControllers.erase(id);
 
   delete arc;
+
+  trackingInitQuit(&arc->threadHandle);
 
   return 0;
 }
