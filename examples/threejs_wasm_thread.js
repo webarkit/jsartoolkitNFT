@@ -1,5 +1,5 @@
 var ar;
-function isMobile () {
+function isMobile() {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
@@ -22,8 +22,8 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
   var w, h;
   var pw, ph;
   var ox, oy;
-  var worker;
-  var camera_para = './../examples/Data/camera_para.dat'
+  var camera_para = './../examples/Data/camera_para.dat';
+  var camera_matrix;
 
   var canvas_process = document.createElement('canvas');
   var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
@@ -52,6 +52,13 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
     window.addEventListener("markerInfos", function (ev) {
       marker = ev.detail.marker;
       console.log(marker);
+    })
+  }
+
+  var getCameraMatrix = function () {
+    window.addEventListener("loaded", function (ev) {
+      camera_matrix = ev.detail.proj;
+      console.log(camera_matrix);
     })
   }
 
@@ -93,18 +100,34 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
 
     load_thread(msg);
     markerInfos();
+    getCameraMatrix();
   };
 
   var world;
 
   var found = function () {
-    window.addEventListener("markerFound", function (ev) { 
+    window.addEventListener("markerFound", function (ev) {
       world = ev.detail.matrixGL_RH
     })
   };
 
   var lasttime = Date.now();
   var time = 0;
+
+  var setCameraMatrix = function () {
+    var proj = camera_matrix;
+    var ratioW = pw / w;
+    var ratioH = ph / h;
+    proj[0] *= ratioW;
+    proj[4] *= ratioW;
+    proj[8] *= ratioW;
+    proj[12] *= ratioW;
+    proj[1] *= ratioH;
+    proj[5] *= ratioH;
+    proj[9] *= ratioH;
+    proj[13] *= ratioH;
+    setMatrix(camera.projectionMatrix, proj);
+  }
 
   var draw = function () {
     render_update();
@@ -113,6 +136,9 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
     time += dt;
     lasttime = now;
     found();
+    if (camera_matrix) {
+      setCameraMatrix();
+    }
 
     if (!world) {
       sphere.visible = false;
@@ -130,7 +156,7 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
         var loader = document.getElementById('loading');
         if (loader) {
           loader.querySelector('.loading-text').innerText = 'Start the tracking!';
-          setTimeout(function(){
+          setTimeout(function () {
             loader.parentElement.removeChild(loader);
           }, 2000);
         }
@@ -146,7 +172,7 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
 
     var imageData = context_process.getImageData(0, 0, pw, ph);
 
-    if (ar && ar.process) {  
+    if (ar && ar.process) {
       ar.process(imageData);
     }
 
