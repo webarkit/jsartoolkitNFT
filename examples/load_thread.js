@@ -37,8 +37,11 @@ function load_thread(msg) {
           var endLoading = new CustomEvent("endLoading", {detail: {end: true}})
             window.dispatchEvent(endLoading)
         });
+
+        var loaded = new CustomEvent("loaded", {detail: {proj: cameraMatrix}});
+        window.dispatchEvent(loaded)
   
-        postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
+        //postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
       };
   
       var onError = function (error) {
