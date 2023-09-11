@@ -15,7 +15,7 @@ var setMatrix = function (matrix, value) {
   }
 };
 
-function start(container, markerUrl, video, input_width, input_height, canvas_draw, render_update, track_update) {
+function start(container, markerUrl, video, input_width, input_height, canvas_draw, render_update) {
   var vw, vh;
   var sw, sh;
   var pscale, sscale;
@@ -51,14 +51,12 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
   var markerInfos = function () {
     window.addEventListener("markerInfos", function (ev) {
       marker = ev.detail.marker;
-      console.log(marker);
     })
   }
 
   var getCameraMatrix = function () {
     window.addEventListener("loaded", function (ev) {
       camera_matrix = ev.detail.proj;
-      console.log(camera_matrix);
     })
   }
 

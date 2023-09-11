@@ -22,11 +22,6 @@
         Main
       </p>
     </div>
-    <div id="stats2" class="stats-item">
-      <p class="stats-item-title">
-        Worker
-      </p>
-    </div>
   </div>
   <!--
   ==================
@@ -65,9 +60,6 @@
   var statsMain = new Stats();
   statsMain.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.getElementById( 'stats1' ).appendChild( statsMain.dom );
-  var statsWorker = new Stats();
-  statsWorker.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.getElementById( 'stats2' ).appendChild( statsWorker.dom );
   /**
   * APP / ELEMENTS
   */
@@ -117,9 +109,6 @@
           canvas,
           function() {
             statsMain.update()
-          },
-          function() {
-            statsWorker.update();
           }
         );
       } );
