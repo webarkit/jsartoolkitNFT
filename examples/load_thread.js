@@ -12,7 +12,6 @@ function load_thread(msg) {
       var onLoad = function () {
         ar = new ARControllerNFT(msg.pw, msg.ph, param);
         var cameraMatrix = ar.getCameraMatrix();
-        console.log(ar);
   
         ar.addEventListener("getNFTMarker", function (ev) {
           tickCount += 1;
@@ -40,8 +39,6 @@ function load_thread(msg) {
 
         var loaded = new CustomEvent("loaded", {detail: {proj: cameraMatrix}});
         window.dispatchEvent(loaded)
-  
-        //postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
       };
   
       var onError = function (error) {
