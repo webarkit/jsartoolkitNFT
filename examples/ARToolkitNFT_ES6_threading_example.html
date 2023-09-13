@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>ARToolkitNFT_ES6 example</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
   <link rel="stylesheet" href="css/nft-style.css">
 </head>
+
 <body>
-  <div id="loading" >
-    <img  src="Data/JsartoolkitNFT-logo.gif"/>
+  <div id="loading">
+    <img src="Data/JsartoolkitNFT-logo.gif" />
     <span class="loading-text">Loading, please wait</span>
   </div>
   <!--
@@ -22,73 +24,56 @@
         Main
       </p>
     </div>
-
-    <div id="stats2" class="stats-item">
-      <p class="stats-item-title">
-        Worker
-      </p>
-    </div>
   </div>
 
-	<div id="app">
-		<video
-			loop
-			autoplay
-			muted
-			playsinline
-			id="video">
-		</video>
-		<canvas id="canvas"></canvas>
-	</div>
+  <div id="app">
+    <video loop autoplay muted playsinline id="video">
+    </video>
+    <canvas id="canvas"></canvas>
+  </div>
   <script src="js/third_party/three.js/stats.min.js"></script>
   <script src="js/third_party/three.js/three.min.js"></script>
-  <script async src="../dist/ARToolkitNFT_td.js"></script>
-  <script async src="../dist/ARToolkitNFT_td.worker.js"></script>
-  <script async src="../dist/121.ARToolkitNFT_td.worker.js"></script>
+  <script async src="js/threading_files/ARToolkitNFT_td.js"></script>
   <script src="index.js"></script>
-  <script  src="../js/one-euro-filter.js"></script>
-  <script  src="load_ES6_thread.js"></script>
-  <script  src="threejs_wasm_thread.js"></script>
+  <script src="../js/one-euro-filter.js"></script>
+  <script src="load_ES6_thread.js"></script>
+  <script src="threejs_wasm_thread.js"></script>
 
   <script>
-  /**
-  * STATS
-  */
-  var statsMain = new Stats();
-  statsMain.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.getElementById( 'stats1' ).appendChild( statsMain.dom );
+    /**
+    * STATS
+    */
+    var statsMain = new Stats();
+    statsMain.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.getElementById('stats1').appendChild(statsMain.dom);
 
-  var statsWorker = new Stats();
-  statsWorker.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.getElementById( 'stats2' ).appendChild( statsWorker.dom );
+    window.addEventListener('load', () => {
+      console.log('init ARToolkitNFT...');
+      initCamera()
+        .then(video => {
 
-  window.addEventListener('load', () => {
-    console.log('init ARToolkitNFT...');
-    initCamera()
-    .then(video => {
+          // start camera playback
+          sourceVideo = video;
+          sourceVideo.width = 640;
+          sourceVideo.height = 480;
+          sourceVideo.play();
 
-    // start camera playback
-    sourceVideo = video;
-    sourceVideo.width = 640;
-    sourceVideo.height = 480;
-    sourceVideo.play();
+          // init target canvas
+          initTargetCanvas();
 
-    // init target canvas
-    initTargetCanvas();
+          return new Promise(resolve => {
+            sourceVideo.addEventListener("loadeddata", event => {
+              console.log("Camera is ready");
+              resolve();
+            });
+          });
+        })
+        .then(_ => {
 
-    return new Promise(resolve => {
-      sourceVideo.addEventListener("loadeddata", event => {
-        console.log("Camera is ready");
-        resolve();
-      });
-    });
-  })
-  .then(_ => {
+          start('../examples/DataNFT/pinball', video, video.videoWidth, video.videoHeight, canvas, function () { statsMain.update() })
 
-    start('../examples/DataNFT/pinball', video, video.videoWidth, video.videoHeight, canvas, function() { statsMain.update() }, function() { statsWorker.update() })
-
-    });
-  })
+        });
+    })
   </script>
 
 </body>
