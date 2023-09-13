@@ -1,3 +1,4 @@
+#include "trackingSub.h"
 #include <stdio.h>
 #include <AR/ar.h>
 #include <emscripten.h>
@@ -11,7 +12,6 @@
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
-#include "trackingSub.h"
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
@@ -93,12 +93,6 @@ private:
     AR2HandleT *ar2Handle;
 
     THREAD_HANDLE_T *threadHandle;
-
-#if WITH_FILTERING
-    ARFilterTransMatInfo *ftmi;
-    ARdouble filterCutoffFrequency;
-    ARdouble filterSampleRate;
-#endif
 
     int detectedPage;
 

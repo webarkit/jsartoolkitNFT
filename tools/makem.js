@@ -234,6 +234,9 @@ var SIMD128_FLAGS = " -msimd128";
 var ES6_FLAGS =
   " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web ";
 
+var ES6_TD_FLAGS =
+  " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web,worker ";
+
 var ES6_EMBED_ES6_FLAGS =
   " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
 
@@ -464,10 +467,10 @@ var compile_wasm_es6_thread = format(
     " " +
     THREAD_BC +
     MAIN_SOURCES_TD_ES6 +
-    FLAGS +
+    FLAGS + "-pthread " +
     WASM_FLAGS +
     DEFINES +
-    ES6_FLAGS +
+    ES6_TD_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,

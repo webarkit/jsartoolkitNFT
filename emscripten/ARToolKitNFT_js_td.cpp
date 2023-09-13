@@ -7,9 +7,6 @@ ARToolKitNFT::ARToolKitNFT()
                           // tracking online on page.
       surfaceSetCount(0), // Running NFT marker id
       arhandle(NULL), ar3DHandle(NULL), kpmHandle(NULL), ar2Handle(NULL), threadHandle(NULL),
-#if WITH_FILTERING
-      ftmi(NULL), filterCutoffFrequency(60.0), filterSampleRate(120.0),
-#endif
       nearPlane(0.0001), farPlane(1000.0),
       patt_id(0) // Running pattern marker id
 {
