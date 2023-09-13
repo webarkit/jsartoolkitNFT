@@ -35,7 +35,6 @@
  */
 
 import ARToolkitNFT from "../../build/artoolkitNFT_ES6_wasm_td";
-import "../../build/artoolkitNFT_ES6_wasm_td.worker";
 export async function initARToolkitNFT() {
   return await ARToolkitNFT();
 }

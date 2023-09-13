@@ -50,8 +50,7 @@
     "typedoc": "^0.25.1",
     "typescript": "^5.2.2",
     "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4",
-    "worker-loader": "^3.0.8"
+    "webpack-cli": "^5.1.4"
   },
   "scripts": {
     "dev-ts": "webpack --mode development --progress --watch",

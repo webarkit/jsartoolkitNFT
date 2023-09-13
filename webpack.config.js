@@ -27,10 +27,6 @@ module.exports = (env, argv) => {
           },
         ],
       },
-      {
-        test: /\.worker\.js$/,
-        use: { loader: "worker-loader" },
-      },
     ],
   };
  
