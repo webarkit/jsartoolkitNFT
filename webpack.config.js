@@ -29,6 +29,7 @@ module.exports = (env, argv) => {
       },
     ],
   };
+ 
   return [
     {
       name: "default",
@@ -82,5 +83,32 @@ module.exports = (env, argv) => {
       },
       module,
     },
+    {
+      name: "threaded",
+      devtool,
+      entry: "./src/index_td.ts",
+      output: {
+        //path: path.resolve('dist'),
+        path: path.resolve(__dirname, "dist"),
+        filename: "ARToolkitNFT_td.js",
+        //library: "ARToolkitNFT",
+        libraryTarget: "umd",
+        // @see: https://github.com/webpack/webpack/issues/3929
+        //libraryExport: "default",
+        // @see: https://github.com/webpack/webpack/issues/6522
+        globalObject: "typeof self !== 'undefined' ? self : this",
+      },
+      resolve: {
+        extensions: [".tsx", ".ts", ".js"],
+        // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
+        fallback: {
+          fs: false,
+          path: false,
+          crypto: false,
+        },
+      },
+      module,
+    },
+    
   ];
 };
