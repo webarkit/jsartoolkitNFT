@@ -37,6 +37,10 @@ has **WASM** embedded in a single file!
 
 ❕From 0.9.0 version has **Typescript** feature 💖 💣
 
+## Pthread
+
+From 1.6.0 version has **Pthread** exeperimental feature 🎉 🎉 🎉
+
 ## Using the library 💥
 You can use raw.githack.com links:
 
