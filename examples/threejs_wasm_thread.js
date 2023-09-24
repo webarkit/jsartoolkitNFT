@@ -155,9 +155,13 @@ function start( markerUrl, video, input_width, input_height, canvas_draw, render
         if (loader) {
           loader.querySelector('.loading-text').innerText = 'Start the tracking!';
           setTimeout(function () {
-            loader.parentElement.removeChild(loader);
+            if(loader) {
+              loader.querySelector('.loading-text').innerText = '';
+              loader.querySelector('img').src = '';
+            }
           }, 2000);
-        }
+        } else {
+          console.log("No loader found");}
       }
     })
     renderer.render(scene, camera);
