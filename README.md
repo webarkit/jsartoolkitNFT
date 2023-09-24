@@ -39,7 +39,7 @@ has **WASM** embedded in a single file!
 
 ## Pthread
 
-From 1.6.0 version has **Pthread** exeperimental feature 🎉 🎉 🎉
+From 1.6.0 version has **Pthread** experimental feature 🎉 🎉 🎉
 
 ❕❕❕ ATTENTION: this feature is experimental and it is not well tested yet. It is not recommended to use it in production.
 You need to set up a server with COOP and COEP headers to use this feature. Read this [Emscripten article](https://emscripten.org/docs/porting/pthreads.html#pthreads-support)
