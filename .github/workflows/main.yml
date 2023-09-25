@@ -64,7 +64,11 @@ jobs:
         files: |
           build/artoolkitNFT_embed_ES6_wasm.js
           build/artoolkitNFT_ES6_wasm.js
+          build/artoolkitNFT_ES6_wasm_td.js
+          build/artoolkitNFT_ES6_wasm_td.worker.js
           build/artoolkitNFT_ES6_wasm.simd.js
+          build/artoolkitNFT_thread.js
+          build/artoolkitNFT_thread.worker.js
           build/artoolkitNFT_wasm.js
           build/artoolkitNFT_wasm.simd.js
           build/artoolkitNFT.debug.js
@@ -80,3 +84,4 @@ jobs:
           js/artoolkitNFT.multi_worker.js
           dist/ARToolkitNFT.js
           dist/ARToolkitNFT_simd.js
+          dist/ARToolkitNFT_td.js
