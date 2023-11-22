@@ -38,11 +38,11 @@ export abstract class AbstractARControllerNFT {
   static initWithDimensions: (
     width: number,
     height: number,
-    cameraParam: string
+    cameraParam: string,
   ) => Promise<AbstractARControllerNFT>;
   static initWithImage: (
     image: IImageObj,
-    cameraParam: string
+    cameraParam: string,
   ) => Promise<AbstractARControllerNFT>;
   process: (image: IImageObj) => void;
   detectNFTMarker: (videoLuma: any) => void;
@@ -57,12 +57,12 @@ export abstract class AbstractARControllerNFT {
   transMatToGLMat: (
     transMat: Float64Array,
     glMat: Float64Array,
-    scale?: number
+    scale?: number,
   ) => Float64Array;
   arglCameraViewRHf: (
     glMatrix: Float64Array,
     glRhMatrix?: Float64Array,
-    scale?: number
+    scale?: number,
   ) => Float64Array;
   getTransformationMatrix: () => Float64Array;
   getCameraMatrix: () => Float64Array;
@@ -82,12 +82,12 @@ export abstract class AbstractARControllerNFT {
   loadNFTMarker: (
     urlOrData: string,
     onSuccess: (ids: number) => void,
-    onError: (err: number) => void
+    onError: (err: number) => void,
   ) => Promise<number[]>;
   loadNFTMarkers: (
     urlOrData: Array<string>,
     onSuccess: (ids: number[]) => void,
-    onError: (err: number) => void
+    onError: (err: number) => void,
   ) => Promise<number[]>;
   setImageProcMode: (mode: number) => number;
   getImageProcMode: () => number;

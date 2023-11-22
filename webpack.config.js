@@ -29,7 +29,7 @@ module.exports = (env, argv) => {
       },
     ],
   };
- 
+
   return [
     {
       name: "default",
@@ -109,6 +109,5 @@ module.exports = (env, argv) => {
       },
       module,
     },
-    
   ];
 };

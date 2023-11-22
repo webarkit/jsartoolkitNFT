@@ -32,11 +32,20 @@
     },
     "typedocOptions": {
     "entryPoints": [
+      "src/abstractions/AbstractARControllerNFT.ts",
+      "src/abstractions/CommonInterfaces.ts",
+      "src/abstractions/IARToolkitNFT.ts",
+      "src/factoryFunctions/initARToolkitNFT.ts",
+      "src/factoryFunctions/initARToolkitNFT_td.ts",
+      "src/factoryFunctions/initARToolkitNFT_simd.ts",
       "src/index_simd.ts",
+      "src/index_td.ts",
       "src/index.ts",
       "src/ARControllerNFT_simd.ts",
+      "src/ARControllerNFT_td.ts",
       "src/ARControllerNFT.ts",
       "src/ARToolkitNFT_simd.ts",
+      "src/ARToolkitNFT_td.ts",
       "src/ARToolkitNFT.ts",
       "src/Utils.ts"
     ],

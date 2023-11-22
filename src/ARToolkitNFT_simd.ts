@@ -302,7 +302,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
 
   public passVideoData(
     videoFrame: Uint8ClampedArray,
-    videoLuma: Uint8Array
+    videoLuma: Uint8Array,
   ): void {
     this.instance.passVideoData(videoFrame, videoLuma);
   }
@@ -350,7 +350,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
   public addNFTMarkers(
     urls: Array<string | Array<string>>,
     callback: (filename: number[]) => void,
-    onError2: (errorNumber: number) => void
+    onError2: (errorNumber: number) => void,
   ): Array<number> {
     var prefixes: any = [];
     var pending = urls.length * 3;
@@ -390,7 +390,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
             url,
             filename,
             onSuccess.bind(filename),
-            onError.bind(filename)
+            onError.bind(filename),
           );
         });
 
@@ -404,19 +404,19 @@ export class ARToolkitNFT implements IARToolkitNFT {
           element + ".fset",
           filename1,
           onSuccess.bind(filename1),
-          onError.bind(filename1)
+          onError.bind(filename1),
         );
         this.ajax(
           element + ".iset",
           filename2,
           onSuccess.bind(filename2),
-          onError.bind(filename2)
+          onError.bind(filename2),
         );
         this.ajax(
           element + ".fset3",
           filename3,
           onSuccess.bind(filename3),
-          onError.bind(filename3)
+          onError.bind(filename3),
         );
 
         this.markerNFTCount += 1;
@@ -454,7 +454,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     url: string,
     target: string,
     callback: (byteArray: Uint8Array) => void,
-    errorCallback: (url: string, message: number) => void
+    errorCallback: (url: string, message: number) => void,
   ) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
@@ -462,7 +462,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     const writeByteArrayToFS = (
       target: string,
       byteArray: Uint8Array,
-      callback: (byteArray: Uint8Array) => void
+      callback: (byteArray: Uint8Array) => void,
     ) => {
       this.FS.writeFile(target, byteArray, { encoding: "binary" });
       callback(byteArray);

@@ -87,17 +87,21 @@ function load(msg) {
     ar.loadNFTMarkers(msg.marker, function (ids) {
       for (var i = 0; i < ids.length; i++) {
         ar.trackNFTMarkerId(i);
-        nftMarkers.push_back(ar.getNFTData(i,i));
+        nftMarkers.push_back(ar.getNFTData(i, i));
       }
-  
+
       marker1 = ar.getNFTData(ids[0], 0);
       marker2 = ar.getNFTData(ids[1], 1);
       marker3 = ar.getNFTData(ids[2], 2);
-     
+
       nftMarkers.push_back(marker1);
 
-      console.log("Array of nftData: ", [nftMarkers.get(0), nftMarkers.get(1), nftMarkers.get(2)]);
-  
+      console.log("Array of nftData: ", [
+        nftMarkers.get(0),
+        nftMarkers.get(1),
+        nftMarkers.get(2),
+      ]);
+
       postMessage({
         type: "markerInfos",
         marker1: marker1,
@@ -120,11 +124,7 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARControllerNFT.initWithDimensions(
-    msg.pw,
-    msg.ph,
-    msg.camera_para
-  )
+  ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para)
     .then(onLoad)
     .catch(onError);
 }

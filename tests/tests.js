@@ -14,7 +14,7 @@ QUnit.test("Create object and load camera parameter", function (assert) {
   assert.equal(
     cameraPara.src,
     cParaUrl,
-    "Camera para URL is equal to: " + cParaUrl
+    "Camera para URL is equal to: " + cParaUrl,
   );
 });
 QUnit.test(
@@ -31,7 +31,7 @@ QUnit.test(
       done();
     };
     const cameraPara = new ARCameraParamNFT(cParaUrl, success, error, false);
-  }
+  },
 );
 QUnit.test("Try to load twice", (assert) => {
   const cParaUrl = "./base/examples/Data/camera_para_error.dat";
@@ -58,9 +58,9 @@ QUnit.test(
     assert.deepEqual(
       cameraParaString,
       cameraPara.src,
-      "load after dispose should work"
+      "load after dispose should work",
     );
-  }
+  },
 );
 
 /* #### ARController Module #### */
@@ -74,12 +74,12 @@ QUnit.module("ARControllerNFT", {
       assert.deepEqual(
         arController.listeners,
         {},
-        "Check the default values: listeners"
+        "Check the default values: listeners",
       );
       assert.deepEqual(
         arController.transform_mat,
         new Float32Array(16),
-        "Check the default values: transform_mat"
+        "Check the default values: transform_mat",
       );
     };
   },
@@ -93,7 +93,7 @@ QUnit.test("Create ARControllerNFT default", (assert) => {
     const arController = new ARControllerNFT(
       videoWidth,
       videoHeight,
-      cameraPara
+      cameraPara,
     );
     this.checkDefault(arController);
 
@@ -104,28 +104,28 @@ QUnit.test("Create ARControllerNFT default", (assert) => {
       assert.deepEqual(
         arController.cameraParam,
         cameraPara,
-        "Check the default values: cameraPara"
+        "Check the default values: cameraPara",
       );
       assert.deepEqual(
         arController.videoWidth,
         videoWidth,
-        "Check the default values: videoWidth"
+        "Check the default values: videoWidth",
       );
       assert.deepEqual(
         arController.videoHeight,
         videoHeight,
-        "Check the default values: videoHeight"
+        "Check the default values: videoHeight",
       );
 
       assert.deepEqual(
         arController.width,
         videoWidth,
-        "Check the default values: width"
+        "Check the default values: width",
       );
       assert.deepEqual(
         arController.height,
         videoHeight,
-        "Check the default values: height"
+        "Check the default values: height",
       );
       setTimeout(() => {
         arController.dispose();

@@ -130,11 +130,7 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARControllerNFT.initWithDimensions(
-    width,
-    height,
-    msg.camera_para
-  )
+  ARControllerNFT.initWithDimensions(width, height, msg.camera_para)
     .then(onLoad)
     .catch(onError);
 }
