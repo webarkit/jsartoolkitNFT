@@ -58,7 +58,7 @@ export interface IARToolkitNFT {
   addNFTMarkers(
     urls: Array<string>,
     callback: (ids: number[]) => void,
-    onError2: (errorNumber: number) => void
+    onError2: (errorNumber: number) => void,
   ): Array<number>;
   detectMarker(): number;
   detectNFTMarker(): number;

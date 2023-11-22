@@ -170,7 +170,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   static async initWithDimensions(
     width: number,
     height: number,
-    cameraParam: string
+    cameraParam: string,
   ): Promise<ARControllerNFT> {
     // directly init with given width / height
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
@@ -198,7 +198,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   static async initWithImage(
     image: IImageObj,
-    cameraParam: string
+    cameraParam: string,
   ): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
@@ -237,7 +237,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     width: number,
     height: number,
     cameraParam: string,
-    callback: () => void
+    callback: () => void,
   ): Promise<ARControllerNFT> {
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     callback();
@@ -495,7 +495,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   transMatToGLMat(
     transMat: Float64Array,
     glMat: Float64Array,
-    scale?: number
+    scale?: number,
   ): Float64Array {
     if (glMat == undefined) {
       glMat = new Float64Array(16);
@@ -538,7 +538,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   arglCameraViewRHf(
     glMatrix: Float64Array,
     glRhMatrix?: Float64Array,
-    scale?: number
+    scale?: number,
   ): Float64Array {
     let m_modelview;
     if (glRhMatrix == undefined) {
@@ -746,7 +746,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   async loadNFTMarker(
     urlOrData: string,
     onSuccess: (ids: number) => void,
-    onError: (err: number) => void
+    onError: (err: number) => void,
   ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       [urlOrData],
@@ -754,7 +754,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
         this.nftMarkerCount += ids.length;
         onSuccess(ids[0]);
       },
-      onError
+      onError,
     );
     return nft;
   }
@@ -766,7 +766,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   async loadNFTMarkers(
     urlOrData: Array<string>,
     onSuccess: (ids: number[]) => void,
-    onError: (err: number) => void
+    onError: (err: number) => void,
   ): Promise<number[]> {
     let nft = await this.artoolkitNFT.addNFTMarkers(
       urlOrData,
@@ -774,7 +774,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
         this.nftMarkerCount += ids.length;
         onSuccess(ids);
       },
-      onError
+      onError,
     );
     return nft;
   }
@@ -851,7 +851,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     console.log(
       "[ARControllerNFT]",
       "Camera params loaded with ID",
-      this.cameraId
+      this.cameraId,
     );
 
     // setup

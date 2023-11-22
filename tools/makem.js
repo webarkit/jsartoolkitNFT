@@ -22,7 +22,7 @@ for (var j = 2; j < arguments.length; j++) {
   if (arguments[j] == "--no-libar") {
     NO_LIBAR = true;
     console.log(
-      "Building jsartoolkitNFT with --no-libar option, libar will be preserved."
+      "Building jsartoolkitNFT with --no-libar option, libar will be preserved.",
     );
   }
 }
@@ -37,7 +37,7 @@ var WEBARKITLIB_ROOT =
 if (!EMSCRIPTEN_ROOT) {
   console.log("\nWarning: EMSCRIPTEN environment variable not found.");
   console.log(
-    'If you get a "command not found" error,\ndo `source <path to emsdk>/emsdk_env.sh` and try again.'
+    'If you get a "command not found" error,\ndo `source <path to emsdk>/emsdk_env.sh` and try again.',
   );
 }
 
@@ -64,10 +64,7 @@ var MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c"];
 // testing threaded version of the library.
 var MAIN_SOURCES_TD = ["ARToolKitJS_td.cpp", "trackingSub.c"];
 
-var MAIN_SOURCES_TD_ES6 = [
-  "ARToolKitNFT_js_td.cpp",
-  "trackingSub.c"
-];
+var MAIN_SOURCES_TD_ES6 = ["ARToolKitNFT_js_td.cpp", "trackingSub.c"];
 
 var MAIN_SOURCES_IMPROVED_ES6 = [
   "ARToolKitNFT_js.cpp",
@@ -79,7 +76,7 @@ if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
   console.log("Renaming and moving config.h.in to config.h");
   fs.copyFileSync(
     path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h.in"),
-    path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h")
+    path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"),
   );
   console.log("Done!");
 }
@@ -310,7 +307,7 @@ var compile_arlib = format(
     " " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar.bc ",
-  OUTPUT_PATH
+  OUTPUT_PATH,
 );
 
 var compile_thread_arlib = format(
@@ -319,10 +316,11 @@ var compile_thread_arlib = format(
     " " +
     ar_sources_threaded.join(" ") +
     FLAGS +
-    " " + "-pthread " +
+    " " +
+    "-pthread " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar_td.bc ",
-  OUTPUT_PATH
+  OUTPUT_PATH,
 );
 
 var compile_simd_arlib = format(
@@ -335,7 +333,7 @@ var compile_simd_arlib = format(
     " " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar_simd.bc ",
-  OUTPUT_PATH
+  OUTPUT_PATH,
 );
 
 var ALL_BC = " {OUTPUT_PATH}libar.bc ";
@@ -356,7 +354,7 @@ var compile_combine = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_DEBUG_FILE
+  BUILD_DEBUG_FILE,
 );
 
 var compile_combine_min = format(
@@ -373,7 +371,7 @@ var compile_combine_min = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_MIN_FILE
+  BUILD_MIN_FILE,
 );
 
 var compile_wasm = format(
@@ -390,7 +388,7 @@ var compile_wasm = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_WASM_FILE
+  BUILD_WASM_FILE,
 );
 
 var compile_wasm_thread = format(
@@ -399,7 +397,8 @@ var compile_wasm_thread = format(
     " " +
     THREAD_BC +
     MAIN_SOURCES_TD +
-    FLAGS + "-pthread " +
+    FLAGS +
+    "-pthread " +
     WASM_FLAGS +
     SIMD128_FLAGS +
     DEFINES +
@@ -407,7 +406,7 @@ var compile_wasm_thread = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_THREAD_FILE
+  BUILD_THREAD_FILE,
 );
 
 var compile_wasm_embed_ES6 = format(
@@ -425,7 +424,7 @@ var compile_wasm_embed_ES6 = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_WASM_EMBED_ES6_FILE
+  BUILD_WASM_EMBED_ES6_FILE,
 );
 
 var compile_simd_wasm = format(
@@ -442,7 +441,7 @@ var compile_simd_wasm = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_SIMD_WASM_FILE
+  BUILD_SIMD_WASM_FILE,
 );
 
 var compile_wasm_es6 = format(
@@ -458,7 +457,7 @@ var compile_wasm_es6 = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_WASM_ES6_FILE
+  BUILD_WASM_ES6_FILE,
 );
 
 var compile_wasm_es6_thread = format(
@@ -467,14 +466,15 @@ var compile_wasm_es6_thread = format(
     " " +
     THREAD_BC +
     MAIN_SOURCES_TD_ES6 +
-    FLAGS + "-pthread " +
+    FLAGS +
+    "-pthread " +
     WASM_FLAGS +
     DEFINES +
     ES6_TD_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_WASM_ES6_TD_FILE
+  BUILD_WASM_ES6_TD_FILE,
 );
 
 var compile_simd_wasm_es6 = format(
@@ -491,7 +491,7 @@ var compile_simd_wasm_es6 = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-  BUILD_SIMD_WASM_ES6_FILE
+  BUILD_SIMD_WASM_ES6_FILE,
 );
 
 /*
