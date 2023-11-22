@@ -685,7 +685,7 @@
 
         this.framesize = this.width * this.height;
 
-        this.videoLuma = new Uint8Array(this.framesize / 4);
+        this.videoLuma = new Uint8Array(this.framesize);
 
         this.camera_mat = artoolkitNFT.getCameraLens(this.id);
 
