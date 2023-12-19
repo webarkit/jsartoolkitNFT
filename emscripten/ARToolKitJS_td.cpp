@@ -723,13 +723,14 @@ int detectMarker(int id) {
   arController *arc = &(arControllers[id]);
 
   // Convert video frame to AR2VideoBufferT
-  AR2VideoBufferT buff = {0};
+  /*AR2VideoBufferT buff = {0};
   buff.buff = arc->videoFrame;
   buff.fillFlag = 1;
 
   buff.buffLuma = arc->videoLuma;
 
-  return arDetectMarker(arc->arhandle, &buff);
+  return arDetectMarker(arc->arhandle, &buff);*/
+  return 0;
 }
 
 /********
