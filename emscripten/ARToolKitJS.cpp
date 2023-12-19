@@ -800,7 +800,7 @@ extern "C"
     {
       return ARCONTROLLER_NOT_FOUND;
     }
-    arController *arc = &(arControllers[id]);
+    /*arController *arc = &(arControllers[id]);
 
     // Convert video frame to AR2VideoBufferT
     AR2VideoBufferT buff = {0};
@@ -809,7 +809,8 @@ extern "C"
 
     buff.buffLuma = arc->videoLuma;
 
-    return arDetectMarker(arc->arhandle, &buff);
+    return arDetectMarker(arc->arhandle, &buff);*/
+    return 0;
   }
 
   /********

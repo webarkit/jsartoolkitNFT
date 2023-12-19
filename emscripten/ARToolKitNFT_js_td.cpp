@@ -418,13 +418,14 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
 
 int ARToolKitNFT::detectMarker() {
   // Convert video frame to AR2VideoBufferT
-  AR2VideoBufferT buff = {0};
+  /*AR2VideoBufferT buff = {0};
   buff.buff = this->videoFrame;
   buff.fillFlag = 1;
 
   buff.buffLuma = this->videoLuma;
 
-  return arDetectMarker(this->arhandle, &buff);
+  return arDetectMarker(this->arhandle, &buff);*/
+  return 0;
 }
 
 /**********************
