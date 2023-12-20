@@ -163,24 +163,24 @@ emscripten::val getNFTMarkerInfo(int id, int markerIndex) {
     if (arc->detectedPage == -1) {
       ret = trackingInitGetResult(arc->threadHandle, trackingTrans, &pageNo);
       if (ret == 1) {
-        ARLOGi("page detected ret: %d \n", ret);
+        webarkitLOGi("page detected ret: %d \n", ret);
         if (pageNo >= 0 && pageNo < arc->surfaceSetCount) {
-          ARLOGi("Detected page %d.\n", pageNo);
+          webarkitLOGi("Detected page %d.\n", pageNo);
           arc->detectedPage = pageNo;
           ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trackingTrans);
         } else {
-          ARLOGe("Detected bad page %d.\n", pageNo);
+          webarkitLOGe("Detected bad page %d.\n", pageNo);
           arc->detectedPage = -2;
         }
       } else if (ret < 0) {
-        ARLOGi("No page detected.\n");
+        webarkitLOGi("No page detected.\n");
         arc->detectedPage = -2;
       }
     }
     if (arc->detectedPage >= 0 && arc->detectedPage < arc->surfaceSetCount) {
       if (ar2Tracking(arc->ar2Handle, arc->surfaceSet[arc->detectedPage],
                       arc->videoFrame, trackingTrans, &err) < 0) {
-        ARLOGi("Tracking lost.\n");
+        webarkitLOGi("Tracking lost.\n");
         arc->detectedPage = -2;
       } else {
         ARLOGi("Tracked page %d (max %d).\n", arc->detectedPage,
@@ -188,7 +188,7 @@ emscripten::val getNFTMarkerInfo(int id, int markerIndex) {
       }
     }
   } else {
-    ARLOGe("Error: threadHandle\n");
+    webarkitLOGe("Error: threadHandle\n");
     arc->detectedPage = -2;
   }
   if (arc->detectedPage >= 0 && arc->detectedPage < arc->surfaceSetCount) {
@@ -291,12 +291,12 @@ int setupAR2(int id) {
   if ((arc->ar2Handle = ar2CreateHandle(arc->paramLT, arc->pixFormat,
                                         AR2_TRACKING_DEFAULT_THREAD_NUM)) ==
       NULL) {
-    ARLOGe("Error: ar2CreateHandle.\n");
+    webarkitLOGe("Error: ar2CreateHandle.\n");
     kpmDeleteHandle(&arc->kpmHandle);
     return (FALSE);
   }
   if (threadGetCPU() <= 1) {
-    ARLOGi("Using NFT tracking settings for a single CPU.\n");
+    webarkitLOGi("Using NFT tracking settings for a single CPU.\n");
     ar2SetTrackingThresh(arc->ar2Handle, 5.0);
     ar2SetSimThresh(arc->ar2Handle, 0.50);
     ar2SetSearchFeatureNum(arc->ar2Handle, 16);
@@ -304,7 +304,7 @@ int setupAR2(int id) {
     ar2SetTemplateSize1(arc->ar2Handle, 6);
     ar2SetTemplateSize2(arc->ar2Handle, 6);
   } else {
-    ARLOGi("Using NFT tracking settings for more than one CPU.\n");
+    webarkitLOGi("Using NFT tracking settings for more than one CPU.\n");
     ar2SetTrackingThresh(arc->ar2Handle, 5.0);
     ar2SetSimThresh(arc->ar2Handle, 0.50);
     ar2SetSearchFeatureNum(arc->ar2Handle, 16);

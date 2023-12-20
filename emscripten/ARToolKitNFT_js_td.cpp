@@ -63,24 +63,24 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
     if (this->detectedPage == -1) {
       ret = trackingInitGetResult(this->threadHandle, trackingTrans, &pageNo);
       if (ret == 1) {
-        ARLOGi("page detected ret: %d \n", ret);
+        webarkitLOGi("page detected ret: %d \n", ret);
         if (pageNo >= 0 && pageNo < this->surfaceSetCount) {
-          ARLOGi("Detected page %d.\n", pageNo);
+          webarkitLOGi("Detected page %d.\n", pageNo);
           this->detectedPage = pageNo;
           ar2SetInitTrans(this->surfaceSet[this->detectedPage], trackingTrans);
         } else {
-          ARLOGe("Detected bad page %d.\n", pageNo);
+          webarkitLOGe("Detected bad page %d.\n", pageNo);
           this->detectedPage = -2;
         }
       } else if (ret < 0) {
-        ARLOGi("No page detected.\n");
+        webarkitLOGi("No page detected.\n");
         this->detectedPage = -2;
       }
     }
     if (this->detectedPage >= 0 && this->detectedPage < this->surfaceSetCount) {
       if (ar2Tracking(this->ar2Handle, this->surfaceSet[this->detectedPage],
                       this->videoFrame, trackingTrans, &err) < 0) {
-        ARLOGi("Tracking lost.\n");
+        webarkitLOGi("Tracking lost.\n");
         this->detectedPage = -2;
       } else {
         ARLOGi("Tracked page %d (max %d).\n", this->detectedPage,
@@ -88,7 +88,7 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
       }
     }
   } else {
-    ARLOGe("Error: threadHandle\n");
+    webarkitLOGe("Error: threadHandle\n");
     this->detectedPage = -2;
   }
   if (this->detectedPage >= 0 && this->detectedPage < this->surfaceSetCount) {
