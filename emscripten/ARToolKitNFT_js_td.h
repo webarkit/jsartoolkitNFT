@@ -51,7 +51,6 @@ public:
     int setCamera(int id, int cameraID);
     emscripten::val getCameraLens();
     std::vector<int> addNFTMarkers(std::vector<std::string> &datasetPathnames);
-    int detectMarker();
 
     // setters and getters
     void setProjectionNearPlane(const ARdouble projectionNearPlane);

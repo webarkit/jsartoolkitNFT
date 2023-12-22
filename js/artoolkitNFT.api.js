@@ -134,10 +134,7 @@
         @param {ImageElement | VideoElement} image The image to process [optional].
     */
     ARControllerNFT.prototype.process = function (image) {
-        var result = this.detectMarker(image);
-        if (result != 0) {
-            console.error("detectMarker error: " + result);
-        }
+        this._copyImageToHeap(image);
 
         // get NFT markers
         var k, o;
@@ -413,27 +410,6 @@
         glRhMatrix = m_modelview;
 
         return glRhMatrix;
-    };
-    /**
-        This is the core ARToolKit marker detection function. It calls through to a set of
-        internal functions to perform the key marker detection steps of binarization and
-        labelling, contour extraction, and template matching and/or matrix code extraction.
-
-        Typically, the resulting set of detected markers is retrieved by calling arGetMarkerNum
-        to get the number of markers detected and arGetMarker to get an array of ARMarkerInfo
-        structures with information on each detected marker, followed by a step in which
-        detected markers are possibly examined for some measure of goodness of match (e.g. by
-        examining the match confidence value) and pose extraction.
-
-        @param {image} Image to be processed to detect markers.
-        @return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
-            A result of 0 does not however, imply any markers were detected.
-    */
-    ARControllerNFT.prototype.detectMarker = function (image) {
-        if (this._copyImageToHeap(image)) {
-            return artoolkitNFT.detectMarker(this.id);
-        }
-        return -99;
     };
 
     /**
@@ -867,7 +843,6 @@
 
         'getProcessingImage',
 
-        'detectMarker',
         'detectNFTMarker',
         'getNFTMarker',
         'getNFTData',
