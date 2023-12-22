@@ -60,7 +60,6 @@ export interface IARToolkitNFT {
     callback: (ids: number[]) => void,
     onError2: (errorNumber: number) => void,
   ): Array<number>;
-  detectMarker(): number;
   detectNFTMarker(): number;
   getNFTMarker(markerIndex: number): INFTMarkerInfo;
   getNFTData(index: number): object;
