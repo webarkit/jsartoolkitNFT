@@ -416,18 +416,6 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
   return markerIds;
 }
 
-int ARToolKitNFT::detectMarker() {
-  // Convert video frame to AR2VideoBufferT
-  /*AR2VideoBufferT buff = {0};
-  buff.buff = this->videoFrame;
-  buff.fillFlag = 1;
-
-  buff.buffLuma = this->videoLuma;
-
-  return arDetectMarker(this->arhandle, &buff);*/
-  return 0;
-}
-
 /**********************
  * Setters and getters *
  **********************/

@@ -17,7 +17,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	function("_loadCamera", &loadCamera);
 
-	function("detectMarker", &detectMarker);
 	function("detectNFTMarker", &detectNFTMarker);
 	function("getNFTMarker", &getNFTMarkerInfo);
 	function("getNFTData", &getNFTData);

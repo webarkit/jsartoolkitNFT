@@ -9,7 +9,6 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
   class_<ARToolKitNFT>("ARToolKitNFT")
       .constructor()
-      .function("detectMarker", &ARToolKitNFT::detectMarker)
       .function("detectNFTMarker", &ARToolKitNFT::detectNFTMarker)
       .function("getNFTMarker", &ARToolKitNFT::getNFTMarkerInfo)
       .function("getNFTData", &ARToolKitNFT::getNFTData)
