@@ -233,10 +233,6 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getProcessingImage();
   }
 
-  public detectMarker(): number {
-    return this.instance.detectMarker();
-  }
-
   public detectNFTMarker(): number {
     return this.instance.detectNFTMarker();
   }

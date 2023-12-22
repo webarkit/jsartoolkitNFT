@@ -41,7 +41,6 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     process(image: IImageObj): void;
     detectNFTMarker(): number;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
-    detectMarker(image: IImageObj): number;
     getNFTMarker(markerIndex: number): INFTMarkerInfo;
     getNFTData(index: number): object;
     addEventListener(name: string, callback: object): void;
