@@ -92,43 +92,29 @@ class ARControllerNFT {
     }
 
     /**
-        Detects markers in the given image. The process method dispatches marker detection events during its run.
- 
-        The marker detection process proceeds by first dispatching a markerNum event that tells you how many
-        markers were found in the image. Next, a getMarker event is dispatched for each found marker square.
- 
-        Then, a getNFTMarker event is dispatched for each found NFT marker.
- 
-        Finally, getMultiMarker is dispatched for every found multimarker, followed by getMultiMarkerSub events
-        dispatched for each of the markers in the multimarker.
- 
-            ARControllerNFT.addEventListener('markerNum', function(ev) {
-                console.log("Detected " + ev.data + " markers.")
-            });
-            ARControllerNFT.addEventListener('getMarker', function(ev) {
-                console.log("Detected marker with ids:", ev.data.marker.id, ev.data.marker.idPatt, ev.data.marker.idMatrix);
-                console.log("Marker data", ev.data.marker);
-                console.log("Marker transform matrix:", [].join.call(ev.data.matrix, ', '));
-            });
-            ARControllerNFT.addEventListener('getNFTMarker', function(ev) {
-                // do stuff
-            });
-            ARControllerNFT.addEventListener('getMultiMarker', function(ev) {
-                console.log("Detected multimarker with id:", ev.data.multiMarkerId);
-            });
-            ARControllerNFT.addEventListener('getMultiMarkerSub', function(ev) {
-                console.log("Submarker for " + ev.data.multiMarkerId, ev.data.markerIndex, ev.data.marker);
-            });
- 
-            ARControllerNFT.process(image);
- 
- 
-        If no image is given, defaults to this.image.
- 
-        If the debugSetup has been called, draws debug markers on the debug canvas.
- 
-        @param {ImageElement | VideoElement} image The image to process [optional].
-    */
+     Detects NFT markers in the given image. The process method dispatches marker detection events during its run.
+
+     The NFT marker detection process proceeds by first dispatching a getNFTMarker event for each found NFT marker.
+
+     Instead, if a NFT marker is lost, a lostNFTMarker event is dispatched.
+
+     ARControllerNFT.addEventListener('getNFTMarker', function(ev) {
+     // do stuff
+     });
+
+     ARControllerNFT.addEventListener('lostNFTMarker', function(ev) {
+     // do stuff
+     });
+
+     ARControllerNFT.process(image);
+
+
+     If no image is given, defaults to this.image.
+
+     If the debugSetup has been called, draws debug markers on the debug canvas.
+
+     @param {ImageElement | VideoElement} image The image to process [optional].
+     */
     process(image) {
         this._copyImageToHeap(image);
 
