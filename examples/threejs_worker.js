@@ -34,7 +34,17 @@ export default function start(container, markerUrl, video, input_width, input_he
 
   const scene = new THREE.Scene();
 
-  const camera = new THREE.Camera();
+  let fov = 0.8 * 180 / Math.PI;
+  let ratio = input_width / input_height;
+
+  const cameraConfig= {
+    fov: fov,
+    aspect: ratio,
+    near: 0.01,
+    far: 1000
+  }
+
+  const camera = new THREE.PerspectiveCamera(cameraConfig);
   camera.matrixAutoUpdate = false;
 
   scene.add(camera);
