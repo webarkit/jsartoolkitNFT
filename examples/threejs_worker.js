@@ -1,10 +1,12 @@
+import * as THREE from 'three';
+
 function isMobile () {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
-var setMatrix = function (matrix, value) {
-  var array = [];
-  for (var key in value) {
+const setMatrix = function (matrix, value) {
+  const array = [];
+  for (const key in value) {
     array[key] = value[key];
   }
   if (typeof matrix.elements.set === "function") {
@@ -14,38 +16,38 @@ var setMatrix = function (matrix, value) {
   }
 };
 
-function start(container, markerUrl, video, input_width, input_height, canvas_draw, render_update, track_update) {
-  var vw, vh;
-  var sw, sh;
-  var pscale, sscale;
-  var w, h;
-  var pw, ph;
-  var ox, oy;
-  var worker;
-  var camera_para = './../examples/Data/camera_para.dat'
+export default function start(container, markerUrl, video, input_width, input_height, canvas_draw, render_update, track_update) {
+  let vw, vh;
+  let sw, sh;
+  let pscale, sscale;
+  let w, h;
+  let pw, ph;
+  let ox, oy;
+  let worker;
+  const camera_para = './../examples/Data/camera_para.dat';
 
-  var canvas_process = document.createElement('canvas');
-  var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
+  const canvas_process = document.createElement('canvas');
+  const context_process = canvas_process.getContext('2d', {willReadFrequently: true});
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas_draw, alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({canvas: canvas_draw, alpha: true, antialias: true});
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  var scene = new THREE.Scene();
+  const scene = new THREE.Scene();
 
-  var camera = new THREE.Camera();
+  const camera = new THREE.Camera();
   camera.matrixAutoUpdate = false;
 
   scene.add(camera);
 
-  var sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 8, 8),
-    new THREE.MeshNormalMaterial()
+  const sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.5, 8, 8),
+      new THREE.MeshNormalMaterial()
   );
 
-  var root = new THREE.Object3D();
+  const root = new THREE.Object3D();
   scene.add(root);
 
-  var marker;
+  let marker;
 
   sphere.material.flatShading;
   sphere.scale.set(200, 200, 200);
@@ -53,7 +55,7 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
   root.matrixAutoUpdate = false;
   root.add(sphere);
 
-  var load = function () {
+  const load = function () {
     vw = input_width;
     vh = input_height;
 
@@ -78,15 +80,15 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
 
     worker = new Worker('../js/artoolkitNFT.worker.js');
 
-    worker.postMessage({ type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: markerUrl });
+    worker.postMessage({type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: markerUrl});
 
     worker.onmessage = function (ev) {
-      var msg = ev.data;
+      const msg = ev.data;
       switch (msg.type) {
         case "loaded": {
-          var proj = JSON.parse(msg.proj);
-          var ratioW = pw / w;
-          var ratioH = ph / h;
+          const proj = JSON.parse(msg.proj);
+          const ratioW = pw / w;
+          const ratioH = ph / h;
           proj[0] *= ratioW;
           proj[4] *= ratioW;
           proj[8] *= ratioW;
@@ -99,12 +101,12 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
           break;
         }
         case "endLoading": {
-          if (msg.end == true) {
+          if (msg.end === true) {
             // removing loader page if present
-            var loader = document.getElementById('loading');
+            const loader = document.getElementById('loading');
             if (loader) {
               loader.querySelector('.loading-text').innerText = 'Start the tracking!';
-              setTimeout(function(){
+              setTimeout(function () {
                 loader.parentElement.removeChild(loader);
               }, 2000);
             }
@@ -128,9 +130,9 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
     };
   };
 
-  var world;
+  let world;
 
-  var found = function (msg) {
+  const found = function (msg) {
     if (!msg) {
       world = null;
     } else {
@@ -138,13 +140,13 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
     }
   };
 
-  var lasttime = Date.now();
-  var time = 0;
+  let lasttime = Date.now();
+  let time = 0;
 
-  var draw = function () {
+  const draw = function () {
     render_update();
-    var now = Date.now();
-    var dt = now - lasttime;
+    const now = Date.now();
+    const dt = now - lasttime;
     time += dt;
     lasttime = now;
 
@@ -160,7 +162,7 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
     renderer.render(scene, camera);
   };
 
-  var process = function () {
+  const process = function () {
     context_process.fillStyle = 'black';
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
@@ -168,7 +170,8 @@ function start(container, markerUrl, video, input_width, input_height, canvas_dr
     var imageData = context_process.getImageData(0, 0, pw, ph);
     worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
   }
-  var tick = function () {
+
+  const tick = function () {
     draw();
     requestAnimationFrame(tick);
   };

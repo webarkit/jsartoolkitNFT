@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>NFT marker example with a WebWorker and Three.js</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@v0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.169.0/examples/jsm/"
+      }
+    }
+  </script>
   <link rel="stylesheet" href="css/nft-style.css">
 </head>
 <body>
   <div id="loading" >
-    <img  src="Data/JsartoolkitNFT-logo.gif"/>
+    <img alt="JsartoolkitNFT logo" src="Data/JsartoolkitNFT-logo.gif"/>
     <span class="loading-text">Loading, please wait</span>
   </div>
   <!--
@@ -52,38 +60,38 @@
   </a>
 
   <script src="js/third_party/three.js/stats.min.js"></script>
-  <script src="js/third_party/three.js/three.min.js"></script>
-  <script src="threejs_worker.js"></script>
 
-  <script>
-  /**
-  * STATS
-  */
-  var statsMain = new Stats();
-  statsMain.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+  <script type="module">
+    import start from './threejs_worker.js'
+
+    /**
+     * STATS
+     */
+    const statsMain = new Stats();
+    statsMain.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.getElementById( 'stats1' ).appendChild( statsMain.dom );
-  var statsWorker = new Stats();
-  statsWorker.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+    const statsWorker = new Stats();
+    statsWorker.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.getElementById( 'stats2' ).appendChild( statsWorker.dom );
-  /**
-  * APP / ELEMENTS
-  */
-  var container = document.getElementById( 'app' );
-  var video = document.getElementById( 'video' );
-  var canvas = document.getElementById( 'canvas' );
-  /**
+    /**
+     * APP / ELEMENTS
+     */
+    const container = document.getElementById('app');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    /**
   * APP / VIDEO STREAM
   */
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    var hint = {
+    let hint = {
       audio: false,
       video: true
     };
     if( window.innerWidth < 800 ) {
-      var width = ( window.innerWidth < window.innerHeight ) ? 240 : 360;
-      var height = ( window.innerWidth < window.innerHeight ) ? 360 : 240;
+      const width = (window.innerWidth < window.innerHeight) ? 240 : 360;
+      const height = (window.innerWidth < window.innerHeight) ? 360 : 240;
 
-      var aspectRatio = window.innerWidth / window.innerHeight;
+      const aspectRatio = window.innerWidth / window.innerHeight;
 
       console.log( width, height );
 
