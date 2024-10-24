@@ -1,5 +1,5 @@
-var browser = (function () {
-  var test = function (regexp) {
+const browser = (function () {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -32,8 +32,9 @@ if (browser == "Apple Safari") {
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
 
+let next = null;
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -46,16 +47,15 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
-var markerResult = null;
-var marker;
+let ar = null;
+let markerResult = null;
+let marker;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
 
 // initialize the OneEuroFilter
-var oef = true;
+const oef = true;
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
 const filter = new OneEuroFilter({
@@ -65,7 +65,7 @@ const filter = new OneEuroFilter({
 
 function oefFilter(matrixGL_RH) {
   tickCount += 1;
-  var mat;
+  let mat;
   if (tickCount > WARM_UP_TOLERANCE) {
     mat = filter.filter(Date.now(), matrixGL_RH);
   } else {
@@ -77,13 +77,13 @@ function oefFilter(matrixGL_RH) {
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
-  var onLoad = function (arController) {
+  const onLoad = function (arController) {
     ar = arController;
     var cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
-      var mat;
-      if (oef == true) {
+      let mat;
+      if (oef === true) {
         mat = oefFilter(ev.data.matrixGL_RH);
       } else {
         mat = ev.data.matrixGL_RH;
@@ -121,7 +121,7 @@ function load(msg) {
     });
   };
 
-  var onError = function (error) {
+  const onError = function (error) {
     console.error(error);
   };
 
