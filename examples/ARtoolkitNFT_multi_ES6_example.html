@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>ARToolkitNFT_ES6 multi marker example</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
-  <link rel="stylesheet" href="css/nft-style.css">
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@v0.169.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.169.0/examples/jsm/"
+          }
+        }
+    </script>
+    <link rel="stylesheet" href="css/nft-style.css">
 </head>
 <body>
   <div id="loading" >
-    <img  src="Data/JsartoolkitNFT-logo.gif"/>
+      <img alt="JsartoolkitNFT logo" src="Data/JsartoolkitNFT-logo.gif"/>
     <span class="loading-text">Loading, please wait</span>
   </div>
   <!--
@@ -41,23 +49,22 @@
 		<canvas id="canvas"></canvas>
 	</div>
   <script src="js/third_party/three.js/stats.min.js"></script>
-  <script src="js/third_party/three.js/three.min.js"></script>
   <script src="index.js"></script>
-  <script src="threejs_multi_worker_ES6.js"></script>
 
-  <script>
+  <script type="module">
+      import start from './threejs_multi_worker_ES6.js'
   /**
   * STATS
   */
-  var statsMain = new Stats();
+  const statsMain = new Stats();
   statsMain.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.getElementById( 'stats1' ).appendChild( statsMain.dom );
 
-  var statsWorker = new Stats();
+  const statsWorker = new Stats();
   statsWorker.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.getElementById( 'stats2' ).appendChild( statsWorker.dom );
 
-  var markerUrls = [ "../examples/DataNFT/pinball", "../examples/DataNFT/chalk_multi", "../examples/DataNFT/kuva" ]
+  const markerUrls = [ "../examples/DataNFT/pinball", "../examples/DataNFT/chalk_multi", "../examples/DataNFT/kuva" ]
 
   window.addEventListener('load', () => {
     console.log('init ARToolkitNFT...');
@@ -75,7 +82,9 @@
 
     return new Promise(resolve => {
       sourceVideo.addEventListener("loadeddata", event => {
-        console.log("Camera is ready");
+          const target = event.target;
+          console.log("Camera is ready");
+          console.log("Video stream with width, height: ", target.width, target.height)
         resolve();
       });
     });
