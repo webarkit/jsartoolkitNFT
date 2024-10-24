@@ -1,11 +1,14 @@
-var ar;
+import * as THREE from 'three';
+
+let ar;
+
 function isMobile() {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
-var setMatrix = function (matrix, value) {
-  var array = [];
-  for (var key in value) {
+const setMatrix = function (matrix, value) {
+  const array = [];
+  for (const key in value) {
     array[key] = value[key];
   }
   if (typeof matrix.elements.set === "function") {
@@ -15,50 +18,50 @@ var setMatrix = function (matrix, value) {
   }
 };
 
-function start( markerUrl, video, input_width, input_height, canvas_draw, render_update) {
-  var vw, vh;
-  var sw, sh;
-  var pscale, sscale;
-  var w, h;
-  var pw, ph;
-  var ox, oy;
-  var camera_para = './../examples/Data/camera_para.dat';
-  var camera_matrix;
+export default function start( markerUrl, video, input_width, input_height, canvas_draw, render_update) {
+  let vw, vh;
+  let sw, sh;
+  let pscale, sscale;
+  let w, h;
+  let pw, ph;
+  let ox, oy;
+  const camera_para = './../examples/Data/camera_para.dat';
+  let camera_matrix;
 
-  var canvas_process = document.createElement('canvas');
-  var context_process = canvas_process.getContext('2d', { willReadFrequently: true });
+  const canvas_process = document.createElement('canvas');
+  const context_process = canvas_process.getContext('2d', {willReadFrequently: true});
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas_draw, alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({canvas: canvas_draw, alpha: true, antialias: true});
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  var scene = new THREE.Scene();
+  const scene = new THREE.Scene();
 
-  var camera = new THREE.Camera();
+  const camera = new THREE.Camera();
   camera.matrixAutoUpdate = false;
 
   scene.add(camera);
 
-  var sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 8, 8),
-    new THREE.MeshNormalMaterial()
+  const sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.5, 8, 8),
+      new THREE.MeshNormalMaterial()
   );
 
-  var root = new THREE.Object3D();
+  const root = new THREE.Object3D();
   scene.add(root);
 
-  var marker;
+  let marker;
 
-  var markerInfos = function () {
+  const markerInfos = function () {
     window.addEventListener("markerInfos", function (ev) {
       marker = ev.detail.marker;
     })
-  }
+  };
 
-  var getCameraMatrix = function () {
+  const getCameraMatrix = function () {
     window.addEventListener("loaded", function (ev) {
       camera_matrix = ev.detail.proj;
     })
-  }
+  };
 
   sphere.material.flatShading;
   sphere.scale.set(200, 200, 200);
@@ -66,7 +69,7 @@ function start( markerUrl, video, input_width, input_height, canvas_draw, render
   root.matrixAutoUpdate = false;
   root.add(sphere);
 
-  var load = function () {
+  const load = function () {
     vw = input_width;
     vh = input_height;
 
@@ -89,33 +92,33 @@ function start( markerUrl, video, input_width, input_height, canvas_draw, render
 
     renderer.setSize(sw, sh);
 
-    var msg = {
+    const msg = {
       pw: pw,
       ph: ph,
       camera_para: camera_para,
       marker: markerUrl
-    }
+    };
 
     load_thread(msg);
     markerInfos();
     getCameraMatrix();
   };
 
-  var world;
+  let world;
 
-  var found = function () {
+  const found = function () {
     window.addEventListener("markerFound", function (ev) {
       world = ev.detail.matrixGL_RH
     })
   };
 
-  var lasttime = Date.now();
-  var time = 0;
+  let lasttime = Date.now();
+  let time = 0;
 
-  var setCameraMatrix = function () {
-    var proj = camera_matrix;
-    var ratioW = pw / w;
-    var ratioH = ph / h;
+  const setCameraMatrix = function () {
+    const proj = camera_matrix;
+    const ratioW = pw / w;
+    const ratioH = ph / h;
     proj[0] *= ratioW;
     proj[4] *= ratioW;
     proj[8] *= ratioW;
@@ -125,12 +128,12 @@ function start( markerUrl, video, input_width, input_height, canvas_draw, render
     proj[9] *= ratioH;
     proj[13] *= ratioH;
     setMatrix(camera.projectionMatrix, proj);
-  }
+  };
 
-  var draw = function () {
+  const draw = function () {
     render_update();
-    var now = Date.now();
-    var dt = now - lasttime;
+    const now = Date.now();
+    const dt = now - lasttime;
     time += dt;
     lasttime = now;
     found();
@@ -149,38 +152,38 @@ function start( markerUrl, video, input_width, input_height, canvas_draw, render
       setMatrix(root.matrix, world);
     }
     window.addEventListener("endLoading", function (ev) {
-      if (ev.detail.end == true) {
+      if (ev.detail.end === true) {
         // removing loader page if present
-        var loader = document.getElementById('loading');
+        const loader = document.getElementById('loading');
         if (loader) {
           loader.querySelector('.loading-text').innerText = 'Start the tracking!';
           setTimeout(function () {
-            if(loader) {
+            if (loader) {
               loader.querySelector('.loading-text').innerText = '';
               loader.querySelector('img').src = '';
             }
           }, 2000);
         } else {
-          console.log("No loader found");}
+          console.log("No loader found");
+        }
       }
     })
     renderer.render(scene, camera);
   };
 
-  var process = function () {
+  const process = function () {
     context_process.fillStyle = 'black';
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
-    var imageData = context_process.getImageData(0, 0, pw, ph);
+    let imageData = context_process.getImageData(0, 0, pw, ph);
 
-    if (ar && ar.process) {
-      ar.process(imageData);
-    }
+    var imageDataEvent = new CustomEvent('imageDataEvent', {detail: {imageData: imageData} });
+    window.dispatchEvent(imageDataEvent);
 
     requestAnimationFrame(process);
-  }
-  var tick = function () {
+  };
+  const tick = function () {
     draw();
     requestAnimationFrame(tick);
   };
