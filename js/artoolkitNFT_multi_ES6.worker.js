@@ -1,5 +1,5 @@
-var browser = (function () {
-  var test = function (regexp) {
+const browser = (function () {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -32,8 +32,9 @@ if (browser == "Apple Safari") {
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
 
+let next = null;
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -46,10 +47,9 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
-var markerResult = null;
-var marker1, marker2, marker3;
+let ar = null;
+let markerResult = null;
+let marker1, marker2, marker3;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
@@ -62,14 +62,14 @@ const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
-  var onLoad = function (arController) {
+  const onLoad = function (arController) {
     ar = arController;
-    var cameraMatrix = ar.getCameraMatrix();
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
       tickCount += 1;
       if (tickCount > WARM_UP_TOLERANCE) {
-        var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
+        const mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
         markerResult = {
           type: "found",
           index: JSON.stringify(ev.data.index),
@@ -85,7 +85,7 @@ function load(msg) {
     const nftMarkers = new ar.artoolkitNFT.nftMarkers();
 
     ar.loadNFTMarkers(msg.marker, function (ids) {
-      for (var i = 0; i < ids.length; i++) {
+      for (let i = 0; i < ids.length; i++) {
         ar.trackNFTMarkerId(i);
         nftMarkers.push_back(ar.getNFTData(i, i));
       }
@@ -109,15 +109,15 @@ function load(msg) {
         marker3: marker3,
       });
       console.log("loadNFTMarker -> ", ids);
-      postMessage({ type: "endLoading", end: true });
+      postMessage({type: "endLoading", end: true});
     }).catch(function (err) {
       console.log("Error in loading marker on Worker", err);
     });
 
-    postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
+    postMessage({type: "loaded", proj: JSON.stringify(cameraMatrix)});
   };
 
-  var onError = function (error) {
+  const onError = function (error) {
     console.error(error);
   };
 

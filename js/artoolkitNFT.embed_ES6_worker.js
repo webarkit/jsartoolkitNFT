@@ -3,7 +3,7 @@ import ARToolkitNFT from "../build/artoolkitNFT_embed_ES6_wasm.js";
 import { OneEuroFilter } from "./one-euro-filter-ES6.js";
 
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -19,8 +19,8 @@ self.onmessage = function (e) {
 
 var next = null;
 var ar = null;
-var markerResult = null;
-var marker;
+let markerResult = null;
+//var marker;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
@@ -33,7 +33,7 @@ const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 
 function oefFilter(matrixGL_RH) {
   tickCount += 1;
-  var mat;
+  let mat;
   if (tickCount > WARM_UP_TOLERANCE) {
     mat = filter.filter(Date.now(), matrixGL_RH);
   } else {
@@ -48,13 +48,13 @@ async function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
   console.log(arTK);
 
-  var onLoad = function () {
+  const onLoad = function () {
     ar = new arTK.ARControllerNFT(msg.pw, msg.ph, param);
     console.log(ar);
-    var cameraMatrix = ar.getCameraMatrix();
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
-      var mat;
+      let mat;
       if (oef == true) {
         mat = oefFilter(ev.data.matrixGL_RH);
       } else {
@@ -74,15 +74,15 @@ async function load(msg) {
       ar.trackNFTMarkerId(id);
       let marker = ar.getNFTData(id, 0);
       console.log("nftMarker data: ", marker);
-      postMessage({ type: "markerInfos", marker: marker });
+      postMessage({type: "markerInfos", marker: marker});
       console.log("loadNFTMarker -> ", id);
-      postMessage({ type: "endLoading", end: true }),
-        function (err) {
-          console.error("Error in loading marker on Worker", err);
-        };
+      postMessage({type: "endLoading", end: true}),
+          function (err) {
+            console.error("Error in loading marker on Worker", err);
+          };
     });
 
-    postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
+    postMessage({type: "loaded", proj: JSON.stringify(cameraMatrix)});
   };
 
   var onError = function (error) {
@@ -92,7 +92,7 @@ async function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  var param = new arTK.ARCameraParamNFT(msg.camera_para, onLoad, onError);
+  const param = new arTK.ARCameraParamNFT(msg.camera_para, onLoad, onError);
   //});//event listener
 }
 

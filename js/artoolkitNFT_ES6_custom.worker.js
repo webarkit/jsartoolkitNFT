@@ -1,5 +1,5 @@
-var browser = (function () {
-  var test = function (regexp) {
+const browser = (function () {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -32,8 +32,9 @@ if (browser == "Apple Safari") {
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
 
+let next = null;
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -46,10 +47,9 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
-var markerResult = null;
-var marker;
+let ar = null;
+let markerResult = null;
+let marker;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
@@ -62,9 +62,9 @@ const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
-  var onLoad = function (arController) {
+  const onLoad = function (arController) {
     ar = arController;
-    var cameraMatrix = ar.getCameraMatrix();
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
       tickCount += 1;
@@ -81,17 +81,17 @@ function load(msg) {
       ar.trackNFTMarkerId(id);
       let marker = ar.getNFTData(ar.id, 0);
       console.log("nftMarker data: ", marker);
-      postMessage({ type: "markerInfos", marker: marker });
+      postMessage({type: "markerInfos", marker: marker});
       console.log("loadNFTMarker -> ", id);
-      postMessage({ type: "endLoading", end: true });
+      postMessage({type: "endLoading", end: true});
     }).catch(function (err) {
       console.log("Error in loading marker on Worker", err);
     });
 
-    postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
+    postMessage({type: "loaded", proj: JSON.stringify(cameraMatrix)});
   };
 
-  var onError = function (error) {
+  const onError = function (error) {
     console.error(error);
   };
 

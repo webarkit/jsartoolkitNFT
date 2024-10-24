@@ -183,7 +183,7 @@ var kpm_sources = [
   "FreakMatcher/detectors/DoG_scale_invariant_detector.cpp",
   "FreakMatcher/detectors/gaussian_scale_space_pyramid.cpp",
   "FreakMatcher/detectors/gradients.cpp",
-  "FreakMatcher/detectors/harris.cpp",
+  //"FreakMatcher/detectors/harris.cpp",
   "FreakMatcher/detectors/orientation_assignment.cpp",
   "FreakMatcher/detectors/pyramid.cpp",
   "FreakMatcher/facade/visual_database_facade.cpp",
@@ -222,7 +222,7 @@ FLAGS += " -Wno-warn-absolute-paths";
 FLAGS += " -s TOTAL_MEMORY=" + MEM + " ";
 FLAGS += " -s USE_ZLIB=1";
 FLAGS += " -s USE_LIBJPEG=1";
-FLAGS += " --memory-init-file 0"; // for memless file
+//FLAGS += " --memory-init-file 0"; // for memless file
 FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 
@@ -306,7 +306,7 @@ var compile_arlib = format(
     FLAGS +
     " " +
     DEFINES +
-    " -r -o {OUTPUT_PATH}libar.bc ",
+    " -r -o {OUTPUT_PATH}libar.o ",
   OUTPUT_PATH,
 );
 
@@ -319,7 +319,7 @@ var compile_thread_arlib = format(
     " " +
     "-pthread " +
     DEFINES +
-    " -r -o {OUTPUT_PATH}libar_td.bc ",
+    " -r -o {OUTPUT_PATH}libar_td.o ",
   OUTPUT_PATH,
 );
 
@@ -332,13 +332,13 @@ var compile_simd_arlib = format(
     SIMD128_FLAGS +
     " " +
     DEFINES +
-    " -r -o {OUTPUT_PATH}libar_simd.bc ",
+    " -r -o {OUTPUT_PATH}libar_simd.o ",
   OUTPUT_PATH,
 );
 
-var ALL_BC = " {OUTPUT_PATH}libar.bc ";
-var THREAD_BC = " {OUTPUT_PATH}libar_td.bc ";
-var SIMD_BC = " {OUTPUT_PATH}libar_simd.bc ";
+var ALL_BC = " {OUTPUT_PATH}libar.o ";
+var THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
+var SIMD_BC = " {OUTPUT_PATH}libar_simd.o ";
 
 var compile_combine = format(
   EMCC +

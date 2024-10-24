@@ -1,4 +1,4 @@
-var scope;
+let scope;
 if (typeof window !== 'undefined') {
     scope = window;
 } else if (typeof global !== 'undefined') {
@@ -346,7 +346,7 @@ class ARControllerNFT {
         glMat[3 + 1 * 4] = 0.0;
         glMat[3 + 2 * 4] = 0.0;
         glMat[3 + 3 * 4] = 1.0;
-        if (scale != undefined && scale !== 0.0) {
+        if (scale !== undefined && scale !== 0.0) {
             glMat[12] *= scale;
             glMat[13] *= scale;
             glMat[14] *= scale;
@@ -696,11 +696,11 @@ class ARControllerNFT {
 
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
         if (this.videoLuma) {
-            var q = 0;
+            let q = 0;
             //Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA (ARToolKitJS.cpp L: 43)
 
-            for (var p = 0; p < this.videoSize; p++) {
-                var r = data[q + 0], g = data[q + 1], b = data[q + 2];
+            for (let p = 0; p < this.videoSize; p++) {
+                const r = data[q], g = data[q + 1], b = data[q + 2];
                 // videoLuma[p] = (r+r+b+g+g+g)/6;         // https://stackoverflow.com/a/596241/5843642
                 this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
                 q += 4;
@@ -810,7 +810,7 @@ class ARCameraParamNFT {
 
 // ARToolKit exported JS API
 //
-var artoolkitNFT = {
+const artoolkitNFT = {
 
     UNKNOWN_MARKER: -1,
     NFT_MARKER: 0, // 0,
@@ -821,7 +821,7 @@ var artoolkitNFT = {
 
 };
 
-var FUNCTIONS = [
+const FUNCTIONS = [
     'setup',
     'teardown',
 
@@ -863,7 +863,7 @@ function runWhenLoaded() {
         artoolkitNFT[n] = Module[n];
     });
 
-    for (var m in Module) {
+    for (const m in Module) {
         if (m.match(/^AR/))
             artoolkitNFT[m] = Module[m];
     }
@@ -872,11 +872,11 @@ function runWhenLoaded() {
 var marker_count = 0;
 
 function addNFTMarker(arId, url, callback, onError) {
-    var mId = marker_count++;
-    var prefix = '/markerNFT_' + mId;
-    var filename1 = prefix + '.fset';
-    var filename2 = prefix + '.iset';
-    var filename3 = prefix + '.fset3';
+    const mId = marker_count++;
+    const prefix = '/markerNFT_' + mId;
+    const filename1 = prefix + '.fset';
+    const filename2 = prefix + '.iset';
+    const filename3 = prefix + '.fset3';
     ajax(url + '.fset', filename1, function () {
         ajax(url + '.iset', filename2, function () {
             ajax(url + '.fset3', filename3, function () {
@@ -887,10 +887,10 @@ function addNFTMarker(arId, url, callback, onError) {
     }, function (errorNumber) { if (onError) onError(errorNumber); });
 }
 
-function addNFTMarkers(arId, urls, callback, onError) {
-    var prefixes = [];
-    var pending = urls.length * 3;
-    var onSuccess = (filename) => {
+function addNFTMarkers(arId, urls, callback, onerror) {
+    const prefixes = [];
+    let pending = urls.length * 3;
+    const onSuccess = (filename) => {
         pending -= 1;
         if (pending === 0) {
             const vec = new Module.StringList();
@@ -906,19 +906,19 @@ function addNFTMarkers(arId, urls, callback, onError) {
             console.log("add nft marker ids: ", markerIds);
             if (callback) callback(markerIds);
         }
-    }
-    var onError = (filename, errorNumber) => {
+    };
+    const onError = (filename, errorNumber) => {
         console.log("failed to load: ", filename);
-        onError(errorNumber);
-    }
+        onerror(errorNumber);
+    };
 
     for (var i = 0; i < urls.length; i++) {
-        var url = urls[i];
-        var prefix = '/markerNFT_' + marker_count;
+        const url = urls[i];
+        const prefix = '/markerNFT_' + marker_count;
         prefixes.push(prefix);
-        var filename1 = prefix + '.fset';
-        var filename2 = prefix + '.iset';
-        var filename3 = prefix + '.fset3';
+        const filename1 = prefix + '.fset';
+        const filename2 = prefix + '.iset';
+        const filename3 = prefix + '.fset3';
 
         ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
         ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
@@ -931,12 +931,14 @@ function bytesToString(array) {
     return String.fromCharCode.apply(String, array);
 }
 
-var camera_count = 0;
+let camera_count = 0;
+
 function loadCamera(url, callback, errorCallback) {
-    var filename = '/camera_param_' + camera_count++;
-    var writeCallback = function (errorCode) {
+    const filename = '/camera_param_' + camera_count++;
+    const writeCallback = function (errorCode) {
         if (!Module._loadCamera) {
-            if (callback) callback(id); setTimeout(writeCallback, 10);
+            if (callback) callback(id);
+            setTimeout(writeCallback, 10);
         } else {
             var id = Module._loadCamera(filename);
             if (callback) callback(id);
@@ -988,15 +990,15 @@ function writeByteArrayToFS(target, byteArray, callback) {
 //	ajax('../bin/Data/patt.hiro', '/patt.hiro', callback);
 
 function ajax(url, target, callback, errorCallback) {
-    var oReq = new XMLHttpRequest();
+    const oReq = new XMLHttpRequest();
     oReq.open('GET', url, true);
     oReq.responseType = 'arraybuffer'; // blob arraybuffer
 
     oReq.onload = function () {
         if (this.status == 200) {
             // console.log('ajax done for ', url);
-            var arrayBuffer = oReq.response;
-            var byteArray = new Uint8Array(arrayBuffer);
+            const arrayBuffer = oReq.response;
+            const byteArray = new Uint8Array(arrayBuffer);
             writeByteArrayToFS(target, byteArray, callback);
         }
         else {
@@ -1016,7 +1018,7 @@ scope.Module = Module;
 if (scope.Module) {
     scope.Module.onRuntimeInitialized = function () {
         runWhenLoaded();
-        var event = new Event('artoolkitNFT-loaded');
+        const event = new Event('artoolkitNFT-loaded');
         scope.dispatchEvent(event);
     };
 } else {

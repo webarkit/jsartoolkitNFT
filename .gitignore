@@ -1,3 +1,4 @@
 build/*.bc
+build/*.o
 node_modules
 docs/*
