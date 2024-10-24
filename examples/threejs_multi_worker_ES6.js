@@ -38,7 +38,7 @@ export default function start(markerUrls, video, input_width, input_height, rend
   const camera = new THREE.Camera();
   camera.matrixAutoUpdate = false;
   
-    scene.add(camera);
+  scene.add(camera);
 
   const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(0.5, 8, 8),
@@ -143,8 +143,14 @@ export default function start(markerUrls, video, input_width, input_height, rend
         }
         case 'markerInfos': {
           marker1 = msg.marker1;
+          sphere.position.y = ((marker1.height / marker1.dpi) * 2.54 * 10) / 2.0;
+          sphere.position.x = ((marker1.width / marker1.dpi) * 2.54 * 10) / 2.0;
           marker2 = msg.marker2;
+          cube.position.y = ((marker2.height / marker2.dpi) * 2.54 * 10) / 2.0;
+          cube.position.x = ((marker2.width / marker2.dpi) * 2.54 * 10) / 2.0;
           marker3 = msg.marker3;
+          cone.position.y = ((marker3.height / marker3.dpi) * 2.54 * 10) / 2.0;
+          cone.position.x = ((marker3.width / marker3.dpi) * 2.54 * 10) / 2.0;
         }
       }
       track_update();
@@ -180,22 +186,16 @@ export default function start(markerUrls, video, input_width, input_height, rend
     } else {
       if (index === 0) {
         sphere.visible = true;
-        sphere.position.y = ((marker1.height / marker1.dpi) * 2.54 * 10) / 2.0;
-        sphere.position.x = ((marker1.width / marker1.dpi) * 2.54 * 10) / 2.0;
         cube.visible = false;
         cone.visible = false;
       } else if (index === 1) {
         sphere.visible = false;
         cube.visible = true;
-        cube.position.y = ((marker2.height / marker2.dpi) * 2.54 * 10) / 2.0;
-        cube.position.x = ((marker2.width / marker2.dpi) * 2.54 * 10) / 2.0;
         cone.visible = false;
       } else if (index === 2) {
         sphere.visible = false;
         cube.visible = false;
         cone.visible = true;
-        cone.position.y = ((marker3.height / marker3.dpi) * 2.54 * 10) / 2.0;
-        cone.position.x = ((marker3.width / marker3.dpi) * 2.54 * 10) / 2.0;
       }
       // set matrix of 'root' by detected 'world' matrix
       setMatrix(root.matrix, world);
