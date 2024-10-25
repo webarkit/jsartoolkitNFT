@@ -2,7 +2,6 @@ let sourceVideo;
 let targetCanvas;
 
 async function initCamera() {
-
   const constraints = {
     audio: false,
     video: {
@@ -11,8 +10,8 @@ async function initCamera() {
       // using the "user" front camera
       // facingMode: "user",
       width: 640,
-      height: 480
-    }
+      height: 480,
+    },
   };
 
   // initialize video source
@@ -20,12 +19,12 @@ async function initCamera() {
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
   video.srcObject = stream;
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     video.onloadedmetadata = () => {
       resolve(video);
     };
   });
-};
+}
 
 function initTargetCanvas() {
   // target canvas should overlap source video

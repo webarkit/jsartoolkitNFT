@@ -81,14 +81,14 @@ function load(msg) {
       ar.trackNFTMarkerId(id);
       let marker = ar.getNFTData(ar.id, 0);
       console.log("nftMarker data: ", marker);
-      postMessage({type: "markerInfos", marker: marker});
+      postMessage({ type: "markerInfos", marker: marker });
       console.log("loadNFTMarker -> ", id);
-      postMessage({type: "endLoading", end: true});
+      postMessage({ type: "endLoading", end: true });
     }).catch(function (err) {
       console.log("Error in loading marker on Worker", err);
     });
 
-    postMessage({type: "loaded", proj: JSON.stringify(cameraMatrix)});
+    postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
   };
 
   const onError = function (error) {

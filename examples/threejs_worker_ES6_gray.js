@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 function isMobile() {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
@@ -23,7 +23,14 @@ const demo_opt = function () {
   this.sigma = 0;
 };
 
-export default function start(markerUrl, video, input_width, input_height, render_update, track_update) {
+export default function start(
+  markerUrl,
+  video,
+  input_width,
+  input_height,
+  render_update,
+  track_update,
+) {
   let vw, vh;
   let sw, sh;
   let pscale, sscale;
@@ -31,10 +38,12 @@ export default function start(markerUrl, video, input_width, input_height, rende
   let pw, ph;
   let ox, oy;
   let worker;
-  const camera_para = './../examples/Data/camera_para.dat';
+  const camera_para = "./../examples/Data/camera_para.dat";
 
-  const canvas_process = document.createElement('canvas');
-  const context_process = canvas_process.getContext('2d', {willReadFrequently: true});
+  const canvas_process = document.createElement("canvas");
+  const context_process = canvas_process.getContext("2d", {
+    willReadFrequently: true,
+  });
   const targetCanvas = document.querySelector("#canvas");
 
   // gui to modfy gaussian options interactively.
@@ -42,23 +51,27 @@ export default function start(markerUrl, video, input_width, input_height, rende
 
   options = new demo_opt();
 
-  gui.add(options, 'radius', 1, 11).step(1);
-  gui.add(options, 'sigma', 0, 10).step(0.5);
+  gui.add(options, "radius", 1, 11).step(1);
+  gui.add(options, "sigma", 0, 10).step(0.5);
 
-  const renderer = new THREE.WebGLRenderer({canvas: targetCanvas, alpha: true, antialias: true});
+  const renderer = new THREE.WebGLRenderer({
+    canvas: targetCanvas,
+    alpha: true,
+    antialias: true,
+  });
   renderer.setPixelRatio(window.devicePixelRatio);
 
   const scene = new THREE.Scene();
 
-  let fov = 0.8 * 180 / Math.PI;
+  let fov = (0.8 * 180) / Math.PI;
   let ratio = input_width / input_height;
 
-  const cameraConfig= {
+  const cameraConfig = {
     fov: fov,
     aspect: ratio,
     near: 0.01,
-    far: 1000
-  }
+    far: 1000,
+  };
 
   const camera = new THREE.PerspectiveCamera(cameraConfig);
   camera.matrixAutoUpdate = false;
@@ -66,8 +79,8 @@ export default function start(markerUrl, video, input_width, input_height, rende
   scene.add(camera);
 
   const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.5, 8, 8),
-      new THREE.MeshNormalMaterial()
+    new THREE.SphereGeometry(0.5, 8, 8),
+    new THREE.MeshNormalMaterial(),
   );
 
   const root = new THREE.Object3D();
@@ -85,7 +98,7 @@ export default function start(markerUrl, video, input_width, input_height, rende
     vw = input_width;
     vh = input_height;
 
-    pscale = 320 / Math.max(vw, vh / 3 * 4);
+    pscale = 320 / Math.max(vw, (vh / 3) * 4);
     sscale = isMobile() ? window.outerWidth / input_width : 1;
 
     sw = vw * sscale;
@@ -93,8 +106,8 @@ export default function start(markerUrl, video, input_width, input_height, rende
 
     w = vw * pscale;
     h = vh * pscale;
-    pw = Math.max(w, h / 3 * 4);
-    ph = Math.max(h, w / 4 * 3);
+    pw = Math.max(w, (h / 3) * 4);
+    ph = Math.max(h, (w / 4) * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
     canvas_process.style.clientWidth = pw + "px";
@@ -104,7 +117,7 @@ export default function start(markerUrl, video, input_width, input_height, rende
 
     renderer.setSize(sw, sh);
 
-    worker = new Worker('../js/artoolkitNFT_ES6_gray.worker.js')
+    worker = new Worker("../js/artoolkitNFT_ES6_gray.worker.js");
 
     worker.postMessage({
       type: "load",
@@ -113,7 +126,7 @@ export default function start(markerUrl, video, input_width, input_height, rende
       radius: options.radius,
       sigma: options.sigma,
       camera_para: camera_para,
-      marker: markerUrl
+      marker: markerUrl,
     });
 
     worker.onmessage = function (ev) {
@@ -137,9 +150,10 @@ export default function start(markerUrl, video, input_width, input_height, rende
         case "endLoading": {
           if (msg.end === true) {
             // removing loader page if present
-            const loader = document.getElementById('loading');
+            const loader = document.getElementById("loading");
             if (loader) {
-              loader.querySelector('.loading-text').innerText = 'Start the tracking!';
+              loader.querySelector(".loading-text").innerText =
+                "Start the tracking!";
               setTimeout(function () {
                 loader.parentElement.removeChild(loader);
               }, 2000);
@@ -147,15 +161,15 @@ export default function start(markerUrl, video, input_width, input_height, rende
           }
           break;
         }
-        case 'found': {
+        case "found": {
           found(msg);
           break;
         }
-        case 'not found': {
+        case "not found": {
           found(null);
           break;
         }
-        case 'markerInfos': {
+        case "markerInfos": {
           marker = msg.marker;
         }
       }
@@ -197,12 +211,14 @@ export default function start(markerUrl, video, input_width, input_height, rende
   };
 
   const process = function () {
-    context_process.fillStyle = 'black';
+    context_process.fillStyle = "black";
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
     const imageData = context_process.getImageData(0, 0, pw, ph);
-    worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
+    worker.postMessage({ type: "process", imagedata: imageData }, [
+      imageData.data.buffer,
+    ]);
   };
 
   const tick = function () {

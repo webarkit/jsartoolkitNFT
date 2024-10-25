@@ -22,10 +22,10 @@ html {
 }
 
 #loading img {
-    height: 5em;
+  height: 5em;
 }
 
-#loading span{
+#loading span {
   color: black;
   font-weight: bold;
 }
@@ -35,7 +35,7 @@ html {
 
   margin: 0.5rem;
 
-  background-color: rgba( 255,255,255,0.6 );
+  background-color: rgba(255, 255, 255, 0.6);
   border-radius: 6px;
 }
 
@@ -49,7 +49,6 @@ html {
 
 .stats-item {
   margin: 0 0 0.5rem;
-
 }
 
 .stats-item-title {
