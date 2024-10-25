@@ -64,32 +64,22 @@ export default function start(markerUrl, video, input_width, input_height, rende
 
   root.matrixAutoUpdate = false;
 
-  threeGLTFLoader.load(modelURL, (gltf) => {
-    model = gltf.scene;
-        console.log(model)
-    /*let scale = 180;
-    model.scale.set(scale, scale, scale);
-    model.rotation.x = Math.PI / 2;
-    root.add(model);*/
+  threeGLTFLoader.load(modelURL, 
+    (gltf) => {
+
+      model = gltf.scene;
+      let scale = 180;
+      model.scale.set(scale, scale, scale);
+      model.rotation.x = Math.PI / 2;
+      root.add(model);
+
   },
-      ( error ) => {
+    ( error ) => {
 
-        console.log( 'An error happened', error );
+      console.log( 'An error happened', error );
 
-      });
-
-  if(model ) {
-    let scale = 180;
-    model.scale.set(scale, scale, scale);
-    model.rotation.x = Math.PI / 2;
-    root.add(model);
-  }
-
-
-  /*const root = new THREE.Object3D();
-  scene.add(root);*/
-
-  //root.matrixAutoUpdate = false;
+      }
+    );
 
   const load = function () {
     vw = input_width;
@@ -191,7 +181,7 @@ export default function start(markerUrl, video, input_width, input_height, rende
     lasttime = now;
 
     if (!world) {
-      root.matrix = null;
+      //world = null;
     } else {
       // set matrix of 'root' by detected 'world' matrix
       setMatrix(root.matrix, world);
