@@ -59,18 +59,37 @@ export default function start(markerUrl, video, input_width, input_height, rende
   const light = new THREE.AmbientLight(0xffffff);
   scene.add(light);
 
-  threeGLTFLoader.load(modelURL, (gltf) => {
-    model = gltf.scene;
-    let scale = 180;
-    model.scale.set(scale, scale, scale);
-    model.rotation.x = Math.PI / 2;
-    root.add(model);
-  });
-
   const root = new THREE.Object3D();
   scene.add(root);
 
   root.matrixAutoUpdate = false;
+
+  threeGLTFLoader.load(modelURL, (gltf) => {
+    model = gltf.scene;
+        console.log(model)
+    /*let scale = 180;
+    model.scale.set(scale, scale, scale);
+    model.rotation.x = Math.PI / 2;
+    root.add(model);*/
+  },
+      ( error ) => {
+
+        console.log( 'An error happened', error );
+
+      });
+
+  if(model ) {
+    let scale = 180;
+    model.scale.set(scale, scale, scale);
+    model.rotation.x = Math.PI / 2;
+    root.add(model);
+  }
+
+
+  /*const root = new THREE.Object3D();
+  scene.add(root);*/
+
+  //root.matrixAutoUpdate = false;
 
   const load = function () {
     vw = input_width;
