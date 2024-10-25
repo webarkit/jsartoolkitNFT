@@ -3,9 +3,10 @@ emscripten
 dist
 docs
 node_modules
-examples
+examples/*/*/*/*.js
+examples/*/*/*.js
 types
-*.html
+#*.html
 *.json
 build/*.js
 js/*.api.js
