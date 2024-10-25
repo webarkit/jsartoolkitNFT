@@ -1,8 +1,8 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-function isMobile () {
-    return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
-  }
+function isMobile() {
+  return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
+}
 
 const setMatrix = function (matrix, value) {
   const array = [];
@@ -16,7 +16,14 @@ const setMatrix = function (matrix, value) {
   }
 };
 
-export default function start(markerUrls, video, input_width, input_height, render_update, track_update) {
+export default function start(
+  markerUrls,
+  video,
+  input_width,
+  input_height,
+  render_update,
+  track_update,
+) {
   let vw, vh;
   let sw, sh;
   let pscale, sscale;
@@ -24,45 +31,51 @@ export default function start(markerUrls, video, input_width, input_height, rend
   let pw, ph;
   let ox, oy;
   let worker;
-  const camera_para = './../examples/Data/camera_para.dat';
+  const camera_para = "./../examples/Data/camera_para.dat";
 
-  const canvas_process = document.createElement('canvas');
-  const context_process = canvas_process.getContext('2d', {willReadFrequently: true});
+  const canvas_process = document.createElement("canvas");
+  const context_process = canvas_process.getContext("2d", {
+    willReadFrequently: true,
+  });
   const targetCanvas = document.querySelector("#canvas");
 
-  const renderer = new THREE.WebGLRenderer({canvas: targetCanvas, alpha: true, antialias: true});
+  const renderer = new THREE.WebGLRenderer({
+    canvas: targetCanvas,
+    alpha: true,
+    antialias: true,
+  });
   renderer.setPixelRatio(window.devicePixelRatio);
 
   const scene = new THREE.Scene();
 
-  let fov = 0.8 * 180 / Math.PI;
+  let fov = (0.8 * 180) / Math.PI;
   let ratio = input_width / input_height;
 
-  const cameraConfig= {
+  const cameraConfig = {
     fov: fov,
     aspect: ratio,
     near: 0.01,
-    far: 1000
-  }
+    far: 1000,
+  };
 
   const camera = new THREE.PerspectiveCamera(cameraConfig);
   camera.matrixAutoUpdate = false;
-  
+
   scene.add(camera);
 
   const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.5, 8, 8),
-      new THREE.MeshNormalMaterial()
+    new THREE.SphereGeometry(0.5, 8, 8),
+    new THREE.MeshNormalMaterial(),
   );
 
   const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(0.5),
-      new THREE.MeshNormalMaterial()
+    new THREE.BoxGeometry(0.5),
+    new THREE.MeshNormalMaterial(),
   );
 
   const cone = new THREE.Mesh(
-      new THREE.ConeGeometry(0.5, 1, 32),
-      new THREE.MeshNormalMaterial()
+    new THREE.ConeGeometry(0.5, 1, 32),
+    new THREE.MeshNormalMaterial(),
   );
 
   const root = new THREE.Object3D();
@@ -71,25 +84,25 @@ export default function start(markerUrls, video, input_width, input_height, rend
   let marker1, marker2, marker3;
 
   sphere.material.flatShading;
-    sphere.scale.set(200, 200, 200);
+  sphere.scale.set(200, 200, 200);
 
-    cube.material.flatShading;
-    cube.scale.set(200, 200, 200);
+  cube.material.flatShading;
+  cube.scale.set(200, 200, 200);
 
-    cone.material.flatShading;
-    cone.rotation.x = 90;
-    cone.scale.set(200, 200, 200);
-  
-    root.matrixAutoUpdate = false;
-    root.add(sphere);
-    root.add(cube);
-    root.add(cone);
+  cone.material.flatShading;
+  cone.rotation.x = 90;
+  cone.scale.set(200, 200, 200);
+
+  root.matrixAutoUpdate = false;
+  root.add(sphere);
+  root.add(cube);
+  root.add(cone);
 
   const load = function () {
     vw = input_width;
     vh = input_height;
 
-    pscale = 320 / Math.max(vw, vh / 3 * 4);
+    pscale = 320 / Math.max(vw, (vh / 3) * 4);
     sscale = isMobile() ? window.outerWidth / input_width : 1;
 
     sw = vw * sscale;
@@ -97,8 +110,8 @@ export default function start(markerUrls, video, input_width, input_height, rend
 
     w = vw * pscale;
     h = vh * pscale;
-    pw = Math.max(w, h / 3 * 4);
-    ph = Math.max(h, w / 4 * 3);
+    pw = Math.max(w, (h / 3) * 4);
+    ph = Math.max(h, (w / 4) * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
     canvas_process.style.clientWidth = pw + "px";
@@ -108,9 +121,15 @@ export default function start(markerUrls, video, input_width, input_height, rend
 
     renderer.setSize(sw, sh);
 
-    worker = new Worker('../js/artoolkitNFT_multi_ES6.worker.js')
+    worker = new Worker("../js/artoolkitNFT_multi_ES6.worker.js");
 
-    worker.postMessage({type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: markerUrls});
+    worker.postMessage({
+      type: "load",
+      pw: pw,
+      ph: ph,
+      camera_para: camera_para,
+      marker: markerUrls,
+    });
 
     worker.onmessage = function (ev) {
       const msg = ev.data;
@@ -133,9 +152,10 @@ export default function start(markerUrls, video, input_width, input_height, rend
         case "endLoading": {
           if (msg.end === true) {
             // removing loader page if present
-            const loader = document.getElementById('loading');
+            const loader = document.getElementById("loading");
             if (loader) {
-              loader.querySelector('.loading-text').innerText = 'Start the tracking!';
+              loader.querySelector(".loading-text").innerText =
+                "Start the tracking!";
               setTimeout(function () {
                 loader.parentElement.removeChild(loader);
               }, 2000);
@@ -143,17 +163,18 @@ export default function start(markerUrls, video, input_width, input_height, rend
           }
           break;
         }
-        case 'found': {
+        case "found": {
           found(msg);
           break;
         }
-        case 'not found': {
+        case "not found": {
           found(null);
           break;
         }
-        case 'markerInfos': {
+        case "markerInfos": {
           marker1 = msg.marker1;
-          sphere.position.y = ((marker1.height / marker1.dpi) * 2.54 * 10) / 2.0;
+          sphere.position.y =
+            ((marker1.height / marker1.dpi) * 2.54 * 10) / 2.0;
           sphere.position.x = ((marker1.width / marker1.dpi) * 2.54 * 10) / 2.0;
           marker2 = msg.marker2;
           cube.position.y = ((marker2.height / marker2.dpi) * 2.54 * 10) / 2.0;
@@ -214,12 +235,14 @@ export default function start(markerUrls, video, input_width, input_height, rend
   };
 
   const process = function () {
-    context_process.fillStyle = 'black';
+    context_process.fillStyle = "black";
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
     var imageData = context_process.getImageData(0, 0, pw, ph);
-    worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
+    worker.postMessage({ type: "process", imagedata: imageData }, [
+      imageData.data.buffer,
+    ]);
   };
 
   const tick = function () {
@@ -228,7 +251,6 @@ export default function start(markerUrls, video, input_width, input_height, rend
   };
 
   load();
-    tick();
-    process();
-  }
-  
+  tick();
+  process();
+}

@@ -1,100 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>ARToolkitNFT_ES6 example</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1">
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "./js/third_party/three.js/three.module.min.js",
-        "three/addons/": "./js/third_party/three.js/"
+  <head>
+    <meta charset="utf-8" />
+    <title>ARToolkitNFT_ES6 example</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./js/third_party/three.js/three.module.min.js",
+          "three/addons/": "./js/third_party/three.js/"
+        }
       }
-    }
-</script>
-    <link rel="stylesheet" href="css/nft-style.css">
-</head>
-<body>
-  <div id="loading" >
-    <img alt="JsartoolkitNFT logo" src="Data/JsartoolkitNFT-logo.gif"/>
-    <span class="loading-text">Loading, please wait</span>
-  </div>
-  <!--
+    </script>
+    <link rel="stylesheet" href="css/nft-style.css" />
+  </head>
+  <body>
+    <div id="loading">
+      <img alt="JsartoolkitNFT logo" src="Data/JsartoolkitNFT-logo.gif" />
+      <span class="loading-text">Loading, please wait</span>
+    </div>
+    <!--
   ==================
   STATS
   ==================
   -->
-  <div id="stats" class="ui stats">
-    <div id="stats1" class="stats-item">
-      <p class="stats-item-title">
-        Main
-      </p>
+    <div id="stats" class="ui stats">
+      <div id="stats1" class="stats-item">
+        <p class="stats-item-title">Main</p>
+      </div>
+
+      <div id="stats2" class="stats-item">
+        <p class="stats-item-title">Worker</p>
+      </div>
     </div>
 
-    <div id="stats2" class="stats-item">
-      <p class="stats-item-title">
-        Worker
-      </p>
+    <div id="app">
+      <video loop autoplay muted playsinline id="video"></video>
+      <canvas id="canvas"></canvas>
     </div>
-  </div>
+    <script src="js/third_party/three.js/stats.min.js"></script>
+    <script src="index.js"></script>
 
-	<div id="app">
-		<video
-			loop
-			autoplay
-			muted
-			playsinline
-			id="video">
-		</video>
-		<canvas id="canvas"></canvas>
-	</div>
-  <script src="js/third_party/three.js/stats.min.js"></script>
-  <script src="index.js"></script>
+    <script type="module">
+      import start from "./threejs_worker_brave_robot_gltf_ES6.js";
+      /**
+       * STATS
+       */
+      const statsMain = new Stats();
+      statsMain.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.getElementById("stats1").appendChild(statsMain.dom);
 
-  <script type="module">
-      import start from './threejs_worker_brave_robot_gltf_ES6.js'
-  /**
-  * STATS
-  */
-  const statsMain = new Stats();
-  statsMain.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.getElementById( 'stats1' ).appendChild( statsMain.dom );
+      const statsWorker = new Stats();
+      statsWorker.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.getElementById("stats2").appendChild(statsWorker.dom);
 
-  const statsWorker = new Stats();
-  statsWorker.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.getElementById( 'stats2' ).appendChild( statsWorker.dom );
+      window.addEventListener("load", () => {
+        console.log("init ARToolkitNFT...");
+        initCamera()
+          .then((video) => {
+            // start camera playback
+            sourceVideo = video;
+            sourceVideo.width = 640;
+            sourceVideo.height = 480;
+            sourceVideo.play();
 
-  window.addEventListener('load', () => {
-    console.log('init ARToolkitNFT...');
-    initCamera()
-    .then(video => {
+            // init target canvas
+            initTargetCanvas();
 
-    // start camera playback
-    sourceVideo = video;
-    sourceVideo.width = 640;
-    sourceVideo.height = 480;
-    sourceVideo.play();
-
-    // init target canvas
-    initTargetCanvas();
-
-    return new Promise(resolve => {
-      sourceVideo.addEventListener("loadeddata", event => {
-          const target = event.target;
-          console.log("Camera is ready");
-          console.log("Video stream with width, height: ", target.width, target.height)
-          resolve();
+            return new Promise((resolve) => {
+              sourceVideo.addEventListener("loadeddata", (event) => {
+                const target = event.target;
+                console.log("Camera is ready");
+                console.log(
+                  "Video stream with width, height: ",
+                  target.width,
+                  target.height,
+                );
+                resolve();
+              });
+            });
+          })
+          .then((_) => {
+            start(
+              "../examples/DataNFT/pinball",
+              video,
+              video.videoWidth,
+              video.videoHeight,
+              function () {
+                statsMain.update();
+              },
+              function () {
+                statsWorker.update();
+              },
+            );
+          });
       });
-    });
-  })
-  .then(_ => {
-
-    start('../examples/DataNFT/pinball', video, video.videoWidth, video.videoHeight, function() { statsMain.update() }, function() { statsWorker.update() })
-
-    });
-  })
-  </script>
-
-</body>
-
+    </script>
+  </body>
 </html>

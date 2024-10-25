@@ -6,10 +6,10 @@
  */
 
 let exec = require("child_process").exec,
-    path = require("path"),
-    fs = require("fs"),
-    os = require("os"),
-    child;
+  path = require("path"),
+  fs = require("fs"),
+  os = require("os"),
+  child;
 
 const platform = os.platform();
 
@@ -32,8 +32,8 @@ const HAVE_NFT = 1;
 
 const EMSCRIPTEN_ROOT = process.env.EMSCRIPTEN;
 const WEBARKITLIB_ROOT =
-    process.env.WEBARKITLIB_ROOT ||
-    path.resolve(__dirname, "../emscripten/WebARKitLib");
+  process.env.WEBARKITLIB_ROOT ||
+  path.resolve(__dirname, "../emscripten/WebARKitLib");
 
 if (!EMSCRIPTEN_ROOT) {
   console.log("\nWarning: EMSCRIPTEN environment variable not found.");
@@ -232,19 +232,19 @@ FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 const WASM_FLAGS = " -s SINGLE_FILE=1";
 const SIMD128_FLAGS = " -msimd128";
 const ES6_FLAGS =
-    " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web ";
+  " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web ";
 
 const ES6_TD_FLAGS =
-    " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web,worker ";
+  " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web,worker ";
 
 const ES6_EMBED_ES6_FLAGS =
-    " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
+  " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
 
 const PRE_FLAGS =
-    " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
+  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
 
 const PRE_ES6_FLAGS =
-    " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
+  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
 
 FLAGS += " --bind ";
 
@@ -261,10 +261,10 @@ const INCLUDES = [
   SOURCE_PATH,
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),
 ]
-    .map(function (s) {
-      return "-I" + s;
-    })
-    .join(" ");
+  .map(function (s) {
+    return "-I" + s;
+  })
+  .join(" ");
 
 function format(str) {
   for (let f = 1; f < arguments.length; f++) {
@@ -300,12 +300,12 @@ function clean_builds() {
       }
     }
   } catch (e) {
-    return console.log('error cleaning the build libs:', e);
+    return console.log("error cleaning the build libs:", e);
   }
 }
 
 const compile_arlib = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     ar_sources.join(" ") +
@@ -313,11 +313,11 @@ const compile_arlib = format(
     " " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar.o ",
-    OUTPUT_PATH,
+  OUTPUT_PATH,
 );
 
 const compile_thread_arlib = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     ar_sources_threaded.join(" ") +
@@ -326,11 +326,11 @@ const compile_thread_arlib = format(
     "-pthread " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar_td.o ",
-    OUTPUT_PATH,
+  OUTPUT_PATH,
 );
 
 const compile_simd_arlib = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     ar_sources.join(" ") +
@@ -339,7 +339,7 @@ const compile_simd_arlib = format(
     " " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar_simd.o ",
-    OUTPUT_PATH,
+  OUTPUT_PATH,
 );
 
 const ALL_BC = " {OUTPUT_PATH}libar.o ";
@@ -347,7 +347,7 @@ const THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
 const SIMD_BC = " {OUTPUT_PATH}libar_simd.o ";
 
 const compile_combine = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -358,13 +358,13 @@ const compile_combine = format(
     DEBUG_FLAGS +
     DEFINES +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_DEBUG_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_DEBUG_FILE,
 );
 
 const compile_combine_min = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -375,13 +375,13 @@ const compile_combine_min = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_MIN_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_MIN_FILE,
 );
 
 const compile_wasm = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -392,13 +392,13 @@ const compile_wasm = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_WASM_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_FILE,
 );
 
 const compile_wasm_thread = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     THREAD_BC +
@@ -410,13 +410,13 @@ const compile_wasm_thread = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_THREAD_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_THREAD_FILE,
 );
 
 const compile_wasm_embed_ES6 = format(
-    EMCC +
+  EMCC +
     " " +
     INCLUDES +
     " " +
@@ -428,13 +428,13 @@ const compile_wasm_embed_ES6 = format(
     ES6_EMBED_ES6_FLAGS +
     PRE_ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_WASM_EMBED_ES6_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_EMBED_ES6_FILE,
 );
 
 const compile_simd_wasm = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     SIMD_BC +
@@ -445,13 +445,13 @@ const compile_simd_wasm = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_SIMD_WASM_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_SIMD_WASM_FILE,
 );
 
 const compile_wasm_es6 = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -461,13 +461,13 @@ const compile_wasm_es6 = format(
     DEFINES +
     ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_WASM_ES6_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_ES6_FILE,
 );
 
 const compile_wasm_es6_thread = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     THREAD_BC +
@@ -478,13 +478,13 @@ const compile_wasm_es6_thread = format(
     DEFINES +
     ES6_TD_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_WASM_ES6_TD_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_ES6_TD_FILE,
 );
 
 const compile_simd_wasm_es6 = format(
-    EMCC +
+  EMCC +
     INCLUDES +
     " " +
     SIMD_BC +
@@ -495,9 +495,9 @@ const compile_simd_wasm_es6 = format(
     DEFINES +
     ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-    OUTPUT_PATH,
-    OUTPUT_PATH,
-    BUILD_SIMD_WASM_ES6_FILE,
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_SIMD_WASM_ES6_FILE,
 );
 
 /*

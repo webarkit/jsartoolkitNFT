@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-function isMobile () {
+function isMobile() {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
@@ -17,7 +17,14 @@ const setMatrix = function (matrix, value) {
   }
 };
 
-export default function start(markerUrl, video, input_width, input_height, render_update, track_update) {
+export default function start(
+  markerUrl,
+  video,
+  input_width,
+  input_height,
+  render_update,
+  track_update,
+) {
   let vw, vh;
   let sw, sh;
   let pscale, sscale;
@@ -25,31 +32,38 @@ export default function start(markerUrl, video, input_width, input_height, rende
   let pw, ph;
   let ox, oy;
   let worker;
-  const camera_para = './../examples/Data/camera_para.dat';
+  const camera_para = "./../examples/Data/camera_para.dat";
 
-  const modelURL = './../examples/Data/models/brave_robot/brave_robot.glb';
+  const modelURL = "./../examples/Data/models/brave_robot/brave_robot.glb";
   let model, marker;
 
-  const canvas_process = document.createElement('canvas');
-  const context_process = canvas_process.getContext('2d', {willReadFrequently: true});
+  const canvas_process = document.createElement("canvas");
+  const context_process = canvas_process.getContext("2d", {
+    willReadFrequently: true,
+  });
   const targetCanvas = document.querySelector("#canvas");
 
-  const renderer = new THREE.WebGLRenderer({canvas: targetCanvas, alpha: true, antialias: true, logarithmicDepthBuffer: true});
+  const renderer = new THREE.WebGLRenderer({
+    canvas: targetCanvas,
+    alpha: true,
+    antialias: true,
+    logarithmicDepthBuffer: true,
+  });
   renderer.setPixelRatio(window.devicePixelRatio);
 
   const threeGLTFLoader = new GLTFLoader();
 
   const scene = new THREE.Scene();
 
-  let fov = 0.8 * 180 / Math.PI;
+  let fov = (0.8 * 180) / Math.PI;
   let ratio = input_width / input_height;
 
-  const cameraConfig= {
+  const cameraConfig = {
     fov: fov,
     aspect: ratio,
     near: 0.01,
-    far: 1000
-  }
+    far: 1000,
+  };
 
   const camera = new THREE.PerspectiveCamera(cameraConfig);
   camera.matrixAutoUpdate = false;
@@ -64,28 +78,25 @@ export default function start(markerUrl, video, input_width, input_height, rende
 
   root.matrixAutoUpdate = false;
 
-  threeGLTFLoader.load(modelURL, 
+  threeGLTFLoader.load(
+    modelURL,
     (gltf) => {
-
       model = gltf.scene;
       let scale = 180;
       model.scale.set(scale, scale, scale);
       model.rotation.x = Math.PI / 2;
       root.add(model);
-
-  },
-    ( error ) => {
-
-      console.log( 'An error happened', error );
-
-      }
-    );
+    },
+    (error) => {
+      console.log("An error happened", error);
+    },
+  );
 
   const load = function () {
     vw = input_width;
     vh = input_height;
 
-    pscale = 320 / Math.max(vw, vh / 3 * 4);
+    pscale = 320 / Math.max(vw, (vh / 3) * 4);
     sscale = isMobile() ? window.outerWidth / input_width : 1;
 
     sw = vw * sscale;
@@ -93,8 +104,8 @@ export default function start(markerUrl, video, input_width, input_height, rende
 
     w = vw * pscale;
     h = vh * pscale;
-    pw = Math.max(w, h / 3 * 4);
-    ph = Math.max(h, w / 4 * 3);
+    pw = Math.max(w, (h / 3) * 4);
+    ph = Math.max(h, (w / 4) * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
     canvas_process.style.clientWidth = pw + "px";
@@ -104,9 +115,15 @@ export default function start(markerUrl, video, input_width, input_height, rende
 
     renderer.setSize(sw, sh);
 
-    worker = new Worker('../js/artoolkitNFT_ES6.worker.js')
+    worker = new Worker("../js/artoolkitNFT_ES6.worker.js");
 
-    worker.postMessage({type: "load", pw: pw, ph: ph, camera_para: camera_para, marker: markerUrl});
+    worker.postMessage({
+      type: "load",
+      pw: pw,
+      ph: ph,
+      camera_para: camera_para,
+      marker: markerUrl,
+    });
 
     worker.onmessage = function (ev) {
       const msg = ev.data;
@@ -129,9 +146,10 @@ export default function start(markerUrl, video, input_width, input_height, rende
         case "endLoading": {
           if (msg.end === true) {
             // removing loader page if present
-            const loader = document.getElementById('loading');
+            const loader = document.getElementById("loading");
             if (loader) {
-              loader.querySelector('.loading-text').innerText = 'Start the tracking!';
+              loader.querySelector(".loading-text").innerText =
+                "Start the tracking!";
               setTimeout(function () {
                 loader.parentElement.removeChild(loader);
               }, 2000);
@@ -139,17 +157,17 @@ export default function start(markerUrl, video, input_width, input_height, rende
           }
           break;
         }
-        case 'found': {
+        case "found": {
           found(msg);
           model.visible = true;
           break;
         }
-        case 'not found': {
+        case "not found": {
           found(null);
           model.visible = false;
           break;
         }
-        case 'markerInfos': {
+        case "markerInfos": {
           marker = msg.marker;
           model.position.y = ((marker.height / marker.dpi) * 2.54 * 10) / 2.0;
           model.position.x = ((marker.width / marker.dpi) * 2.54 * 10) / 2.0;
@@ -190,13 +208,15 @@ export default function start(markerUrl, video, input_width, input_height, rende
   };
 
   const process = function () {
-    context_process.fillStyle = 'black';
+    context_process.fillStyle = "black";
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
     const imageData = context_process.getImageData(0, 0, pw, ph);
-    worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
-  }
+    worker.postMessage({ type: "process", imagedata: imageData }, [
+      imageData.data.buffer,
+    ]);
+  };
 
   const tick = function () {
     draw();

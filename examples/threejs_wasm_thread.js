@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
 let ar;
 
@@ -18,33 +18,46 @@ const setMatrix = function (matrix, value) {
   }
 };
 
-export default function start( markerUrl, video, input_width, input_height, canvas_draw, render_update) {
+export default function start(
+  markerUrl,
+  video,
+  input_width,
+  input_height,
+  canvas_draw,
+  render_update,
+) {
   let vw, vh;
   let sw, sh;
   let pscale, sscale;
   let w, h;
   let pw, ph;
   let ox, oy;
-  const camera_para = './../examples/Data/camera_para.dat';
+  const camera_para = "./../examples/Data/camera_para.dat";
   let camera_matrix;
 
-  const canvas_process = document.createElement('canvas');
-  const context_process = canvas_process.getContext('2d', {willReadFrequently: true});
+  const canvas_process = document.createElement("canvas");
+  const context_process = canvas_process.getContext("2d", {
+    willReadFrequently: true,
+  });
 
-  const renderer = new THREE.WebGLRenderer({canvas: canvas_draw, alpha: true, antialias: true});
+  const renderer = new THREE.WebGLRenderer({
+    canvas: canvas_draw,
+    alpha: true,
+    antialias: true,
+  });
   renderer.setPixelRatio(window.devicePixelRatio);
 
   const scene = new THREE.Scene();
 
-  let fov = 0.8 * 180 / Math.PI;
+  let fov = (0.8 * 180) / Math.PI;
   let ratio = input_width / input_height;
 
-  const cameraConfig= {
+  const cameraConfig = {
     fov: fov,
     aspect: ratio,
     near: 0.01,
-    far: 1000
-  }
+    far: 1000,
+  };
 
   const camera = new THREE.PerspectiveCamera(cameraConfig);
   camera.matrixAutoUpdate = false;
@@ -52,8 +65,8 @@ export default function start( markerUrl, video, input_width, input_height, canv
   scene.add(camera);
 
   const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.5, 8, 8),
-      new THREE.MeshNormalMaterial()
+    new THREE.SphereGeometry(0.5, 8, 8),
+    new THREE.MeshNormalMaterial(),
   );
 
   const root = new THREE.Object3D();
@@ -64,13 +77,13 @@ export default function start( markerUrl, video, input_width, input_height, canv
   const markerInfos = function () {
     window.addEventListener("markerInfos", function (ev) {
       marker = ev.detail.marker;
-    })
+    });
   };
 
   const getCameraMatrix = function () {
     window.addEventListener("loaded", function (ev) {
       camera_matrix = ev.detail.proj;
-    })
+    });
   };
 
   sphere.material.flatShading;
@@ -83,7 +96,7 @@ export default function start( markerUrl, video, input_width, input_height, canv
     vw = input_width;
     vh = input_height;
 
-    pscale = 320 / Math.max(vw, vh / 3 * 4);
+    pscale = 320 / Math.max(vw, (vh / 3) * 4);
     sscale = isMobile() ? window.outerWidth / input_width : 1;
 
     sw = vw * sscale;
@@ -91,8 +104,8 @@ export default function start( markerUrl, video, input_width, input_height, canv
 
     w = vw * pscale;
     h = vh * pscale;
-    pw = Math.max(w, h / 3 * 4);
-    ph = Math.max(h, w / 4 * 3);
+    pw = Math.max(w, (h / 3) * 4);
+    ph = Math.max(h, (w / 4) * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
     canvas_process.style.clientWidth = pw + "px";
@@ -106,7 +119,7 @@ export default function start( markerUrl, video, input_width, input_height, canv
       pw: pw,
       ph: ph,
       camera_para: camera_para,
-      marker: markerUrl
+      marker: markerUrl,
     };
 
     load_thread(msg);
@@ -118,8 +131,8 @@ export default function start( markerUrl, video, input_width, input_height, canv
 
   const found = function () {
     window.addEventListener("markerFound", function (ev) {
-      world = ev.detail.matrixGL_RH
-    })
+      world = ev.detail.matrixGL_RH;
+    });
   };
 
   let lasttime = Date.now();
@@ -164,31 +177,34 @@ export default function start( markerUrl, video, input_width, input_height, canv
     window.addEventListener("endLoading", function (ev) {
       if (ev.detail.end === true) {
         // removing loader page if present
-        const loader = document.getElementById('loading');
+        const loader = document.getElementById("loading");
         if (loader) {
-          loader.querySelector('.loading-text').innerText = 'Start the tracking!';
+          loader.querySelector(".loading-text").innerText =
+            "Start the tracking!";
           setTimeout(function () {
             if (loader) {
-              loader.querySelector('.loading-text').innerText = '';
-              loader.querySelector('img').src = '';
+              loader.querySelector(".loading-text").innerText = "";
+              loader.querySelector("img").src = "";
             }
           }, 2000);
         } else {
           console.log("No loader found");
         }
       }
-    })
+    });
     renderer.render(scene, camera);
   };
 
   const process = function () {
-    context_process.fillStyle = 'black';
+    context_process.fillStyle = "black";
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
     let imageData = context_process.getImageData(0, 0, pw, ph);
 
-    var imageDataEvent = new CustomEvent('imageDataEvent', {detail: {imageData: imageData} });
+    var imageDataEvent = new CustomEvent("imageDataEvent", {
+      detail: { imageData: imageData },
+    });
     window.dispatchEvent(imageDataEvent);
 
     requestAnimationFrame(process);
