@@ -2,23 +2,24 @@
  * Simple script for running emcc on ARToolKit
  * @author zz85 github.com/zz85
  * @author ThorstenBux github.com/ThorstenBux
+ * @author kalwalt github.com/kalwalt
  */
 
-var exec = require("child_process").exec,
-  path = require("path"),
-  fs = require("fs"),
-  os = require("os"),
-  child;
+let exec = require("child_process").exec,
+    path = require("path"),
+    fs = require("fs"),
+    os = require("os"),
+    child;
 
 const platform = os.platform();
 
-var NO_LIBAR = false;
+let NO_LIBAR = false;
 /* Filtering remote jitter, but makes the tracking swim */
-var WITH_FILTERING = 1;
+const WITH_FILTERING = 1;
 
-var arguments = process.argv;
+const arguments = process.argv;
 
-for (var j = 2; j < arguments.length; j++) {
+for (let j = 2; j < arguments.length; j++) {
   if (arguments[j] == "--no-libar") {
     NO_LIBAR = true;
     console.log(
@@ -27,12 +28,12 @@ for (var j = 2; j < arguments.length; j++) {
   }
 }
 
-var HAVE_NFT = 1;
+const HAVE_NFT = 1;
 
-var EMSCRIPTEN_ROOT = process.env.EMSCRIPTEN;
-var WEBARKITLIB_ROOT =
-  process.env.WEBARKITLIB_ROOT ||
-  path.resolve(__dirname, "../emscripten/WebARKitLib");
+const EMSCRIPTEN_ROOT = process.env.EMSCRIPTEN;
+const WEBARKITLIB_ROOT =
+    process.env.WEBARKITLIB_ROOT ||
+    path.resolve(__dirname, "../emscripten/WebARKitLib");
 
 if (!EMSCRIPTEN_ROOT) {
   console.log("\nWarning: EMSCRIPTEN environment variable not found.");
@@ -41,32 +42,34 @@ if (!EMSCRIPTEN_ROOT) {
   );
 }
 
-var EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc ") : "emcc ";
-var EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++ ") : "em++ ";
-var OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
-var MEM = 128 * 1024 * 1024; // 64MB
+const EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc ") : "emcc ";
+const EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++ ") : "em++ ";
+const OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
+const MEM = 128 * 1024 * 1024; // 64MB
 
-var SOURCE_PATH = path.resolve(__dirname, "../emscripten/") + "/";
-var OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
+const SOURCE_PATH = path.resolve(__dirname, "../emscripten/") + "/";
+const OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
 
-var BUILD_DEBUG_FILE = "artoolkitNFT.debug.js";
-var BUILD_WASM_FILE = "artoolkitNFT_wasm.js";
-var BUILD_THREAD_FILE = "artoolkitNFT_thread.js";
-var BUILD_WASM_EMBED_ES6_FILE = "artoolkitNFT_embed_ES6_wasm.js";
-var BUILD_SIMD_WASM_FILE = "artoolkitNFT_wasm.simd.js";
-var BUILD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.js";
-var BUILD_SIMD_WASM_ES6_FILE = "artoolkitNFT_ES6_wasm.simd.js";
-var BUILD_WASM_ES6_TD_FILE = "artoolkitNFT_ES6_wasm_td.js";
-var BUILD_MIN_FILE = "artoolkitNFT.min.js";
+const BUILD_BASE_FILENAME = "artoolkitNFT";
 
-var MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c"];
+const BUILD_DEBUG_FILE = BUILD_BASE_FILENAME + ".debug.js";
+const BUILD_WASM_FILE = BUILD_BASE_FILENAME + "_wasm.js";
+const BUILD_THREAD_FILE = BUILD_BASE_FILENAME + "_thread.js";
+const BUILD_WASM_EMBED_ES6_FILE = BUILD_BASE_FILENAME + "_embed_ES6_wasm.js";
+const BUILD_SIMD_WASM_FILE = BUILD_BASE_FILENAME + "_wasm.simd.js";
+const BUILD_WASM_ES6_FILE = BUILD_BASE_FILENAME + "_ES6_wasm.js";
+const BUILD_SIMD_WASM_ES6_FILE = BUILD_BASE_FILENAME + "_ES6_wasm.simd.js";
+const BUILD_WASM_ES6_TD_FILE = BUILD_BASE_FILENAME + "_ES6_wasm_td.js";
+const BUILD_MIN_FILE = BUILD_BASE_FILENAME + ".min.js";
+
+let MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c"];
 
 // testing threaded version of the library.
-var MAIN_SOURCES_TD = ["ARToolKitJS_td.cpp", "trackingSub.c"];
+let MAIN_SOURCES_TD = ["ARToolKitJS_td.cpp", "trackingSub.c"];
 
-var MAIN_SOURCES_TD_ES6 = ["ARToolKitNFT_js_td.cpp", "trackingSub.c"];
+let MAIN_SOURCES_TD_ES6 = ["ARToolKitNFT_js_td.cpp", "trackingSub.c"];
 
-var MAIN_SOURCES_IMPROVED_ES6 = [
+let MAIN_SOURCES_IMPROVED_ES6 = [
   "ARToolKitNFT_js.cpp",
   "trackingMod.c",
   "trackingMod2d.c",
@@ -93,16 +96,17 @@ MAIN_SOURCES_TD_ES6 = MAIN_SOURCES_TD_ES6.map(function (src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(" ");
 
-var MAIN_SOURCES_IMPROVED_ES6 = MAIN_SOURCES_IMPROVED_ES6.map(function (src) {
+MAIN_SOURCES_IMPROVED_ES6 = MAIN_SOURCES_IMPROVED_ES6.map(function (src) {
   return path.resolve(SOURCE_PATH, src);
 }).join(" ");
 
 let ar_sources, ar_sources_threaded;
 
 if (platform === "win32") {
-  var glob = require("glob");
+  const glob = require("glob");
+
   function match(pattern) {
-    var r = glob.sync("emscripten/WebARKitLib/lib/SRC/" + pattern);
+    const r = glob.sync("emscripten/WebARKitLib/lib/SRC/" + pattern);
     return r;
   }
   function matchAll(patterns, prefix = "") {
@@ -152,7 +156,7 @@ if (platform === "win32") {
   });
 }
 
-var ar2_sources = [
+const ar2_sources = [
   "handle.c",
   "imageSet.c",
   "jpeg.c",
@@ -173,7 +177,7 @@ var ar2_sources = [
   return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/AR2/", src);
 });
 
-var kpm_sources = [
+const kpm_sources = [
   "kpmHandle.cpp",
   "kpmRefDataSet.cpp",
   "kpmMatching.cpp",
@@ -197,7 +201,7 @@ var kpm_sources = [
   return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/", src);
 });
 
-var webarkit_sources = ["WebARKitLog.cpp"].map(function (src) {
+const webarkit_sources = ["WebARKitLog.cpp"].map(function (src) {
   return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/WebARKit/", src);
 });
 
@@ -213,93 +217,94 @@ if (HAVE_NFT) {
     .concat(webarkit_sources);
 }
 
-var DEFINES = " ";
+let DEFINES = " ";
 if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
 DEFINES += " -D WITH_FILTERING=" + WITH_FILTERING;
 
-var FLAGS = "" + OPTIMIZE_FLAGS;
+let FLAGS = "" + OPTIMIZE_FLAGS;
 FLAGS += " -Wno-warn-absolute-paths";
 FLAGS += " -s TOTAL_MEMORY=" + MEM + " ";
-FLAGS += " -s USE_ZLIB=1";
 FLAGS += " -s USE_LIBJPEG=1";
-//FLAGS += " --memory-init-file 0"; // for memless file
 FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 
-var WASM_FLAGS = " -s SINGLE_FILE=1";
-var SIMD128_FLAGS = " -msimd128";
-var ES6_FLAGS =
-  " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web ";
+const WASM_FLAGS = " -s SINGLE_FILE=1";
+const SIMD128_FLAGS = " -msimd128";
+const ES6_FLAGS =
+    " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web ";
 
-var ES6_TD_FLAGS =
-  " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web,worker ";
+const ES6_TD_FLAGS =
+    " -s EXPORT_ES6=1 -s USE_ES6_IMPORT_META=0 -s MODULARIZE=1 -sENVIRONMENT=web,worker ";
 
-var ES6_EMBED_ES6_FLAGS =
-  " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
+const ES6_EMBED_ES6_FLAGS =
+    " -s EXPORT_ES6=1 -s EXPORT_NAME='ARToolkitNFT' -s MODULARIZE=1";
 
-var PRE_FLAGS =
-  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
+const PRE_FLAGS =
+    " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT.api.js");
 
-var PRE_ES6_FLAGS =
-  " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
+const PRE_ES6_FLAGS =
+    " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
 
 FLAGS += " --bind ";
 
 /* DEBUG FLAGS */
-var DEBUG_FLAGS = " -g ";
+let DEBUG_FLAGS = " -g ";
 DEBUG_FLAGS += " -s ASSERTIONS=1 ";
 DEBUG_FLAGS += " --profiling ";
 DEBUG_FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 DEBUG_FLAGS += "  -s DEMANGLE_SUPPORT=1 ";
 
-var INCLUDES = [
+const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
   OUTPUT_PATH,
   SOURCE_PATH,
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),
 ]
-  .map(function (s) {
-    return "-I" + s;
-  })
-  .join(" ");
+    .map(function (s) {
+      return "-I" + s;
+    })
+    .join(" ");
 
 function format(str) {
-  for (var f = 1; f < arguments.length; f++) {
+  for (let f = 1; f < arguments.length; f++) {
     str = str.replace(/{\w*}/, arguments[f]);
   }
   return str;
 }
 
 function clean_builds() {
+  let filePath;
+  let i;
   try {
-    var stats = fs.statSync(OUTPUT_PATH);
+    const stats = fs.statSync(OUTPUT_PATH);
   } catch (e) {
     fs.mkdirSync(OUTPUT_PATH);
   }
 
   try {
-    var files = fs.readdirSync(OUTPUT_PATH);
-    var filesLength = files.length;
+    const files = fs.readdirSync(OUTPUT_PATH);
+    const filesLength = files.length;
     if (filesLength > 0) {
       if (NO_LIBAR == true) {
-        for (var i = 0; i < filesLength - 2; i++) {
-          var filePath = OUTPUT_PATH + "/" + files[i];
+        let noLibarFilesLength = filesLength - 3;
+        for (i = 0; i < noLibarFilesLength; i++) {
+          filePath = OUTPUT_PATH + "/" + files[i];
           if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
         }
       } else {
-        for (var i = 0; i < filesLength; i++) {
-          var filePath = OUTPUT_PATH + "/" + files[i];
+        for (i = 0; i < filesLength; i++) {
+          filePath = OUTPUT_PATH + "/" + files[i];
           if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
         }
       }
     }
   } catch (e) {
-    return console.log(e);
+    return console.log('error cleaning the build libs:', e);
   }
 }
 
-var compile_arlib = format(
-  EMCC +
+const compile_arlib = format(
+    EMCC +
     INCLUDES +
     " " +
     ar_sources.join(" ") +
@@ -307,11 +312,11 @@ var compile_arlib = format(
     " " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar.o ",
-  OUTPUT_PATH,
+    OUTPUT_PATH,
 );
 
-var compile_thread_arlib = format(
-  EMCC +
+const compile_thread_arlib = format(
+    EMCC +
     INCLUDES +
     " " +
     ar_sources_threaded.join(" ") +
@@ -320,11 +325,11 @@ var compile_thread_arlib = format(
     "-pthread " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar_td.o ",
-  OUTPUT_PATH,
+    OUTPUT_PATH,
 );
 
-var compile_simd_arlib = format(
-  EMCC +
+const compile_simd_arlib = format(
+    EMCC +
     INCLUDES +
     " " +
     ar_sources.join(" ") +
@@ -333,15 +338,15 @@ var compile_simd_arlib = format(
     " " +
     DEFINES +
     " -r -o {OUTPUT_PATH}libar_simd.o ",
-  OUTPUT_PATH,
+    OUTPUT_PATH,
 );
 
-var ALL_BC = " {OUTPUT_PATH}libar.o ";
-var THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
-var SIMD_BC = " {OUTPUT_PATH}libar_simd.o ";
+const ALL_BC = " {OUTPUT_PATH}libar.o ";
+const THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
+const SIMD_BC = " {OUTPUT_PATH}libar_simd.o ";
 
-var compile_combine = format(
-  EMCC +
+const compile_combine = format(
+    EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -352,13 +357,13 @@ var compile_combine = format(
     DEBUG_FLAGS +
     DEFINES +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_DEBUG_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_DEBUG_FILE,
 );
 
-var compile_combine_min = format(
-  EMCC +
+const compile_combine_min = format(
+    EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -369,13 +374,13 @@ var compile_combine_min = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_MIN_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_MIN_FILE,
 );
 
-var compile_wasm = format(
-  EMCC +
+const compile_wasm = format(
+    EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -386,13 +391,13 @@ var compile_wasm = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_WASM_FILE,
 );
 
-var compile_wasm_thread = format(
-  EMCC +
+const compile_wasm_thread = format(
+    EMCC +
     INCLUDES +
     " " +
     THREAD_BC +
@@ -404,13 +409,13 @@ var compile_wasm_thread = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_THREAD_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_THREAD_FILE,
 );
 
-var compile_wasm_embed_ES6 = format(
-  EMCC +
+const compile_wasm_embed_ES6 = format(
+    EMCC +
     " " +
     INCLUDES +
     " " +
@@ -422,13 +427,13 @@ var compile_wasm_embed_ES6 = format(
     ES6_EMBED_ES6_FLAGS +
     PRE_ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_EMBED_ES6_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_WASM_EMBED_ES6_FILE,
 );
 
-var compile_simd_wasm = format(
-  EMCC +
+const compile_simd_wasm = format(
+    EMCC +
     INCLUDES +
     " " +
     SIMD_BC +
@@ -439,13 +444,13 @@ var compile_simd_wasm = format(
     DEFINES +
     PRE_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_SIMD_WASM_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_SIMD_WASM_FILE,
 );
 
-var compile_wasm_es6 = format(
-  EMCC +
+const compile_wasm_es6 = format(
+    EMCC +
     INCLUDES +
     " " +
     ALL_BC +
@@ -455,13 +460,13 @@ var compile_wasm_es6 = format(
     DEFINES +
     ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_ES6_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_WASM_ES6_FILE,
 );
 
-var compile_wasm_es6_thread = format(
-  EMCC +
+const compile_wasm_es6_thread = format(
+    EMCC +
     INCLUDES +
     " " +
     THREAD_BC +
@@ -472,13 +477,13 @@ var compile_wasm_es6_thread = format(
     DEFINES +
     ES6_TD_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_ES6_TD_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_WASM_ES6_TD_FILE,
 );
 
-var compile_simd_wasm_es6 = format(
-  EMCC +
+const compile_simd_wasm_es6 = format(
+    EMCC +
     INCLUDES +
     " " +
     SIMD_BC +
@@ -489,9 +494,9 @@ var compile_simd_wasm_es6 = format(
     DEFINES +
     ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_SIMD_WASM_ES6_FILE,
+    OUTPUT_PATH,
+    OUTPUT_PATH,
+    BUILD_SIMD_WASM_ES6_FILE,
 );
 
 /*
@@ -509,12 +514,14 @@ function onExec(error, stdout, stderr) {
   }
 }
 
+const jobs = [];
+
 function runJob() {
   if (!jobs.length) {
     console.log("Jobs completed");
     return;
   }
-  var cmd = jobs.shift();
+  const cmd = jobs.shift();
 
   if (typeof cmd === "function") {
     cmd();
@@ -525,8 +532,6 @@ function runJob() {
   console.log("\nRunning command: " + cmd + "\n");
   exec(cmd, onExec);
 }
-
-var jobs = [];
 
 function addJob(job) {
   jobs.push(job);
@@ -546,8 +551,8 @@ addJob(compile_simd_wasm_es6);
 addJob(compile_wasm_es6_thread);
 addJob(compile_combine_min);
 
-if (NO_LIBAR == true) {
-  jobs.splice(1, 2);
+if (NO_LIBAR === true) {
+  jobs.splice(1, 3);
 }
 
 runJob();
