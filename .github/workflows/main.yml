@@ -58,17 +58,15 @@ jobs:
         message: new build files from action
         add: '["build", "dist"]'
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           build/artoolkitNFT_embed_ES6_wasm.js
           build/artoolkitNFT_ES6_wasm.js
           build/artoolkitNFT_ES6_wasm_td.js
-          build/artoolkitNFT_ES6_wasm_td.worker.js
           build/artoolkitNFT_ES6_wasm.simd.js
           build/artoolkitNFT_thread.js
-          build/artoolkitNFT_thread.worker.js
           build/artoolkitNFT_wasm.js
           build/artoolkitNFT_wasm.simd.js
           build/artoolkitNFT.debug.js
