@@ -39,8 +39,9 @@ jobs:
         name: build
         path: |
           build
-          !build/libar.bc
-          !build/libar_simd.bc
+          !build/libar.o
+          !build/libar_td.o
+          !build/libar_simd.o
     - run: git submodule update --init
     - run: npm install
     - run: docker run -dit --name emscripten -v $(pwd):/src emscripten/emsdk:3.1.69 bash
