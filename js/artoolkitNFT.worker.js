@@ -1,5 +1,5 @@
-var browser = (function () {
-  var test = function (regexp) {
+const browser = (function () {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -32,8 +32,9 @@ if (browser == "Apple Safari") {
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
 
+let next = null;
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -47,10 +48,9 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
-var markerResult = null;
-var marker;
+let ar = null;
+let markerResult = null;
+let marker;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
@@ -58,20 +58,20 @@ let tickCount = 0;
 // initialize the OneEuroFilter
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
-const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
+const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 
 function load(msg) {
   self.addEventListener("artoolkitNFT-loaded", function () {
     console.debug("Loading marker at: ", msg.marker);
 
-    var onLoad = function () {
+    const onLoad = function () {
       ar = new ARControllerNFT(msg.pw, msg.ph, param);
-      var cameraMatrix = ar.getCameraMatrix();
+      const cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
         tickCount += 1;
         if (tickCount > WARM_UP_TOLERANCE) {
-          var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
+          const mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
           markerResult = {
             type: "found",
             matrixGL_RH: JSON.stringify(mat),
@@ -79,7 +79,7 @@ function load(msg) {
         }
       });
 
-      ar.addEventListener("lostNFTMarker", function(ev) {
+      ar.addEventListener("lostNFTMarker", function (ev) {
         filter.reset();
       });
 
@@ -98,14 +98,14 @@ function load(msg) {
       postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
     };
 
-    var onError = function (error) {
+    const onError = function (error) {
       console.error(error);
     };
 
     console.debug("Loading camera at:", msg.camera_para);
 
     // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-    var param = new ARCameraParamNFT(msg.camera_para, onLoad, onError);
+    const param = new ARCameraParamNFT(msg.camera_para, onLoad, onError);
   });
 }
 

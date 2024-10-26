@@ -12,14 +12,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -34,18 +34,19 @@ jobs:
       run: |
         echo $RELEASE_VERSION
         echo ${{ steps.vars.outputs.tag }}
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: build
         path: |
           build
-          !build/libar.bc
-          !build/libar_simd.bc
+          !build/libar.o
+          !build/libar_td.o
+          !build/libar_simd.o
     - run: git submodule update --init
     - run: npm install
-    - run: docker run -dit --name emscripten -v $(pwd):/src emscripten/emsdk:3.1.32 bash
+    - run: docker run -dit --name emscripten -v $(pwd):/src emscripten/emsdk:3.1.69 bash
     - run: docker exec emscripten npm run build
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: dist
         path: dist
@@ -58,13 +59,15 @@ jobs:
         message: new build files from action
         add: '["build", "dist"]'
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           build/artoolkitNFT_embed_ES6_wasm.js
           build/artoolkitNFT_ES6_wasm.js
+          build/artoolkitNFT_ES6_wasm_td.js
           build/artoolkitNFT_ES6_wasm.simd.js
+          build/artoolkitNFT_thread.js
           build/artoolkitNFT_wasm.js
           build/artoolkitNFT_wasm.simd.js
           build/artoolkitNFT.debug.js
@@ -80,3 +83,4 @@ jobs:
           js/artoolkitNFT.multi_worker.js
           dist/ARToolkitNFT.js
           dist/ARToolkitNFT_simd.js
+          dist/ARToolkitNFT_td.js

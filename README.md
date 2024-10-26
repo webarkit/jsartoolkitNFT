@@ -37,6 +37,12 @@ has **WASM** embedded in a single file!
 
 ❕From 0.9.0 version has **Typescript** feature 💖 💣
 
+## Pthread
+
+From 1.6.0 version has **Pthread** experimental feature 🎉 🎉 🎉
+
+❕❕❕ ATTENTION: this feature is experimental and it is not well tested yet. It is not recommended to use it in production.
+You need to set up a server with COOP and COEP headers to use this feature. Read this [Emscripten article](https://emscripten.org/docs/porting/pthreads.html#pthreads-support)
 ## Using the library 💥
 You can use raw.githack.com links:
 
@@ -80,6 +86,16 @@ then:
 ```javascript
 import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
+
+**Note**: All the examples in the repository are running the code inside a Worker (don't use it in the main thread!). So i you need to import the library in a worker you need to use the `importScripts` function.
+
+```javascript
+// example of import in a worker with the wasm code lib
+importScripts("../build/artoolkitNFT_wasm.js");
+// or the dist lib
+importScripts("../dist/ARToolkitNFT.js");
+```
+
 ## Downloads
 
 You can download the build libs in the [releases page](https://github.com/webarkit/jsartoolkitNFT/releases). Starting from version 0.8.0 it is possible to download `dist` or `build` zip packages and from 0.9.6 version only single libs (no zipped).

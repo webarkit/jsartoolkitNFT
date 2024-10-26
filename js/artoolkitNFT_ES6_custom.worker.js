@@ -1,5 +1,5 @@
-var browser = (function () {
-  var test = function (regexp) {
+const browser = (function () {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -32,8 +32,9 @@ if (browser == "Apple Safari") {
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
 
+let next = null;
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -46,10 +47,9 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
-var markerResult = null;
-var marker;
+let ar = null;
+let markerResult = null;
+let marker;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
@@ -62,9 +62,9 @@ const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
-  var onLoad = function (arController) {
+  const onLoad = function (arController) {
     ar = arController;
-    var cameraMatrix = ar.getCameraMatrix();
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
       tickCount += 1;
@@ -91,21 +91,16 @@ function load(msg) {
     postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
   };
 
-  var onError = function (error) {
+  const onError = function (error) {
     console.error(error);
   };
 
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARToolkitNFT.ARControllerNFT.customInit(
-    msg.pw,
-    msg.ph,
-    msg.camera_para,
-    function () {
-      console.log("Message from the callback.");
-    }
-  )
+  ARControllerNFT.customInit(msg.pw, msg.ph, msg.camera_para, function () {
+    console.log("Message from the callback.");
+  })
     .then(onLoad)
     .catch(onError);
 }

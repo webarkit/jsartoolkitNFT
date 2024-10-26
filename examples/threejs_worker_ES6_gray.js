@@ -1,10 +1,12 @@
+import * as THREE from "three";
+
 function isMobile() {
   return /Android|mobile|iPad|iPhone/i.test(navigator.userAgent);
 }
 
-var setMatrix = function (matrix, value) {
-  var array = [];
-  for (var key in value) {
+const setMatrix = function (matrix, value) {
+  const array = [];
+  for (const key in value) {
     array[key] = value[key];
   }
   if (typeof matrix.elements.set === "function") {
@@ -14,54 +16,77 @@ var setMatrix = function (matrix, value) {
   }
 };
 
-var gui, options;
+let gui, options;
 
-var demo_opt = function(){
+const demo_opt = function () {
   this.radius = 2;
   this.sigma = 0;
-}
+};
 
-function start(markerUrl, video, input_width, input_height, render_update, track_update) {
-  var vw, vh;
-  var sw, sh;
-  var pscale, sscale;
-  var w, h;
-  var pw, ph;
-  var ox, oy;
-  var worker;
-  var camera_para = './../examples/Data/camera_para.dat'
+export default function start(
+  markerUrl,
+  video,
+  input_width,
+  input_height,
+  render_update,
+  track_update,
+) {
+  let vw, vh;
+  let sw, sh;
+  let pscale, sscale;
+  let w, h;
+  let pw, ph;
+  let ox, oy;
+  let worker;
+  const camera_para = "./../examples/Data/camera_para.dat";
 
-  var canvas_process = document.createElement('canvas');
-  var context_process = canvas_process.getContext('2d');
-  var targetCanvas = document.querySelector("#canvas");
+  const canvas_process = document.createElement("canvas");
+  const context_process = canvas_process.getContext("2d", {
+    willReadFrequently: true,
+  });
+  const targetCanvas = document.querySelector("#canvas");
 
   // gui to modfy gaussian options interactively.
   gui = new dat.GUI();
 
   options = new demo_opt();
 
-  gui.add(options, 'radius', 1, 11).step(1);
-  gui.add(options, 'sigma', 0, 10).step(0.5);
+  gui.add(options, "radius", 1, 11).step(1);
+  gui.add(options, "sigma", 0, 10).step(0.5);
 
-  var renderer = new THREE.WebGLRenderer({ canvas: targetCanvas, alpha: true, antialias: true });
+  const renderer = new THREE.WebGLRenderer({
+    canvas: targetCanvas,
+    alpha: true,
+    antialias: true,
+  });
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  var scene = new THREE.Scene();
+  const scene = new THREE.Scene();
 
-  var camera = new THREE.Camera();
+  let fov = (0.8 * 180) / Math.PI;
+  let ratio = input_width / input_height;
+
+  const cameraConfig = {
+    fov: fov,
+    aspect: ratio,
+    near: 0.01,
+    far: 1000,
+  };
+
+  const camera = new THREE.PerspectiveCamera(cameraConfig);
   camera.matrixAutoUpdate = false;
 
   scene.add(camera);
 
-  var sphere = new THREE.Mesh(
+  const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 8, 8),
-    new THREE.MeshNormalMaterial()
+    new THREE.MeshNormalMaterial(),
   );
 
-  var root = new THREE.Object3D();
+  const root = new THREE.Object3D();
   scene.add(root);
 
-  var marker;
+  let marker;
 
   sphere.material.flatShading;
   sphere.scale.set(200, 200, 200);
@@ -69,11 +94,11 @@ function start(markerUrl, video, input_width, input_height, render_update, track
   root.matrixAutoUpdate = false;
   root.add(sphere);
 
-  var load = function () {
+  const load = function () {
     vw = input_width;
     vh = input_height;
 
-    pscale = 320 / Math.max(vw, vh / 3 * 4);
+    pscale = 320 / Math.max(vw, (vh / 3) * 4);
     sscale = isMobile() ? window.outerWidth / input_width : 1;
 
     sw = vw * sscale;
@@ -81,8 +106,8 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     w = vw * pscale;
     h = vh * pscale;
-    pw = Math.max(w, h / 3 * 4);
-    ph = Math.max(h, w / 4 * 3);
+    pw = Math.max(w, (h / 3) * 4);
+    ph = Math.max(h, (w / 4) * 3);
     ox = (pw - w) / 2;
     oy = (ph - h) / 2;
     canvas_process.style.clientWidth = pw + "px";
@@ -92,17 +117,25 @@ function start(markerUrl, video, input_width, input_height, render_update, track
 
     renderer.setSize(sw, sh);
 
-    worker = new Worker('../js/artoolkitNFT_ES6_gray.worker.js')
+    worker = new Worker("../js/artoolkitNFT_ES6_gray.worker.js");
 
-    worker.postMessage({ type: "load", pw: pw, ph: ph, radius: options.radius, sigma: options.sigma, camera_para: camera_para, marker: markerUrl });
+    worker.postMessage({
+      type: "load",
+      pw: pw,
+      ph: ph,
+      radius: options.radius,
+      sigma: options.sigma,
+      camera_para: camera_para,
+      marker: markerUrl,
+    });
 
     worker.onmessage = function (ev) {
-      var msg = ev.data;
+      const msg = ev.data;
       switch (msg.type) {
         case "loaded": {
-          var proj = JSON.parse(msg.proj);
-          var ratioW = pw / w;
-          var ratioH = ph / h;
+          const proj = JSON.parse(msg.proj);
+          const ratioW = pw / w;
+          const ratioH = ph / h;
           proj[0] *= ratioW;
           proj[4] *= ratioW;
           proj[8] *= ratioW;
@@ -115,11 +148,12 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           break;
         }
         case "endLoading": {
-          if (msg.end == true) {
+          if (msg.end === true) {
             // removing loader page if present
-            var loader = document.getElementById('loading');
+            const loader = document.getElementById("loading");
             if (loader) {
-              loader.querySelector('.loading-text').innerText = 'Start the tracking!';
+              loader.querySelector(".loading-text").innerText =
+                "Start the tracking!";
               setTimeout(function () {
                 loader.parentElement.removeChild(loader);
               }, 2000);
@@ -127,15 +161,15 @@ function start(markerUrl, video, input_width, input_height, render_update, track
           }
           break;
         }
-        case 'found': {
+        case "found": {
           found(msg);
           break;
         }
-        case 'not found': {
+        case "not found": {
           found(null);
           break;
         }
-        case 'markerInfos': {
+        case "markerInfos": {
           marker = msg.marker;
         }
       }
@@ -144,9 +178,9 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     };
   };
 
-  var world;
+  let world;
 
-  var found = function (msg) {
+  const found = function (msg) {
     if (!msg) {
       world = null;
     } else {
@@ -154,13 +188,13 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     }
   };
 
-  var lasttime = Date.now();
-  var time = 0;
+  let lasttime = Date.now();
+  let time = 0;
 
-  var draw = function () {
+  const draw = function () {
     render_update();
-    var now = Date.now();
-    var dt = now - lasttime;
+    const now = Date.now();
+    const dt = now - lasttime;
     time += dt;
     lasttime = now;
 
@@ -176,15 +210,18 @@ function start(markerUrl, video, input_width, input_height, render_update, track
     renderer.render(scene, camera);
   };
 
-  var process = function () {
-    context_process.fillStyle = 'black';
+  const process = function () {
+    context_process.fillStyle = "black";
     context_process.fillRect(0, 0, pw, ph);
     context_process.drawImage(video, 0, 0, vw, vh, ox, oy, w, h);
 
-    var imageData = context_process.getImageData(0, 0, pw, ph);
-    worker.postMessage({ type: 'process', imagedata: imageData }, [imageData.data.buffer]);
-  }
-  var tick = function () {
+    const imageData = context_process.getImageData(0, 0, pw, ph);
+    worker.postMessage({ type: "process", imagedata: imageData }, [
+      imageData.data.buffer,
+    ]);
+  };
+
+  const tick = function () {
     draw();
     requestAnimationFrame(tick);
   };

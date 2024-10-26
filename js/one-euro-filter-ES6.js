@@ -2,15 +2,15 @@
 
 const smoothingFactor = (te, cutoff) => {
   const r = 2 * Math.PI * cutoff * te;
-  return r / (r+1);
-}
+  return r / (r + 1);
+};
 
 const exponentialSmoothing = (a, x, xPrev) => {
   return a * x + (1 - a) * xPrev;
-}
+};
 
 export class OneEuroFilter {
-  constructor({minCutOff, beta}) {
+  constructor({ minCutOff, beta }) {
     this.minCutOff = minCutOff;
     this.beta = beta;
     this.dCutOff = 0.001; // period in milliseconds, so default to 0.001 = 1Hz
@@ -34,7 +34,7 @@ export class OneEuroFilter {
       return x;
     }
 
-    const {xPrev, tPrev, dxPrev} = this;
+    const { xPrev, tPrev, dxPrev } = this;
 
     //console.log("filter", x, xPrev, x.map((xx, i) => x[i] - xPrev[i]));
 
@@ -57,7 +57,7 @@ export class OneEuroFilter {
     }
 
     // update prev
-    this.xPrev = xHat; 
+    this.xPrev = xHat;
     this.dxPrev = dxHat;
     this.tPrev = t;
 

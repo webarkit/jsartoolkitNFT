@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.4.1",
+  "version": "1.7.1",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
@@ -36,21 +36,21 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.3",
-    "@babel/plugin-transform-runtime": "^7.21.0",
-    "@babel/preset-env": "^7.20.2",
-    "babel-loader": "^9.1.2",
-    "karma": "^6.4.1",
-    "karma-chrome-launcher": "^3.1.1",
-    "karma-firefox-launcher": "^2.1.2",
-    "karma-qunit": "^4.1.2",
-    "prettier": "^2.8.7",
-    "qunit": "^2.19.4",
-    "ts-loader": "^9.4.2",
-    "typedoc": "^0.23.28",
-    "typescript": "^5.0.2",
-    "webpack": "^5.76.3",
-    "webpack-cli": "^5.0.1"
+    "@babel/core": "7.26.0",
+    "@babel/plugin-transform-runtime": "^7.25.9",
+    "@babel/preset-env": "7.26.0",
+    "babel-loader": "^9.2.1",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-firefox-launcher": "^2.1.3",
+    "karma-qunit": "^4.2.1",
+    "prettier": "^3.3.3",
+    "qunit": "^2.22.0",
+    "ts-loader": "^9.5.1",
+    "typedoc": "^0.26.10",
+    "typescript": "5.5.4",
+    "webpack": "5.95.0",
+    "webpack-cli": "^5.1.4"
   },
   "scripts": {
     "dev-ts": "webpack --mode development --progress --watch",
@@ -58,16 +58,19 @@
     "build-ts": "webpack --mode production",
     "build": "node tools/makem.js; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
+    "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
+    "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
     "test-browser": "karma start --browsers Chrome,Firefox,ChromeHeadless,FirefoxHeadless",
     "test": "karma start",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "setup-docker": "docker run -dit --name emscripten-jsartoolkitnft -v $(pwd):/src emscripten/emsdk:3.1.69 bash"
   },
   "license": "LGPL-3.0",
   "dependencies": {
     "sharp": "^0.30.3",
-    "@babel/runtime": "^7.21.0",
-    "axios": "^1.3.4"
+    "@babel/runtime": "7.26.0",
+    "axios": "1.7.7"
   }
 }

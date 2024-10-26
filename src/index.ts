@@ -33,10 +33,7 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import ARToolkitNFT from "./ARToolkitNFT";
-import ARControllerNFT from "./ARControllerNFT";
+import { ARToolkitNFT } from "./ARToolkitNFT";
+import { ARControllerNFT } from "./ARControllerNFT";
 
-export default {
-  ARToolkitNFT,
-  ARControllerNFT,
-};
+export { ARToolkitNFT, ARControllerNFT };

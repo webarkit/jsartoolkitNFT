@@ -1,4 +1,4 @@
-var scope;
+let scope;
 if (typeof window !== 'undefined') {
     scope = window;
 } else if (typeof global !== 'undefined') {
@@ -58,7 +58,7 @@ class ARControllerNFT {
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.4.1';
+        this.version = '1.7.1';
         console.info('JsartoolkitNFT ', this.version);
 
         if (typeof cameraPara === 'string') {
@@ -92,48 +92,31 @@ class ARControllerNFT {
     }
 
     /**
-        Detects markers in the given image. The process method dispatches marker detection events during its run.
- 
-        The marker detection process proceeds by first dispatching a markerNum event that tells you how many
-        markers were found in the image. Next, a getMarker event is dispatched for each found marker square.
- 
-        Then, a getNFTMarker event is dispatched for each found NFT marker.
- 
-        Finally, getMultiMarker is dispatched for every found multimarker, followed by getMultiMarkerSub events
-        dispatched for each of the markers in the multimarker.
- 
-            ARControllerNFT.addEventListener('markerNum', function(ev) {
-                console.log("Detected " + ev.data + " markers.")
-            });
-            ARControllerNFT.addEventListener('getMarker', function(ev) {
-                console.log("Detected marker with ids:", ev.data.marker.id, ev.data.marker.idPatt, ev.data.marker.idMatrix);
-                console.log("Marker data", ev.data.marker);
-                console.log("Marker transform matrix:", [].join.call(ev.data.matrix, ', '));
-            });
-            ARControllerNFT.addEventListener('getNFTMarker', function(ev) {
-                // do stuff
-            });
-            ARControllerNFT.addEventListener('getMultiMarker', function(ev) {
-                console.log("Detected multimarker with id:", ev.data.multiMarkerId);
-            });
-            ARControllerNFT.addEventListener('getMultiMarkerSub', function(ev) {
-                console.log("Submarker for " + ev.data.multiMarkerId, ev.data.markerIndex, ev.data.marker);
-            });
- 
-            ARControllerNFT.process(image);
- 
- 
-        If no image is given, defaults to this.image.
- 
-        If the debugSetup has been called, draws debug markers on the debug canvas.
- 
-        @param {ImageElement | VideoElement} image The image to process [optional].
-    */
+     Detects NFT markers in the given image. The process method dispatches marker detection events during its run.
+
+     The NFT marker detection process proceeds by first dispatching a getNFTMarker event for each found NFT marker.
+
+     Instead, if a NFT marker is lost, a lostNFTMarker event is dispatched.
+
+     ARControllerNFT.addEventListener('getNFTMarker', function(ev) {
+     // do stuff
+     });
+
+     ARControllerNFT.addEventListener('lostNFTMarker', function(ev) {
+     // do stuff
+     });
+
+     ARControllerNFT.process(image);
+
+
+     If no image is given, defaults to this.image.
+
+     If the debugSetup has been called, draws debug markers on the debug canvas.
+
+     @param {ImageElement | VideoElement} image The image to process [optional].
+     */
     process(image) {
-        var result = this.detectMarker(image);
-        if (result != 0) {
-            console.error("detectMarker error: " + result);
-        }
+        this._copyImageToHeap(image);
 
         // get NFT markers
         var k, o;
@@ -363,7 +346,7 @@ class ARControllerNFT {
         glMat[3 + 1 * 4] = 0.0;
         glMat[3 + 2 * 4] = 0.0;
         glMat[3 + 3 * 4] = 1.0;
-        if (scale != undefined && scale !== 0.0) {
+        if (scale !== undefined && scale !== 0.0) {
             glMat[12] *= scale;
             glMat[13] *= scale;
             glMat[14] *= scale;
@@ -418,27 +401,6 @@ class ARControllerNFT {
         glRhMatrix = m_modelview;
 
         return glRhMatrix;
-    };
-    /**
-        This is the core ARToolKit marker detection function. It calls through to a set of
-        internal functions to perform the key marker detection steps of binarization and
-        labelling, contour extraction, and template matching and/or matrix code extraction.
- 
-        Typically, the resulting set of detected markers is retrieved by calling arGetMarkerNum
-        to get the number of markers detected and arGetMarker to get an array of ARMarkerInfo
-        structures with information on each detected marker, followed by a step in which
-        detected markers are possibly examined for some measure of goodness of match (e.g. by
-        examining the match confidence value) and pose extraction.
- 
-        @param {image} Image to be processed to detect markers.
-        @return {number} 0 if the function proceeded without error, or a value less than 0 in case of error.
-            A result of 0 does not however, imply any markers were detected.
-    */
-    detectMarker(image) {
-        if (this._copyImageToHeap(image)) {
-            return artoolkitNFT.detectMarker(this.id);
-        }
-        return -99;
     };
 
     /**
@@ -690,7 +652,7 @@ class ARControllerNFT {
 
         this.framesize = this.width * this.height;
 
-        this.videoLuma = new Uint8Array(this.framesize / 4);
+        this.videoLuma = new Uint8Array(this.framesize);
 
         this.camera_mat = artoolkitNFT.getCameraLens(this.id);
 
@@ -734,11 +696,11 @@ class ARControllerNFT {
 
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
         if (this.videoLuma) {
-            var q = 0;
+            let q = 0;
             //Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA (ARToolKitJS.cpp L: 43)
 
-            for (var p = 0; p < this.videoSize; p++) {
-                var r = data[q + 0], g = data[q + 1], b = data[q + 2];
+            for (let p = 0; p < this.videoSize; p++) {
+                const r = data[q], g = data[q + 1], b = data[q + 2];
                 // videoLuma[p] = (r+r+b+g+g+g)/6;         // https://stackoverflow.com/a/596241/5843642
                 this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
                 q += 4;
@@ -848,7 +810,7 @@ class ARCameraParamNFT {
 
 // ARToolKit exported JS API
 //
-var artoolkitNFT = {
+const artoolkitNFT = {
 
     UNKNOWN_MARKER: -1,
     NFT_MARKER: 0, // 0,
@@ -859,7 +821,7 @@ var artoolkitNFT = {
 
 };
 
-var FUNCTIONS = [
+const FUNCTIONS = [
     'setup',
     'teardown',
 
@@ -873,7 +835,6 @@ var FUNCTIONS = [
 
     'getProcessingImage',
 
-    'detectMarker',
     'detectNFTMarker',
     'getNFTMarker',
     'getNFTData',
@@ -902,7 +863,7 @@ function runWhenLoaded() {
         artoolkitNFT[n] = Module[n];
     });
 
-    for (var m in Module) {
+    for (const m in Module) {
         if (m.match(/^AR/))
             artoolkitNFT[m] = Module[m];
     }
@@ -911,11 +872,11 @@ function runWhenLoaded() {
 var marker_count = 0;
 
 function addNFTMarker(arId, url, callback, onError) {
-    var mId = marker_count++;
-    var prefix = '/markerNFT_' + mId;
-    var filename1 = prefix + '.fset';
-    var filename2 = prefix + '.iset';
-    var filename3 = prefix + '.fset3';
+    const mId = marker_count++;
+    const prefix = '/markerNFT_' + mId;
+    const filename1 = prefix + '.fset';
+    const filename2 = prefix + '.iset';
+    const filename3 = prefix + '.fset3';
     ajax(url + '.fset', filename1, function () {
         ajax(url + '.iset', filename2, function () {
             ajax(url + '.fset3', filename3, function () {
@@ -926,10 +887,10 @@ function addNFTMarker(arId, url, callback, onError) {
     }, function (errorNumber) { if (onError) onError(errorNumber); });
 }
 
-function addNFTMarkers(arId, urls, callback, onError) {
-    var prefixes = [];
-    var pending = urls.length * 3;
-    var onSuccess = (filename) => {
+function addNFTMarkers(arId, urls, callback, onerror) {
+    const prefixes = [];
+    let pending = urls.length * 3;
+    const onSuccess = (filename) => {
         pending -= 1;
         if (pending === 0) {
             const vec = new Module.StringList();
@@ -945,19 +906,19 @@ function addNFTMarkers(arId, urls, callback, onError) {
             console.log("add nft marker ids: ", markerIds);
             if (callback) callback(markerIds);
         }
-    }
-    var onError = (filename, errorNumber) => {
+    };
+    const onError = (filename, errorNumber) => {
         console.log("failed to load: ", filename);
-        onError(errorNumber);
-    }
+        onerror(errorNumber);
+    };
 
     for (var i = 0; i < urls.length; i++) {
-        var url = urls[i];
-        var prefix = '/markerNFT_' + marker_count;
+        const url = urls[i];
+        const prefix = '/markerNFT_' + marker_count;
         prefixes.push(prefix);
-        var filename1 = prefix + '.fset';
-        var filename2 = prefix + '.iset';
-        var filename3 = prefix + '.fset3';
+        const filename1 = prefix + '.fset';
+        const filename2 = prefix + '.iset';
+        const filename3 = prefix + '.fset3';
 
         ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
         ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
@@ -970,12 +931,14 @@ function bytesToString(array) {
     return String.fromCharCode.apply(String, array);
 }
 
-var camera_count = 0;
+let camera_count = 0;
+
 function loadCamera(url, callback, errorCallback) {
-    var filename = '/camera_param_' + camera_count++;
-    var writeCallback = function (errorCode) {
+    const filename = '/camera_param_' + camera_count++;
+    const writeCallback = function (errorCode) {
         if (!Module._loadCamera) {
-            if (callback) callback(id); setTimeout(writeCallback, 10);
+            if (callback) callback(id);
+            setTimeout(writeCallback, 10);
         } else {
             var id = Module._loadCamera(filename);
             if (callback) callback(id);
@@ -1027,15 +990,15 @@ function writeByteArrayToFS(target, byteArray, callback) {
 //	ajax('../bin/Data/patt.hiro', '/patt.hiro', callback);
 
 function ajax(url, target, callback, errorCallback) {
-    var oReq = new XMLHttpRequest();
+    const oReq = new XMLHttpRequest();
     oReq.open('GET', url, true);
     oReq.responseType = 'arraybuffer'; // blob arraybuffer
 
     oReq.onload = function () {
         if (this.status == 200) {
             // console.log('ajax done for ', url);
-            var arrayBuffer = oReq.response;
-            var byteArray = new Uint8Array(arrayBuffer);
+            const arrayBuffer = oReq.response;
+            const byteArray = new Uint8Array(arrayBuffer);
             writeByteArrayToFS(target, byteArray, callback);
         }
         else {
@@ -1055,7 +1018,7 @@ scope.Module = Module;
 if (scope.Module) {
     scope.Module.onRuntimeInitialized = function () {
         runWhenLoaded();
-        var event = new Event('artoolkitNFT-loaded');
+        const event = new Event('artoolkitNFT-loaded');
         scope.dispatchEvent(event);
     };
 } else {

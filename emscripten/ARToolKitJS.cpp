@@ -131,8 +131,9 @@ extern "C"
     std::vector<uint8_t> vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
     std::vector<uint8_t> vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
 
-    memcpy(arc->videoFrame, vf.data(), sizeof(uint8_t) * arc->videoFrameSize);
-    memcpy(arc->videoLuma, vl.data(), sizeof(uint8_t) * arc->videoFrameSize/4);
+    arc->videoFrame = vf.data();
+    arc->videoLuma = vl.data();
+
     return 0;
   }
 
@@ -707,24 +708,6 @@ extern "C"
     }
 
     return -1;
-  }
-
-  int detectMarker(int id)
-  {
-    if (arControllers.find(id) == arControllers.end())
-    {
-      return ARCONTROLLER_NOT_FOUND;
-    }
-    arController *arc = &(arControllers[id]);
-
-    // Convert video frame to AR2VideoBufferT
-    AR2VideoBufferT buff = {0};
-    buff.buff = arc->videoFrame;
-    buff.fillFlag = 1;
-
-    buff.buffLuma = arc->videoLuma;
-
-    return arDetectMarker(arc->arhandle, &buff);
   }
 
   /********

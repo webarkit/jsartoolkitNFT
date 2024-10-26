@@ -1,17 +1,19 @@
 import { INFTMarkerInfo, IImageObj, INFTMarker } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
-export default class ARControllerNFT implements AbstractARControllerNFT {
+export declare class ARControllerNFT implements AbstractARControllerNFT {
     private id;
     private _width;
     private _height;
     private _cameraParam;
     private cameraId;
-    private cameraLoaded;
     private artoolkitNFT;
+    private FS;
+    private StringList;
     private listeners;
     private nftMarkers;
     private transform_mat;
     private transformGL_RH;
+    private camera_mat;
     private videoWidth;
     private videoHeight;
     private videoSize;
@@ -19,7 +21,6 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     private videoLuma;
     private grayscaleEnabled;
     private grayscaleSource;
-    private camera_mat;
     private nftMarkerFound;
     private nftMarkerFoundTime;
     private nftMarkerCount;
@@ -38,11 +39,10 @@ export default class ARControllerNFT implements AbstractARControllerNFT {
     set cameraParam(cameraParam: string);
     get cameraParam(): string;
     process(image: IImageObj): void;
-    detectNFTMarker(): void;
+    detectNFTMarker(): number;
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
-    detectMarker(image: IImageObj): number;
     getNFTMarker(markerIndex: number): INFTMarkerInfo;
-    getNFTData(id: number, index: number): object;
+    getNFTData(index: number): object;
     addEventListener(name: string, callback: object): void;
     removeEventListener(name: string, callback: object): void;
     dispatchEvent(event: {

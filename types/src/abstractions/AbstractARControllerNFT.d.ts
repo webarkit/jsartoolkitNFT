@@ -5,7 +5,6 @@ export declare abstract class AbstractARControllerNFT {
     process: (image: IImageObj) => void;
     detectNFTMarker: (videoLuma: any) => void;
     trackNFTMarkerId: (id: number, markerWidth?: number) => object;
-    detectMarker: (image: any) => number;
     getNFTMarker: (markerIndex: number) => object;
     getNFTData: (id: number, index: number) => object;
     addEventListener: (name: string, callback: object) => void;

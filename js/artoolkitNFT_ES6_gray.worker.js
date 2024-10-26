@@ -1,5 +1,5 @@
-var browser = (function () {
-  var test = function (regexp) {
+const browser = (function () {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -35,8 +35,9 @@ importScripts("../examples/js/third_party/jsfeatNext/jsfeatNext.js");
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
 
+let next = null;
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -49,29 +50,28 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
-var markerResult = null;
-var marker;
+let ar = null;
+let markerResult = null;
+let marker;
 // jsfeatNext settings
-var radius;
-var sigma;
+let radius;
+let sigma;
 const jsfeat = jsfeatNext.jsfeatNext;
 const imgproc = new jsfeat.imgproc();
-var img_u8, width, height;
+let img_u8, width, height;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
 
 // initialize the OneEuroFilter
-var oef = true;
+const oef = true;
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
 const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 
 function oefFilter(matrixGL_RH) {
   tickCount += 1;
-  var mat;
+  let mat;
   if (tickCount > WARM_UP_TOLERANCE) {
     mat = filter.filter(Date.now(), matrixGL_RH);
   } else {
@@ -88,16 +88,16 @@ function load(msg) {
   sigma = msg.sigma;
   img_u8 = new jsfeat.matrix_t(width, height, jsfeat.U8_t | jsfeat.C1_t);
 
-  var onLoad = function (arController) {
+  const onLoad = function (arController) {
     ar = arController;
-    var cameraMatrix = ar.getCameraMatrix();
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
-      var mat;
-      if (oef == true) {
-        mat = oefFilter(ev.data.matrixGL_RH)
+      let mat;
+      if (oef === true) {
+        mat = oefFilter(ev.data.matrixGL_RH);
       } else {
-        mat = ev.data.matrixGL_RH
+        mat = ev.data.matrixGL_RH;
       }
       markerResult = {
         type: "found",
@@ -123,18 +123,14 @@ function load(msg) {
     postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
   };
 
-  var onError = function (error) {
+  const onError = function (error) {
     console.error(error);
   };
 
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARToolkitNFT.ARControllerNFT.initWithDimensions(
-    width,
-    height,
-    msg.camera_para
-  )
+  ARControllerNFT.initWithDimensions(width, height, msg.camera_para)
     .then(onLoad)
     .catch(onError);
 }
@@ -144,8 +140,8 @@ function process() {
 
   if (ar && ar.process) {
     imgproc.grayscale(next.data, width, height, img_u8);
-    var r = radius | 0;
-    var kernel_size = (r + 1) << 1;
+    const r = radius | 0;
+    const kernel_size = (r + 1) << 1;
     imgproc.gaussian_blur(img_u8, img_u8, kernel_size, sigma);
     ar.setGrayData(img_u8.data);
     ar.process(next);

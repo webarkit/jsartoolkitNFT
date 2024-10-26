@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="e">
+  <head>
+    <meta charset="utf-8" />
+    <title>NFT marker example with a WebWorker and Three.js</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./js/third_party/three.js/three.module.min.js",
+          "three/addons/": "./js/third_party/three.js/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="css/nft-style.css" />
+  </head>
+  <body>
+    <div id="loading">
+      <img alt="JsartoolkitNFT logo" src="Data/JsartoolkitNFT-logo.gif" />
+      <span class="loading-text">Loading, please wait</span>
+    </div>
+    <!--
+  ==================
+  STATS
+  ==================
+  -->
+    <div id="stats" class="ui stats">
+      <div id="stats1" class="stats-item">
+        <p class="stats-item-title">Main</p>
+      </div>
+    </div>
+    <!--
+  ==================
+  CAMERA VIDEO & CANVAS
+  ==================
+  -->
+    <div id="app">
+      <video loop autoplay muted playsinline id="video"></video>
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <a
+      href="https://raw.githubusercontent.com/artoolkitx/artoolkit5/master/doc/Marker%20images/pinball.jpg"
+      class="ui marker"
+      target="_blank"
+    >
+      🖼 Marker Image
+    </a>
+
+    <script src="js/third_party/three.js/stats.min.js"></script>
+    <script async src="../build/artoolkitNFT_thread.js"></script>
+    <script async src="../js/one-euro-filter.js"></script>
+    <script async src="load_thread.js"></script>
+
+    <script type="module">
+      import start from "./threejs_wasm_thread.js";
+
+      /**
+       * STATS
+       */
+      const statsMain = new Stats();
+      statsMain.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.getElementById("stats1").appendChild(statsMain.dom);
+      /**
+       * APP / ELEMENTS
+       */
+      const container = document.getElementById("app");
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      /**
+       * APP / VIDEO STREAM
+       */
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        let hint = {
+          audio: false,
+          video: true,
+        };
+        if (window.innerWidth < 800) {
+          const width = window.innerWidth < window.innerHeight ? 240 : 360;
+          const height = window.innerWidth < window.innerHeight ? 360 : 240;
+
+          const aspectRatio = window.innerWidth / window.innerHeight;
+
+          console.log(width, height);
+
+          hint = {
+            audio: false,
+            video: {
+              facingMode: "environment",
+              width: { min: width, max: width },
+            },
+          };
+
+          console.log(hint);
+        }
+
+        navigator.mediaDevices.getUserMedia(hint).then(function (stream) {
+          video.srcObject = stream;
+          video.addEventListener("loadedmetadata", function () {
+            video.play();
+
+            console.log("video", video, video.videoWidth, video.videoHeight);
+
+            start(
+              "../examples/DataNFT/pinball",
+              video,
+              video.videoWidth,
+              video.videoHeight,
+              canvas,
+              function () {
+                statsMain.update();
+              },
+            );
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

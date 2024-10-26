@@ -1,5 +1,5 @@
-var browser = (function () {
-  var test = function (regexp) {
+const browser = (function () {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -32,8 +32,9 @@ if (browser == "Apple Safari") {
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
 
+let next = null;
 self.onmessage = function (e) {
-  var msg = e.data;
+  const msg = e.data;
   switch (msg.type) {
     case "load": {
       load(msg);
@@ -46,10 +47,9 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
-var markerResult = null;
-var marker1, marker2, marker3;
+let ar = null;
+let markerResult = null;
+let marker1, marker2, marker3;
 
 const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
@@ -57,19 +57,19 @@ let tickCount = 0;
 // initialize the OneEuroFilter
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
-const filter = new OneEuroFilter({minCutOff: filterMinCF, beta: filterBeta});
+const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
 
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
-  var onLoad = function (arController) {
+  const onLoad = function (arController) {
     ar = arController;
-    var cameraMatrix = ar.getCameraMatrix();
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
       tickCount += 1;
       if (tickCount > WARM_UP_TOLERANCE) {
-        var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
+        const mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
         markerResult = {
           type: "found",
           index: JSON.stringify(ev.data.index),
@@ -78,17 +78,30 @@ function load(msg) {
       }
     });
 
-    ar.addEventListener("lostNFTMarker", function(ev) {
+    ar.addEventListener("lostNFTMarker", function (ev) {
       filter.reset();
     });
 
+    const nftMarkers = new ar.artoolkitNFT.nftMarkers();
+
     ar.loadNFTMarkers(msg.marker, function (ids) {
-      for (var i = 0; i < ids.length; i++) {
+      for (let i = 0; i < ids.length; i++) {
         ar.trackNFTMarkerId(i);
+        nftMarkers.push_back(ar.getNFTData(i, i));
       }
-      marker1 = ar.getNFTData(ar.id, 0);
-      marker2 = ar.getNFTData(ar.id, 1);
-      marker3 = ar.getNFTData(ar.id, 2);
+
+      marker1 = ar.getNFTData(ids[0], 0);
+      marker2 = ar.getNFTData(ids[1], 1);
+      marker3 = ar.getNFTData(ids[2], 2);
+
+      nftMarkers.push_back(marker1);
+
+      console.log("Array of nftData: ", [
+        nftMarkers.get(0),
+        nftMarkers.get(1),
+        nftMarkers.get(2),
+      ]);
+
       postMessage({
         type: "markerInfos",
         marker1: marker1,
@@ -104,18 +117,14 @@ function load(msg) {
     postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
   };
 
-  var onError = function (error) {
+  const onError = function (error) {
     console.error(error);
   };
 
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARToolkitNFT.ARControllerNFT.initWithDimensions(
-    msg.pw,
-    msg.ph,
-    msg.camera_para
-  )
+  ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para)
     .then(onLoad)
     .catch(onError);
 }
