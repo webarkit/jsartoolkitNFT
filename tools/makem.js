@@ -252,7 +252,6 @@ FLAGS += " --bind ";
 let DEBUG_FLAGS = " -g ";
 DEBUG_FLAGS += " -s ASSERTIONS=1 ";
 DEBUG_FLAGS += " --profiling ";
-DEBUG_FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 DEBUG_FLAGS += "  -s DEMANGLE_SUPPORT=1 ";
 
 const INCLUDES = [
@@ -316,6 +315,19 @@ const compile_arlib = format(
   OUTPUT_PATH,
 );
 
+const compile_debug_arlib = format(
+  EMCC +
+    INCLUDES +
+    " " +
+    ar_sources.join(" ") +
+    FLAGS +
+    DEBUG_FLAGS +
+    " " +
+    DEFINES +
+    " -r -o {OUTPUT_PATH}libar_debug.o ",
+  OUTPUT_PATH,
+);
+
 const compile_thread_arlib = format(
   EMCC +
     INCLUDES +
@@ -342,6 +354,7 @@ const compile_simd_arlib = format(
   OUTPUT_PATH,
 );
 
+const DEBUG_BC = " {OUTPUT_PATH}libar_debug.o ";
 const ALL_BC = " {OUTPUT_PATH}libar.o ";
 const THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
 const SIMD_BC = " {OUTPUT_PATH}libar_simd.o ";
@@ -350,7 +363,7 @@ const compile_combine = format(
   EMCC +
     INCLUDES +
     " " +
-    ALL_BC +
+    DEBUG_BC +
     MAIN_SOURCES +
     FLAGS +
     " -s WASM=0" +
@@ -540,6 +553,7 @@ function addJob(job) {
 
 addJob(clean_builds);
 addJob(compile_arlib);
+addJob(compile_debug_arlib);
 addJob(compile_thread_arlib);
 addJob(compile_simd_arlib);
 addJob(compile_combine);
