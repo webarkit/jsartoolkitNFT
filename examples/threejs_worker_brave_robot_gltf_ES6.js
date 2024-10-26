@@ -51,6 +51,8 @@ export default function start(
   });
   renderer.setPixelRatio(window.devicePixelRatio);
 
+  renderer.toneMappingExposure = Math.pow(2, -0.5);
+
   const threeGLTFLoader = new GLTFLoader();
 
   const scene = new THREE.Scene();
@@ -71,7 +73,12 @@ export default function start(
   scene.add(camera);
 
   const light = new THREE.AmbientLight(0xffffff);
-  scene.add(light);
+  camera.add(light);
+
+  const light2 = new THREE.DirectionalLight(0xffffff, 1.2);
+	light2.position.set(0.5, 0, 0.866); // ~60º
+	light2.name = 'main_light';
+	camera.add(light2);
 
   const root = new THREE.Object3D();
   scene.add(root);
