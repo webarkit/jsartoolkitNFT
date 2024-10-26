@@ -86,6 +86,16 @@ then:
 ```javascript
 import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
+
+**Note**: All the examples in the repository are running the code inside a Worker (don't use it in the main thread!). So i you need to import the library in a worker you need to use the `importScripts` function.
+
+```javascript
+// example of import in a worker with the wasm code lib
+importScripts("../build/artoolkitNFT_wasm.js");
+// or the dist lib
+importScripts("../dist/ARToolkitNFT.js");
+```
+
 ## Downloads
 
 You can download the build libs in the [releases page](https://github.com/webarkit/jsartoolkitNFT/releases). Starting from version 0.8.0 it is possible to download `dist` or `build` zip packages and from 0.9.6 version only single libs (no zipped).
