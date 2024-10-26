@@ -76,9 +76,9 @@ export default function start(
   camera.add(light);
 
   const light2 = new THREE.DirectionalLight(0xffffff, 1.2);
-	light2.position.set(0.5, 0, 0.866); // ~60º
-	light2.name = 'main_light';
-	camera.add(light2);
+  light2.position.set(0.5, 0, 0.866); // ~60º
+  light2.name = "main_light";
+  camera.add(light2);
 
   const root = new THREE.Object3D();
   scene.add(root);
