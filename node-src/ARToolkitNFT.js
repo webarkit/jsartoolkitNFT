@@ -10,12 +10,12 @@ class ARToolKitNFT {
   }
   // private method
   _initialize() {
-    var artoolkitNFT = {
+    const artoolkitNFT = {
       UNKNOWN_MARKER: -1,
       NFT_MARKER: 0, // 0,
     };
 
-    var FUNCTIONS = [
+    const FUNCTIONS = [
       "setup",
       "teardown",
 
@@ -48,6 +48,9 @@ class ARToolKitNFT {
 
       "setImageProcMode",
       "getImageProcMode",
+
+      "getCameraLens",
+      "passVideoData",
     ];
 
     function runWhenLoaded() {
@@ -55,7 +58,7 @@ class ARToolKitNFT {
         artoolkitNFT[n] = Module[n];
       });
 
-      for (var m in Module) {
+      for (const m in Module) {
         if (m.match(/^AR/)) artoolkitNFT[m] = Module[m];
       }
     }

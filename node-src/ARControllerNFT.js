@@ -1,5 +1,5 @@
 const ARToolkitNFT = require('./ARToolkitNFT.js')
-var emitter = require('events').EventEmitter;
+const emitter = require('events').EventEmitter;
 
 class ARControllerNFT {
     constructor(width, height, cameraParam) {
@@ -42,13 +42,10 @@ class ARControllerNFT {
     }
 
     process(image) {
-        var result = this.detectMarker(image);
-        if (result != 0) {
-            console.error("detectMarker error: " + result);
-        }
+        this._copyImageToHeap(image);
 
         // get NFT markers
-        var k, o;
+        let k, o;
         for (k in this.nftMarkers) {
             o = this.nftMarkers[k];
             o.inPrevious = o.inCurrent;
@@ -56,23 +53,23 @@ class ARControllerNFT {
         }
 
         // detect NFT markers
-        var nftMarkerCount = this.nftMarkerCount;
+        const nftMarkerCount = this.nftMarkerCount;
         this.detectNFTMarker();
 
         // in ms
-        var MARKER_LOST_TIME = 200;
+        const MARKER_LOST_TIME = 200;
 
-        for (var i = 0; i < nftMarkerCount; i++) {
-            var nftMarkerInfo = this.getNFTMarker(i);
+        for (let i = 0; i < nftMarkerCount; i++) {
+            const nftMarkerInfo = this.getNFTMarker(i);
             console.log("nftMarkerInfo: ", nftMarkerInfo);
-            var markerType = this.artoolkitNFT.NFT_MARKER;
+            const markerType = this.artoolkitNFT.NFT_MARKER;
             console.log('before found');
             if (nftMarkerInfo.found) {
                 console.log('found');
                 this.markerFound = i;
                 this.markerFoundTime = Date.now();
 
-                var visible = this.trackNFTMarkerId(i);
+                const visible = this.trackNFTMarkerId(i);
                 visible.matrix.set(nftMarkerInfo.pose);
                 visible.inCurrent = true;
                 this.transMatToGLMat(visible.matrix, this.transform_mat);
@@ -127,7 +124,7 @@ class ARControllerNFT {
     };
 
     trackNFTMarkerId(id, markerWidth) {
-        var obj = this.nftMarkers[id];
+        let obj = this.nftMarkers[id];
         if (!obj) {
             this.nftMarkers[id] = obj = {
                 inPrevious: false,
@@ -141,13 +138,6 @@ class ARControllerNFT {
             obj.markerWidth = markerWidth;
         }
         return obj;
-    };
-
-    detectMarker(image) {
-        if (this._copyImageToHeap(image)) {
-            return this.artoolkitNFT.artoolkitNFT.detectMarker(this.id);
-        }
-        return -99;
     };
 
     getNFTMarker(markerIndex) {
@@ -255,7 +245,7 @@ class ARControllerNFT {
     };
 
     dispatchEvent(event) {
-        var listeners = this.listeners[event.name];
+        const listeners = this.listeners[event.name];
         if (listeners) {
             for (var i = 0; i < listeners.length; i++) {
                 listeners[i].call(this, event);
@@ -264,7 +254,7 @@ class ARControllerNFT {
     };
 
     loadNFTMarkers(markerURLs, onSuccess, onError) {
-        var self = this;
+        const self = this;
         this.addNFTMarkers(this.id, markerURLs, function (ids) {
             self.nftMarkerCount += ids.length;
             onSuccess(ids);
@@ -290,15 +280,15 @@ class ARControllerNFT {
     //marker_count = 0;
 
     addNFTMarker(arId, url, callback, onError) {
-        var mId = this.nftMarkerCount++;
-        var prefix = '/markerNFT_' + mId;
-        var filename1 = prefix + '.fset';
-        var filename2 = prefix + '.iset';
-        var filename3 = prefix + '.fset3';
+        const mId = this.nftMarkerCount++;
+        const prefix = '/markerNFT_' + mId;
+        const filename1 = prefix + '.fset';
+        const filename2 = prefix + '.iset';
+        const filename3 = prefix + '.fset3';
         this.ajax(url + '.fset', filename1, function () {
             this.ajax(url + '.iset', filename2, function () {
                 this.ajax(url + '.fset3', filename3, function () {
-                    var nftMarker = this.artoolkitNFT.artoolkitNFT._addNFTMarker(arId, prefix);
+                    const nftMarker = this.artoolkitNFT.artoolkitNFT._addNFTMarker(arId, prefix);
                     if (callback) callback(nftMarker);
                 }, function (errorNumber) { if (onError) onError(errorNumber); });
             }, function (errorNumber) { if (onError) onError(errorNumber); });
@@ -306,9 +296,9 @@ class ARControllerNFT {
     }
 
     addNFTMarkers(arId, urls, callback, onError) {
-        var prefixes = [];
-        var pending = urls.length * 3;
-        var onSuccess = (filename) => {
+        const prefixes = [];
+        let pending = urls.length * 3;
+        const onSuccess = (filename) => {
             pending -= 1;
             if (pending === 0) {
                 const vec = new this.artoolkitNFT.artoolkitNFT.StringList();
@@ -324,21 +314,21 @@ class ARControllerNFT {
                 console.log("add nft marker ids: ", markerIds);
                 if (callback) callback(markerIds);
             }
-        }
+        };
         var onError = (filename, errorNumber) => {
             console.log("failed to load: ", filename);
             onError(errorNumber);
         }
 
-        for (var i = 0; i < urls.length; i++) {
-            var url = urls[i];
+        for (let i = 0; i < urls.length; i++) {
+            const url = urls[i];
 
-            var prefix = '/temp/' + url;
+            const prefix = '/temp/' + url;
             prefixes.push(prefix);
 
-            var filename1 = url + '.fset';
-            var filename2 = url + '.iset';
-            var filename3 = url + '.fset3';
+            const filename1 = url + '.fset';
+            const filename2 = url + '.iset';
+            const filename3 = url + '.fset3';
 
             this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
             this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
@@ -382,33 +372,11 @@ class ARControllerNFT {
 
         this._initNFT();
 
-        const params = this.artoolkitNFT.frameMalloc
+        this.framesize = this.width * this.height
 
-        this.framepointer = params.framepointer;
-        this.framesize = params.framesize;
-        this.videoLumaPointer = params.videoLumaPointer;
+        this.videoLuma = new Uint8Array(this.framesize);
 
-        this.dataHeap = new Uint8Array(
-            this.artoolkitNFT.artoolkitNFT.HEAPU8.buffer,
-            this.framepointer,
-            this.framesize
-        );
-        this.videoLuma = new Uint8Array(
-            this.artoolkitNFT.artoolkitNFT.HEAPU8.buffer,
-            this.videoLumaPointer,
-            this.framesize / 4
-        );
-
-        this.camera_mat = new Float64Array(
-            this.artoolkitNFT.artoolkitNFT.HEAPU8.buffer,
-            params.camera,
-            16
-        );
-        this.marker_transform_mat = new Float64Array(
-            this.artoolkitNFT.artoolkitNFT.HEAPU8.buffer,
-            params.transform,
-            12
-        );
+        this.camera_mat = this.artoolkitNFT.artoolkitNFT.getCameraLens(this.id);
 
         this.setProjectionNearPlane(0.1);
         this.setProjectionFarPlane(1000);
@@ -432,20 +400,22 @@ class ARControllerNFT {
             console.error("Error: no provided imageData to ARControllerNFT");
             return;
         }
-        if (image.data) {
+        /*if (image.data) {
 
-            var imageData = image;
+            var data = image.data;
 
-        }
+        }*/
         //var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
-        var data = image
+        const data = new Uint8Array(this.videoSize * 4);
+        data.set(image);
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
         if (this.videoLuma) {
-            var q = 0;
+            let q = 0;
             //Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA (ARToolKitJS.cpp L: 43)
-
-            for (var p = 0; p < this.videoSize; p++) {
-                var r = data[q + 0], g = data[q + 1], b = data[q + 2];
+            console.log("this.videoSize: ",this.videoSize)
+            for (let p = 0; p < this.videoSize; p++) {
+                const r = data[q + 0], g = data[q + 1], b = data[q + 2];
+                //console.log(r)
                 if (r > 255) {
                     console.error("not in range");
                 }
@@ -453,13 +423,12 @@ class ARControllerNFT {
                 // videoLuma[p] = (r+r+b+g+g+g)/6;         // https://stackoverflow.com/a/596241/5843642
                 this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
                 q += 4;
-                //console.log(this.videoLuma[p]);
             }
-            //console.log(this.videoLuma);
         }
 
-        if (this.dataHeap) {
-            this.dataHeap.set(data);
+        console.log(this.videoLuma);
+        if (this.videoLuma) {
+            this.artoolkitNFT.artoolkitNFT.passVideoData(this.id, image, this.videoLuma);
             return true;
         }
         return false;
