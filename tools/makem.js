@@ -54,6 +54,7 @@ const BUILD_BASE_FILENAME = "artoolkitNFT";
 
 const BUILD_DEBUG_FILE = BUILD_BASE_FILENAME + ".debug.js";
 const BUILD_WASM_FILE = BUILD_BASE_FILENAME + "_wasm.js";
+const BUILD_WASM_NODE_FILE = BUILD_BASE_FILENAME + "_node_wasm.js";
 const BUILD_THREAD_FILE = BUILD_BASE_FILENAME + "_thread.js";
 const BUILD_WASM_EMBED_ES6_FILE = BUILD_BASE_FILENAME + "_embed_ES6_wasm.js";
 const BUILD_SIMD_WASM_FILE = BUILD_BASE_FILENAME + "_wasm.simd.js";
@@ -246,6 +247,8 @@ const PRE_FLAGS =
 const PRE_ES6_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
 
+var NODE_FLAGS = " -s ENVIRONMENT='node' -s FORCE_FILESYSTEM  -s EXPORTED_RUNTIME_METHODS='['NODEFS','FS']' -lnodefs.js";
+
 FLAGS += " --bind ";
 
 /* DEBUG FLAGS */
@@ -397,6 +400,23 @@ const compile_wasm = format(
   BUILD_WASM_FILE,
 );
 
+var compile_wasm_node = format(
+  EMCC +
+    " " +
+    INCLUDES +
+    " " +
+    ALL_BC +
+    MAIN_SOURCES +
+    FLAGS +
+    WASM_FLAGS +
+    DEFINES +
+    NODE_FLAGS +
+    " -o {OUTPUT_PATH}{BUILD_FILE} ",
+  OUTPUT_PATH,
+  OUTPUT_PATH,
+  BUILD_WASM_NODE_FILE
+);
+
 const compile_wasm_thread = format(
   EMCC +
     INCLUDES +
@@ -544,6 +564,7 @@ addJob(compile_thread_arlib);
 addJob(compile_simd_arlib);
 addJob(compile_combine);
 addJob(compile_wasm);
+addJob(compile_wasm_node);
 addJob(compile_wasm_thread);
 addJob(compile_wasm_embed_ES6);
 addJob(compile_simd_wasm);
