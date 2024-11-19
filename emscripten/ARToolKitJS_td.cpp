@@ -24,6 +24,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "markerDecompress.h"
 
 const int PAGES_MAX =
     20; // Maximum number of pages expected. You can change this down (to save
@@ -463,6 +464,12 @@ emscripten::val getCameraLens(int id) {
   }
 
   return lens;
+}
+
+int decompressZFT(std::string datasetPathname, std::string tempPathname){
+  int response = decompressMarkers(datasetPathname.c_str(), tempPathname.c_str());
+
+  return 1;
 }
 
 /*****************

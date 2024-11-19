@@ -12,6 +12,7 @@
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
 #include "trackingMod.h"
+#include "markerDecompress.h"
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
@@ -50,6 +51,7 @@ public:
     int loadCamera(std::string cparam_name);
     int setCamera(int id, int cameraID);
     emscripten::val getCameraLens();
+    int decompressZFT(std::string datasetPathname, std::string tempPathname);
     std::vector<int> addNFTMarkers(std::vector<std::string> &datasetPathnames);
 
     // setters and getters

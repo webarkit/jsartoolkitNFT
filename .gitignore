@@ -1,4 +1,6 @@
 build/*.bc
 build/*.o
+build/*.a
 node_modules
 docs/*
+emscripten/build

@@ -323,6 +323,12 @@ emscripten::val ARToolKitNFT::getCameraLens() {
   return lens;
 }
 
+int ARToolKitNFT::decompressZFT(std::string datasetPathname, std::string tempPathname){
+  int response = decompressMarkers(datasetPathname.c_str(), tempPathname.c_str());
+
+  return 1;
+}
+
 /*****************
  * Marker loading *
  *****************/

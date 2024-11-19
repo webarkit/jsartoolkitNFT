@@ -15,6 +15,8 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	function("_addNFTMarkers", &addNFTMarkers);
 
+	function("_decompressZFT", &decompressZFT);
+
 	function("_loadCamera", &loadCamera);
 
 	function("detectNFTMarker", &detectNFTMarker);
