@@ -387,9 +387,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
       this.FS.unlink(prefixTemp + ".fset");
       this.FS.unlink(prefixTemp + ".fset3");
 
-      let hexStrIset = this.Uint8ArrayToStr(contentIsetUint8);
-      let hexStrFset = this.Uint8ArrayToStr(contentFsetUint8);
-      let hexStrFset3 = this.Uint8ArrayToStr(contentFset3Uint8);
+      let hexStrIset = Utils.Uint8ArrayToStr(contentIsetUint8);
+      let hexStrFset = Utils.Uint8ArrayToStr(contentFsetUint8);
+      let hexStrFset3 = Utils.Uint8ArrayToStr(contentFset3Uint8);
 
       let contentIset = new Uint8Array(
         hexStrIset.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
@@ -495,47 +495,6 @@ export class ARToolkitNFT implements IARToolkitNFT {
     }
 
     return isZFT;
-  }
-
-  private Uint8ArrayToStr(array: any) {
-    let out, i, len, c;
-    let char2, char3;
-
-    out = "";
-    len = array.length;
-    i = 0;
-    while (i < len) {
-      c = array[i++];
-      switch (c >> 4) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-          // 0xxxxxxx
-          out += String.fromCharCode(c);
-          break;
-        case 12:
-        case 13:
-          // 110x xxxx   10xx xxxx
-          char2 = array[i++];
-          out += String.fromCharCode(((c & 0x1f) << 6) | (char2 & 0x3f));
-          break;
-        case 14:
-          // 1110 xxxx  10xx xxxx  10xx xxxx
-          char2 = array[i++];
-          char3 = array[i++];
-          out += String.fromCharCode(
-            ((c & 0x0f) << 12) | ((char2 & 0x3f) << 6) | ((char3 & 0x3f) << 0),
-          );
-          break;
-      }
-    }
-
-    return out;
   }
 
   // ---------------------------------------------------------------------------

@@ -73,7 +73,6 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     loadCamera(urlOrData: Uint8Array | string): Promise<number>;
     addNFTMarkers(urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
     private checkZFT;
-    private Uint8ArrayToStr;
     private _storeDataFile;
     private ajax;
 }
