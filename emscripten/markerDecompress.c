@@ -24,7 +24,7 @@ int decompressMarkers(const char* src, const char* outTemp){
     int filesize, ret;
     const char *ext = "zft";
     char *c = malloc (mem_size_4mb);
-    
+
     fp = openZFT(src, ext);
     if ( fp == NULL )
     {
@@ -37,7 +37,7 @@ int decompressMarkers(const char* src, const char* outTemp){
     fseek (fp, 0, SEEK_SET);
 
     in = malloc (filesize);
-    
+
     if (in == NULL)
     {
         ARLOGe("Error mallocing %i bytes for inflate\n", filesize);
@@ -65,7 +65,7 @@ int decompressMarkers(const char* src, const char* outTemp){
     free(in);
 
     extractDataAndSave(c, outTemp);
-    
+
     free(c);
     return 0;
     // return markerData;
@@ -73,19 +73,19 @@ int decompressMarkers(const char* src, const char* outTemp){
 
 void extractDataAndSave(const char* str, const char* name){
     // string and variable name structure
-    // 
+    //
     //                iset_final_index
     //               V
     // str = {"iset":"test","fset":"test2","fset3":"test3"}
     //       ∧
-    //        Beginning of str or iset_initial_index 
-    //                      
-    // 
+    //        Beginning of str or iset_initial_index
+    //
+    //
     // iset_final_index    fset_initial_index
     //                V    V
     //  str = {"iset":"test","fset":"test2","fset3":"test3"}
     //                 ---- <- iset_content
-    //  
+    //
 
     // markerContentStruct *tempMarkerData;
 
@@ -96,6 +96,10 @@ void extractDataAndSave(const char* str, const char* name){
     int iset_final_index = 9;
 
     char *fsetInitialIndex = strstr(str, "\",\"fset\":\"");
+    if (fsetInitialIndex == NULL) {
+        ARLOGe("Error: 'fset' not found in the string.\n");
+        exit(EXIT_FAILURE);
+    }
     int fset_initial_index = (fsetInitialIndex - str);
 
     int fset_final_index = (fset_initial_index + 10);
@@ -103,17 +107,29 @@ void extractDataAndSave(const char* str, const char* name){
     int iset_content_size = fset_initial_index - iset_final_index;
 
     char *fset3InitialIndex = strstr(str, "\",\"fset3\":\"");
+    if (fset3InitialIndex == NULL) {
+        ARLOGe("Error: 'fset3' not found in the string.\n");
+        exit(EXIT_FAILURE);
+    }
     int fset3_initial_index = (fset3InitialIndex - str);
     int fset3_final_index = (fset3_initial_index + 11);
 
     int fset_content_size = fset3_initial_index - fset_final_index;
 
     char *endOfStr = strstr(str, "\"}");
+    if (endOfStr == NULL) {
+        ARLOGe("Error: end of string not found.\n");
+        exit(EXIT_FAILURE);
+    }
     int endPos = endOfStr - str;
-    
+
     int fset3_content_size = endPos - fset3_final_index;
 
     // ---ISET---
+    if (iset_content_size <= 0) {
+        ARLOGe("Error: Invalid iset_content_size: %d\n", iset_content_size);
+        exit(EXIT_FAILURE);
+    }
     char *iset_contentHex = malloc(iset_content_size);
     strncpy(iset_contentHex, str + iset_final_index, iset_content_size);
 
@@ -149,7 +165,7 @@ void extractDataAndSave(const char* str, const char* name){
     fclose(tempFset3);
     free(fset3Name);
     free(fset3_contentHex);
-    
+
     // return tempMarkerData;
 }
 
@@ -158,7 +174,7 @@ FILE *openZFT( const char *filename, const char *ext)
     FILE   *fp;
     char   *buf;
     size_t  len;
-    
+
     if (!filename) return (NULL);
     if (ext) {
         len = strlen(filename) + strlen(ext) + 2; // space for '.' and '\0'.
