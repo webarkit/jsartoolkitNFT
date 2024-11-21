@@ -27,7 +27,7 @@ const browser = (function () {
 if (browser == "Apple Safari") {
   importScripts("../dist/ARToolkitNFT.js");
 } else {
-  importScripts("../dist/ARToolkitNFT_simd.js");
+  importScripts("../dist/ARToolkitNFT.js");
 }
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
@@ -79,7 +79,7 @@ function load(msg) {
 
   const onLoad = function (arController) {
     ar = arController;
-    console.log(ar)
+    console.log(ar);
     var cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
@@ -112,9 +112,14 @@ function load(msg) {
         type: "endLoading",
         end: true,
       });
-    }).catch(function (err) {
-      console.log("Error in loading marker on Worker", err);
-    });
+    }).catch(
+      function (err) {
+        console.log("Error in loading marker on Worker", err);
+      },
+      function (err) {
+        console.error("Error in loadNFTMarker function on Worker", err);
+      },
+    );
 
     postMessage({
       type: "loaded",
