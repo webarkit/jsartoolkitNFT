@@ -291,7 +291,7 @@ function clean_builds() {
     const filesLength = files.length;
     if (filesLength > 0) {
       if (NO_LIBAR == true) {
-        let noLibarFilesLength = filesLength - 3;
+        let noLibarFilesLength = filesLength - 4;
         for (i = 0; i < noLibarFilesLength; i++) {
           filePath = OUTPUT_PATH + "/" + files[i];
           if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
@@ -588,7 +588,7 @@ addJob(compile_wasm_es6_thread);
 addJob(compile_combine_min);
 
 if (NO_LIBAR === true) {
-  jobs.splice(1, 3);
+  jobs.splice(1, 6);
 }
 
 runJob();
