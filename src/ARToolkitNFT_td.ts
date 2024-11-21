@@ -372,6 +372,45 @@ export class ARToolkitNFT implements IARToolkitNFT {
       onError2(errorNumber);
     };
 
+    const loadZFT = (prefix: any) => {
+      const marker_num = prefix.substring(11);
+      const prefixTemp = "/tempMarkerNFT_" + marker_num;
+
+      const response = this.instance._decompressZFT(prefix, prefixTemp);
+
+      let contentIsetUint8 = this.FS.readFile(prefixTemp + ".iset");
+      let contentFsetUint8 = this.FS.readFile(prefixTemp + ".fset");
+      let contentFset3Uint8 = this.FS.readFile(prefixTemp + ".fset3");
+
+      this.FS.unlink(prefixTemp + ".iset");
+      this.FS.unlink(prefixTemp + ".fset");
+      this.FS.unlink(prefixTemp + ".fset3");
+
+      let hexStrIset = this.Uint8ArrayToStr(contentIsetUint8);
+      let hexStrFset = this.Uint8ArrayToStr(contentFsetUint8);
+      let hexStrFset3 = this.Uint8ArrayToStr(contentFset3Uint8);
+
+      let contentIset = new Uint8Array(
+        hexStrIset.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+      );
+      let contentFset = new Uint8Array(
+        hexStrFset.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+      );
+      let contentFset3 = new Uint8Array(
+        hexStrFset3.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+      );
+
+      this._storeDataFile(contentFset, prefix + ".fset");
+      this._storeDataFile(contentIset, prefix + ".iset");
+      this._storeDataFile(contentFset3, prefix + ".fset3");
+      onSuccess(contentFset);
+    };
+
+    const onSuccessZFT = function () {
+      loadZFT(arguments[1]);
+      //onSuccess(contentFset);
+    };
+
     let Ids: Array<number> = [];
 
     urls.forEach((element, index) => {
@@ -381,12 +420,12 @@ export class ARToolkitNFT implements IARToolkitNFT {
       if (Array.isArray(element)) {
         element.forEach((url) => {
           const filename = prefix + "." + url.split(".").pop();
-
           this.ajax(
             url,
             filename,
             onSuccess.bind(filename),
             onError.bind(filename),
+            prefix,
           );
         });
 
@@ -395,25 +434,41 @@ export class ARToolkitNFT implements IARToolkitNFT {
         var filename1 = prefix + ".fset";
         var filename2 = prefix + ".iset";
         var filename3 = prefix + ".fset3";
+        const filename4 = prefix + ".zft";
 
-        this.ajax(
-          element + ".fset",
-          filename1,
-          onSuccess.bind(filename1),
-          onError.bind(filename1),
-        );
-        this.ajax(
-          element + ".iset",
-          filename2,
-          onSuccess.bind(filename2),
-          onError.bind(filename2),
-        );
-        this.ajax(
-          element + ".fset3",
-          filename3,
-          onSuccess.bind(filename3),
-          onError.bind(filename3),
-        );
+        let type = this.checkZFT(element + ".zft");
+        if (type) {
+          pending -= 2;
+          this.ajax(
+            element + ".zft",
+            filename4,
+            onSuccessZFT.bind(filename4),
+            onError.bind(filename4),
+            prefix,
+          );
+        } else {
+          this.ajax(
+            element + ".fset",
+            filename1,
+            onSuccess.bind(filename1),
+            onError.bind(filename1),
+            prefix,
+          );
+          this.ajax(
+            element + ".iset",
+            filename2,
+            onSuccess.bind(filename2),
+            onError.bind(filename2),
+            prefix,
+          );
+          this.ajax(
+            element + ".fset3",
+            filename3,
+            onSuccess.bind(filename3),
+            onError.bind(filename3),
+            prefix,
+          );
+        }
 
         this.markerNFTCount += 1;
       }
@@ -422,6 +477,63 @@ export class ARToolkitNFT implements IARToolkitNFT {
     });
 
     return Ids;
+  }
+
+  private checkZFT(url: any) {
+    let isZFT = null;
+
+    let request = new XMLHttpRequest();
+    request.open("GET", url, false); // `false` makes the request synchronous
+    request.send(null);
+
+    if (request.status === 200) {
+      isZFT = true;
+    } else if (request.status === 404) {
+      isZFT = false;
+    }
+
+    return isZFT;
+  }
+
+  private Uint8ArrayToStr(array: any) {
+    let out, i, len, c;
+    let char2, char3;
+
+    out = "";
+    len = array.length;
+    i = 0;
+    while (i < len) {
+      c = array[i++];
+      switch (c >> 4) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+          // 0xxxxxxx
+          out += String.fromCharCode(c);
+          break;
+        case 12:
+        case 13:
+          // 110x xxxx   10xx xxxx
+          char2 = array[i++];
+          out += String.fromCharCode(((c & 0x1f) << 6) | (char2 & 0x3f));
+          break;
+        case 14:
+          // 1110 xxxx  10xx xxxx  10xx xxxx
+          char2 = array[i++];
+          char3 = array[i++];
+          out += String.fromCharCode(
+            ((c & 0x0f) << 12) | ((char2 & 0x3f) << 6) | ((char3 & 0x3f) << 0),
+          );
+          break;
+      }
+    }
+
+    return out;
   }
 
   // ---------------------------------------------------------------------------
@@ -451,6 +563,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     target: string,
     callback: (byteArray: Uint8Array) => void,
     errorCallback: (url: string, message: number) => void,
+    prefix: string,
   ) {
     var oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
@@ -458,17 +571,18 @@ export class ARToolkitNFT implements IARToolkitNFT {
     const writeByteArrayToFS = (
       target: string,
       byteArray: Uint8Array,
-      callback: (byteArray: Uint8Array) => void,
+      callback: (byteArray: Uint8Array, prefix: string) => void,
+      prefix: string,
     ) => {
       this.FS.writeFile(target, byteArray, { encoding: "binary" });
-      callback(byteArray);
+      callback(byteArray, prefix);
     };
 
     oReq.onload = function () {
       if (this.status == 200) {
         var arrayBuffer = oReq.response;
         var byteArray = new Uint8Array(arrayBuffer);
-        writeByteArrayToFS(target, byteArray, callback);
+        writeByteArrayToFS(target, byteArray, callback, prefix);
       } else {
         errorCallback(url, this.status);
       }

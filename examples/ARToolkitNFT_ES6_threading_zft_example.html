@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ARToolkitNFT_ES6 threading example with zft markers</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./js/third_party/three.js/three.module.min.js",
+          "three/addons/": "./js/third_party/three.js/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="css/nft-style.css" />
+  </head>
+
+  <body>
+    <div id="loading">
+      <img alt="JsartoolkitNFT logo" src="Data/JsartoolkitNFT-logo.gif" />
+      <span class="loading-text">Loading, please wait</span>
+    </div>
+    <!--
+  ==================
+  STATS
+  ==================
+  -->
+    <div id="stats" class="ui stats">
+      <div id="stats1" class="stats-item">
+        <p class="stats-item-title">Main</p>
+      </div>
+    </div>
+
+    <div id="app">
+      <video loop autoplay muted playsinline id="video"></video>
+      <canvas id="canvas"></canvas>
+    </div>
+    <script src="js/third_party/three.js/stats.min.js"></script>
+    <script async src="js/threading_files/ARToolkitNFT_td.js"></script>
+    <script src="index.js"></script>
+    <script src="../js/one-euro-filter.js"></script>
+    <script src="load_ES6_thread.js"></script>
+    <!--<script type="module" src="threejs_wasm_thread.js"></script>-->
+
+    <script type="module">
+      import start from "./threejs_wasm_thread.js";
+
+      /**
+       * STATS
+       */
+      const statsMain = new Stats();
+      statsMain.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.getElementById("stats1").appendChild(statsMain.dom);
+
+      window.addEventListener("load", () => {
+        console.log("init ARToolkitNFT...");
+        initCamera()
+          .then((video) => {
+            // start camera playback
+            sourceVideo = video;
+            sourceVideo.width = 640;
+            sourceVideo.height = 480;
+            sourceVideo.play();
+
+            // init target canvas
+            initTargetCanvas();
+
+            return new Promise((resolve) => {
+              sourceVideo.addEventListener("loadeddata", (event) => {
+                const target = event.target;
+                console.log("Camera is ready");
+                console.log(
+                  "Video stream with width, height: ",
+                  target.width,
+                  target.height,
+                );
+                resolve();
+              });
+            });
+          })
+          .then((_) => {
+            start(
+              "../examples/DataNFT/zft/pinball",
+              video,
+              video.videoWidth,
+              video.videoHeight,
+              canvas,
+              function () {
+                statsMain.update();
+              },
+            );
+          });
+      });
+    </script>
+  </body>
+</html>
