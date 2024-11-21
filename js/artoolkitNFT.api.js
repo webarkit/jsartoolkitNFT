@@ -1010,6 +1010,7 @@
 
         return out;
     }
+
     function bytesToString(array) {
         return String.fromCharCode.apply(String, array);
     }
