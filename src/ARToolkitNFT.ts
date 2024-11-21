@@ -348,9 +348,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
     callback: (filename: number[]) => void,
     onError2: (errorNumber: number) => void,
   ): Array<number> {
-    var prefixes: any = [];
-    var pending = urls.length * 3;
-    var onSuccess = (filename: Uint8Array) => {
+    const prefixes: any = [];
+    let pending = urls.length * 3;
+    const onSuccess = (filename: Uint8Array) => {
       pending -= 1;
       if (pending === 0) {
         const vec = new this.StringList();
@@ -358,7 +358,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
         for (let i = 0; i < prefixes.length; i++) {
           vec.push_back(prefixes[i]);
         }
-        var ret = this.instance._addNFTMarkers(vec);
+        const ret = this.instance._addNFTMarkers(vec);
         for (let i = 0; i < ret.size(); i++) {
           markerIds.push(ret.get(i));
         }
@@ -367,7 +367,8 @@ export class ARToolkitNFT implements IARToolkitNFT {
         if (callback) callback(markerIds);
       }
     };
-    var onError = (filename: string, errorNumber?: number) => {
+
+    const onError = (filename: string, errorNumber?: number) => {
       console.log("failed to load: ", filename);
       onError2(errorNumber);
     };
@@ -414,7 +415,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     let Ids: Array<number> = [];
 
     urls.forEach((element, index) => {
-      var prefix = "/markerNFT_" + this.markerNFTCount;
+      const prefix = "/markerNFT_" + this.markerNFTCount;
       prefixes.push(prefix);
 
       if (Array.isArray(element)) {
@@ -432,9 +433,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
 
         this.markerNFTCount += 1;
       } else {
-        var filename1 = prefix + ".fset";
-        var filename2 = prefix + ".iset";
-        var filename3 = prefix + ".fset3";
+        const filename1 = prefix + ".fset";
+        const filename2 = prefix + ".iset";
+        const filename3 = prefix + ".fset3";
         const filename4 = prefix + ".zft";
 
         let type = this.checkZFT(element + ".zft");
@@ -566,7 +567,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     errorCallback: (url: string, message: number) => void,
     prefix: string,
   ) {
-    var oReq = new XMLHttpRequest();
+    const oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
     oReq.responseType = "arraybuffer"; // blob arraybuffer
     const writeByteArrayToFS = (
@@ -581,8 +582,8 @@ export class ARToolkitNFT implements IARToolkitNFT {
 
     oReq.onload = function () {
       if (this.status == 200) {
-        var arrayBuffer = oReq.response;
-        var byteArray = new Uint8Array(arrayBuffer);
+        const arrayBuffer = oReq.response;
+        const byteArray = new Uint8Array(arrayBuffer);
         writeByteArrayToFS(target, byteArray, callback, prefix);
       } else {
         errorCallback(url, this.status);
