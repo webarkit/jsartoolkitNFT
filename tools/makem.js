@@ -62,18 +62,31 @@ const BUILD_SIMD_WASM_ES6_FILE = BUILD_BASE_FILENAME + "_ES6_wasm.simd.js";
 const BUILD_WASM_ES6_TD_FILE = BUILD_BASE_FILENAME + "_ES6_wasm_td.js";
 const BUILD_MIN_FILE = BUILD_BASE_FILENAME + ".min.js";
 
-let MAIN_SOURCES = ["ARToolKitJS.cpp", "trackingMod.c", "trackingMod2d.c", "markerDecompress.c"];
+let MAIN_SOURCES = [
+  "ARToolKitJS.cpp",
+  "trackingMod.c",
+  "trackingMod2d.c",
+  "markerDecompress.c",
+];
 
 // testing threaded version of the library.
-let MAIN_SOURCES_TD = ["ARToolKitJS_td.cpp", "trackingSub.c", "markerDecompress.c"];
+let MAIN_SOURCES_TD = [
+  "ARToolKitJS_td.cpp",
+  "trackingSub.c",
+  "markerDecompress.c",
+];
 
-let MAIN_SOURCES_TD_ES6 = ["ARToolKitNFT_js_td.cpp", "trackingSub.c", "markerDecompress.c"];
+let MAIN_SOURCES_TD_ES6 = [
+  "ARToolKitNFT_js_td.cpp",
+  "trackingSub.c",
+  "markerDecompress.c",
+];
 
 let MAIN_SOURCES_IMPROVED_ES6 = [
   "ARToolKitNFT_js.cpp",
   "trackingMod.c",
   "trackingMod2d.c",
-  "markerDecompress.c"
+  "markerDecompress.c",
 ];
 
 if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
@@ -222,7 +235,6 @@ let DEFINES = " ";
 if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
 DEFINES += " -D WITH_FILTERING=" + WITH_FILTERING;
 
-
 let ZLIB_FLAG = " -s USE_ZLIB=1 ";
 
 let FLAGS = "" + OPTIMIZE_FLAGS;
@@ -354,11 +366,16 @@ const THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
 const SIMD_BC = " {OUTPUT_PATH}libar_simd.o ";
 const LIBZ_A = " {OUTPUT_PATH}libz.a ";
 
-const configure_zlib = format("emcmake cmake -B emscripten/build -S emscripten/zlib ..");
+const configure_zlib = format(
+  "emcmake cmake -B emscripten/build -S emscripten/zlib ..",
+);
 
 const build_zlib = format("cd emscripten/build && emmake make");
 
-const copy_zlib = format("cp emscripten/build/libz.a {OUTPUT_PATH}libz.a", OUTPUT_PATH);
+const copy_zlib = format(
+  "cp emscripten/build/libz.a {OUTPUT_PATH}libz.a",
+  OUTPUT_PATH,
+);
 
 const compile_combine = format(
   EMCC +
@@ -375,7 +392,7 @@ const compile_combine = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_DEBUG_FILE,
 );
 
@@ -394,7 +411,7 @@ const compile_combine_min = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_MIN_FILE,
 );
 
@@ -413,7 +430,7 @@ const compile_wasm = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_WASM_FILE,
 );
 
@@ -433,7 +450,7 @@ const compile_wasm_thread = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_THREAD_FILE,
 );
 
@@ -453,7 +470,7 @@ const compile_wasm_embed_ES6 = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_WASM_EMBED_ES6_FILE,
 );
 
@@ -472,7 +489,7 @@ const compile_simd_wasm = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_SIMD_WASM_FILE,
 );
 
@@ -490,7 +507,7 @@ const compile_wasm_es6 = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_WASM_ES6_FILE,
 );
 
@@ -509,7 +526,7 @@ const compile_wasm_es6_thread = format(
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   BUILD_WASM_ES6_TD_FILE,
 );
 
@@ -527,7 +544,7 @@ const compile_simd_wasm_es6 = format(
     ES6_FLAGS +
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
-    OUTPUT_PATH,
+  OUTPUT_PATH,
   OUTPUT_PATH,
   BUILD_SIMD_WASM_ES6_FILE,
 );
