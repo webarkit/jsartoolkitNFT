@@ -907,24 +907,115 @@ function addNFTMarkers(arId, urls, callback, onerror) {
             if (callback) callback(markerIds);
         }
     };
+
     const onError = (filename, errorNumber) => {
         console.log("failed to load: ", filename);
         onerror(errorNumber);
     };
 
-    for (var i = 0; i < urls.length; i++) {
+    var loadZFT = (prefix) => {
+        let marker_num = prefix.substring(11);
+        var prefixTemp = '/tempMarkerNFT_' + marker_num;
+
+        var response = Module._decompressZFT(prefix, prefixTemp);
+
+        let contentIsetUint8 = FS.readFile(prefixTemp + '.iset');
+        let contentFsetUint8 = FS.readFile(prefixTemp + '.fset');
+        let contentFset3Uint8 = FS.readFile(prefixTemp + '.fset3');
+
+        FS.unlink(prefixTemp + '.iset');
+        FS.unlink(prefixTemp + '.fset');
+        FS.unlink(prefixTemp + '.fset3');
+
+        let hexStrIset = Uint8ArrayToStr(contentIsetUint8);
+        let hexStrFset = Uint8ArrayToStr(contentFsetUint8);
+        let hexStrFset3 = Uint8ArrayToStr(contentFset3Uint8);
+
+        let contentIset = new Uint8Array(hexStrIset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        let contentFset = new Uint8Array(hexStrFset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        let contentFset3 = new Uint8Array(hexStrFset3.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+
+        writeByteArrayToFS(prefix + '.fset', contentFset, function(){});
+        writeByteArrayToFS(prefix + '.iset', contentIset, function(){});
+        writeByteArrayToFS(prefix + '.fset3', contentFset3, function(){});
+
+    }
+
+    const onSuccessZFT = function(){
+        loadZFT(arguments[1]);
+        onSuccess();
+    }
+
+    for (let i = 0; i < urls.length; i++) {
         const url = urls[i];
         const prefix = '/markerNFT_' + marker_count;
         prefixes.push(prefix);
         const filename1 = prefix + '.fset';
         const filename2 = prefix + '.iset';
         const filename3 = prefix + '.fset3';
+        const filename4 = prefix + '.zft';
 
-        ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
-        ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
-        ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
+        let type = checkZFT(url + '.zft');
+        if(type){
+            pending -= 2;
+            ajax(url + '.zft', filename4, onSuccessZFT, onError.bind(filename4), prefix);
+        }else {
+            ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1), prefix);
+            ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2), prefix);
+            ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3), prefix);
+        }
         marker_count += 1;
     }
+}
+
+function checkZFT(url){
+    let isZFT = null;
+
+    let request = new XMLHttpRequest();
+    request.open('GET', url, false);  // `false` makes the request synchronous
+    request.send(null);
+
+    if (request.status === 200) {
+        isZFT = true;
+    }else if(request.status === 404){
+        isZFT = false;
+    }
+
+    return isZFT;
+}
+
+function Uint8ArrayToStr(array) {
+    var out, i, len, c;
+    var char2, char3;
+
+    out = "";
+    len = array.length;
+    i = 0;
+    while(i < len) {
+        c = array[i++];
+        switch(c >> 4)
+        {
+            case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+            // 0xxxxxxx
+            out += String.fromCharCode(c);
+            break;
+            case 12: case 13:
+            // 110x xxxx   10xx xxxx
+            char2 = array[i++];
+            out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+            break;
+            case 14:
+                // 1110 xxxx  10xx xxxx  10xx xxxx
+                char2 = array[i++];
+                char3 = array[i++];
+                out += String.fromCharCode(((c & 0x0F) << 12) |
+                    ((char2 & 0x3F) << 6) |
+                    ((char3 & 0x3F) << 0));
+                break;
+        }
+    }
+
+    return out;
 }
 
 function bytesToString(array) {
@@ -978,18 +1069,18 @@ function writeStringToFS(target, string, callback) {
     writeByteArrayToFS(target, byteArray, callback);
 }
 
-function writeByteArrayToFS(target, byteArray, callback) {
+function writeByteArrayToFS(target, byteArray, callback, prefix) {
     FS.writeFile(target, byteArray, { encoding: 'binary' });
     // console.log('FS written', target);
 
-    callback(byteArray);
+    callback(byteArray, prefix);
 }
 
 // Eg.
 //	ajax('../bin/Data2/markers.dat', '/Data2/markers.dat', callback);
 //	ajax('../bin/Data/patt.hiro', '/patt.hiro', callback);
 
-function ajax(url, target, callback, errorCallback) {
+function ajax(url, target, callback, errorCallback, prefix) {
     const oReq = new XMLHttpRequest();
     oReq.open('GET', url, true);
     oReq.responseType = 'arraybuffer'; // blob arraybuffer
@@ -999,7 +1090,7 @@ function ajax(url, target, callback, errorCallback) {
             // console.log('ajax done for ', url);
             const arrayBuffer = oReq.response;
             const byteArray = new Uint8Array(arrayBuffer);
-            writeByteArrayToFS(target, byteArray, callback);
+            writeByteArrayToFS(target, byteArray, callback, prefix);
         }
         else {
             errorCallback(this.status);
