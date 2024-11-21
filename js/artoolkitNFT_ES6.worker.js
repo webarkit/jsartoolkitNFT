@@ -27,7 +27,7 @@ const browser = (function () {
 if (browser == "Apple Safari") {
   importScripts("../dist/ARToolkitNFT.js");
 } else {
-  importScripts("../dist/ARToolkitNFT.js");
+  importScripts("../dist/ARToolkitNFT_simd.js");
 }
 // Import OneEuroFilter class into the worker.
 importScripts("./one-euro-filter.js");
