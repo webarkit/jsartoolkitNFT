@@ -906,11 +906,11 @@
             onerror(errorNumber);
         }
 
-        var loadZFT = (prefix) => {
-            let marker_num = prefix.substring(11);
-            var prefixTemp = '/tempMarkerNFT_' + marker_num;
+        const loadZFT = (prefix) => {
+            const marker_num = prefix.substring(11);
+            const prefixTemp = '/tempMarkerNFT_' + marker_num;
 
-            var response = Module._decompressZFT(prefix, prefixTemp);
+            const response = Module._decompressZFT(prefix, prefixTemp);
 
             let contentIsetUint8 = FS.readFile(prefixTemp + '.iset');
             let contentFsetUint8 = FS.readFile(prefixTemp + '.fset');
@@ -978,8 +978,8 @@
     }
 
     function Uint8ArrayToStr(array) {
-        var out, i, len, c;
-        var char2, char3;
+        let out, i, len, c;
+        let char2, char3;
 
         out = "";
         len = array.length;
