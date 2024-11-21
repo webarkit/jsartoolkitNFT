@@ -913,11 +913,11 @@ function addNFTMarkers(arId, urls, callback, onerror) {
         onerror(errorNumber);
     };
 
-    var loadZFT = (prefix) => {
-        let marker_num = prefix.substring(11);
-        var prefixTemp = '/tempMarkerNFT_' + marker_num;
+    const loadZFT = (prefix) => {
+        const marker_num = prefix.substring(11);
+        const prefixTemp = '/tempMarkerNFT_' + marker_num;
 
-        var response = Module._decompressZFT(prefix, prefixTemp);
+        const response = Module._decompressZFT(prefix, prefixTemp);
 
         let contentIsetUint8 = FS.readFile(prefixTemp + '.iset');
         let contentFsetUint8 = FS.readFile(prefixTemp + '.fset');
@@ -935,11 +935,14 @@ function addNFTMarkers(arId, urls, callback, onerror) {
         let contentFset = new Uint8Array(hexStrFset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
         let contentFset3 = new Uint8Array(hexStrFset3.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
-        writeByteArrayToFS(prefix + '.fset', contentFset, function(){});
-        writeByteArrayToFS(prefix + '.iset', contentIset, function(){});
-        writeByteArrayToFS(prefix + '.fset3', contentFset3, function(){});
+        writeByteArrayToFS(prefix + '.fset', contentFset, function () {
+        });
+        writeByteArrayToFS(prefix + '.iset', contentIset, function () {
+        });
+        writeByteArrayToFS(prefix + '.fset3', contentFset3, function () {
+        });
 
-    }
+    };
 
     const onSuccessZFT = function(){
         loadZFT(arguments[1]);
@@ -985,8 +988,8 @@ function checkZFT(url){
 }
 
 function Uint8ArrayToStr(array) {
-    var out, i, len, c;
-    var char2, char3;
+    let out, i, len, c;
+    let char2, char3;
 
     out = "";
     len = array.length;
