@@ -438,6 +438,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
         const filename4 = prefix + ".zft";
 
         let type = Utils.checkZFT(element + ".zft");
+        console.log(type);
         if (type) {
           pending -= 2;
           this.ajax(
