@@ -309,8 +309,8 @@ export class ARToolkitNFT implements IARToolkitNFT {
   /**
    * Load the camera, this is an important and required step, Internally fill
    * the ARParam struct.
-   * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
-   * @return {number} a number, the internal id.
+   * @param {Uint8Array|string} urlOrData: the camera parameter, usually a path to a .dat file
+   * @return {Promise<number>} a promise that resolves to a number, the internal id.
    */
   public async loadCamera(urlOrData: Uint8Array | string): Promise<number> {
     const target = "/camera_param_" + this.cameraCount++;
@@ -329,7 +329,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
       }
     }
 
-    this._storeDataFile(data, target);
+    Utils._storeDataFile(data, target, this);
 
     // return the internal marker ID
     return this.instance._loadCamera(target);
@@ -338,10 +338,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
   /**
    * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
    * the url of the file without the extension. If fails to load it raise an error.
-   * @param {number} arId internal id
    * @param {Array<string>} urls  array of urls of the descriptors files without ext
    * @param {function} callback the callback to retrieve the ids.
    * @param {function} onError2 the error callback.
+   * @return {Array<number>} an array of ids.
    */
   public addNFTMarkers(
     urls: Array<string | Array<string>>,
@@ -400,9 +400,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
         hexStrFset3.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
       );
 
-      this._storeDataFile(contentFset, prefix + ".fset");
-      this._storeDataFile(contentIset, prefix + ".iset");
-      this._storeDataFile(contentFset3, prefix + ".fset3");
+      Utils._storeDataFile(contentFset, prefix + ".fset", this);
+      Utils._storeDataFile(contentIset, prefix + ".iset", this);
+      Utils._storeDataFile(contentFset3, prefix + ".fset3", this);
       onSuccess(contentFset);
     };
 
@@ -482,24 +482,14 @@ export class ARToolkitNFT implements IARToolkitNFT {
   // ---------------------------------------------------------------------------
 
   // implementation
-  /**
-   * Used internally by LoadCamera method
-   * @return {void}
-   */
-  private _storeDataFile(data: Uint8Array, target: string) {
-    // FS is provided by emscripten
-    // Note: valid data must be in binary format encoded as Uint8Array
-    this.FS.writeFile(target, data, {
-      encoding: "binary",
-    });
-  }
 
   /**
    * Used internally by the addNFTMarkers method
-   * @param url url of the marker.
-   * @param target the target of the marker.
-   * @param callback callback  to get the binary data.
-   * @param errorCallback the error callback.
+   * @param {string} url url of the marker.
+   * @param {string} target the target of the marker.
+   * @param {function} callback callback to get the binary data.
+   * @param {function} errorCallback the error callback.
+   * @param {string} prefix the prefix for the marker.
    */
   private ajax(
     url: string,
@@ -517,7 +507,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
       callback: (byteArray: Uint8Array, prefix: string) => void,
       prefix: string,
     ) => {
-      this.FS.writeFile(target, byteArray, { encoding: "binary" });
+      Utils._storeDataFile(byteArray, target, this);
       callback(byteArray, prefix);
     };
 
