@@ -270,7 +270,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * This is one of the most important method inside ARControllerNFT. It detect the marker
+   * This is one of the most important method inside ARControllerNFT. It detects the marker
    * and dispatch internally with the getNFTMarker event listener the NFTMarkerInfo
    * struct object of the tracked NFT Markers.
    * @param {image} image data
@@ -717,8 +717,24 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Loads an NFT marker from the given URL or data string
-   * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
+   * Loads an NFT marker from the given URL or data string.
+   * This method is asynchronous and returns a Promise that resolves to an array of marker IDs.
+   *
+   * Example usage:
+   * ```typescript
+   * import ARControllerNFT from '@webarkit/jsartoolkit-nft';
+   *
+   * const arController = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
+   * arController.loadNFTMarker("path/to/marker.dat", (id) => {
+   *   console.log("Marker loaded with ID:", id);
+   * }, (err) => {
+   *   console.error("Failed to load marker:", err);
+   * });
+   * ```
+   * @param {string} urlOrData - The URL or data string of the NFT marker to load.
+   * @param {function} onSuccess - Callback function to call when the marker is successfully loaded. Receives the marker ID as an argument.
+   * @param {function} onError - Callback function to call when there is an error loading the marker. Receives the error code as an argument.
+   * @return {Promise<number[]>} A Promise that resolves to an array of marker IDs.
    */
   async loadNFTMarker(
     urlOrData: string,
@@ -737,8 +753,24 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Loads an array of NFT markers from the given URLs or data string
-   * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
+   * Loads an array of NFT markers from the given URLs or data strings.
+   * This method is asynchronous and returns a Promise that resolves to an array of marker IDs.
+   *
+   * Example usage:
+   * ```typescript
+   * import ARControllerNFT from '@webarkit/jsartoolkit-nft';
+   *
+   * const arController = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
+   * arController.loadNFTMarkers(["path/to/marker1.dat", "path/to/marker2.dat"], (ids) => {
+   *   console.log("Markers loaded with IDs:", ids);
+   * }, (err) => {
+   *   console.error("Failed to load markers:", err);
+   * });
+   * ```
+   * @param {Array<string>} urlOrData - The array of URLs or data strings of the NFT markers to load.
+   * @param {function} onSuccess - Callback function to call when the markers are successfully loaded. Receives an array of marker IDs as an argument.
+   * @param {function} onError - Callback function to call when there is an error loading the markers. Receives the error code as an argument.
+   * @return {Promise<number[]>} A Promise that resolves to an array of marker IDs.
    */
   async loadNFTMarkers(
     urlOrData: Array<string>,
