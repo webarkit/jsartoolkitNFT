@@ -41,6 +41,7 @@ export default class Utils {
       const response: AxiosResponse<any> = await axios.get(url, {
         responseType: "arraybuffer",
       });
+      console.log(response);
       return new Uint8Array(response.data);
     } catch (error) {
       throw new Error("Error in Utils.fetchRemoteData: ", error);
@@ -109,5 +110,24 @@ export default class Utils {
     }
 
     return out;
+  }
+
+  static checkZFT(url: string) {
+    let isZFT: boolean = null;
+
+    try {
+      const response: any = axios.get(url);
+
+      return () => {
+        if (response.status == 200) {
+          isZFT = true;
+        } else {
+          isZFT = false;
+        }
+        return isZFT;
+      };
+    } catch (error) {
+      throw new Error("Error in Utils.checkZFT: ", error);
+    }
   }
 }
