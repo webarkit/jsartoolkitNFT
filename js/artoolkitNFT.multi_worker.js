@@ -1,5 +1,5 @@
 var browser = (function () {
-  var test = function (regexp) {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -47,8 +47,8 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
+let next = null;
+let ar = null;
 let markerResult = null;
 let marker1, marker2, marker3;
 

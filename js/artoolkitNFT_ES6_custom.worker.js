@@ -69,7 +69,7 @@ function load(msg) {
     ar.addEventListener("getNFTMarker", function (ev) {
       tickCount += 1;
       if (tickCount > WARM_UP_TOLERANCE) {
-        var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
+        const mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
         markerResult = {
           type: "found",
           matrixGL_RH: JSON.stringify(mat),
