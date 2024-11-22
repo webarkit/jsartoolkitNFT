@@ -20,14 +20,21 @@ Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://
 ## Features
 ### Markers Types
 
-**JSARToolKitNFT** support only this type of markers:
+**JSARToolKitNFT** support only this type of marker:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 - Multi NFT markers !!!
 
+
+
 ## WASM
 
 has **WASM** embedded in a single file!
+
+## ZFT
+
+**JSARToolKitNFT** now supports loading NFT markers from `.zft` compressed files. This allows for faster loading times and reduced file sizes.
+
 
 ## ES6
 
@@ -41,7 +48,7 @@ has **WASM** embedded in a single file!
 
 From 1.6.0 version has **Pthread** experimental feature 🎉 🎉 🎉
 
-❕❕❕ ATTENTION: this feature is experimental and it is not well tested yet. It is not recommended to use it in production.
+❕❕❕ ATTENTION: this feature is experimental, and it is not well tested yet. It is not recommended to use it in production.
 You need to set up a server with COOP and COEP headers to use this feature. Read this [Emscripten article](https://emscripten.org/docs/porting/pthreads.html#pthreads-support)
 ## Using the library 💥
 You can use raw.githack.com links:
