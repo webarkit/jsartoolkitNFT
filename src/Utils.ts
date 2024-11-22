@@ -113,23 +113,17 @@ export default class Utils {
     return out;
   }
 
-  static checkZFT(url: string): any {
-    let isZFT: boolean = null;
+  static checkZFT(url: string): boolean {
+    const request = new XMLHttpRequest();
+    request.open("GET", url, false); // `false` makes the request synchronous
+    request.send(null);
 
-    try {
-      const response: any = axios.get(url);
-
-      return () => {
-        if (response.status == 200) {
-          isZFT = true;
-        } else {
-          isZFT = false;
-        }
-        return isZFT;
-      };
-    } catch (error) {
-      throw new Error("Error in Utils.checkZFT: ", error);
+    if (request.status === 200) {
+      return true;
+    } else if (request.status === 404) {
+      return false;
     }
+    return false;
   }
   /**
    * Stores data in the Emscripten filesystem.
