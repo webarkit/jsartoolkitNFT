@@ -17,8 +17,8 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
+let next = null;
+let ar = null;
 let markerResult = null;
 //var marker;
 
@@ -26,7 +26,7 @@ const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
 
 // initialize the OneEuroFilter
-var oef = true;
+const oef = true;
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
 const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
@@ -46,11 +46,9 @@ async function load(msg) {
   const arTK = await ARToolkitNFT();
   //self.addEventListener("artoolkitNFT-loaded", function () {
   console.debug("Loading marker at: ", msg.marker);
-  console.log(arTK);
 
   const onLoad = function () {
     ar = new arTK.ARControllerNFT(msg.pw, msg.ph, param);
-    console.log(ar);
     const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
@@ -85,7 +83,7 @@ async function load(msg) {
     postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
   };
 
-  var onError = function (error) {
+  const onError = function (error) {
     console.error(error);
   };
 

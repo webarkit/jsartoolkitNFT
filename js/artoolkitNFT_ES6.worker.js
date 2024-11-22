@@ -79,8 +79,7 @@ function load(msg) {
 
   const onLoad = function (arController) {
     ar = arController;
-    console.log(ar);
-    var cameraMatrix = ar.getCameraMatrix();
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
       let mat;
