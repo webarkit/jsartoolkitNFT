@@ -437,7 +437,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
         const filename3 = prefix + ".fset3";
         const filename4 = prefix + ".zft";
 
-        let type = this.checkZFT(element + ".zft");
+        let type = Utils.checkZFT(element + ".zft");
         if (type) {
           pending -= 2;
           this.ajax(
@@ -478,22 +478,6 @@ export class ARToolkitNFT implements IARToolkitNFT {
     });
 
     return Ids;
-  }
-
-  private checkZFT(url: any) {
-    let isZFT = null;
-
-    let request = new XMLHttpRequest();
-    request.open("GET", url, false); // `false` makes the request synchronous
-    request.send(null);
-
-    if (request.status === 200) {
-      isZFT = true;
-    } else if (request.status === 404) {
-      isZFT = false;
-    }
-
-    return isZFT;
   }
 
   // ---------------------------------------------------------------------------
