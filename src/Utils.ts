@@ -36,25 +36,26 @@
 import axios, { AxiosResponse } from "axios";
 
 export default class Utils {
-  static async fetchRemoteData(url: string) {
+  static async fetchRemoteData(url: string): Promise<Uint8Array> {
     try {
       const response: AxiosResponse<any> = await axios.get(url, {
         responseType: "arraybuffer",
       });
-      console.log(response);
       return new Uint8Array(response.data);
     } catch (error) {
       throw new Error("Error in Utils.fetchRemoteData: ", error);
     }
   }
 
-  static async fetchRemoteDataCallback(url: string, callback: any) {
+  static async fetchRemoteDataCallback(
+    url: string,
+    callback: any,
+  ): Promise<any> {
     try {
       const response: any = await axios
         .get(url, { responseType: "arraybuffer" })
         .then((response: any) => {
           const data = new Uint8Array(response.data);
-          console.log(data);
           callback(response);
         });
       return response;
@@ -63,7 +64,7 @@ export default class Utils {
     }
   }
 
-  static string2Uint8Data(string: string) {
+  static string2Uint8Data(string: string): Uint8Array {
     const data = new Uint8Array(string.length);
     for (let i = 0; i < data.length; i++) {
       data[i] = string.charCodeAt(i) & 0xff;
@@ -71,7 +72,7 @@ export default class Utils {
     return data;
   }
 
-  static Uint8ArrayToStr(array: any) {
+  static Uint8ArrayToStr(array: any): string {
     let out, i, len, c;
     let char2, char3;
 
@@ -112,7 +113,7 @@ export default class Utils {
     return out;
   }
 
-  static checkZFT(url: string) {
+  static checkZFT(url: string): any {
     let isZFT: boolean = null;
 
     try {
@@ -129,5 +130,18 @@ export default class Utils {
     } catch (error) {
       throw new Error("Error in Utils.checkZFT: ", error);
     }
+  }
+  /**
+   * Stores data in the Emscripten filesystem.
+   * Note: FS is provided by emscripten and valid data must be in binary format encoded as Uint8Array
+   * @param {Uint8Array} data - The binary data to store.
+   * @param {string} target - The target file path in the Emscripten filesystem.
+   * @param {any} instance - The instance of the class containing the FS object.
+   * @return {void}
+   */
+  static _storeDataFile(data: Uint8Array, target: string, instance: any) {
+    instance.FS.writeFile(target, data, {
+      encoding: "binary",
+    });
   }
 }
