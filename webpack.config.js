@@ -36,10 +36,8 @@ module.exports = (env, argv) => {
       devtool,
       entry: "./src/index.ts",
       output: {
-        //path: path.resolve('dist'),
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT.js",
-        //library: "ARToolkitNFT",
         libraryTarget: "umd",
         // @see: https://github.com/webpack/webpack/issues/3929
         //libraryExport: "default",
@@ -62,19 +60,13 @@ module.exports = (env, argv) => {
       devtool,
       entry: "./src/index_simd.ts",
       output: {
-        //path: path.resolve('dist'),
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT_simd.js",
-        //library: "ARToolkitNFT",
         libraryTarget: "umd",
-        // @see: https://github.com/webpack/webpack/issues/3929
-        //libraryExport: "default",
-        // @see: https://github.com/webpack/webpack/issues/6522
         globalObject: "typeof self !== 'undefined' ? self : this",
       },
       resolve: {
         extensions: [".tsx", ".ts", ".js"],
-        // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
         fallback: {
           fs: false,
           path: false,
@@ -88,19 +80,34 @@ module.exports = (env, argv) => {
       devtool,
       entry: "./src/index_td.ts",
       output: {
-        //path: path.resolve('dist'),
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT_td.js",
-        //library: "ARToolkitNFT",
         libraryTarget: "umd",
-        // @see: https://github.com/webpack/webpack/issues/3929
-        //libraryExport: "default",
-        // @see: https://github.com/webpack/webpack/issues/6522
         globalObject: "typeof self !== 'undefined' ? self : this",
       },
       resolve: {
         extensions: [".tsx", ".ts", ".js"],
-        // @see https://stackoverflow.com/questions/59487224/webpack-throws-error-with-emscripten-cant-resolve-fs
+        fallback: {
+          fs: false,
+          path: false,
+          crypto: false,
+        },
+      },
+      module,
+    },
+    {
+      name: "node",
+      target: "node",
+      devtool,
+      entry: "./src/index_node.ts",
+      output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "ARToolkitNFT_node.js",
+        libraryTarget: "umd",
+        globalObject: "typeof self !== 'undefined' ? self : this",
+      },
+      resolve: {
+        extensions: [".tsx", ".ts", ".js"],
         fallback: {
           fs: false,
           path: false,

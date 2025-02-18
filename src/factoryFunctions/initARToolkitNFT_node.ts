@@ -1,5 +1,5 @@
 /*
- *  Utils.ts
+ *  initARToolkitNFT.ts
  *  JSARToolKitNFT
  *
  *  This file is part of JSARToolKitNFT - WebARKit.
@@ -33,41 +33,70 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import axios, { AxiosResponse } from "axios";
 
-export default class Utils {
-  static async fetchRemoteData(url: string) {
-    
-    try {
-      const response: AxiosResponse<any> = await axios.get(url, {
-        responseType: "arraybuffer",
+import Module from "../../build/artoolkitNFT_node_wasm";
+export async function initARToolkitNFT() {
+  return new Promise((resolve) => {
+    const artoolkitNFT = {
+      UNKNOWN_MARKER: -1,
+      NFT_MARKER: 0, // 0,
+    };
+
+    const FUNCTIONS = [
+      "setup",
+      "teardown",
+
+      "setupAR2",
+
+      "setLogLevel",
+      "getLogLevel",
+
+      "setDebugMode",
+      "getDebugMode",
+
+      "getProcessingImage",
+
+      "detectMarker",
+      "detectNFTMarker",
+      "getNFTMarker",
+      "getNFTData",
+
+      "setProjectionNearPlane",
+      "getProjectionNearPlane",
+
+      "setProjectionFarPlane",
+      "getProjectionFarPlane",
+
+      "setThresholdMode",
+      "getThresholdMode",
+
+      "setThreshold",
+      "getThreshold",
+
+      "setImageProcMode",
+      "getImageProcMode",
+
+      "getCameraLens",
+      "passVideoData",
+    ];
+
+    function runWhenLoaded() {
+      FUNCTIONS.forEach(function (n) {
+        //@ts-ignore
+        artoolkitNFT[n] = Module[n];
       });
-      return new Uint8Array(response.data);
-    } catch (error) {
-      throw new Error("Error in Utils.fetchRemoteData: ", error);
-    }
-  }
 
-  static async fetchRemoteDataCallback(url: string, callback: any) {
-    try {
-      const response: any = await axios
-        .get(url, { responseType: "arraybuffer" })
-        .then((response: any) => {
-          const data = new Uint8Array(response.data);
-          console.log(data);
-          callback(response);
-        });
-      return response;
-    } catch (error) {
-      throw new Error("Error in Utils.fetchRemoteDataCallback: ", error);
+      for (const m in Module) {
+        //@ts-ignore
+        if (m.match(/^AR/)) artoolkitNFT[m] = Module[m];
+      }
     }
-  }
 
-  static string2Uint8Data(string: string) {
-    const data = new Uint8Array(string.length);
-    for (let i = 0; i < data.length; i++) {
-      data[i] = string.charCodeAt(i) & 0xff;
-    }
-    return data;
-  }
+    Module.onRuntimeInitialized = async function () {
+      runWhenLoaded();
+      // need to wrap this in an object
+      // otherwise it will cause Chrome to crash
+      resolve(this);
+    };
+  });
 }
