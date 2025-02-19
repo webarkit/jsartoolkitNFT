@@ -9,12 +9,17 @@ async function init() {
     arControllerNFT._initialize()
         .then(ar => {
             //console.log(ar);
-            sharp("pinball-test2.png")
+            const image = sharp("pinball-test2.png");
+            image
+            .metadata()
+            .then(function(metadata) {
+                return image
+                //console.log(metadata)
 
-                .toBuffer()
-
+                .toBuffer();
+        })
                 .then(data => {
-                    //console.log("data from sharp Buffer: ", data.buffer)
+                    console.log("data from sharp Buffer: ", data)
                     const imageData = new Uint8Array(data.buffer);
                     //console.log(imageData)
                     //console.log(ar)

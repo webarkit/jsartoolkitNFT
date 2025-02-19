@@ -300,10 +300,14 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     for (let i = 0; i < nftMarkerCount; i++) {
       let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i);
+      console.log(nftMarkerInfo);
+
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
       if (nftMarkerInfo.found) {
+        console.log("found!!!");
+
         this.nftMarkerFound = <boolean>(<unknown>i);
         this.nftMarkerFoundTime = Date.now();
 
@@ -409,7 +413,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   //----------------------------------------------------------------------------
   on(name: string, callback: object) {
     this.em.on(name, callback);
-}
+  }
   /**
    * Add an event listener on this ARControllerNFT for the named event, calling the callback function
    * whenever that event is dispatched.
@@ -725,7 +729,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * Loads an NFT marker from the given URL or data string
    * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
    */
-  async loadNFTMarker(
+  /*async loadNFTMarker(
     urlOrData: string,
     onSuccess: (ids: number) => void,
     onError: (err: number) => void,
@@ -739,13 +743,30 @@ export class ARControllerNFT implements AbstractARControllerNFT {
       onError,
     );
     return nft;
-  }
+  }*/
+  //@ts-ignore
+  loadNFTMarker(markerURL: string, onSuccess: (ids: number) => void, onError: (err: any) => void) {
+    if (markerURL) {
+      //@ts-ignore
+      this.loadNFTMarkers([markerURL], function (ids) {
+        onSuccess(ids[0]);
+      }, onError);
+    } else {
+      if (onError) {
+        onError("Marker URL needs to be defined and not equal empty string!");
+      }
+      else {
+        console.error("Marker URL needs to be defined and not equal empty string!");
+      }
+    }
+
+  };
 
   /**
    * Loads an array of NFT markers from the given URLs or data string
    * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
    */
-  async loadNFTMarkers(
+  /*async loadNFTMarkers(
     urlOrData: Array<string>,
     onSuccess: (ids: number[]) => void,
     onError: (err: number) => void,
@@ -759,7 +780,18 @@ export class ARControllerNFT implements AbstractARControllerNFT {
       onError,
     );
     return nft;
-  }
+  }*/
+  //@ts-ignore
+  loadNFTMarkers(markerURLs: any, onSuccess: any, onError: any) {
+    const self = this;
+    //@ts-ignore
+    this.artoolkitNFT.addNFTMarkers(this.id, markerURLs, function (ids) {
+      //@ts-ignore
+      self.nftMarkerCount += ids.length;
+      onSuccess(ids);
+      //@ts-ignore
+    }, onError);
+  };
 
   /**
    * Set the image processing mode.
@@ -821,8 +853,9 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   private async _initialize() {
     // initialize the toolkit
+    //@ts-ignore
     this.artoolkitNFT = await new ARToolkitNFT().init();
-    
+
 
     this.FS = this.artoolkitNFT.FS;
     this.StringList = this.artoolkitNFT.StringList;
@@ -886,12 +919,21 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     // The Uint8ClampedArray typed array represents an array of 8-bit unsigned
     // integers clamped to 0-255
     // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray
-    let data: Uint8ClampedArray;
+    //let data: Uint8ClampedArray;
 
-    if (sourceImage.data) {
+    /*if (sourceImage.data) {
       // directly use source image
       data = sourceImage.data;
-    }
+    }*/
+
+    console.log('sourceImage: ', sourceImage);
+
+
+    const data = new Uint8Array(this.videoSize * 4);
+    //@ts-ignore
+    data.set(sourceImage);
+    //data = sourceImage;
+
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
     if (this.videoLuma) {
@@ -900,10 +942,15 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
         // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
         // see (ARToolKitJS.cpp L: 43)
+        console.log('videoSize: ', this.videoSize);
+
         for (let p = 0; p < this.videoSize; p++) {
           let r = data[q + 0],
             g = data[q + 1],
             b = data[q + 2];
+          if (r > 255) {
+            console.error("not in range");
+          }
           // @see https://stackoverflow.com/a/596241/5843642
           this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
           q += 4;
@@ -914,7 +961,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     if (this.videoLuma) {
-      this.artoolkitNFT.passVideoData(data, this.videoLuma);
+      //@ts-ignore
+      console.log('videoluma data: ', this.videoLuma);
+      //@ts-ignore
+      this.artoolkitNFT.passVideoData(sourceImage, this.videoLuma);
       return true;
     }
 

@@ -62,6 +62,7 @@
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
     "test-browser": "karma start --browsers Chrome,Firefox,ChromeHeadless,FirefoxHeadless",
     "test": "karma start",
+    "test-node-example": "cd examples/node && node example_dist.js",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",
@@ -69,8 +70,9 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "sharp": "0.33.5",
     "@babel/runtime": "7.26.9",
-    "axios": "1.7.9"
+    "axios": "1.7.9",
+    "canvas": "^3.1.0",
+    "sharp": "0.33.5"
   }
 }

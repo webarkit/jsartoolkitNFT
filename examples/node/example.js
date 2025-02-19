@@ -7,7 +7,8 @@ async function init() {
         .then(ar => {
             //console.log(ar);
             sharp("pinball-test2.png")
-
+                //.resize(1920, 1021, 'fill')
+                .raw()
                 .toBuffer()
 
                 .then(data => {

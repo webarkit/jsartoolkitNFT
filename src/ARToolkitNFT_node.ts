@@ -1,5 +1,5 @@
 /*
- *  ARToolkitNFT.ts
+ *  ARToolkitNFT_node.ts
  *  JSARToolKitNFT
  *
  *  This file is part of JSARToolKitNFT - WebARKit.
@@ -306,7 +306,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
   ): void {
-    this.instance.passVideoData(videoFrame, videoLuma);
+    this.instance.passVideoData(this.id, videoFrame, videoLuma);
   }
 
   // ---------------------------------------------------------------------------
@@ -360,7 +360,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
    * @param {function} callback the callback to retrieve the ids.
    * @param {function} onError2 the error callback.
    */
-  public addNFTMarkers(
+  /*public addNFTMarkers(
     urls: Array<string | Array<string>>,
     callback: (filename: number[]) => void,
     onError2: (errorNumber: number) => void,
@@ -439,7 +439,52 @@ export class ARToolkitNFT implements IARToolkitNFT {
     });
 
     return Ids;
-  }
+  }*/
+
+  public addNFTMarkers(arId, urls, callback, onError) {
+    const prefixes = [];
+    let pending = urls.length * 3;
+    const onSuccess = (filename) => {
+        pending -= 1;
+        if (pending === 0) {
+            const vec = new this.StringList();
+            const markerIds = [];
+            for (let i = 0; i < prefixes.length; i++) {
+                vec.push_back(prefixes[i]);
+            }
+            var ret = this.instance._addNFTMarkers(arId, vec);
+            for (let i = 0; i < ret.size(); i++) {
+                markerIds.push(ret.get(i));
+            }
+
+            console.log("add nft marker ids: ", markerIds);
+            if (callback) callback(markerIds);
+        }
+    };
+    var onError = (filename, errorNumber) => {
+        console.log("failed to load: ", filename);
+        onError(errorNumber);
+    }
+
+    for (let i = 0; i < urls.length; i++) {
+        const url = urls[i];
+
+        const prefix = '/temp/' + url;
+        prefixes.push(prefix);
+
+        const filename1 = url + '.fset';
+        const filename2 = url + '.iset';
+        const filename3 = url + '.fset3';
+
+        this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
+        this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
+        this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
+        //this.marker_count += 1;
+    }
+}
+
+
+
 
   // ---------------------------------------------------------------------------
 
@@ -463,7 +508,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
    * @param callback callback  to get the binary data.
    * @param errorCallback the error callback.
    */
-  private ajax(
+  /*private ajax(
     url: string,
     target: string,
     callback: (byteArray: Uint8Array) => void,
@@ -492,5 +537,8 @@ export class ARToolkitNFT implements IARToolkitNFT {
     };
 
     oReq.send();
+  }*/
+    private ajax(url, target, callback, errorCallback) {
+      callback("/temp/" + target);
   }
 }

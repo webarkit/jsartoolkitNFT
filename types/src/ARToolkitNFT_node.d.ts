@@ -71,7 +71,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     getCameraLens(): any;
     passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array): void;
     loadCamera(url: string): Promise<any>;
-    addNFTMarkers(urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
+    addNFTMarkers(arId: any, urls: any, callback: any, onError: any): void;
     private _storeDataFile;
     private ajax;
 }
