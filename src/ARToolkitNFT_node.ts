@@ -219,36 +219,36 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.setup(width, height, cameraId);
   }
 
-  public teardown(): void {
-    this.instance.teardown();
+  public teardown(id: number): void {
+    this.instance.teardown(id);
   }
 
-  public setupAR2(): void {
-    this.instance.setupAR2();
+  public setupAR2(id: number): void {
+    this.instance.setupAR2(id);
   }
 
-  public setDebugMode(mode: boolean): number {
-    return this.instance.setDebugMode(mode);
+  public setDebugMode(id: number, mode: boolean): number {
+    return this.instance.setDebugMode(id, mode);
   }
 
-  public getDebugMode(): boolean {
-    return this.instance.getDebugMode();
+  public getDebugMode(id: number): boolean {
+    return this.instance.getDebugMode(id);
   }
 
-  public getProcessingImage(): number {
-    return this.instance.getProcessingImage();
+  public getProcessingImage(id: number): number {
+    return this.instance.getProcessingImage(id);
   }
 
-  public detectNFTMarker(): number {
-    return this.instance.detectNFTMarker();
+  public detectNFTMarker(id: number): number {
+    return this.instance.detectNFTMarker(id);
   }
 
-  public getNFTMarker(markerIndex: number): INFTMarkerInfo {
-    return this.instance.getNFTMarker(markerIndex);
+  public getNFTMarker(id: number, markerIndex: number): INFTMarkerInfo {
+    return this.instance.getNFTMarker(id, markerIndex);
   }
 
-  public getNFTData(index: number): object {
-    return this.instance.getNFTData(index);
+  public getNFTData(id: number, index: number): object {
+    return this.instance.getNFTData(id, index);
   }
 
   public setLogLevel(mode: boolean): number {
@@ -258,55 +258,56 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getLogLevel();
   }
 
-  public setProjectionNearPlane(value: number): void {
-    this.instance.setProjectionNearPlane(value);
+  public setProjectionNearPlane(id: number, value: number): void {
+    this.instance.setProjectionNearPlane(id, value);
   }
 
-  public getProjectionNearPlane(): number {
-    return this.instance.getProjectionNearPlane();
+  public getProjectionNearPlane(id: number): number {
+    return this.instance.getProjectionNearPlane(id);
   }
 
-  public setProjectionFarPlane(value: number): void {
-    this.instance.setProjectionFarPlane(value);
+  public setProjectionFarPlane(id: number, value: number): void {
+    this.instance.setProjectionFarPlane(id, value);
   }
 
-  public getProjectionFarPlane(): number {
-    return this.instance.getProjectionFarPlane();
+  public getProjectionFarPlane(id: number): number {
+    return this.instance.getProjectionFarPlane(id);
   }
 
-  public setThresholdMode(mode: number): number {
-    return this.instance.setThresholdMode(mode);
+  public setThresholdMode(id: number, mode: number): number {
+    return this.instance.setThresholdMode(id, mode);
   }
 
-  public getThresholdMode(): number {
-    return this.instance.getThresholdMode();
+  public getThresholdMode(id): number {
+    return this.instance.getThresholdMode(id);
   }
 
-  public setThreshold(threshold: number): number {
-    return this.instance.setThreshold(threshold);
+  public setThreshold(id: number, threshold: number): number {
+    return this.instance.setThreshold(id, threshold);
   }
 
-  public getThreshold(): number {
-    return this.instance.getThreshold();
+  public getThreshold(id: number): number {
+    return this.instance.getThreshold(id);
   }
 
-  public setImageProcMode(mode: number): number {
-    return this.instance.setImageProcMode(mode);
+  public setImageProcMode(id: number, mode: number): number {
+    return this.instance.setImageProcMode(id, mode);
   }
 
-  public getImageProcMode(): number {
-    return this.instance.getImageProcMode();
+  public getImageProcMode(id: number): number {
+    return this.instance.getImageProcMode(id);
   }
 
-  public getCameraLens(): any {
-    return this.instance.getCameraLens();
+  public getCameraLens(id: number): any {
+    return this.instance.getCameraLens(id);
   }
 
   public passVideoData(
+    id: number,
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
   ): void {
-    this.instance.passVideoData(this.id, videoFrame, videoLuma);
+    this.instance.passVideoData(id, videoFrame, videoLuma);
   }
 
   // ---------------------------------------------------------------------------

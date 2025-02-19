@@ -38,7 +38,7 @@ import {
   IImageObj,
   INFTMarker,
 } from "./abstractions/CommonInterfaces";
-import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
+import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
 import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 const emitter = require('events').EventEmitter;
@@ -51,7 +51,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private _cameraParam: string;
   private cameraId: number;
 
-  private artoolkitNFT: IARToolkitNFT;
+  private artoolkitNFT: IARToolkitNFT_node;
   private FS: any;
   private StringList: any;
 
@@ -299,7 +299,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     const MARKER_LOST_TIME = 200;
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i);
+      let nftMarkerInfo: IARToolkitNFT_node["NFTMarkerInfo"] = this.getNFTMarker(i);
       console.log(nftMarkerInfo);
 
 
@@ -353,7 +353,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number}
    */
   detectNFTMarker(): number {
-    return this.artoolkitNFT.detectNFTMarker();
+    return this.artoolkitNFT.detectNFTMarker(this.id);
   }
 
   /**
@@ -396,7 +396,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {Object} The NFTMarkerInfo struct.
    */
   getNFTMarker(markerIndex: number): INFTMarkerInfo {
-    return this.artoolkitNFT.getNFTMarker(markerIndex);
+    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex);
   }
 
   /**
@@ -406,7 +406,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @returns {object}
    */
   getNFTData(index: number) {
-    return this.artoolkitNFT.getNFTData(index);
+    return this.artoolkitNFT.getNFTData(this.id, index);
   }
 
   // event handling
@@ -595,7 +595,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @see getDebugMode()
    */
   setDebugMode(mode: boolean): number {
-    return this.artoolkitNFT.setDebugMode(mode);
+    return this.artoolkitNFT.setDebugMode(this.id, mode);
   }
 
   /**
@@ -604,7 +604,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @see  setDebugMode()
    */
   getDebugMode(): boolean {
-    return this.artoolkitNFT.getDebugMode();
+    return this.artoolkitNFT.getDebugMode(this.id);
   }
 
   /**
@@ -612,7 +612,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} HEAP offset to the debug processing image.
    */
   getProcessingImage(): number {
-    return this.artoolkitNFT.getProcessingImage();
+    return this.artoolkitNFT.getProcessingImage(this.id);
   }
 
   /**
@@ -637,7 +637,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} 0 (void)
    */
   setProjectionNearPlane(value: number): void {
-    return this.artoolkitNFT.setProjectionNearPlane(value);
+    return this.artoolkitNFT.setProjectionNearPlane(this.id, value);
   }
 
   /**
@@ -645,7 +645,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} the value of the near plane.
    */
   getProjectionNearPlane(): number {
-    return this.artoolkitNFT.getProjectionNearPlane();
+    return this.artoolkitNFT.getProjectionNearPlane(this.id);
   }
 
   /**
@@ -654,7 +654,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} 0 (void)
    */
   setProjectionFarPlane(value: number): void {
-    return this.artoolkitNFT.setProjectionFarPlane(value);
+    return this.artoolkitNFT.setProjectionFarPlane(this.id, value);
   }
 
   /**
@@ -662,7 +662,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} the value of the far plane.
    */
   getProjectionFarPlane(): number {
-    return this.artoolkitNFT.getProjectionFarPlane();
+    return this.artoolkitNFT.getProjectionFarPlane(this.id);
   }
 
   /**
@@ -675,7 +675,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
    */
   setThresholdMode(mode: number): number {
-    return this.artoolkitNFT.setThresholdMode(mode);
+    return this.artoolkitNFT.setThresholdMode(this.id, mode);
   }
 
   /**
@@ -684,7 +684,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @see getVideoThresholdMode()
    */
   getThresholdMode(): number {
-    return this.artoolkitNFT.getThresholdMode();
+    return this.artoolkitNFT.getThresholdMode(this.id);
   }
 
   /**
@@ -707,7 +707,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} threshold An integer in the range [0,255] (inclusive).
    */
   setThreshold(threshold: number): number {
-    return this.artoolkitNFT.setThreshold(threshold);
+    return this.artoolkitNFT.setThreshold(this.id, threshold);
   }
 
   /**
@@ -722,7 +722,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} The current threshold value.
    */
   getThreshold(): number {
-    return this.artoolkitNFT.getThreshold();
+    return this.artoolkitNFT.getThreshold(this.id);
   }
 
   /**
@@ -747,8 +747,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   //@ts-ignore
   loadNFTMarker(markerURL: string, onSuccess: (ids: number) => void, onError: (err: any) => void) {
     if (markerURL) {
-      //@ts-ignore
-      this.loadNFTMarkers([markerURL], function (ids) {
+      
+      this.loadNFTMarkers([markerURL], function (ids: number[]) {
         onSuccess(ids[0]);
       }, onError);
     } else {
@@ -784,12 +784,12 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   //@ts-ignore
   loadNFTMarkers(markerURLs: any, onSuccess: any, onError: any) {
     const self = this;
-    //@ts-ignore
+    
     this.artoolkitNFT.addNFTMarkers(this.id, markerURLs, function (ids) {
-      //@ts-ignore
+      
       self.nftMarkerCount += ids.length;
       onSuccess(ids);
-      //@ts-ignore
+      
     }, onError);
   };
 
@@ -813,7 +813,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
    */
   setImageProcMode(mode: number): number {
-    return this.artoolkitNFT.setImageProcMode(mode);
+    return this.artoolkitNFT.setImageProcMode(this.id, mode);
   }
 
   /**
@@ -822,7 +822,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} The current image processing mode.
    */
   getImageProcMode(): number {
-    return this.artoolkitNFT.getImageProcMode();
+    return this.artoolkitNFT.getImageProcMode(this.id);
   }
 
   /**
@@ -853,7 +853,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   private async _initialize() {
     // initialize the toolkit
-    //@ts-ignore
+    
     this.artoolkitNFT = await new ARToolkitNFT().init();
 
 
@@ -863,7 +863,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     console.log("[ARControllerNFT]", "ARToolkitNFT initialized");
 
     // load the camera
-    //@ts-ignore
+    
     this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
     console.log(
       "[ARControllerNFT]",
@@ -880,8 +880,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     this.framesize = this._width * this._height;
 
     this.videoLuma = new Uint8Array(this.framesize);
-
-    this.camera_mat = this.artoolkitNFT.getCameraLens();
+    
+    this.camera_mat = this.artoolkitNFT.getCameraLens(this.id);
 
     this.setProjectionNearPlane(0.1);
     this.setProjectionFarPlane(1000);
@@ -901,7 +901,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} 0 (void)
    */
   private _initNFT() {
-    this.artoolkitNFT.setupAR2();
+    this.artoolkitNFT.setupAR2(this.id);
   }
 
   /**
@@ -932,8 +932,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     const data = new Uint8Array(this.videoSize * 4);
     //@ts-ignore
     data.set(sourceImage);
-    //data = sourceImage;
-
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
     if (this.videoLuma) {
@@ -961,10 +959,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     if (this.videoLuma) {
-      //@ts-ignore
+      
       console.log('videoluma data: ', this.videoLuma);
       //@ts-ignore
-      this.artoolkitNFT.passVideoData(sourceImage, this.videoLuma);
+      this.artoolkitNFT.passVideoData(this.id, sourceImage, this.videoLuma);
       return true;
     }
 
