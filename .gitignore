@@ -4,3 +4,5 @@ build/*.a
 node_modules
 docs/*
 emscripten/build
+python-bindings/build
+python-bindings/*.so

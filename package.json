@@ -61,6 +61,7 @@
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
     "test-browser": "karma start --browsers Chrome,Firefox,ChromeHeadless,FirefoxHeadless",
+    "build-python-bindings": "cd python-bindings && python setup.py build_ext --inplace",
     "test": "karma start",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
