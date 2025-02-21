@@ -18,6 +18,13 @@ def download_and_extract(url, dest):
     shutil.move(f'jpeg-{LIBJPEG_VERSION}', dest)
     os.remove('libjpeg.tar.gz')
 
+def build_libjpeg():
+    build_dir = os.path.join(LIBJPEG_DIR, 'build')
+    os.makedirs(build_dir, exist_ok=True)
+    subprocess.run(['./configure', '--prefix=' + build_dir], cwd=LIBJPEG_DIR, check=True)
+    subprocess.run(['make'], cwd=LIBJPEG_DIR, check=True)
+    subprocess.run(['make', 'install'], cwd=LIBJPEG_DIR, check=True)
+
 def generate_config_h():
     with open(CONFIG_H_IN, 'r') as file:
         config_h_content = file.read()
@@ -30,6 +37,9 @@ def generate_config_h():
 # Check if the libjpeg directory exists, if not, download and extract it
 if not os.path.exists(LIBJPEG_DIR):
     download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
+
+# Build libjpeg
+build_libjpeg()
 
 # Generate config.h from config.h.in
 generate_config_h()
@@ -69,13 +79,13 @@ ext_modules = [
         ],
         include_dirs=[
             pybind11.get_include(),
-            LIBJPEG_DIR,  # Include the downloaded libjpeg headers
+            os.path.join(LIBJPEG_DIR, 'build', 'include'),  # Include the built libjpeg headers
             '../emscripten',
             '../emscripten/WebARKitLib/include',
             '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher'
         ],
         libraries=['jpeg', 'z', 'm'],
-        library_dirs=[LIBJPEG_DIR],  # Link against the downloaded libjpeg library
+        library_dirs=[os.path.join(LIBJPEG_DIR, 'build', 'lib')],  # Link against the built libjpeg library
         define_macros=[('AR_DEFAULT_PIXEL_FORMAT', 'AR_PIXEL_FORMAT_RGBA')],  # Define the required macro
         language='c++'
     ),
