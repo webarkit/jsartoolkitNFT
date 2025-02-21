@@ -1,0 +1,33 @@
+name: Build and Test Python Bindings
+
+on:
+    - push
+    - pull_request
+
+jobs:
+    build:
+        runs-on: ubuntu-24.04
+
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+
+        - name: Set up Python
+          uses: actions/setup-python@v2
+          with:
+              python-version: '3.8'
+
+        - name: Install dependencies
+          run: |
+              python -m pip install --upgrade pip
+              pip install setuptools wheel pybind11
+
+        - name: Build the Python bindings
+          run: |
+              cd python-bindings
+              python setup.py build_ext --inplace
+
+        - name: Test the build
+          run: |
+              cd python-bindings
+              python test.py
