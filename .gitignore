@@ -6,3 +6,4 @@ docs/*
 emscripten/build
 python-bindings/build
 python-bindings/*.so
+python-bindings/deps/libjpeg

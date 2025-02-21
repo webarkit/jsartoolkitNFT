@@ -1,19 +1,36 @@
 from glob import glob
 from setuptools import setup, Extension
-import pybind11
 from pybind11.setup_helpers import Pybind11Extension, build_ext
+import pybind11
+import os
+import shutil
+import subprocess
+
+LIBJPEG_VERSION = '9c'
+LIBJPEG_URL = f'http://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
+LIBJPEG_DIR = 'deps/libjpeg'
+
+def download_and_extract(url, dest):
+    subprocess.run(['curl', '-L', url, '-o', 'libjpeg.tar.gz'], check=True)
+    subprocess.run(['tar', 'xzf', 'libjpeg.tar.gz'], check=True)
+    shutil.move(f'jpeg-{LIBJPEG_VERSION}', dest)
+    os.remove('libjpeg.tar.gz')
+
+# Check if the libjpeg directory exists, if not, download and extract it
+if not os.path.exists(LIBJPEG_DIR):
+    download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
 
 # Sort the list of files
-sorted_ar_files=sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR/*.c'))
-sorted_ar2_files=sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR2/*.c'))
-sorted_arutil_files=sorted(glob('../emscripten/WebARKitLib/lib/SRC/ARUtil/*.c'))
+sorted_ar_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR/*.c'))
+sorted_ar2_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR2/*.c'))
+sorted_arutil_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/ARUtil/*.c'))
 sorted_arLabeling_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR/arLabelingSub/*.c'))
 sorted_aricp_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/ARICP/*.c'))
 
 ext_modules = [
-    Extension(
+    Pybind11Extension(
         'jsartoolkitNFT',
-        sources=sorted_ar_files+sorted_ar2_files+sorted_arutil_files+sorted_arLabeling_files+sorted_aricp_files+[
+        sources=sorted_ar_files + sorted_ar2_files + sorted_arutil_files + sorted_arLabeling_files + sorted_aricp_files + [
             'ARToolKitNFT_py.cpp',
             '../emscripten/trackingMod.c',
             '../emscripten/trackingMod2d.c',
@@ -38,12 +55,13 @@ ext_modules = [
         ],
         include_dirs=[
             pybind11.get_include(),
-            'deps',
-            '../emscripten', 
+            LIBJPEG_DIR,  # Include the downloaded libjpeg headers
+            '../emscripten',
             '../emscripten/WebARKitLib/include',
             '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher'
         ],
-        libraries=['jpeg','z'],
+        libraries=['jpeg', 'z', 'm'],
+        library_dirs=[LIBJPEG_DIR],  # Link against the downloaded libjpeg library
         language='c++'
     ),
 ]
