@@ -14,7 +14,7 @@ ARToolKitNFT::ARToolKitNFT()
       nearPlane(0.0001), farPlane(1000.0),
       patt_id(0) // Running pattern marker id
 {
-  ARLOGi("init ARToolKitNFT constructor...");
+  ARLOGi("init ARToolKitNFT constructor...\n");
 }
 
 ARToolKitNFT::~ARToolKitNFT() {
@@ -175,7 +175,7 @@ int ARToolKitNFT::getKpmImageHeight(KpmHandle *kpmHandle) {
 int ARToolKitNFT::setupAR2() {
   if ((this->ar2Handle = ar2CreateHandleMod(this->paramLT, this->pixFormat)) ==
       NULL) {
-    ARLOGe("Error: ar2CreateHandle.");
+    ARLOGe("Error: ar2CreateHandle.\n");
     kpmDeleteHandle(&this->kpmHandle);
   }
   // Settings for devices with single-core CPUs.
@@ -256,7 +256,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
 
   if ((this->paramLT = arParamLTCreate(&(this->param),
                                        AR_PARAM_LT_DEFAULT_OFFSET)) == NULL) {
-    ARLOGe("setCamera(): Error: arParamLTCreate.");
+    ARLOGe("setCamera(): Error: arParamLTCreate.\n");
     return -1;
   }
 
@@ -265,7 +265,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
 
   // setup camera
   if ((this->arhandle = arCreateHandle(this->paramLT)) == NULL) {
-    ARLOGe("setCamera(): Error: arCreateHandle.");
+    ARLOGe("setCamera(): Error: arCreateHandle.\n");
     return -1;
   }
   // AR_DEFAULT_PIXEL_FORMAT
@@ -273,7 +273,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
 
   this->ar3DHandle = ar3DCreateHandle(&(this->param));
   if (this->ar3DHandle == NULL) {
-    ARLOGe("setCamera(): Error creating 3D handle");
+    ARLOGe("setCamera(): Error creating 3D handle\n");
     return -1;
   }
 
@@ -288,7 +288,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
 int ARToolKitNFT::loadCamera(std::string cparam_name) {
   ARParam param;
   if (arParamLoad(cparam_name.c_str(), 1, &param) < 0) {
-    ARLOGe("loadCamera(): Error loading parameter file %s for camera.",
+    ARLOGe("loadCamera(): Error loading parameter file %s for camera.\n",
                  cparam_name.c_str());
     return -1;
   }
@@ -326,15 +326,15 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
   refDataSet = NULL;
 
   if (datasetPathnames.size() >= PAGES_MAX) {
-    ARLOGe("Error exceed maximum pages.");
+    ARLOGe("Error exceed maximum pages.\n");
     exit(-1);
   }
 
   std::vector<int> markerIds = {};
 
   for (int i = 0; i < datasetPathnames.size(); i++) {
-    ARLOGi("datasetPathnames size: %i", datasetPathnames.size());
-    ARLOGi("add NFT marker-> '%s'", datasetPathnames[i].c_str());
+    ARLOGi("datasetPathnames size: %i\n", datasetPathnames.size());
+    ARLOGi("add NFT marker-> '%s'\n", datasetPathnames[i].c_str());
 
     const char *datasetPathname = datasetPathnames[i].c_str();
     int pageNo = i;
@@ -344,27 +344,27 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
     KpmRefDataSet *refDataSet2;
     ARLOGi("Reading %s.fset3", datasetPathname);
     if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0) {
-      ARLOGe("Error reading KPM data from %s.fset3", datasetPathname);
+      ARLOGe("Error reading KPM data from %s.fset3\n", datasetPathname);
       return {};
     }
     ARLOGi("Assigned page no. %d.", pageNo);
     if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages,
                                     pageNo) < 0) {
-      ARLOGe("Error: kpmChangePageNoOfRefDataSet");
+      ARLOGe("Error: kpmChangePageNoOfRefDataSe\nt");
       return {};
     }
     if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0) {
-      ARLOGe("Error: kpmMergeRefDataSet");
+      ARLOGe("Error: kpmMergeRefDataSet\n");
       return {};
     }
     ARLOGi("Done.");
 
     // Load AR2 data.
-    ARLOGi("Reading %s.fset", datasetPathname);
+    ARLOGi("Reading %s.fset\n", datasetPathname);
 
     if ((this->surfaceSet[i] =
       ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL) {
-      ARLOGe("Error reading data from %s.fset", datasetPathname);
+      ARLOGe("Error reading data from %s.fset\n", datasetPathname);
       return {};
     }
 
@@ -376,10 +376,10 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
         this->surfaceSet[i]->surface[0].imageSet->scale[0]->ysize;
     this->nft.dpi_NFT = this->surfaceSet[i]->surface[0].imageSet->scale[0]->dpi;
 
-    ARLOGi("NFT num. of ImageSet: %i", numIset);
-    ARLOGi("NFT marker width: %i", this->nft.width_NFT);
-    ARLOGi("NFT marker height: %i", this->nft.height_NFT);
-    ARLOGi("NFT marker dpi: %i", this->nft.dpi_NFT);
+    ARLOGi("NFT num. of ImageSet: %i\n", numIset);
+    ARLOGi("NFT marker width: %i\n", this->nft.width_NFT);
+    ARLOGi("NFT marker height: %i\n", this->nft.height_NFT);
+    ARLOGi("NFT marker dpi: %i\n", this->nft.dpi_NFT);
 
     this->nft.id_NFT = i;
     this->nft.width_NFT = this->nft.width_NFT;
@@ -387,17 +387,17 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
     this->nft.dpi_NFT = this->nft.dpi_NFT;
     this->nftMarkers.push_back(this->nft);
 
-    ARLOGi("Done.");
+    ARLOGi("Done.\n");
     surfaceSetCount++;
   }
 
   if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
-    ARLOGe("Error: kpmSetRefDataSet");
+    ARLOGe("Error: kpmSetRefDataSet\n");
     return {};
   }
   kpmDeleteRefDataSet(&refDataSet);
 
-  ARLOGi("Loading of NFT data complete.");
+  ARLOGi("Loading of NFT data complete.\n");
 
   this->surfaceSetCount += markerIds.size();
 
@@ -431,7 +431,7 @@ void ARToolKitNFT::setThreshold(int threshold) {
   if (threshold < 0 || threshold > 255)
     return;
   if (arSetLabelingThresh(this->arhandle, threshold) == 0) {
-    ARLOGi("Threshold set to %d", threshold);
+    ARLOGi("Threshold set to %d\n", threshold);
   };
   // default 100
   // arSetLabelingThreshMode
@@ -452,7 +452,7 @@ void ARToolKitNFT::setThresholdMode(int mode) {
   AR_LABELING_THRESH_MODE thresholdMode = (AR_LABELING_THRESH_MODE)mode;
 
   if (arSetLabelingThreshMode(this->arhandle, thresholdMode) == 0) {
-    ARLOGi("Threshold mode set to %d", (int)thresholdMode);
+    ARLOGi("Threshold mode set to %d\n", (int)thresholdMode);
   }
 }
 
@@ -468,7 +468,7 @@ int ARToolKitNFT::getThresholdMode() {
 
 int ARToolKitNFT::setDebugMode(int enable) {
   arSetDebugMode(this->arhandle, enable ? AR_DEBUG_ENABLE : AR_DEBUG_DISABLE);
-  ARLOGi("Debug mode set to %s", enable ? "on." : "off.");
+  ARLOGi("Debug mode set to %s\n", enable ? "on." : "off.");
 
   return enable;
 }
@@ -489,7 +489,7 @@ void ARToolKitNFT::setImageProcMode(int mode) {
 
   int imageProcMode = mode;
   if (arSetImageProcMode(this->arhandle, mode) == 0) {
-    ARLOGi("Image proc. mode set to %d.", imageProcMode);
+    ARLOGi("Image proc. mode set to %d.\n", imageProcMode);
   }
 }
 
@@ -515,7 +515,7 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
 
   setCamera(id, cameraID);
 
-  ARLOGi("Allocated videoFrameSize %d", this->videoFrameSize);
+  ARLOGi("Allocated videoFrameSize %d\n", this->videoFrameSize);
 
   return this->id;
 }
