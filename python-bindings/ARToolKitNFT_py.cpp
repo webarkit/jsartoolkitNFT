@@ -521,6 +521,21 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
 }
 
 PYBIND11_MODULE(jsartoolkitNFT, m) {
+  py::class_<nftMarker>(m, "nftMarker")
+  .def(py::init<>())
+  .def_readwrite("id_NFT", &nftMarker::id_NFT)
+  .def_readwrite("width_NFT", &nftMarker::width_NFT)
+  .def_readwrite("height_NFT", &nftMarker::height_NFT)
+  .def_readwrite("dpi_NFT", &nftMarker::dpi_NFT)
+  .def("__repr__",
+    [](const nftMarker &n) {
+        return "<nftMarker id_NFT=" + std::to_string(n.id_NFT) +
+               ", width_NFT=" + std::to_string(n.width_NFT) +
+               ", height_NFT=" + std::to_string(n.height_NFT) +
+               ", dpi_NFT=" + std::to_string(n.dpi_NFT) + ">";
+    });
+
+
   py::class_<ARToolKitNFT>(m, "ARToolKitNFT")
       .def(py::init<>())
       .def("passVideoData", &ARToolKitNFT::passVideoData)
