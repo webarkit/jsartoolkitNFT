@@ -9,6 +9,8 @@ import subprocess
 LIBJPEG_VERSION = '9c'
 LIBJPEG_URL = f'http://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
 LIBJPEG_DIR = 'deps/libjpeg'
+CONFIG_H_IN = os.path.join(os.path.dirname(__file__), '../emscripten/WebARKitLib/include/AR/config.h.in')
+CONFIG_H = os.path.join(os.path.dirname(__file__), '../emscripten/WebARKitLib/include/AR/config.h')
 
 def download_and_extract(url, dest):
     subprocess.run(['curl', '-L', url, '-o', 'libjpeg.tar.gz'], check=True)
@@ -16,9 +18,21 @@ def download_and_extract(url, dest):
     shutil.move(f'jpeg-{LIBJPEG_VERSION}', dest)
     os.remove('libjpeg.tar.gz')
 
+def generate_config_h():
+    with open(CONFIG_H_IN, 'r') as file:
+        config_h_content = file.read()
+    
+    config_h_content = config_h_content.replace('#undef  ARVIDEO_INPUT_DEFAULT_DUMMY', '#define  ARVIDEO_INPUT_DEFAULT_DUMMY')
+    
+    with open(CONFIG_H, 'w') as file:
+        file.write(config_h_content)
+
 # Check if the libjpeg directory exists, if not, download and extract it
 if not os.path.exists(LIBJPEG_DIR):
     download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
+
+# Generate config.h from config.h.in
+generate_config_h()
 
 # Sort the list of files
 sorted_ar_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR/*.c'))
@@ -62,6 +76,7 @@ ext_modules = [
         ],
         libraries=['jpeg', 'z', 'm'],
         library_dirs=[LIBJPEG_DIR],  # Link against the downloaded libjpeg library
+        define_macros=[('AR_DEFAULT_PIXEL_FORMAT', 'AR_PIXEL_FORMAT_RGBA')],  # Define the required macro
         language='c++'
     ),
 ]
