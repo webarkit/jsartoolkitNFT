@@ -342,22 +342,22 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
 
     // Load KPM data.
     KpmRefDataSet *refDataSet2;
-    ARLOGi("Reading %s.fset3", datasetPathname);
+    ARLOGi("Reading %s.fset3\n", datasetPathname);
     if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0) {
       ARLOGe("Error reading KPM data from %s.fset3\n", datasetPathname);
       return {};
     }
-    ARLOGi("Assigned page no. %d.", pageNo);
+    ARLOGi("Assigned page no. %d.\n", pageNo);
     if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages,
                                     pageNo) < 0) {
-      ARLOGe("Error: kpmChangePageNoOfRefDataSe\nt");
+      ARLOGe("Error: kpmChangePageNoOfRefDataSet\n");
       return {};
     }
     if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0) {
       ARLOGe("Error: kpmMergeRefDataSet\n");
       return {};
     }
-    ARLOGi("Done.");
+    ARLOGi("Done.\n");
 
     // Load AR2 data.
     ARLOGi("Reading %s.fset\n", datasetPathname);
