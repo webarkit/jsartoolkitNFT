@@ -19,7 +19,7 @@ def download_and_extract(url, dest):
     os.remove('libjpeg.tar.gz')
 
 def build_libjpeg():
-    build_dir = os.path.join(LIBJPEG_DIR, 'build')
+    build_dir = os.path.abspath(os.path.join(LIBJPEG_DIR, 'build'))
     os.makedirs(build_dir, exist_ok=True)
     subprocess.run(['./configure', '--prefix=' + build_dir], cwd=LIBJPEG_DIR, check=True)
     subprocess.run(['make'], cwd=LIBJPEG_DIR, check=True)
