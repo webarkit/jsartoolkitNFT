@@ -61,7 +61,8 @@ jobs:
       run: .\vcpkg\vcpkg install libjpeg-turbo
 
     - name: Add vcpkg to path
-      run: echo "::add-path::$(pwd)\vcpkg\installed\x64-windows\bin"
+      shell: bash
+      run: echo "vcpkg/installed/x64-windows/bin" >> $GITHUB_PATH
 
     - name: Install Python dependencies
       run: |
