@@ -5,6 +5,7 @@ import pybind11
 import os
 import shutil
 import subprocess
+import sys
 
 LIBJPEG_VERSION = '9c'
 LIBJPEG_URL = f'http://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
@@ -19,6 +20,9 @@ def download_and_extract(url, dest):
     os.remove('libjpeg.tar.gz')
 
 def build_libjpeg():
+    if sys.platform == 'win32':
+        # On Windows, use vcpkg installed libjpeg-turbo
+        return
     build_dir = os.path.abspath(os.path.join(LIBJPEG_DIR, 'build'))
     os.makedirs(build_dir, exist_ok=True)
     subprocess.run(['./configure', '--prefix=' + build_dir], cwd=LIBJPEG_DIR, check=True)
@@ -35,7 +39,7 @@ def generate_config_h():
         file.write(config_h_content)
 
 # Check if the libjpeg directory exists, if not, download and extract it
-if not os.path.exists(LIBJPEG_DIR):
+if not os.path.exists(LIBJPEG_DIR) and sys.platform != 'win32':
     download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
 
 # Build libjpeg
@@ -50,6 +54,25 @@ sorted_ar2_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR2/*.c'))
 sorted_arutil_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/ARUtil/*.c'))
 sorted_arLabeling_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR/arLabelingSub/*.c'))
 sorted_aricp_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/ARICP/*.c'))
+
+include_dirs = [
+    pybind11.get_include(),
+    '../emscripten',
+    '../emscripten/WebARKitLib/include',
+    '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher'
+]
+
+library_dirs = []
+libraries = ['z', 'm']
+
+if sys.platform == 'win32':
+    include_dirs.append(os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'include'))
+    library_dirs.append(os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'lib'))
+    libraries.append('turbojpeg')
+else:
+    include_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'include'))
+    library_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'lib'))
+    libraries.append('jpeg')
 
 ext_modules = [
     Pybind11Extension(
@@ -77,16 +100,9 @@ ext_modules = [
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/logger.cpp",
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/timers.cpp",
         ],
-        include_dirs=[
-            pybind11.get_include(),
-            os.path.join(LIBJPEG_DIR, 'build', 'include'),  # Include the built libjpeg headers
-            '../emscripten',
-            '../emscripten/WebARKitLib/include',
-            '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher'
-        ],
-        libraries=['jpeg', 'z', 'm'],
-        library_dirs=[os.path.join(LIBJPEG_DIR, 'build', 'lib')],  # Link against the built libjpeg library
-        define_macros=[('AR_DEFAULT_PIXEL_FORMAT', 'AR_PIXEL_FORMAT_RGBA')],  # Define the required macro
+        include_dirs=include_dirs,
+        libraries=libraries,
+        library_dirs=library_dirs,
         language='c++'
     ),
 ]
