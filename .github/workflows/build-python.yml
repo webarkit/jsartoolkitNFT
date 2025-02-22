@@ -57,8 +57,8 @@ jobs:
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
 
-    - name: Install libjpeg
-      run: .\vcpkg\vcpkg install libjpeg
+    - name: Install libjpeg-turbo
+      run: .\vcpkg\vcpkg install libjpeg-turbo
 
     - name: Add vcpkg to path
       run: echo "::add-path::$(pwd)\vcpkg\installed\x64-windows\bin"
