@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-24.04
 
     steps:
@@ -21,6 +21,47 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libjpeg9
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy setuptools wheel pybind11
+
+    - name: Update submodules
+      run: git submodule update --init
+
+    - name: Build the Python bindings
+      run: |
+        cd python-bindings
+        python setup.py build_ext --inplace
+
+    - name: Test the build
+      run: |
+        cd python-bindings
+        python test.py
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+
+    - name: Install libjpeg
+      run: .\vcpkg\vcpkg install libjpeg
+
+    - name: Add vcpkg to path
+      run: echo "::add-path::$(pwd)\vcpkg\installed\x64-windows\bin"
 
     - name: Install Python dependencies
       run: |
