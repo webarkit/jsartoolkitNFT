@@ -10,6 +10,7 @@ import sys
 LIBJPEG_VERSION = '9c'
 LIBJPEG_URL = f'http://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
 LIBJPEG_DIR = 'deps/libjpeg'
+ZLIB_DIR = '../emscripten/zlib'
 CONFIG_H_IN = os.path.join(os.path.dirname(__file__), '../emscripten/WebARKitLib/include/AR/config.h.in')
 CONFIG_H = os.path.join(os.path.dirname(__file__), '../emscripten/WebARKitLib/include/AR/config.h')
 
@@ -19,34 +20,92 @@ def download_and_extract(url, dest):
     shutil.move(f'jpeg-{LIBJPEG_VERSION}', dest)
     os.remove('libjpeg.tar.gz')
 
+def build_zlib():
+    build_dir = os.path.join(ZLIB_DIR, 'build')
+    install_dir = os.path.join(ZLIB_DIR, 'install')
+    os.makedirs(build_dir, exist_ok=True)
+    os.makedirs(install_dir, exist_ok=True)
+    cmake_command = [
+        'cmake',
+        '-S', ZLIB_DIR,
+        '-B', build_dir,
+        '-DCMAKE_BUILD_TYPE=Release',
+        f'-DCMAKE_INSTALL_PREFIX={install_dir}'
+    ]
+    build_command = ['cmake', '--build', build_dir, '--config', 'Release']
+    install_command = ['cmake', '--install', build_dir]
+
+    try:
+        subprocess.run(cmake_command, check=True)
+        subprocess.run(build_command, check=True)
+        subprocess.run(install_command, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error building zlib: {e}")
+        sys.exit(1)
+
 def build_libjpeg():
     if sys.platform == 'win32':
-        # On Windows, use vcpkg installed libjpeg-turbo
-        return
-    build_dir = os.path.abspath(os.path.join(LIBJPEG_DIR, 'build'))
-    os.makedirs(build_dir, exist_ok=True)
-    subprocess.run(['./configure', '--prefix=' + build_dir], cwd=LIBJPEG_DIR, check=True)
-    subprocess.run(['make'], cwd=LIBJPEG_DIR, check=True)
-    subprocess.run(['make', 'install'], cwd=LIBJPEG_DIR, check=True)
+        # Use MSYS2 to build libjpeg on Windows
+        build_dir = os.path.abspath(os.path.join(LIBJPEG_DIR, 'build'))
+        os.makedirs(build_dir, exist_ok=True)
+        # Full path to MSYS2
+        msys2_path = r'C:\msys64\usr\bin'  # Adjust this path if necessary
+        os.environ['PATH'] = msys2_path + os.pathsep + os.environ['PATH']
+        # Convert Windows path to Unix-style path using MSYS2
+        try:
+            build_dir_unix = subprocess.check_output(['bash', '-c', f'cygpath -u {build_dir}']).strip().decode('utf-8')
+            print(f"Converted build directory: {build_dir_unix}")
+        except subprocess.CalledProcessError as e:
+            print(f"Error converting path: {e}")
+            sys.exit(1)
+        # Change the installation directory to a location with write permissions
+        install_dir = os.path.join(build_dir, 'install')
+        os.makedirs(install_dir, exist_ok=True)
+        install_dir_unix = subprocess.check_output(['bash', '-c', f'cygpath -u {install_dir}']).strip().decode('utf-8')
+        subprocess.run(['bash', '-c', f'./configure --prefix={install_dir_unix}'], cwd=LIBJPEG_DIR, check=True)
+        subprocess.run(['bash', '-c', 'make'], cwd=LIBJPEG_DIR, check=True)
+        subprocess.run(['bash', '-c', 'make install'], cwd=LIBJPEG_DIR, check=True)
+    else:
+        build_dir = os.path.abspath(os.path.join(LIBJPEG_DIR, 'build'))
+        os.makedirs(build_dir, exist_ok=True)
+        subprocess.run(['./configure', '--prefix=' + build_dir], cwd=LIBJPEG_DIR, check=True)
+        subprocess.run(['make'], cwd=LIBJPEG_DIR, check=True)
+        subprocess.run(['make', 'install'], cwd=LIBJPEG_DIR, check=True)
 
 def generate_config_h():
     with open(CONFIG_H_IN, 'r') as file:
         config_h_content = file.read()
-    
-    config_h_content = config_h_content.replace('#undef  ARVIDEO_INPUT_DEFAULT_DUMMY', '#define  ARVIDEO_INPUT_DEFAULT_DUMMY')
-    
+
+    config_h_content = config_h_content.replace('#undef  ARVIDEO_INPUT_DEFAULT_DUMMY',
+                                                '#define  ARVIDEO_INPUT_DEFAULT_DUMMY')
+
     with open(CONFIG_H, 'w') as file:
         file.write(config_h_content)
 
+# Build zlib
+build_zlib()
+
 # Check if the libjpeg directory exists, if not, download and extract it
-if not os.path.exists(LIBJPEG_DIR) and sys.platform != 'win32':
+if not os.path.exists(LIBJPEG_DIR):
     download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
 
 # Build libjpeg
-build_libjpeg()
+# build_libjpeg()
 
 # Generate config.h from config.h.in
 generate_config_h()
+
+# Windows-specific step to install pthread static library using vcpkg
+if sys.platform == 'win32':
+    print("Running Windows-specific setup step to install pthread static library")
+    vcpkg_path = os.path.join(os.getcwd(), 'vcpkg')
+    if not os.path.exists(vcpkg_path):
+        subprocess.run(['git', 'clone', 'https://github.com/microsoft/vcpkg.git'], check=True)
+        subprocess.run([os.path.join(vcpkg_path, 'bootstrap-vcpkg.bat')], check=True)
+    # Install necessary tools using choco
+    subprocess.run(['choco', 'install', 'cmake', 'ninja', 'visualstudio2019buildtools', 'visualstudio2019-workload-vctools', '-y'], check=True)
+    subprocess.run([os.path.join(vcpkg_path, 'vcpkg'), 'install', 'pthreads:x64-windows-static'], check=True)
+    os.environ['VCPKG_ROOT'] = vcpkg_path
 
 # Sort the list of files
 sorted_ar_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR/*.c'))
@@ -66,9 +125,21 @@ library_dirs = []
 libraries = ['z', 'm']
 
 if sys.platform == 'win32':
-    include_dirs.append(os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'include'))
-    library_dirs.append(os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'lib'))
-    libraries.append('turbojpeg')
+    include_dirs.extend([
+        'deps/include',
+        'deps/libjpeg',
+        '../emscripten/zlib',
+        '../emscripten/zlib/build',
+        'vcpkg/packages/pthreads_x64-windows-static/include',
+        os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'include')
+    ])
+    library_dirs.extend([
+        'deps/libs',
+        '../emscripten/zlib/build/Release'
+        'vcpkg/packages/pthreads_x64-windows-static/lib',
+        os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'lib')
+    ])
+    libraries.extend(['zlib', 'libjpeg', 'Advapi32', 'Shell32','pthreadVC3', 'pthreadVC2static'])
 else:
     include_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'include'))
     library_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'lib'))
@@ -103,7 +174,8 @@ ext_modules = [
         include_dirs=include_dirs,
         libraries=libraries,
         library_dirs=library_dirs,
-        language='c++'
+        language='c++',
+        extra_compile_args=['/std:c++17', '/Dcpu_set_t=struct{unsigned long __bits[1024 / (8 * sizeof(unsigned long))];}'],  # Set the C++ standard to C++17 and define cpu_set_t
     ),
 ]
 
