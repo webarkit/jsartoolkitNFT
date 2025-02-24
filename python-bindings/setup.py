@@ -123,7 +123,7 @@ include_dirs = [
 ]
 
 library_dirs = []
-libraries = ['z', 'm']
+libraries = []
 extra_compile_args = []
 
 if sys.platform == 'win32':
@@ -146,7 +146,7 @@ if sys.platform == 'win32':
 else:
     include_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'include'))
     library_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'lib'))
-    libraries.append('jpeg')
+    libraries.extend(['z', 'm','jpeg'])
 
 ext_modules = [
     Pybind11Extension(
