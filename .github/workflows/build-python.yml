@@ -84,6 +84,9 @@ jobs:
     - name: Install libjpeg-turbo
       run: .\vcpkg\vcpkg install libjpeg-turbo
 
+    - name: Install pthreads
+      run: .\vcpkg\vcpkg install pthreads
+
     - name: Add vcpkg to path
       shell: bash
       run: echo "vcpkg/installed/x64-windows/bin" >> $GITHUB_PATH
