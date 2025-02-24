@@ -48,6 +48,11 @@ jobs:
         cd python-bindings
         python test.py
 
+    - name: Run unit tests
+      run: |
+        cd python-bindings
+        python -m unittest discover -s . -p 'unittests.py'
+
   build-windows:
     runs-on: windows-latest
 
@@ -108,3 +113,8 @@ jobs:
       run: |
         cd python-bindings
         python test.py
+
+    - name: Run unit tests
+      run: |
+        cd python-bindings
+        python -m unittest discover -s . -p 'unittests.py'
