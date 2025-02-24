@@ -123,6 +123,7 @@ include_dirs = [
 
 library_dirs = []
 libraries = ['z', 'm']
+extra_compile_args = []
 
 if sys.platform == 'win32':
     include_dirs.extend([
@@ -140,6 +141,7 @@ if sys.platform == 'win32':
         os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'lib')
     ])
     libraries.extend(['zlib', 'libjpeg', 'Advapi32', 'Shell32','pthreadVC3', 'pthreadVC2static'])
+    extra_compile_args=['/std:c++17', '/Dcpu_set_t=struct{unsigned long __bits[1024 / (8 * sizeof(unsigned long))];}'],  # Set the C++ standard to C++17 and define cpu_set_t
 else:
     include_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'include'))
     library_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'lib'))
@@ -175,7 +177,7 @@ ext_modules = [
         libraries=libraries,
         library_dirs=library_dirs,
         language='c++',
-        extra_compile_args=['/std:c++17', '/Dcpu_set_t=struct{unsigned long __bits[1024 / (8 * sizeof(unsigned long))];}'],  # Set the C++ standard to C++17 and define cpu_set_t
+        extra_compile_args=extra_compile_args
     ),
 ]
 
