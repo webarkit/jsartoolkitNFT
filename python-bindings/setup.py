@@ -90,7 +90,8 @@ if not os.path.exists(LIBJPEG_DIR):
     download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
 
 # Build libjpeg
-# build_libjpeg()
+if sys.platform.startswith('linux'):
+    build_libjpeg()
 
 # Generate config.h from config.h.in
 generate_config_h()
