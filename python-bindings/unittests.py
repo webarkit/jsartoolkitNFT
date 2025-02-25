@@ -13,10 +13,10 @@ class TestNFT(unittest.TestCase):
         self.farPlane = 1000
 
     def test_load_camera(self):
-        self.assertEqual(self.cameraId, 2) 
+        self.assertEqual(self.cameraId, 3) 
  
     def test_setup(self):
-        self.assertEqual(self.id, 5)
+        self.assertEqual(self.id, 6)
     
     def test_setupAR2(self): 
         self.assertEqual(self.nft.setupAR2(), 0)

@@ -4,7 +4,7 @@ build/*.a
 node_modules
 docs/*
 emscripten/build
-emscripten/zlib/build
 python-bindings/build
 python-bindings/*.so
 python-bindings/deps/libjpeg/*
+python-bindings/__pycache__
