@@ -16,7 +16,7 @@ class TestNFT(unittest.TestCase):
         self.assertEqual(self.cameraId, 2) 
  
     def test_setup(self):
-        self.assertEqual(self.id, 5)  # Update the expected value based on actual return value
+        self.assertEqual(self.id, 5)
     
     def test_setupAR2(self): 
         self.assertEqual(self.nft.setupAR2(), 0)
@@ -41,7 +41,11 @@ class TestNFT(unittest.TestCase):
     def test_add_nft_markers(self):
         self.assertEqual(self.nft.addNFTMarkers(['../examples/DataNFT/pinball']), [0])
 
-    
+    def test_get_nft_data(self):
+        nftData = self.nft.getNFTData(self.id)
+        self.assertEqual(nftData.width_NFT, 80)
+        self.assertEqual(nftData.height_NFT, 60)
+        self.assertEqual(nftData.dpi_NFT, 96) 
 
 if __name__ == '__main__':
     unittest.main()
