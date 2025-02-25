@@ -17,6 +17,11 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
+      - name: Install ChromiumHeadless
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+
       - name: Get npm cache directory
         id: npm-cache-dir
         shell: bash
