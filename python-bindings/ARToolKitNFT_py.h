@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -16,6 +17,7 @@
 //#include "markerDecompress.h"
 
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
@@ -40,7 +42,7 @@ public:
     ARToolKitNFT();
     ~ARToolKitNFT(); 
     int passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uint8_t> videoLuma);
-    //emscripten::val getNFTMarkerInfo(int markerIndex);
+    py::dict getNFTMarkerInfo(int markerIndex);
 
     int detectNFTMarker();
     //int getKpmImageWidth(KpmHandle *kpmHandle);

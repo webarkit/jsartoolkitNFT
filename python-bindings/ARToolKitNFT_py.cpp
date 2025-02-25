@@ -40,12 +40,12 @@ int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uin
   return 0;
 }
 
-/*emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
-  emscripten::val NFTMarkerInfo = emscripten::val::object();
-  emscripten::val pose = emscripten::val::array();
+py::dict ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
+  py::dict NFTMarkerInfo;
+  py::list pose;
 
   if (this->surfaceSetCount <= markerIndex) {
-    return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
+    return py::dict("error"_a=MARKER_INDEX_OUT_OF_BOUNDS);
   }
 
   float trans[3][4];
@@ -58,7 +58,6 @@ int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uin
 
   float err = -1;
   if (this->detectedPage == markerIndex) {
-
     int trackResult =
         ar2TrackingMod(this->ar2Handle, this->surfaceSet[this->detectedPage],
                        this->videoFrame, trans, &err);
@@ -70,12 +69,7 @@ int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uin
       }
     }
 
-    bool reset;
-    if (trackResult < 0) {
-      reset = 1;
-    } else {
-      reset = 0;
-    }
+    bool reset = (trackResult < 0);
 
     if (arFilterTransMat(this->ftmi, transF, reset) < 0) {
       ARLOGe("arFilterTransMat error with marker %d.", markerIndex);
@@ -94,38 +88,37 @@ int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uin
   }
 
   if (this->detectedPage == markerIndex) {
-    NFTMarkerInfo.set("id", markerIndex);
-    NFTMarkerInfo.set("error", err);
-    NFTMarkerInfo.set("found", 1);
+    NFTMarkerInfo["id"] = markerIndex;
+    NFTMarkerInfo["error"] = err;
+    NFTMarkerInfo["found"] = 1;
 #if WITH_FILTERING
     for (auto x = 0; x < 3; x++) {
       for (auto y = 0; y < 4; y++) {
-        pose.call<void>("push", transFLerp[x][y]);
+        pose.append(transFLerp[x][y]);
       }
     }
 #else
     for (auto x = 0; x < 3; x++) {
       for (auto y = 0; y < 4; y++) {
-        pose.call<void>("push", trans[x][y]);
+        pose.append(trans[x][y]);
       }
     }
 #endif
-    NFTMarkerInfo.set("pose", pose);
+    NFTMarkerInfo["pose"] = pose;
   } else {
-    NFTMarkerInfo.set("id", markerIndex);
-    NFTMarkerInfo.set("error", -1);
-    NFTMarkerInfo.set("found", 0);
+    NFTMarkerInfo["id"] = markerIndex;
+    NFTMarkerInfo["error"] = -1;
+    NFTMarkerInfo["found"] = 0;
     for (auto x = 0; x < 3; x++) {
       for (auto y = 0; y < 4; y++) {
-        pose.call<void>("push", 0);
+        pose.append(0.0f);
       }
     }
-    NFTMarkerInfo.set("pose", pose);
+    NFTMarkerInfo["pose"] = pose;
   }
 
   return NFTMarkerInfo;
 }
-  */
 
 int ARToolKitNFT::detectNFTMarker() {
 
@@ -540,6 +533,7 @@ PYBIND11_MODULE(jsartoolkitNFT, m) {
       .def(py::init<>())
       .def("passVideoData", &ARToolKitNFT::passVideoData)
       .def("detectNFTMarker", &ARToolKitNFT::detectNFTMarker)
+      .def("getNFTMarkerInfo", &ARToolKitNFT::getNFTMarkerInfo)
       //.def("getKpmImageWidth", &ARToolKitNFT::getKpmImageWidth)
       //.def("getKpmImageHeight", &ARToolKitNFT::getKpmImageHeight)
       .def("setupAR2", &ARToolKitNFT::setupAR2)
