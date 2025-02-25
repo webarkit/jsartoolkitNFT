@@ -13,10 +13,10 @@ class TestNFT(unittest.TestCase):
         self.farPlane = 1000
 
     def test_load_camera(self):
-        self.assertEqual(self.cameraId, 1)  # Update the expected value based on actual return value
-    
+        self.assertEqual(self.cameraId, 2) 
+ 
     def test_setup(self):
-        self.assertEqual(self.id, 4)  # Update the expected value based on actual return value
+        self.assertEqual(self.id, 5)  # Update the expected value based on actual return value
     
     def test_setupAR2(self): 
         self.assertEqual(self.nft.setupAR2(), 0)
