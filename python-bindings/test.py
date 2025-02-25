@@ -27,4 +27,7 @@ nft.detectNFTMarker()
 
 info = nft.getNFTMarkerInfo(id)
 print(info)
-print(info["id"])
+print("id:", info["id"])
+print("error:", info["error"])
+print("found:", info["found"])
+print("pose:", info["pose"])
