@@ -22,3 +22,9 @@ print(nftData)
 print(f"Width: {nftData.width_NFT}")
 print(f"Height: {nftData.height_NFT}")
 print(f"DPI: {nftData.dpi_NFT}")
+
+nft.detectNFTMarker()
+
+info = nft.getNFTMarkerInfo(id)
+print(info)
+print(info["id"])
