@@ -13,7 +13,7 @@ class TestNFT(unittest.TestCase):
         self.farPlane = 1000
 
     def test_load_camera(self):
-        self.assertEqual(self.cameraId, 3) 
+        self.assertEqual(self.cameraId, 3)
  
     def test_setup(self):
         self.assertEqual(self.id, 6)
@@ -39,13 +39,21 @@ class TestNFT(unittest.TestCase):
         self.assertEqual(self.nft.getProjectionFarPlane(), self.farPlane)
 
     def test_add_nft_markers(self):
-        self.assertEqual(self.nft.addNFTMarkers(['../examples/DataNFT/pinball']), [0])
+        marker_ids = self.nft.addNFTMarkers(['../examples/DataNFT/pinball'])
+        print('marker_ids:', marker_ids)
+        self.assertEqual(marker_ids, [0])
 
     def test_get_nft_data(self):
-        nftData = self.nft.getNFTData(self.id)
-        self.assertEqual(nftData.width_NFT, 80)
-        self.assertEqual(nftData.height_NFT, 60)
-        self.assertEqual(nftData.dpi_NFT, 96) 
+        marker_ids = self.nft.addNFTMarkers(['../examples/DataNFT/pinball'])
+        print('marker_ids:', marker_ids)
+        if marker_ids:
+            nftData = self.nft.getNFTData(marker_ids[0])
+            print('nftData:', nftData)
+            self.assertEqual(nftData.width_NFT, 893)
+            self.assertEqual(nftData.height_NFT, 1117)
+            self.assertEqual(nftData.dpi_NFT, 120)
+        else:
+            self.fail("No NFT markers were added.")
 
 if __name__ == '__main__':
     unittest.main()
