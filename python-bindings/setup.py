@@ -184,7 +184,7 @@ ext_modules = [
 
 setup(
     name='jsartoolkitNFT',
-    version='0.0.1',
+    version='0.0.4',
     author='Walter Perdan',
     author_email='github@kalwaltart.it',
     description='This is a Python binding project for jsartoolkitNFT, which integrates WebARKitLib with Python using pybind11. It allows for augmented reality applications to be developed in Python by providing bindings to the underlying C/C++ WebARKitLib library.',
@@ -196,7 +196,8 @@ setup(
         'Operating System :: OS Independent',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
     ],
-    packages=find_packages(exclude=['deps', 'vcpkg', 'emscripten']),
+    packages=find_packages(where='src', exclude=['deps', 'vcpkg', 'emscripten']),
+    package_dir={'': 'src'},
     ext_modules=ext_modules,
     cmdclass={'build_ext': build_ext},
     zip_safe=False,
