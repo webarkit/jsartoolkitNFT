@@ -42,7 +42,7 @@ jobs:
       run: |
         cd python-bindings
         python setup.py bdist_wheel
-        pip install dist/*.whl
+        pip install dist/jsartoolkitNFT-0.0.5-cp38-cp38-win_amd64.whl
 
     - name: Test the build
       run: |
