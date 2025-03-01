@@ -41,8 +41,7 @@ jobs:
     - name: Build the Python bindings
       run: |
         cd python-bindings
-        python setup.py bdist_wheel
-        pip install dist/jsartoolkitNFT-0.0.5-cp38-cp38-win_amd64.whl
+        python setup.py bdist_wheel && pip install dist/*.whl
 
     - name: Test the build
       run: |
@@ -108,7 +107,8 @@ jobs:
     - name: Build the Python bindings
       run: |
         cd python-bindings
-        python setup.py bdist_wheel && pip install dist/*.whl
+        python setup.py bdist_wheel
+        pip install dist/jsartoolkitNFT-0.0.5-cp38-cp38-win_amd64.whl
 
     - name: Test the build
       run: |
