@@ -41,7 +41,8 @@ jobs:
     - name: Build the Python bindings
       run: |
         cd python-bindings
-        python setup.py bdist_wheel && pip install dist/*.whl
+        python setup.py bdist_wheel
+        pip install dist/*.whl
 
     - name: Test the build
       run: |
