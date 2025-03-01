@@ -6,8 +6,8 @@ ARToolKitNFT::ARToolKitNFT()
       videoLuma(NULL), width(0), height(0),
       detectedPage(-2),   // -2 Tracking not inited, -1 tracking inited OK, >= 0
                           // tracking online on page.
-      surfaceSetCount(0), // Running NFT marker id
-      arhandle(NULL), ar3DHandle(NULL), kpmHandle(NULL), ar2Handle(NULL),
+surfaceSetCount(0), // Running NFT marker id
+arhandle(NULL), ar3DHandle(NULL), kpmHandle(NULL), ar2Handle(NULL),
 #if WITH_FILTERING
       ftmi(NULL), filterCutoffFrequency(60.0), filterSampleRate(120.0),
 #endif
@@ -513,7 +513,7 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
   return this->id;
 }
 
-PYBIND11_MODULE(jsartoolkitNFT, m) {
+PYBIND11_MODULE(ARToolKitNFT_core, m) {
   py::class_<nftMarker>(m, "nftMarker")
   .def(py::init<>())
   .def_readwrite("id_NFT", &nftMarker::id_NFT)
@@ -558,4 +558,7 @@ PYBIND11_MODULE(jsartoolkitNFT, m) {
       .def("setImageProcMode", &ARToolKitNFT::setImageProcMode)
       .def("getImageProcMode", &ARToolKitNFT::getImageProcMode)
       .def("setup", &ARToolKitNFT::setup);
+
+    // Define the NFT_MARKER constant
+    m.attr("NFT_MARKER") = py::int_(0); // Replace 1 with the actual value of NFT_MARKER
 }

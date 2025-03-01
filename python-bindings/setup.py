@@ -150,7 +150,7 @@ else:
 
 ext_modules = [
     Pybind11Extension(
-        'jsartoolkitNFT',
+        'ARToolKitNFT_core',
         sources=sorted_ar_files + sorted_ar2_files + sorted_arutil_files + sorted_arLabeling_files + sorted_aricp_files + [
             'ARToolKitNFT_py.cpp',
             '../emscripten/trackingMod.c',
@@ -184,7 +184,7 @@ ext_modules = [
 
 setup(
     name='jsartoolkitNFT',
-    version='0.0.4',
+    version='0.0.5',
     author='Walter Perdan',
     author_email='github@kalwaltart.it',
     description='This is a Python binding project for jsartoolkitNFT, which integrates WebARKitLib with Python using pybind11. It allows for augmented reality applications to be developed in Python by providing bindings to the underlying C/C++ WebARKitLib library.',
