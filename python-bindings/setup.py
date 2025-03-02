@@ -1,5 +1,5 @@
 from glob import glob
-from setuptools import setup, find_packages, Extension
+from setuptools import setup, find_packages
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 import pybind11
 import os
@@ -82,6 +82,11 @@ def generate_config_h():
     with open(CONFIG_H, 'w') as file:
         file.write(config_h_content)
 
+# Check if the CMakeLists.txt file exists in the zlib directory
+if not os.path.exists(os.path.join(ZLIB_DIR, 'CMakeLists.txt')):
+    print("CMakeLists.txt not found in zlib directory. Running 'git submodule update --init'.")
+    subprocess.run(['git', 'submodule', 'update', '--init'], check=True)
+
 # Build zlib
 build_zlib()
 
@@ -124,7 +129,7 @@ include_dirs = [
 ]
 
 library_dirs = []
-libraries = ['z']  # Add 'z' for zlib
+libraries = []
 extra_compile_args = []
 
 if sys.platform == 'win32':
@@ -142,7 +147,6 @@ if sys.platform == 'win32':
         'vcpkg/packages/pthreads_x64-windows-static/lib',
         os.path.join(os.getenv('VCPKG_ROOT', 'vcpkg'), 'installed', 'x64-windows', 'lib')
     ])
-    libraries = []  # Set libraries to an empty list for Windows
     libraries.extend(['zlib', 'libjpeg', 'Advapi32', 'Shell32', 'pthreadVC3', 'pthreadVC2static'])
     extra_compile_args.extend(['/std:c++17', '/Dcpu_set_t=struct{unsigned long __bits[1024 / (8 * sizeof(unsigned long))];}'])  # Set the C++ standard to C++17 and define cpu_set_t
 else:
@@ -186,7 +190,7 @@ ext_modules = [
 
 setup(
     name='artoolkitnft',
-    version='0.0.6',
+    version='0.0.8',
     author='Walter Perdan',
     author_email='github@kalwaltart.it',
     description='This is a Python binding project for jsartoolkitNFT, which integrates WebARKitLib with Python using pybind11. It allows for augmented reality applications to be developed in Python by providing bindings to the underlying C/C++ WebARKitLib library.',
