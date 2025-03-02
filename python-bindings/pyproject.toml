@@ -1,6 +1,6 @@
 [project]
-name = "ARToolKitNFT"
-version = "0.0.5"
+name = "artoolkitnft"
+version = "0.0.6"
 authors = [
   { name="Walter Perdan", email="github@kalwaltart.it" },
 ]

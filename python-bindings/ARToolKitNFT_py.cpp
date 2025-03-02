@@ -513,7 +513,8 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
   return this->id;
 }
 
-PYBIND11_MODULE(ARToolKitNFT_core, m) {
+PYBIND11_MODULE(artoolkitnft_core, m) {
+  m.doc() = "ARToolKitNFT Python bindings";
   py::class_<nftMarker>(m, "nftMarker")
   .def(py::init<>())
   .def_readwrite("id_NFT", &nftMarker::id_NFT)

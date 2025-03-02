@@ -1,4 +1,4 @@
-from ARToolKitNFT import arcontrollerNFT
+from artoolkitnft import arcontrollerNFT
 import asyncio
 
 #arnft = arcontrollerNFT.ARControllerNFT()

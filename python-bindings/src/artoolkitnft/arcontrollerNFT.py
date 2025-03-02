@@ -1,4 +1,4 @@
-import ARToolKitNFT_core
+import artoolkitnft_core
 import time
 import asyncio
 
@@ -21,7 +21,7 @@ class EventDispatcher:
                 callback(event_data)
 
 class ARControllerNFT(EventDispatcher):
-    NFT_MARKER = ARToolKitNFT_core.NFT_MARKER
+    NFT_MARKER = artoolkitnft_core.NFT_MARKER
 
     def __init__(self, width=None, height=None, cameraParam=None):
         super().__init__()
@@ -70,7 +70,7 @@ class ARControllerNFT(EventDispatcher):
 
         for i in range(nftMarkerCount):
             nftMarkerInfo = self.getNFTMarker(i)
-            markerType = ARToolKitNFT_core.NFT_MARKER
+            markerType = artoolkitnft_core.NFT_MARKER
 
             if nftMarkerInfo['found']:
                 self.nftMarkerFound = i
@@ -263,7 +263,7 @@ class ARControllerNFT(EventDispatcher):
         return False
 
     async def _initialize(self):
-        self.artoolkitNFT = ARToolKitNFT_core.ARToolKitNFT()
+        self.artoolkitNFT = artoolkitnft_core.ARToolKitNFT()
 
         print("[ARControllerNFT]", "ARToolkitNFT initialized")
 
