@@ -1,4 +1,4 @@
-from ARToolKitNFT import arcontrollerNFT
+from artoolkitnft import arcontrollerNFT
 import numpy as np
 import pytest
 import numpy.testing as npt

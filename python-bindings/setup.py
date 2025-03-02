@@ -1,5 +1,5 @@
 from glob import glob
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 import pybind11
 import os
@@ -119,11 +119,12 @@ include_dirs = [
     pybind11.get_include(),
     '../emscripten',
     '../emscripten/WebARKitLib/include',
-    '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher'
+    '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher',
+    '../emscripten/zlib'
 ]
 
 library_dirs = []
-libraries = []
+libraries = ['z']  # Add 'z' for zlib
 extra_compile_args = []
 
 if sys.platform == 'win32':
