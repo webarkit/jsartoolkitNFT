@@ -33,7 +33,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy setuptools wheel pybind11
+        pip install numpy setuptools wheel pybind11 pytest
 
     - name: Update submodules
       run: git submodule update --init
@@ -51,7 +51,7 @@ jobs:
     - name: Run unit tests
       run: |
         cd python-bindings
-        echo "No unit tests for Linux yet"
+        pytest test_arcontrollerNFT.py
 
   build-windows:
     runs-on: windows-2022
@@ -99,7 +99,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy setuptools wheel pybind11
+        pip install numpy setuptools wheel pybind11 pytest
 
     - name: Update submodules
       run: git submodule update --init
@@ -108,7 +108,7 @@ jobs:
       run: |
         cd python-bindings
         python setup.py bdist_wheel
-        pip install dist/jsartoolkitNFT-0.0.5-cp38-cp38-win_amd64.whl
+        pip install dist/ARToolKitNFT-0.0.5-cp38-cp38-win_amd64.whl
 
     - name: Test the build
       run: |
@@ -118,4 +118,4 @@ jobs:
     - name: Run unit tests
       run: |
         cd python-bindings
-        echo "No unit tests for Windows yet"
+        pytest test_arcontrollerNFT.py

@@ -183,7 +183,7 @@ ext_modules = [
 ]
 
 setup(
-    name='jsartoolkitNFT',
+    name='ARToolKitNFT',
     version='0.0.5',
     author='Walter Perdan',
     author_email='github@kalwaltart.it',

@@ -6,6 +6,7 @@ docs/*
 emscripten/build
 python-bindings/build
 python-bindings/dist
+python-bindings/emscripten
 python-bindings/*.so
 python-bindings/deps/libjpeg/*
 python-bindings/__pycache__

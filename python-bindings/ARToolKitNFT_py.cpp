@@ -533,7 +533,7 @@ PYBIND11_MODULE(ARToolKitNFT_core, m) {
       .def(py::init<>())
       .def("passVideoData", &ARToolKitNFT::passVideoData)
       .def("detectNFTMarker", &ARToolKitNFT::detectNFTMarker)
-      .def("getNFTMarkerInfo", &ARToolKitNFT::getNFTMarkerInfo)
+      .def("getNFTMarker", &ARToolKitNFT::getNFTMarkerInfo)
       //.def("getKpmImageWidth", &ARToolKitNFT::getKpmImageWidth)
       //.def("getKpmImageHeight", &ARToolKitNFT::getKpmImageHeight)
       .def("setupAR2", &ARToolKitNFT::setupAR2)

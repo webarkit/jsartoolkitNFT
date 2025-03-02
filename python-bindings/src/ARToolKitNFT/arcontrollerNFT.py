@@ -292,6 +292,18 @@ class ARControllerNFT(EventDispatcher):
         camera_id = await loop.run_in_executor(None, self.artoolkitNFT.loadCamera, cparam_name)
         return camera_id
 
+    async def loadNFTMarker(self, urlOrData):
+        loop = asyncio.get_event_loop()
+        marker_ids = await loop.run_in_executor(None, self.artoolkitNFT.addNFTMarkers, [urlOrData])
+        self.nftMarkerCount += len(marker_ids)
+        return marker_ids
+
+    async def loadNFTMarkers(self, urlOrDataList):
+        loop = asyncio.get_event_loop()
+        marker_ids = await loop.run_in_executor(None, self.artoolkitNFT.addNFTMarkers, urlOrDataList)
+        self.nftMarkerCount += len(marker_ids)
+        return marker_ids
+
     @staticmethod
     def some_static_method(arg1, arg2):
         return arg1 + arg2
