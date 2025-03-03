@@ -1,14 +1,14 @@
 #include "ARToolKitNFT_js.h"
 
 ARToolKitNFT::ARToolKitNFT()
-    : id(0), paramLT(NULL), videoFrame(NULL), videoFrameSize(0),
-      videoLuma(NULL), width(0), height(0),
+    : id(0), paramLT(nullptr), videoFrame(nullptr), videoFrameSize(0),
+      videoLuma(nullptr), width(0), height(0),
       detectedPage(-2),   // -2 Tracking not inited, -1 tracking inited OK, >= 0
                           // tracking online on page.
       surfaceSetCount(0), // Running NFT marker id
-      arhandle(NULL), ar3DHandle(NULL), kpmHandle(NULL), ar2Handle(NULL),
+      arhandle(nullptr), ar3DHandle(nullptr), kpmHandle(nullptr), ar2Handle(nullptr),
 #if WITH_FILTERING
-      ftmi(NULL), filterCutoffFrequency(60.0), filterSampleRate(120.0),
+      ftmi(nullptr), filterCutoffFrequency(60.0), filterSampleRate(120.0),
 #endif
       nearPlane(0.0001), farPlane(1000.0),
       patt_id(0) // Running pattern marker id
@@ -22,18 +22,16 @@ ARToolKitNFT::~ARToolKitNFT() {
 
 void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
                 float interpolationFactor) {
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 4; j++) {
+  for (auto i = 0; i < 3; i++) {
+    for (auto j = 0; j < 4; j++) {
       dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) * interpolationFactor;
     }
   }
 }
 
 int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val videoLuma) {
-  std::vector<uint8_t> vf =
-      emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
-  std::vector<uint8_t> vl =
-      emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+  auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
+  auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
 
   this->videoFrame = vf.data();
   this->videoLuma = vl.data();
@@ -42,8 +40,8 @@ int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val vide
 }
 
 emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
-  emscripten::val NFTMarkerInfo = emscripten::val::object();
-  emscripten::val pose = emscripten::val::array();
+  auto NFTMarkerInfo = emscripten::val::object();
+  auto pose = emscripten::val::array();
 
   if (this->surfaceSetCount <= markerIndex) {
     return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
@@ -65,11 +63,7 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
                        this->videoFrame, trans, &err);
 
 #if WITH_FILTERING
-    for (int j = 0; j < 3; j++) {
-      for (int k = 0; k < 4; k++) {
-        transF[j][k] = trans[j][k];
-      }
-    }
+      std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
 
     bool reset;
     if (trackResult < 0) {
