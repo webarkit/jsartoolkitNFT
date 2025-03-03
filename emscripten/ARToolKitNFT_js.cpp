@@ -135,16 +135,12 @@ int ARToolKitNFT::detectNFTMarker() {
                                       this->filterCutoffFrequency);
 #endif
 
-    for (int i = 0; i < kpmResultNum; i++) {
+    for (auto i = 0; i < kpmResultNum; i++) {
       if (kpmResult[i].camPoseF == 0) {
 
         float trans[3][4];
         this->detectedPage = kpmResult[i].pageNo;
-        for (int j = 0; j < 3; j++) {
-          for (int k = 0; k < 4; k++) {
-            trans[j][k] = kpmResult[i].camPose[j][k];
-          }
-        }
+        std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
         ar2SetInitTrans(this->surfaceSet[this->detectedPage], trans);
       }
     }
@@ -293,12 +289,10 @@ int ARToolKitNFT::loadCamera(std::string cparam_name) {
 }
 
 emscripten::val ARToolKitNFT::getCameraLens() {
-
   emscripten::val lens = emscripten::val::array();
-  for (int i = 0; i < 16; i++) {
-    lens.call<void>("push", this->cameraLens[i]);
+  for (const auto& value : this->cameraLens) {
+    lens.call<void>("push", value);
   }
-
   return lens;
 }
 
@@ -327,7 +321,7 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
 
   std::vector<int> markerIds = {};
 
-  for (int i = 0; i < datasetPathnames.size(); i++) {
+  for (auto i = 0; i < datasetPathnames.size(); i++) {
     webarkitLOGi("datasetPathnames size: %i", datasetPathnames.size());
     webarkitLOGi("add NFT marker-> '%s'", datasetPathnames[i].c_str());
 
@@ -363,8 +357,8 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
       return {};
     }
 
-    int surfaceSetCount = this->surfaceSetCount;
-    int numIset = this->surfaceSet[i]->surface[0].imageSet->num;
+    auto surfaceSetCount = this->surfaceSetCount;
+    auto numIset = this->surfaceSet[i]->surface[0].imageSet->num;
     this->nft.width_NFT =
         this->surfaceSet[i]->surface[0].imageSet->scale[0]->xsize;
     this->nft.height_NFT =
