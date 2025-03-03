@@ -127,8 +127,8 @@ int ARToolKitNFT::detectNFTMarker() {
   int kpmResultNum = -1;
 
   if (this->detectedPage == -2) {
-    kpmMatching(this->kpmHandle, this->videoLuma);
-    kpmGetResult(this->kpmHandle, &kpmResult, &kpmResultNum);
+    kpmMatching(this->kpmHandle.get(), this->videoLuma);
+    kpmGetResult(this->kpmHandle.get(), &kpmResult, &kpmResultNum);
 
 #if WITH_FILTERING
     this->ftmi = arFilterTransMatInit(this->filterSampleRate,
@@ -148,10 +148,15 @@ int ARToolKitNFT::detectNFTMarker() {
   return kpmResultNum;
 }
 
-KpmHandle *ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
-  KpmHandle *kpmHandle;
-  kpmHandle = kpmCreateHandle(cparamLT);
-  return kpmHandle;
+std::shared_ptr<KpmHandle> ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
+  KpmHandle* handle = kpmCreateHandle(cparamLT);
+  if (!handle) {
+    webarkitLOGe("Error: kpmCreateHandle returned NULL.");
+    return nullptr;
+  }
+  return std::shared_ptr<KpmHandle>(handle, [](KpmHandle* p) { 
+    if (p) kpmDeleteHandle(&p); 
+  });
 }
 
 int ARToolKitNFT::getKpmImageWidth(KpmHandle *kpmHandle) {
@@ -166,7 +171,6 @@ int ARToolKitNFT::setupAR2() {
   if ((this->ar2Handle = ar2CreateHandleMod(this->paramLT, this->pixFormat)) ==
       NULL) {
     webarkitLOGe("Error: ar2CreateHandle.");
-    kpmDeleteHandle(&this->kpmHandle);
   }
   // Settings for devices with single-core CPUs.
   ar2SetTrackingThresh(this->ar2Handle, 5.0);
@@ -250,7 +254,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
     return -1;
   }
 
-  // ARLOGi("setCamera(): arParamLTCreated\n..%d, %d\n",
+// ARLOGi("setCamera(): arParamLTCreated\n..%d, %d\n",
   // (this->paramLT->param).xsize, (this->paramLT->param).ysize);
 
   // setup camera
@@ -258,7 +262,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
     webarkitLOGe("setCamera(): Error: arCreateHandle.");
     return -1;
   }
-  // AR_DEFAULT_PIXEL_FORMAT
+// AR_DEFAULT_PIXEL_FORMAT
   int set = arSetPixelFormat(this->arhandle, this->pixFormat);
 
   this->ar3DHandle = ar3DCreateHandle(&(this->param));
@@ -309,7 +313,7 @@ int ARToolKitNFT::decompressZFT(std::string datasetPathname, std::string tempPat
 std::vector<int>
 ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
 
-  KpmHandle *kpmHandle = this->kpmHandle;
+  KpmHandle *kpmHandle = this->kpmHandle.get();
 
   KpmRefDataSet *refDataSet;
   refDataSet = NULL;
@@ -456,7 +460,7 @@ int ARToolKitNFT::getThresholdMode() {
 }
 
 int ARToolKitNFT::setDebugMode(int enable) {
-  arSetDebugMode(this->arhandle, enable ? AR_DEBUG_ENABLE : AR_DEBUG_DISABLE);
+    arSetDebugMode(this->arhandle, enable ? AR_DEBUG_ENABLE : AR_DEBUG_DISABLE);
   webarkitLOGi("Debug mode set to %s", enable ? "on." : "off.");
 
   return enable;
@@ -469,7 +473,7 @@ int ARToolKitNFT::getProcessingImage() {
 
 int ARToolKitNFT::getDebugMode() {
   int enable;
-
+  
   arGetDebugMode(this->arhandle, &enable);
   return enable;
 }
