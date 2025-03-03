@@ -24,7 +24,7 @@ void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
                 float interpolationFactor) {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 4; j++) {
-      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) / interpolationFactor;
+      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) * interpolationFactor;
     }
   }
 }
