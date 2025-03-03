@@ -105,11 +105,12 @@ jobs:
       run: git submodule update --init
 
     - name: Build the Python bindings
+      shell: pwsh
       run: |
         cd python-bindings
         python setup.py bdist_wheel
-        $version = (python setup.py --version).Trim()
-        pip install dist/artoolkitnft-$version-cp38-cp38-win_amd64.whl
+        version = (python setup.py --version).Trim()
+        pip install dist/artoolkitnft-${version}-cp38-cp38-win_amd64.whl
 
     - name: Test the build
       run: |
