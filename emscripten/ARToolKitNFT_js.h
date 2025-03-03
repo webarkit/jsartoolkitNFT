@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 #include <AR/config.h>
 #include <AR2/tracking.h>
 #include <AR/arFilterTransMat.h>
@@ -71,7 +72,7 @@ public:
     int setup(int width, int height, int cameraID);
 
 private:
-    KpmHandle *createKpmHandle(ARParamLT *cparamLT);
+    std::shared_ptr<KpmHandle> createKpmHandle(ARParamLT *cparamLT);
     void deleteHandle();
 
     int id;
@@ -89,7 +90,7 @@ private:
     ARHandle *arhandle;
     AR3DHandle *ar3DHandle;
 
-    KpmHandle *kpmHandle;
+    std::shared_ptr<KpmHandle> kpmHandle;
     AR2HandleT *ar2Handle;
 
 #if WITH_FILTERING
