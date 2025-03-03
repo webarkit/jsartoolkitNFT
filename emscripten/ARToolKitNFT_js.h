@@ -43,7 +43,7 @@ public:
     int getKpmImageHeight(KpmHandle *kpmHandle);
     int setupAR2();
     nftMarker getNFTData(int index);
-   
+
     void setLogLevel(int level);
     int getLogLevel();
 
