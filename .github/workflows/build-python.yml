@@ -110,8 +110,7 @@ jobs:
         cd python-bindings
         python setup.py bdist_wheel
         $version = (python setup.py --version).Trim()
-        echo "Installing artoolkitnft-$version-cp38-cp38-win_amd64.whl"
-        pip install dist/artoolkitnft-$version-cp38-cp38-win_amd64.whl
+        pip install dist/artoolkitnft-0.0.10-cp38-cp38-win_amd64.whl
 
     - name: Test the build
       run: |
