@@ -108,7 +108,8 @@ jobs:
       run: |
         cd python-bindings
         python setup.py bdist_wheel
-        pip install dist/artoolkitnft-0.0.6-cp38-cp38-win_amd64.whl
+        version=$(python setup.py --version | tr -d '\r')
+        pip install dist/artoolkitnft-${version}-cp38-cp38-win_amd64.whl
 
     - name: Test the build
       run: |
