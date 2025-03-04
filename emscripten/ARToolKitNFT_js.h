@@ -80,9 +80,9 @@ private:
     ARParam param;
     ARParamLT *paramLT;
 
-    ARUint8 *videoFrame;
+    std::shared_ptr<ARUint8[]> videoFrame;  // Changed from ARUint8*
     int videoFrameSize;
-    ARUint8 *videoLuma;
+    std::shared_ptr<ARUint8[]> videoLuma;   // Changed from ARUint8*
 
     int width;
     int height;

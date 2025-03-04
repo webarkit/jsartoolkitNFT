@@ -33,8 +33,14 @@ int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val vide
   auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
   auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
 
-  this->videoFrame = vf.data();
-  this->videoLuma = vl.data();
+  // Copy data instead of just assigning pointers
+  if (this->videoFrame) {
+    std::copy(vf.begin(), vf.end(), this->videoFrame.get());
+  }
+  
+  if (this->videoLuma) {
+    std::copy(vl.begin(), vl.end(), this->videoLuma.get());
+  }
 
   return 0;
 }
@@ -60,7 +66,7 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
 
     int trackResult =
         ar2TrackingMod(this->ar2Handle, this->surfaceSet[this->detectedPage],
-                       this->videoFrame, trans, &err);
+                       this->videoFrame.get(), trans, &err);
 
 #if WITH_FILTERING
       std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
@@ -127,7 +133,7 @@ int ARToolKitNFT::detectNFTMarker() {
   int kpmResultNum = -1;
 
   if (this->detectedPage == -2) {
-    kpmMatching(this->kpmHandle.get(), this->videoLuma);
+    kpmMatching(this->kpmHandle.get(), this->videoLuma.get());
     kpmGetResult(this->kpmHandle.get(), &kpmResult, &kpmResultNum);
 
 #if WITH_FILTERING
@@ -217,11 +223,10 @@ int ARToolKitNFT::teardown() {
   //      arc->videoLuma = NULL;
   //  }
 
-  if (this->videoFrame) {
-    free(this->videoFrame);
-    this->videoFrame = NULL;
-    this->videoFrameSize = 0;
-  }
+  // Reset shared pointers instead of freeing memory
+  this->videoFrame.reset();
+  this->videoLuma.reset();
+  this->videoFrameSize = 0;
 
   deleteHandle();
 
@@ -501,8 +506,11 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
   this->height = height;
 
   this->videoFrameSize = width * height * 4 * sizeof(ARUint8);
-  this->videoFrame = (ARUint8 *)malloc(this->videoFrameSize);
-  this->videoLuma = (ARUint8 *)malloc(this->videoFrameSize / 4);
+  // Use proper shared_ptr construction for arrays with custom deleter
+  this->videoFrame = std::shared_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize], 
+                                              std::default_delete<ARUint8[]>());
+  this->videoLuma = std::shared_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize / 4], 
+                                             std::default_delete<ARUint8[]>());
 
   setCamera(id, cameraID);
 
