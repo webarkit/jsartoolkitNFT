@@ -7,26 +7,30 @@ on:
 jobs:
 
   tests:
-    strategy:
-      matrix:
-        node:
-          - 20.x
-
-    # Packages 'firefox' and 'chromium' are pre-installed.
-    #
-    # https://github.com/actions/virtual-environments/blob/ubuntu20/20210302.0/images/linux/Ubuntu2004-README.md
-    runs-on: ubuntu-20.04
-    name: Node.js ${{ matrix.node }}
+    runs-on: ubuntu-24.04  # Upgrade to Ubuntu 24.04
+    name: Node.js CI
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node }}
+      - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version-file: ".nvmrc"
+
+      - name: Install ChromiumHeadless
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+
       - uses: actions/cache@v4
+        id: npm-cache
         with:
-          path: ~/.npm
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
