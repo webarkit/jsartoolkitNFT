@@ -484,8 +484,6 @@ extern "C"
     arglCameraFrustumRH(&((arc->paramLT)->param), arc->nearPlane, arc->farPlane,
                         arc->cameraLens);
 
-    arc->kpmHandle = createKpmHandle(arc->paramLT);
-
     return 0;
   }
 
