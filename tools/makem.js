@@ -239,6 +239,7 @@ let ZLIB_FLAG = " -s USE_ZLIB=1 ";
 
 let FLAGS = "" + OPTIMIZE_FLAGS;
 FLAGS += " -Wno-warn-absolute-paths";
+FLAGS += " -Wno-return-type-c-linkage"; // Add this line to disable the warning
 FLAGS += " -s TOTAL_MEMORY=" + MEM + " ";
 FLAGS += " -s USE_LIBJPEG=1";
 //FLAGS += " -s USE_ZLIB=1";
