@@ -201,18 +201,20 @@ nftMarker ARToolKitNFT::getNFTData(int index) {
  ***********/
 
 void ARToolKitNFT::deleteHandle() {
-  if (this->arhandle != NULL) {
-    arPattDetach(this->arhandle);
+  if (this->arhandle != nullptr) {
+    if (arPattDetach(this->arhandle) != 0) {
+      webarkitLOGe("Error detaching pattern from arhandle.");
+    }
     arDeleteHandle(this->arhandle);
-    this->arhandle = NULL;
+    this->arhandle = nullptr;
   }
-  if (this->ar3DHandle != NULL) {
+  if (this->ar3DHandle != nullptr) {
     ar3DDeleteHandle(&(this->ar3DHandle));
-    this->ar3DHandle = NULL;
+    this->ar3DHandle = nullptr;
   }
-  if (this->paramLT != NULL) {
+  if (this->paramLT != nullptr) {
     arParamLTFree(&(this->paramLT));
-    this->paramLT = NULL;
+    this->paramLT = nullptr;
   }
 }
 
@@ -471,7 +473,12 @@ int ARToolKitNFT::setDebugMode(int enable) {
 
 int ARToolKitNFT::getProcessingImage() {
 
-  return (int)this->arhandle->labelInfo.bwImage;
+  if (this->arhandle != nullptr) {
+    return reinterpret_cast<int>(this->arhandle->labelInfo.bwImage);
+  } else {
+    webarkitLOGe("Error: arhandle is null.");
+    return -1;
+  }
 }
 
 int ARToolKitNFT::getDebugMode() {
