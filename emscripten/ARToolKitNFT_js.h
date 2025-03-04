@@ -72,7 +72,7 @@ public:
     int setup(int width, int height, int cameraID);
 
 private:
-    std::shared_ptr<KpmHandle> createKpmHandle(ARParamLT *cparamLT);
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT);
     void deleteHandle();
 
     int id;
@@ -80,9 +80,9 @@ private:
     ARParam param;
     ARParamLT *paramLT;
 
-    std::shared_ptr<ARUint8[]> videoFrame;  // Changed from ARUint8*
+    std::unique_ptr<ARUint8[]> videoFrame;  // Changed from std::shared_ptr
     int videoFrameSize;
-    std::shared_ptr<ARUint8[]> videoLuma;   // Changed from ARUint8*
+    std::unique_ptr<ARUint8[]> videoLuma;   // Changed from std::shared_ptr
 
     int width;
     int height;
@@ -90,7 +90,7 @@ private:
     ARHandle *arhandle;
     AR3DHandle *ar3DHandle;
 
-    std::shared_ptr<KpmHandle> kpmHandle;
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;  // Changed from std::shared_ptr
     AR2HandleT *ar2Handle;
 
 #if WITH_FILTERING
