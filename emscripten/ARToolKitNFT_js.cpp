@@ -6,7 +6,9 @@ ARToolKitNFT::ARToolKitNFT()
       detectedPage(-2),   // -2 Tracking not inited, -1 tracking inited OK, >= 0
                           // tracking online on page.
       surfaceSetCount(0), // Running NFT marker id
-      arhandle(nullptr), ar3DHandle(nullptr), kpmHandle(nullptr), ar2Handle(nullptr),
+      arhandle(nullptr), ar3DHandle(nullptr), 
+      kpmHandle(nullptr, [](KpmHandle*){/* empty deleter */}), // Fix: proper nullptr with deleter
+      ar2Handle(nullptr),
 #if WITH_FILTERING
       ftmi(nullptr), filterCutoffFrequency(60.0), filterSampleRate(120.0),
 #endif
@@ -129,7 +131,7 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
 
 int ARToolKitNFT::detectNFTMarker() {
 
-  KpmResult *kpmResult = NULL;
+  KpmResult* kpmResult = nullptr;
   int kpmResultNum = -1;
 
   if (this->detectedPage == -2) {
@@ -154,13 +156,16 @@ int ARToolKitNFT::detectNFTMarker() {
   return kpmResultNum;
 }
 
-std::shared_ptr<KpmHandle> ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
+std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
   KpmHandle* handle = kpmCreateHandle(cparamLT);
   if (!handle) {
     webarkitLOGe("Error: kpmCreateHandle returned NULL.");
-    return nullptr;
+    // Return empty unique_ptr with proper deleter type
+    return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
+      if (p) kpmDeleteHandle(&p);
+    });
   }
-  return std::shared_ptr<KpmHandle>(handle, [](KpmHandle* p) { 
+  return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(handle, [](KpmHandle* p) { 
     if (p) kpmDeleteHandle(&p); 
   });
 }
@@ -174,10 +179,15 @@ int ARToolKitNFT::getKpmImageHeight(KpmHandle *kpmHandle) {
 }
 
 int ARToolKitNFT::setupAR2() {
-  if ((this->ar2Handle = ar2CreateHandleMod(this->paramLT, this->pixFormat)) ==
-      NULL) {
+  AR2HandleT* tempHandle = ar2CreateHandleMod(this->paramLT, this->pixFormat);
+  if (tempHandle == nullptr) {
     webarkitLOGe("Error: ar2CreateHandle.");
+    return -1;  // Return error code if handle creation failed
   }
+  
+  // Store the handle
+  this->ar2Handle = tempHandle;
+  
   // Settings for devices with single-core CPUs.
   ar2SetTrackingThresh(this->ar2Handle, 5.0);
   ar2SetSimThresh(this->ar2Handle, 0.50);
@@ -186,9 +196,14 @@ int ARToolKitNFT::setupAR2() {
   ar2SetTemplateSize1(this->ar2Handle, 6);
   ar2SetTemplateSize2(this->ar2Handle, 6);
 
+  // Create KPM handle
   this->kpmHandle = createKpmHandle(this->paramLT);
+  if (!this->kpmHandle) {
+    webarkitLOGe("Error creating KPM handle");
+    return -1;
+  }
 
-  return 0;
+  return 0;  // Success
 }
 
 nftMarker ARToolKitNFT::getNFTData(int index) {
@@ -219,11 +234,6 @@ void ARToolKitNFT::deleteHandle() {
 }
 
 int ARToolKitNFT::teardown() {
-  // TODO: Fix Cleanup luma.
-  //  if(arc->videoLuma) {
-  //      free(arc->videoLuma);
-  //      arc->videoLuma = NULL;
-  //  }
 
   // Reset shared pointers instead of freeing memory
   this->videoFrame.reset();
@@ -250,14 +260,17 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
                       &(this->param));
   }
 
-  // ARLOGi("*** Camera Parameter ***\n");
-  // arParamDisp(&(this->param));
+  ARLOGi("*** Camera Parameter ***\n");
+  arParamDisp(&(this->param));
 
   deleteHandle();
+  if (this->paramLT != nullptr) {
+    deleteHandle();
+  }
 
-  if ((this->paramLT = arParamLTCreate(&(this->param),
-                                       AR_PARAM_LT_DEFAULT_OFFSET)) == NULL) {
-    webarkitLOGe("setCamera(): Error: arParamLTCreate.");
+  this->paramLT = arParamLTCreate(&(this->param), AR_PARAM_LT_DEFAULT_OFFSET);
+  if (!this->paramLT) {
+    webarkitLOGe("setCamera(): Error: arParamLTCreate for cameraID %d.", cameraID);
     return -1;
   }
 
@@ -318,19 +331,17 @@ int ARToolKitNFT::decompressZFT(std::string datasetPathname, std::string tempPat
 std::vector<int>
 ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
 
-  KpmHandle *kpmHandle = this->kpmHandle.get();
-
   KpmRefDataSet *refDataSet;
   refDataSet = NULL;
 
   if (datasetPathnames.size() >= PAGES_MAX) {
-    webarkitLOGe("Error exceed maximum pages.");
-    exit(-1);
+    webarkitLOGe("Error: exceeded maximum pages.");
+    return {};
   }
 
   std::vector<int> markerIds = {};
 
-  for (auto i = 0; i < datasetPathnames.size(); i++) {
+  for (size_t i = 0; i < datasetPathnames.size(); i++) {
     webarkitLOGi("datasetPathnames size: %i", datasetPathnames.size());
     webarkitLOGi("add NFT marker-> '%s'", datasetPathnames[i].c_str());
 
@@ -360,9 +371,12 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
     // Load AR2 data.
     webarkitLOGi("Reading %s.fset", datasetPathname);
 
-    if ((this->surfaceSet[i] =
-             ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL) {
+    if ((this->surfaceSet[i] = ar2ReadSurfaceSet(datasetPathname, "fset", nullptr)) == nullptr) {
       webarkitLOGe("Error reading data from %s.fset", datasetPathname);
+      // Cleanup previously allocated resources
+      for (size_t j = 0; j < i; j++) {
+        ar2FreeSurfaceSet(&this->surfaceSet[j]);
+      }
       return {};
     }
 
@@ -389,7 +403,7 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
     surfaceSetCount++;
   }
 
-  if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
+  if (kpmSetRefDataSet(this->kpmHandle.get(), refDataSet) < 0) {
     webarkitLOGe("Error: kpmSetRefDataSet");
     return {};
   }
@@ -513,11 +527,9 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
   this->height = height;
 
   this->videoFrameSize = width * height * 4 * sizeof(ARUint8);
-  // Use proper shared_ptr construction for arrays with custom deleter
-  this->videoFrame = std::shared_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize], 
-                                              std::default_delete<ARUint8[]>());
-  this->videoLuma = std::shared_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize / 4], 
-                                             std::default_delete<ARUint8[]>());
+  // Use unique_ptr to manage video frame memory, ensuring exclusive ownership and automatic deallocation
+  this->videoFrame = std::unique_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize]);
+  this->videoLuma = std::unique_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize / 4]);
 
   setCamera(id, cameraID);
 
