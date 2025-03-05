@@ -25,10 +25,14 @@
 #include <unordered_map>
 #include <vector>
 #include "markerDecompress.h"
+#include <memory> // Add for std::unique_ptr
 
 const int PAGES_MAX =
     20; // Maximum number of pages expected. You can change this down (to save
         // memory) or up (to accomodate more pages.)
+
+// Add a zeros array for pose initialization
+static std::array<float, 12> zeros = {}; // Zero-initialized array
 
 struct nftMarker {
   int id_NFT;
@@ -43,9 +47,10 @@ struct arController {
   ARParam param;
   ARParamLT *paramLT = NULL;
 
-  ARUint8 *videoFrame = NULL;
+  // Replace raw pointers with unique_ptr
+  std::unique_ptr<ARUint8[]> videoFrame = nullptr;
   int videoFrameSize;
-  ARUint8 *videoLuma = NULL;
+  std::unique_ptr<ARUint8[]> videoLuma = nullptr;
 
   int width = 0;
   int height = 0;
@@ -53,7 +58,11 @@ struct arController {
   ARHandle *arhandle = NULL;
   AR3DHandle *ar3DHandle;
 
-  KpmHandle *kpmHandle;
+  // Use unique_ptr with custom deleter for KpmHandle
+  std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle = 
+      std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
+          if (p) kpmDeleteHandle(&p);
+      });
   AR2HandleT *ar2Handle;
 
   THREAD_HANDLE_T *threadHandle = NULL;
@@ -123,13 +132,17 @@ int passVideoData(int id, emscripten::val videoFrame,
 
   arController *arc = &(arControllers[id]);
 
-  std::vector<uint8_t> vf =
-      emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
-  std::vector<uint8_t> vl =
-      emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
-
-  arc->videoFrame = vf.data();
-  arc->videoLuma = vl.data();
+  auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
+  auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+  
+  // Copy data instead of just assigning pointers
+  if (arc->videoFrame) {
+    std::copy(vf.begin(), vf.end(), arc->videoFrame.get());
+  }
+  
+  if (arc->videoLuma) {
+    std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
+  }
 
   return 0;
 }
@@ -158,7 +171,7 @@ emscripten::val getNFTMarkerInfo(int id, int markerIndex) {
   if (arc->threadHandle) {
     int ret;
     if (arc->detectedPage == -2) {
-      trackingInitStart(arc->threadHandle, arc->videoLuma);
+      trackingInitStart(arc->threadHandle, arc->videoLuma.get());
       arc->detectedPage = -1;
     }
     if (arc->detectedPage == -1) {
@@ -180,7 +193,7 @@ emscripten::val getNFTMarkerInfo(int id, int markerIndex) {
     }
     if (arc->detectedPage >= 0 && arc->detectedPage < arc->surfaceSetCount) {
       if (ar2Tracking(arc->ar2Handle, arc->surfaceSet[arc->detectedPage],
-                      arc->videoFrame, trackingTrans, &err) < 0) {
+                      arc->videoFrame.get(), trackingTrans, &err) < 0) {
         webarkitLOGi("Tracking lost.\n");
         arc->detectedPage = -2;
       } else {
@@ -213,12 +226,7 @@ emscripten::val getNFTMarkerInfo(int id, int markerIndex) {
     NFTMarkerInfo.set("id", markerIndex);
     NFTMarkerInfo.set("error", -1);
     NFTMarkerInfo.set("found", 0);
-    for (auto x = 0; x < 3; x++) {
-      for (auto y = 0; y < 4; y++) {
-        pose.call<void>("push", 0);
-      }
-    }
-    NFTMarkerInfo.set("pose", pose);
+    NFTMarkerInfo.set("pose", emscripten::val(emscripten::typed_memory_view(12, zeros.data())));
   }
 
   return NFTMarkerInfo;
@@ -269,18 +277,19 @@ int detectNFTMarker(int id) {
   return kpmResultNum;
 }
 
-KpmHandle *createKpmHandle(ARParamLT *cparamLT) {
-  KpmHandle *kpmHandle;
-  kpmHandle = kpmCreateHandle(cparamLT);
-  return kpmHandle;
-}
-
-int getKpmImageWidth(KpmHandle *kpmHandle) {
-  return kpmHandleGetXSize(kpmHandle);
-}
-
-int getKpmImageHeight(KpmHandle *kpmHandle) {
-  return kpmHandleGetYSize(kpmHandle);
+// Function to create a KpmHandle with proper error handling
+std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT) {
+  KpmHandle* handle = kpmCreateHandle(cparamLT);
+  if (!handle) {
+    webarkitLOGe("Error: kpmCreateHandle returned nullptr.");
+    // Return empty unique_ptr with proper deleter type
+    return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
+      if (p) kpmDeleteHandle(&p);
+    });
+  }
+  return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(handle, [](KpmHandle* p) { 
+    if (p) kpmDeleteHandle(&p); 
+  });
 }
 
 int setupAR2(int id) {
@@ -289,30 +298,30 @@ int setupAR2(int id) {
   }
   arController *arc = &(arControllers[id]);
 
-  if ((arc->ar2Handle = ar2CreateHandle(arc->paramLT, arc->pixFormat,
-                                        AR2_TRACKING_DEFAULT_THREAD_NUM)) ==
-      NULL) {
-    webarkitLOGe("Error: ar2CreateHandle.\n");
-    kpmDeleteHandle(&arc->kpmHandle);
-    return (FALSE);
+  AR2HandleT* tempHandle = ar2CreateHandle(arc->paramLT, arc->pixFormat, AR2_TRACKING_DEFAULT_THREAD_NUM);
+  if (tempHandle == nullptr) {
+    webarkitLOGe("Error: ar2CreateHandle.");
+    return -1;  // Return error code if handle creation failed
   }
-  if (threadGetCPU() <= 1) {
-    webarkitLOGi("Using NFT tracking settings for a single CPU.\n");
-    ar2SetTrackingThresh(arc->ar2Handle, 5.0);
-    ar2SetSimThresh(arc->ar2Handle, 0.50);
-    ar2SetSearchFeatureNum(arc->ar2Handle, 16);
-    ar2SetSearchSize(arc->ar2Handle, 6);
-    ar2SetTemplateSize1(arc->ar2Handle, 6);
-    ar2SetTemplateSize2(arc->ar2Handle, 6);
-  } else {
-    webarkitLOGi("Using NFT tracking settings for more than one CPU.\n");
-    ar2SetTrackingThresh(arc->ar2Handle, 5.0);
-    ar2SetSimThresh(arc->ar2Handle, 0.50);
-    ar2SetSearchFeatureNum(arc->ar2Handle, 16);
-    ar2SetSearchSize(arc->ar2Handle, 12);
-    ar2SetTemplateSize1(arc->ar2Handle, 6);
-    ar2SetTemplateSize2(arc->ar2Handle, 6);
+  
+  // Store the handle
+  arc->ar2Handle = tempHandle;
+  
+  // Settings for devices with single-core CPUs.
+  ar2SetTrackingThresh(arc->ar2Handle, 5.0);
+  ar2SetSimThresh(arc->ar2Handle, 0.50);
+  ar2SetSearchFeatureNum(arc->ar2Handle, 16);
+  ar2SetSearchSize(arc->ar2Handle, 6);
+  ar2SetTemplateSize1(arc->ar2Handle, 6);
+  ar2SetTemplateSize2(arc->ar2Handle, 6);
+
+  // Create KPM handle using our helper to get a unique_ptr
+  arc->kpmHandle = createKpmHandle(arc->paramLT);
+  if (!arc->kpmHandle) {
+    webarkitLOGe("Error creating KPM handle");
+    return -1;
   }
+
   return 0;
 }
 
@@ -358,25 +367,14 @@ int teardown(int id) {
   }
   arController *arc = &(arControllers[id]);
 
-  // TODO: Fix Cleanup luma.
-  //  if(arc->videoLuma) {
-  //      free(arc->videoLuma);
-  //      arc->videoLuma = NULL;
-  //  }
-
-  if (arc->videoFrame) {
-    free(arc->videoFrame);
-    arc->videoFrame = NULL;
-    arc->videoFrameSize = 0;
-  }
+  // Reset unique pointers instead of freeing memory
+  arc->videoFrame.reset();
+  arc->videoLuma.reset();
+  arc->videoFrameSize = 0;
 
   deleteHandle(arc);
 
   arControllers.erase(id);
-
-  delete arc;
-
-  trackingInitQuit(&arc->threadHandle);
 
   return 0;
 }
@@ -483,9 +481,9 @@ std::vector<int> addNFTMarkers(int id,
   }
   arController *arc = &(arControllers[id]);
 
-  KpmHandle *kpmHandle = arc->kpmHandle;
+  KpmHandle *kpmHandle = arc->kpmHandle.get();
 
-  arc->threadHandle = trackingInit(arc->kpmHandle);
+  arc->threadHandle = trackingInit(arc->kpmHandle.get());
 
   KpmRefDataSet *refDataSet;
   refDataSet = NULL;
@@ -753,8 +751,9 @@ int setup(int width, int height, int cameraID) {
   arc->height = height;
 
   arc->videoFrameSize = width * height * 4 * sizeof(ARUint8);
-  arc->videoFrame = (ARUint8 *)malloc(arc->videoFrameSize);
-  arc->videoLuma = (ARUint8 *)malloc(arc->videoFrameSize / 4);
+  // Use unique_ptr instead of malloc
+  arc->videoFrame = std::unique_ptr<ARUint8[]>(new ARUint8[arc->videoFrameSize]);
+  arc->videoLuma = std::unique_ptr<ARUint8[]>(new ARUint8[arc->videoFrameSize / 4]);
 
   setCamera(id, cameraID);
 
