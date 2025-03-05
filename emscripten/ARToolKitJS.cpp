@@ -24,12 +24,10 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <memory> // Add for std::unique_ptr
 #include "markerDecompress.h"
 
-
-const int PAGES_MAX =
-    20; // Maximum number of pages expected. You can change this down (to save
-        // memory) or up (to accomodate more pages.)
+const int PAGES_MAX = 20; // Maximum number of pages expected
 
 struct nftMarker
 {
@@ -39,37 +37,45 @@ struct nftMarker
   int dpi_NFT;
 };
 
+// Add a zeros array for pose initialization
+static std::array<float, 12> zeros = {}; // Zero-initialized array
+
 struct arController
 {
   int id;
 
   ARParam param;
-  ARParamLT *paramLT = NULL;
+  ARParamLT *paramLT = nullptr;
 
-  ARUint8 *videoFrame = NULL;
+  // Replace raw pointers with unique_ptr
+  std::unique_ptr<ARUint8[]> videoFrame = nullptr;
   int videoFrameSize;
-  ARUint8 *videoLuma = NULL;
+  std::unique_ptr<ARUint8[]> videoLuma = nullptr;
 
   int width = 0;
   int height = 0;
 
-  ARHandle *arhandle = NULL;
-  AR3DHandle *ar3DHandle;
+  ARHandle *arhandle = nullptr;
+  AR3DHandle *ar3DHandle = nullptr;
 
-  KpmHandle *kpmHandle;
-  AR2HandleT *ar2Handle;
+  // Use unique_ptr with custom deleter for KpmHandle
+  std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle = 
+      std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
+          if (p) kpmDeleteHandle(&p);
+      });
+      
+  AR2HandleT *ar2Handle = nullptr;
 
 #if WITH_FILTERING
-  ARFilterTransMatInfo *ftmi;
+  ARFilterTransMatInfo *ftmi = nullptr;
   ARdouble filterCutoffFrequency = 60.0;
   ARdouble filterSampleRate = 120.0;
 #endif
 
-  int detectedPage = -2; // -2 Tracking not inited, -1 tracking inited OK, >= 0
-                         // tracking online on page.
+  int detectedPage = -2; // -2 Tracking not inited, -1 tracking inited OK, >= 0 tracking online on page.
 
   int surfaceSetCount = 0; // Running NFT marker id
-  AR2SurfaceSetT *surfaceSet[PAGES_MAX];
+  AR2SurfaceSetT *surfaceSet[PAGES_MAX] = {nullptr};
   std::unordered_map<int, AR2SurfaceSetT *> surfaceSets;
   // nftMarker struct inside arController
   nftMarker nft;
@@ -110,9 +116,9 @@ extern "C"
   void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
                   float interpolationFactor)
   {
-    for (int i = 0; i < 3; i++)
+    for (auto i = 0; i < 3; i++)
     {
-      for (int j = 0; j < 4; j++)
+      for (auto j = 0; j < 4; j++)
       {
         dst[i][j] = (1 - interpolationFactor) * src[i][j] + dst[i][j] * interpolationFactor;
       }
@@ -128,11 +134,17 @@ extern "C"
 
     arController *arc = &(arControllers[id]);
 
-    std::vector<uint8_t> vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
-    std::vector<uint8_t> vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
-
-    arc->videoFrame = vf.data();
-    arc->videoLuma = vl.data();
+    auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
+    auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+    
+    // Copy data instead of just assigning pointers
+    if (arc->videoFrame) {
+      std::copy(vf.begin(), vf.end(), arc->videoFrame.get());
+    }
+    
+    if (arc->videoLuma) {
+      std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
+    }
 
     return 0;
   }
@@ -145,8 +157,8 @@ extern "C"
     }
     arController *arc = &(arControllers[id]);
 
-    emscripten::val NFTMarkerInfo = emscripten::val::object();
-    emscripten::val pose = emscripten::val::array();
+    auto NFTMarkerInfo = emscripten::val::object();
+    auto pose = emscripten::val::array();
 
     if (arc->surfaceSetCount <= markerIndex)
     {
@@ -164,29 +176,14 @@ extern "C"
     float err = -1;
     if (arc->detectedPage == markerIndex)
     {
-
       int trackResult =
           ar2TrackingMod(arc->ar2Handle, arc->surfaceSet[arc->detectedPage],
-                         arc->videoFrame, trans, &err);
+                         arc->videoFrame.get(), trans, &err);
 
 #if WITH_FILTERING
-      for (int j = 0; j < 3; j++)
-      {
-        for (int k = 0; k < 4; k++)
-        {
-          transF[j][k] = trans[j][k];
-        }
-      }
+      std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
 
-      bool reset;
-      if (trackResult < 0)
-      {
-        reset = 1;
-      }
-      else
-      {
-        reset = 0;
-      }
+      bool reset = (trackResult < 0) ? true : false;
 
       if (arFilterTransMat(arc->ftmi, transF, reset) < 0)
       {
@@ -237,14 +234,7 @@ extern "C"
       NFTMarkerInfo.set("id", markerIndex);
       NFTMarkerInfo.set("error", -1);
       NFTMarkerInfo.set("found", 0);
-      for (auto x = 0; x < 3; x++)
-      {
-        for (auto y = 0; y < 4; y++)
-        {
-          pose.call<void>("push", 0);
-        }
-      }
-      NFTMarkerInfo.set("pose", pose);
+      NFTMarkerInfo.set("pose", emscripten::val(emscripten::typed_memory_view(12, zeros.data())));
     }
 
     return NFTMarkerInfo;
@@ -259,33 +249,26 @@ extern "C"
 
     arController *arc = &(arControllers[id]);
 
-    KpmResult *kpmResult = NULL;
+    KpmResult *kpmResult = nullptr;
     int kpmResultNum = -1;
 
     if (arc->detectedPage == -2)
     {
-      kpmMatching(arc->kpmHandle, arc->videoLuma);
-      kpmGetResult(arc->kpmHandle, &kpmResult, &kpmResultNum);
+      kpmMatching(arc->kpmHandle.get(), arc->videoLuma.get());
+      kpmGetResult(arc->kpmHandle.get(), &kpmResult, &kpmResultNum);
 
 #if WITH_FILTERING
       arc->ftmi =
           arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
 #endif
 
-      for (int i = 0; i < kpmResultNum; i++)
+      for (auto i = 0; i < kpmResultNum; i++)
       {
         if (kpmResult[i].camPoseF == 0)
         {
-
           float trans[3][4];
           arc->detectedPage = kpmResult[i].pageNo;
-          for (int j = 0; j < 3; j++)
-          {
-            for (int k = 0; k < 4; k++)
-            {
-              trans[j][k] = kpmResult[i].camPose[j][k];
-            }
-          }
+          std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
           ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
         }
       }
@@ -293,11 +276,27 @@ extern "C"
     return kpmResultNum;
   }
 
+  // Function to create a KpmHandle with proper error handling
+  std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandleHelper(ARParamLT *cparamLT)
+  {
+    KpmHandle* handle = kpmCreateHandle(cparamLT);
+    if (!handle) {
+      webarkitLOGe("Error: kpmCreateHandle returned nullptr.");
+      // Return empty unique_ptr with proper deleter type
+      return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
+        if (p) kpmDeleteHandle(&p);
+      });
+    }
+    return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(handle, [](KpmHandle* p) { 
+      if (p) kpmDeleteHandle(&p); 
+    });
+  }
+
   KpmHandle *createKpmHandle(ARParamLT *cparamLT)
   {
-    KpmHandle *kpmHandle;
-    kpmHandle = kpmCreateHandle(cparamLT);
-    return kpmHandle;
+    auto kpmHandlePtr = createKpmHandleHelper(cparamLT);
+    // Return the raw pointer - this is the C API function
+    return kpmHandlePtr.release();
   }
 
   int getKpmImageWidth(KpmHandle *kpmHandle)
@@ -318,12 +317,16 @@ extern "C"
     }
     arController *arc = &(arControllers[id]);
 
-    if ((arc->ar2Handle = ar2CreateHandleMod(arc->paramLT, arc->pixFormat)) ==
-        NULL)
+    AR2HandleT* tempHandle = ar2CreateHandleMod(arc->paramLT, arc->pixFormat);
+    if (tempHandle == nullptr)
     {
       webarkitLOGe("Error: ar2CreateHandle.");
-      kpmDeleteHandle(&arc->kpmHandle);
+      return -1;  // Return error code if handle creation failed
     }
+    
+    // Store the handle
+    arc->ar2Handle = tempHandle;
+    
     // Settings for devices with single-core CPUs.
     ar2SetTrackingThresh(arc->ar2Handle, 5.0);
     ar2SetSimThresh(arc->ar2Handle, 0.50);
@@ -332,7 +335,12 @@ extern "C"
     ar2SetTemplateSize1(arc->ar2Handle, 6);
     ar2SetTemplateSize2(arc->ar2Handle, 6);
 
-    arc->kpmHandle = createKpmHandle(arc->paramLT);
+    // Create KPM handle using our helper to get a unique_ptr
+    arc->kpmHandle = createKpmHandleHelper(arc->paramLT);
+    if (!arc->kpmHandle) {
+      webarkitLOGe("Error creating KPM handle");
+      return -1;
+    }
 
     return 0;
   }
@@ -361,21 +369,23 @@ extern "C"
 
   void deleteHandle(arController *arc)
   {
-    if (arc->arhandle != NULL)
+    if (arc->arhandle != nullptr)
     {
-      arPattDetach(arc->arhandle);
+      if (arPattDetach(arc->arhandle) != 0) {
+        webarkitLOGe("Error detaching pattern from arhandle.");
+      }
       arDeleteHandle(arc->arhandle);
-      arc->arhandle = NULL;
+      arc->arhandle = nullptr;
     }
-    if (arc->ar3DHandle != NULL)
+    if (arc->ar3DHandle != nullptr)
     {
       ar3DDeleteHandle(&(arc->ar3DHandle));
-      arc->ar3DHandle = NULL;
+      arc->ar3DHandle = nullptr;
     }
-    if (arc->paramLT != NULL)
+    if (arc->paramLT != nullptr)
     {
       arParamLTFree(&(arc->paramLT));
-      arc->paramLT = NULL;
+      arc->paramLT = nullptr;
     }
   }
 
@@ -387,24 +397,14 @@ extern "C"
     }
     arController *arc = &(arControllers[id]);
 
-    // TODO: Fix Cleanup luma.
-    //  if(arc->videoLuma) {
-    //      free(arc->videoLuma);
-    //      arc->videoLuma = NULL;
-    //  }
-
-    if (arc->videoFrame)
-    {
-      free(arc->videoFrame);
-      arc->videoFrame = NULL;
-      arc->videoFrameSize = 0;
-    }
+    // Reset unique pointers instead of freeing memory
+    arc->videoFrame.reset();
+    arc->videoLuma.reset();
+    arc->videoFrameSize = 0;
 
     deleteHandle(arc);
-
+    
     arControllers.erase(id);
-
-    delete arc;
 
     return 0;
   }
@@ -450,23 +450,21 @@ extern "C"
       arParamChangeSize(&(arc->param), arc->width, arc->height, &(arc->param));
     }
 
-    // ARLOGi("*** Camera Parameter ***\n");
-    // arParamDisp(&(arc->param));
+    ARLOGi("*** Camera Parameter ***\n");
+    arParamDisp(&(arc->param));
 
     deleteHandle(arc);
 
-    if ((arc->paramLT = arParamLTCreate(&(arc->param),
-                                        AR_PARAM_LT_DEFAULT_OFFSET)) == NULL)
-    {
+    arc->paramLT = arParamLTCreate(&(arc->param), AR_PARAM_LT_DEFAULT_OFFSET);
+    if (!arc->paramLT) {
       webarkitLOGe("setCamera(): Error: arParamLTCreate.");
       return -1;
     }
 
-    // ARLOGi("setCamera(): arParamLTCreated\n..%d, %d\n",
-    // (arc->paramLT->param).xsize, (arc->paramLT->param).ysize);
+    ARLOGi("setCamera(): arParamLTCreated\n..%d, %d\n", (arc->paramLT->param).xsize, (arc->paramLT->param).ysize);
 
     // setup camera
-    if ((arc->arhandle = arCreateHandle(arc->paramLT)) == NULL)
+    if ((arc->arhandle = arCreateHandle(arc->paramLT)) == nullptr)
     {
       webarkitLOGe("setCamera(): Error: arCreateHandle.");
       return -1;
@@ -475,7 +473,7 @@ extern "C"
     int set = arSetPixelFormat(arc->arhandle, arc->pixFormat);
 
     arc->ar3DHandle = ar3DCreateHandle(&(arc->param));
-    if (arc->ar3DHandle == NULL)
+    if (arc->ar3DHandle == nullptr)
     {
       webarkitLOGe("setCamera(): Error creating 3D handle");
       return -1;
@@ -496,9 +494,8 @@ extern "C"
     arController *arc = &(arControllers[id]);
 
     emscripten::val lens = emscripten::val::array();
-    for (int i = 0; i < 16; i++)
-    {
-      lens.call<void>("push", arc->cameraLens[i]);
+    for (const auto& value : arc->cameraLens) {
+      lens.call<void>("push", value);
     }
 
     return lens;
@@ -506,10 +503,8 @@ extern "C"
 
   int decompressZFT(std::string datasetPathname, std::string tempPathname){
     int response = decompressMarkers(datasetPathname.c_str(), tempPathname.c_str());
-
     return 1;
   }
-
 
   /*****************
    * Marker loading *
@@ -524,10 +519,9 @@ extern "C"
     }
     arController *arc = &(arControllers[id]);
 
-    KpmHandle *kpmHandle = arc->kpmHandle;
+    KpmHandle *kpmHandle = arc->kpmHandle.get();
 
-    KpmRefDataSet *refDataSet;
-    refDataSet = NULL;
+    KpmRefDataSet *refDataSet = nullptr;
 
     if (datasetPathnames.size() >= PAGES_MAX)
     {
@@ -572,7 +566,7 @@ extern "C"
       webarkitLOGi("Reading %s.fset", datasetPathname);
 
       if ((arc->surfaceSet[i] =
-               ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL)
+               ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == nullptr)
       {
         webarkitLOGe("Error reading data from %s.fset", datasetPathname);
         return {};
@@ -673,10 +667,6 @@ extern "C"
     {
       webarkitLOGi("Threshold set to %d", threshold);
     };
-    // default 100
-    // arSetLabelingThreshMode
-    // AR_LABELING_THRESH_MODE_MANUAL, AR_LABELING_THRESH_MODE_AUTO_MEDIAN,
-    // AR_LABELING_THRESH_MODE_AUTO_OTSU, AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE
   }
 
   int getThreshold(int id)
@@ -704,11 +694,11 @@ extern "C"
     }
     arController *arc = &(arControllers[id]);
 
-    AR_LABELING_THRESH_MODE thresholdMode = (AR_LABELING_THRESH_MODE)mode;
+    AR_LABELING_THRESH_MODE thresholdMode = static_cast<AR_LABELING_THRESH_MODE>(mode);
 
     if (arSetLabelingThreshMode(arc->arhandle, thresholdMode) == 0)
     {
-      webarkitLOGi("Threshold mode set to %d", (int)thresholdMode);
+      webarkitLOGi("Threshold mode set to %d", static_cast<int>(thresholdMode));
     }
   }
 
@@ -734,7 +724,7 @@ extern "C"
   {
     if (arControllers.find(id) == arControllers.end())
     {
-      return NULL;
+      return -1;
     }
     arController *arc = &(arControllers[id]);
 
@@ -748,23 +738,22 @@ extern "C"
   {
     if (arControllers.find(id) == arControllers.end())
     {
-      return NULL;
+      return -1;
     }
     arController *arc = &(arControllers[id]);
 
-    return (int)arc->arhandle->labelInfo.bwImage;
+    return arc->arhandle ? static_cast<int>(reinterpret_cast<intptr_t>(arc->arhandle->labelInfo.bwImage)) : -1;
   }
 
   int getDebugMode(int id)
   {
     if (arControllers.find(id) == arControllers.end())
     {
-      return NULL;
+      return -1;
     }
     arController *arc = &(arControllers[id]);
 
     int enable;
-
     arGetDebugMode(arc->arhandle, &enable);
     return enable;
   }
@@ -777,10 +766,9 @@ extern "C"
     }
     arController *arc = &(arControllers[id]);
 
-    int imageProcMode = mode;
     if (arSetImageProcMode(arc->arhandle, mode) == 0)
     {
-      webarkitLOGi("Image proc. mode set to %d.", imageProcMode);
+      webarkitLOGi("Image proc. mode set to %d.", mode);
     }
   }
 
@@ -815,8 +803,9 @@ extern "C"
     arc->height = height;
 
     arc->videoFrameSize = width * height * 4 * sizeof(ARUint8);
-    arc->videoFrame = (ARUint8 *)malloc(arc->videoFrameSize);
-    arc->videoLuma = (ARUint8 *)malloc(arc->videoFrameSize / 4);
+    // Use unique_ptr instead of malloc
+    arc->videoFrame = std::unique_ptr<ARUint8[]>(new ARUint8[arc->videoFrameSize]);
+    arc->videoLuma = std::unique_ptr<ARUint8[]>(new ARUint8[arc->videoFrameSize / 4]);
 
     setCamera(id, cameraID);
 
