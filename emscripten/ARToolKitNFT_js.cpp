@@ -71,7 +71,7 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
                        this->videoFrame.get(), trans, &err);
 
 #if WITH_FILTERING
-      std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
+    std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
 
     bool reset;
     if (trackResult < 0) {
@@ -230,7 +230,7 @@ void ARToolKitNFT::deleteHandle() {
 
 int ARToolKitNFT::teardown() {
 
-  // Reset shared pointers instead of freeing memory
+  // Reset unique pointers instead of freeing memory
   this->videoFrame.reset();
   this->videoLuma.reset();
   this->videoFrameSize = 0;
@@ -269,11 +269,10 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
     return -1;
   }
 
-// ARLOGi("setCamera(): arParamLTCreated\n..%d, %d\n",
-  // (this->paramLT->param).xsize, (this->paramLT->param).ysize);
+  ARLOGi("setCamera(): arParamLTCreated\n..%d, %d\n", (this->paramLT->param).xsize, (this->paramLT->param).ysize);
 
   // setup camera
-  if ((this->arhandle = arCreateHandle(this->paramLT)) == NULL) {
+  if ((this->arhandle = arCreateHandle(this->paramLT)) == nullptr) {
     webarkitLOGe("setCamera(): Error: arCreateHandle.");
     return -1;
   }
@@ -281,7 +280,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
   int set = arSetPixelFormat(this->arhandle, this->pixFormat);
 
   this->ar3DHandle = ar3DCreateHandle(&(this->param));
-  if (this->ar3DHandle == NULL) {
+  if (this->ar3DHandle == nullptr) {
     webarkitLOGe("setCamera(): Error creating 3D handle");
     return -1;
   }
@@ -325,7 +324,7 @@ int ARToolKitNFT::decompressZFT(std::string datasetPathname, std::string tempPat
 
 std::vector<int>
 ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
-
+  
   KpmRefDataSet *refDataSet;
   refDataSet = NULL;
 
