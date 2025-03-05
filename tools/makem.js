@@ -245,6 +245,9 @@ FLAGS += " -s USE_LIBJPEG=1";
 //FLAGS += " -s USE_ZLIB=1";
 FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
+FLAGS += " --bind "; // Ensure --bind is included
+
+const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
 const WASM_FLAGS = " -s SINGLE_FILE=1";
 const SIMD128_FLAGS = " -msimd128";
@@ -263,14 +266,11 @@ const PRE_FLAGS =
 const PRE_ES6_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
 
-FLAGS += " --bind ";
-
 /* DEBUG FLAGS */
-let DEBUG_FLAGS = " -g ";
+let DEBUG_FLAGS = " -g2 ";
 DEBUG_FLAGS += " -s ASSERTIONS=1 ";
 DEBUG_FLAGS += " --profiling ";
 DEBUG_FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
-DEBUG_FLAGS += "  -s DEMANGLE_SUPPORT=1 ";
 
 const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
@@ -442,7 +442,7 @@ const compile_wasm_thread = format(
     THREAD_BC +
     LIBZ_A +
     MAIN_SOURCES_TD +
-    FLAGS +
+    FLAGS_NO_MEMORY_GROWTH +
     "-pthread " +
     WASM_FLAGS +
     SIMD128_FLAGS +
@@ -519,11 +519,12 @@ const compile_wasm_es6_thread = format(
     THREAD_BC +
     LIBZ_A +
     MAIN_SOURCES_TD_ES6 +
-    FLAGS +
+    FLAGS_NO_MEMORY_GROWTH +
     "-pthread " +
     WASM_FLAGS +
     DEFINES +
     ES6_TD_FLAGS +
+    " --bind " + // Ensure --bind is included
     " -o {OUTPUT_PATH}{BUILD_FILE} ",
   OUTPUT_PATH,
   OUTPUT_PATH,
