@@ -374,6 +374,10 @@ int teardown(int id) {
 
   deleteHandle(arc);
 
+  // Add trackingInitQuit and delete arc
+  trackingInitQuit(&arc->threadHandle);
+  delete arc;
+
   arControllers.erase(id);
 
   return 0;

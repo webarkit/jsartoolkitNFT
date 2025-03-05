@@ -403,7 +403,9 @@ extern "C"
     arc->videoFrameSize = 0;
 
     deleteHandle(arc);
-    
+
+    delete arc;
+
     arControllers.erase(id);
 
     return 0;
