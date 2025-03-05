@@ -118,12 +118,7 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
     NFTMarkerInfo.set("id", markerIndex);
     NFTMarkerInfo.set("error", -1);
     NFTMarkerInfo.set("found", 0);
-    for (auto x = 0; x < 3; x++) {
-      for (auto y = 0; y < 4; y++) {
-        pose.call<void>("push", 0);
-      }
-    }
-    NFTMarkerInfo.set("pose", pose);
+    NFTMarkerInfo.set("pose", emscripten::val(emscripten::typed_memory_view(12, zeros.data())));
   }
 
   return NFTMarkerInfo;

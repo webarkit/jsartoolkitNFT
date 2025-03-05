@@ -32,6 +32,9 @@ static int MARKER_INDEX_OUT_OF_BOUNDS = -3;
 
 std::unordered_map<int, ARParam> cameraParams;
 
+// Static array of zeros for initializing poses when markers aren't found
+static const std::array<int, 12> zeros = {0};
+
 class ARToolKitNFT
 {
 public:
