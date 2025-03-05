@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory> // Added for std::unique_ptr
 #include <AR/config.h>
 #include <AR2/tracking.h>
 #include <AR/arFilterTransMat.h>
@@ -28,6 +29,9 @@ static int gARControllerID = 0;
 static int gCameraID = 0;
 
 static int MARKER_INDEX_OUT_OF_BOUNDS = -3;
+
+// Add a zeros array for pose initialization
+static std::array<float, 12> zeros = {}; // Zero-initialized array
 
 std::unordered_map<int, ARParam> cameraParams;
 
@@ -71,7 +75,7 @@ public:
     int setup(int width, int height, int cameraID);
 
 private:
-    KpmHandle *createKpmHandle(ARParamLT *cparamLT);
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT);
     THREAD_HANDLE_T *trackingInit(KpmHandle *kpmHandle);
     void deleteHandle();
 
@@ -80,9 +84,10 @@ private:
     ARParam param;
     ARParamLT *paramLT;
 
-    ARUint8 *videoFrame;
+    // Update to use std::unique_ptr for memory management
+    std::unique_ptr<ARUint8[]> videoFrame;
     int videoFrameSize;
-    ARUint8 *videoLuma;
+    std::unique_ptr<ARUint8[]> videoLuma;
 
     int width;
     int height;
@@ -90,7 +95,8 @@ private:
     ARHandle *arhandle;
     AR3DHandle *ar3DHandle;
 
-    KpmHandle *kpmHandle;
+    // Use unique_ptr with custom deleter for KpmHandle
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;
     AR2HandleT *ar2Handle;
 
     THREAD_HANDLE_T *threadHandle;
