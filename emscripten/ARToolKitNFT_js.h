@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 #include <AR/config.h>
 #include <AR2/tracking.h>
 #include <AR/arFilterTransMat.h>
@@ -31,6 +32,9 @@ static int MARKER_INDEX_OUT_OF_BOUNDS = -3;
 
 std::unordered_map<int, ARParam> cameraParams;
 
+// Static array of zeros for initializing poses when markers aren't found
+static const std::array<int, 12> zeros = {0};
+
 class ARToolKitNFT
 {
 public:
@@ -43,7 +47,7 @@ public:
     int getKpmImageHeight(KpmHandle *kpmHandle);
     int setupAR2();
     nftMarker getNFTData(int index);
-   
+
     void setLogLevel(int level);
     int getLogLevel();
 
@@ -71,7 +75,7 @@ public:
     int setup(int width, int height, int cameraID);
 
 private:
-    KpmHandle *createKpmHandle(ARParamLT *cparamLT);
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT);
     void deleteHandle();
 
     int id;
@@ -79,9 +83,9 @@ private:
     ARParam param;
     ARParamLT *paramLT;
 
-    ARUint8 *videoFrame;
+    std::unique_ptr<ARUint8[]> videoFrame;  // Changed from std::shared_ptr
     int videoFrameSize;
-    ARUint8 *videoLuma;
+    std::unique_ptr<ARUint8[]> videoLuma;   // Changed from std::shared_ptr
 
     int width;
     int height;
@@ -89,7 +93,7 @@ private:
     ARHandle *arhandle;
     AR3DHandle *ar3DHandle;
 
-    KpmHandle *kpmHandle;
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;  // Changed from std::shared_ptr
     AR2HandleT *ar2Handle;
 
 #if WITH_FILTERING
