@@ -5,6 +5,8 @@ examples/*
 tools/
 tools/*
 build/*.bc
+build/*.o
+build/*.a
 *.zip
 docs/**/*
 docs/
