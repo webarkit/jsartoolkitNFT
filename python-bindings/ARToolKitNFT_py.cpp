@@ -273,8 +273,6 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
   arglCameraFrustumRH(&((this->paramLT)->param), this->nearPlane,
                       this->farPlane, this->cameraLens);
 
-  this->kpmHandle = createKpmHandle(this->paramLT);
-
   return 0;
 }
 
