@@ -2,14 +2,16 @@
 #include <KPM/kpm.h>
 
 ARToolKitNFT::ARToolKitNFT()
-    : id(0), paramLT(NULL), videoFrame(NULL), videoFrameSize(0),
-      videoLuma(NULL), width(0), height(0),
+    : id(0), paramLT(nullptr), videoFrame(nullptr), videoFrameSize(0),
+      videoLuma(nullptr), width(0), height(0),
       detectedPage(-2),   // -2 Tracking not inited, -1 tracking inited OK, >= 0
                           // tracking online on page.
 surfaceSetCount(0), // Running NFT marker id
-arhandle(NULL), ar3DHandle(NULL), kpmHandle(NULL), ar2Handle(NULL),
+arhandle(nullptr), ar3DHandle(nullptr), 
+kpmHandle(nullptr, [](KpmHandle*){/* empty deleter */}), // Fix: proper nullptr with deleter
+ar2Handle(nullptr),
 #if WITH_FILTERING
-      ftmi(NULL), filterCutoffFrequency(60.0), filterSampleRate(120.0),
+      ftmi(nullptr), filterCutoffFrequency(60.0), filterSampleRate(120.0),
 #endif
       nearPlane(0.0001), farPlane(1000.0),
       patt_id(0) // Running pattern marker id
@@ -23,9 +25,9 @@ ARToolKitNFT::~ARToolKitNFT() {
 
 void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
                 float interpolationFactor) {
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 4; j++) {
-      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) / interpolationFactor;
+  for (auto i = 0; i < 3; i++) {
+    for (auto j = 0; j < 4; j++) {
+      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) * interpolationFactor;
     }
   }
 }
@@ -34,8 +36,8 @@ int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uin
   auto videoFramePtr = static_cast<uint8_t *>(videoFrame.request().ptr);
   auto videoLumaPtr = static_cast<uint8_t *>(videoLuma.request().ptr);
 
-  this->videoFrame = videoFramePtr;
-  this->videoLuma = videoLumaPtr;
+  std::copy(videoFramePtr, videoFramePtr + videoFrame.size(), this->videoFrame.get());
+  std::copy(videoLumaPtr, videoLumaPtr + videoLuma.size(), this->videoLuma.get());
 
   return 0;
 }
@@ -60,14 +62,10 @@ py::dict ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
   if (this->detectedPage == markerIndex) {
     int trackResult =
         ar2TrackingMod(this->ar2Handle, this->surfaceSet[this->detectedPage],
-                       this->videoFrame, trans, &err);
+                       this->videoFrame.get(), trans, &err);
 
 #if WITH_FILTERING
-    for (int j = 0; j < 3; j++) {
-      for (int k = 0; k < 4; k++) {
-        transF[j][k] = trans[j][k];
-      }
-    }
+    std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
 
     bool reset = (trackResult < 0);
 
@@ -122,12 +120,12 @@ py::dict ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
 
 int ARToolKitNFT::detectNFTMarker() {
 
-  KpmResult *kpmResult = NULL;
+  KpmResult *kpmResult = nullptr;
   int kpmResultNum = -1;
 
   if (this->detectedPage == -2) {
-    kpmMatching(this->kpmHandle, this->videoLuma);
-    kpmGetResult(this->kpmHandle, &kpmResult, &kpmResultNum);
+    kpmMatching(this->kpmHandle.get(), this->videoLuma.get());
+    kpmGetResult(this->kpmHandle.get(), &kpmResult, &kpmResultNum);
 
 #if WITH_FILTERING
     this->ftmi = arFilterTransMatInit(this->filterSampleRate,
@@ -139,11 +137,7 @@ int ARToolKitNFT::detectNFTMarker() {
 
         float trans[3][4];
         this->detectedPage = kpmResult[i].pageNo;
-        for (int j = 0; j < 3; j++) {
-          for (int k = 0; k < 4; k++) {
-            trans[j][k] = kpmResult[i].camPose[j][k];
-          }
-        }
+        std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
         ar2SetInitTrans(this->surfaceSet[this->detectedPage], trans);
       }
     }
@@ -151,10 +145,18 @@ int ARToolKitNFT::detectNFTMarker() {
   return kpmResultNum;
 }
 
-KpmHandle *ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
-  KpmHandle *kpmHandle;
-  kpmHandle = kpmCreateHandle(cparamLT);
-  return kpmHandle;
+std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
+  KpmHandle* handle = kpmCreateHandle(cparamLT);
+  if (!handle) {
+    ARLOGe("Error: kpmCreateHandle returned NULL.");
+    // Return empty unique_ptr with proper deleter type
+    return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
+      if (p) kpmDeleteHandle(&p);
+    });
+  }
+  return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(handle, [](KpmHandle* p) { 
+    if (p) kpmDeleteHandle(&p); 
+  });
 }
 
 /*int ARToolKitNFT::getKpmImageWidth(KpmHandle *kpmHandle) {
@@ -166,11 +168,15 @@ int ARToolKitNFT::getKpmImageHeight(KpmHandle *kpmHandle) {
 }*/
 
 int ARToolKitNFT::setupAR2() {
-  if ((this->ar2Handle = ar2CreateHandleMod(this->paramLT, this->pixFormat)) ==
-      NULL) {
-    ARLOGe("Error: ar2CreateHandle.\n");
-    kpmDeleteHandle(&this->kpmHandle);
+  AR2HandleT* tempHandle = ar2CreateHandleMod(this->paramLT, this->pixFormat);
+  if (tempHandle == nullptr) {
+    ARLOGe("Error: ar2CreateHandle.");
+    return -1;  // Return error code if handle creation failed
   }
+  
+  // Store the handle
+  this->ar2Handle = tempHandle;
+  
   // Settings for devices with single-core CPUs.
   ar2SetTrackingThresh(this->ar2Handle, 5.0);
   ar2SetSimThresh(this->ar2Handle, 0.50);
@@ -179,9 +185,14 @@ int ARToolKitNFT::setupAR2() {
   ar2SetTemplateSize1(this->ar2Handle, 6);
   ar2SetTemplateSize2(this->ar2Handle, 6);
 
+  // Create KPM handle
   this->kpmHandle = createKpmHandle(this->paramLT);
+  if (!this->kpmHandle) {
+    ARLOGe("Error creating KPM handle");
+    return -1;
+  }
 
-  return 0;
+  return 0;  // Success
 }
 
 nftMarker ARToolKitNFT::getNFTData(int index) {
@@ -194,33 +205,26 @@ nftMarker ARToolKitNFT::getNFTData(int index) {
  ***********/
 
 void ARToolKitNFT::deleteHandle() {
-  if (this->arhandle != NULL) {
+  if (this->arhandle != nullptr) {
     arPattDetach(this->arhandle);
     arDeleteHandle(this->arhandle);
-    this->arhandle = NULL;
+    this->arhandle = nullptr;
   }
-  if (this->ar3DHandle != NULL) {
+  if (this->ar3DHandle != nullptr) {
     ar3DDeleteHandle(&(this->ar3DHandle));
-    this->ar3DHandle = NULL;
+    this->ar3DHandle = nullptr;
   }
-  if (this->paramLT != NULL) {
+  if (this->paramLT != nullptr) {
     arParamLTFree(&(this->paramLT));
-    this->paramLT = NULL;
+    this->paramLT = nullptr;
   }
 }
 
 int ARToolKitNFT::teardown() {
-  // TODO: Fix Cleanup luma.
-  //  if(arc->videoLuma) {
-  //      free(arc->videoLuma);
-  //      arc->videoLuma = NULL;
-  //  }
-
-  if (this->videoFrame) {
-    free(this->videoFrame);
-    this->videoFrame = NULL;
-    this->videoFrameSize = 0;
-  }
+  // Reset unique pointers instead of freeing memory
+  this->videoFrame.reset();
+  this->videoLuma.reset();
+  this->videoFrameSize = 0;
 
   deleteHandle();
 
@@ -248,7 +252,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
   deleteHandle();
 
   if ((this->paramLT = arParamLTCreate(&(this->param),
-                                       AR_PARAM_LT_DEFAULT_OFFSET)) == NULL) {
+                                       AR_PARAM_LT_DEFAULT_OFFSET)) == nullptr) {
     ARLOGe("setCamera(): Error: arParamLTCreate.\n");
     return -1;
   }
@@ -257,7 +261,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
   // (this->paramLT->param).xsize, (this->paramLT->param).ysize);
 
   // setup camera
-  if ((this->arhandle = arCreateHandle(this->paramLT)) == NULL) {
+  if ((this->arhandle = arCreateHandle(this->paramLT)) == nullptr) {
     ARLOGe("setCamera(): Error: arCreateHandle.\n");
     return -1;
   }
@@ -265,7 +269,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
   int set = arSetPixelFormat(this->arhandle, this->pixFormat);
 
   this->ar3DHandle = ar3DCreateHandle(&(this->param));
-  if (this->ar3DHandle == NULL) {
+  if (this->ar3DHandle == nullptr) {
     ARLOGe("setCamera(): Error creating 3D handle\n");
     return -1;
   }
@@ -311,10 +315,9 @@ py::array_t<double> ARToolKitNFT::getCameraLens() {
 std::vector<int>
 ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
 
-  KpmHandle *kpmHandle = this->kpmHandle;
+  //auto kpmHandle = this->kpmHandle.get();
 
-  KpmRefDataSet *refDataSet;
-  refDataSet = NULL;
+  KpmRefDataSet *refDataSet = nullptr;
 
   if (datasetPathnames.size() >= PAGES_MAX) {
     ARLOGe("Error exceed maximum pages.\n");
@@ -354,7 +357,7 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
     ARLOGi("Reading %s.fset\n", datasetPathname);
 
     if ((this->surfaceSet[i] =
-      ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL) {
+      ar2ReadSurfaceSet(datasetPathname, "fset", nullptr)) == nullptr) {
       ARLOGe("Error reading data from %s.fset\n", datasetPathname);
       return {};
     }
@@ -382,7 +385,7 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
     surfaceSetCount++;
   }
 
-  if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
+  if (kpmSetRefDataSet(this->kpmHandle.get(), refDataSet) < 0) {
     ARLOGe("Error: kpmSetRefDataSet\n");
     return {};
   }
@@ -477,7 +480,6 @@ int ARToolKitNFT::getDebugMode() {
 }
 
 void ARToolKitNFT::setImageProcMode(int mode) {
-
   int imageProcMode = mode;
   if (arSetImageProcMode(this->arhandle, mode) == 0) {
     ARLOGi("Image proc. mode set to %d.\n", imageProcMode);
@@ -501,8 +503,8 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
   this->height = height;
 
   this->videoFrameSize = width * height * 4 * sizeof(ARUint8);
-  this->videoFrame = (ARUint8 *)malloc(this->videoFrameSize);
-  this->videoLuma = (ARUint8 *)malloc(this->videoFrameSize / 4);
+  this->videoFrame = std::make_unique<ARUint8[]>(this->videoFrameSize);
+  this->videoLuma = std::make_unique<ARUint8[]>(this->videoFrameSize / 4);
 
   setCamera(id, cameraID);
 

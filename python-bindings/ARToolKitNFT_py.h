@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 #include <AR/config.h>
 #include <AR2/tracking.h>
 #include <AR/arFilterTransMat.h>
@@ -78,7 +79,7 @@ public:
     int setup(int width, int height, int cameraID);
 
 private:
-    KpmHandle *createKpmHandle(ARParamLT *cparamLT);
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT);
     void deleteHandle();
 
     int id;
@@ -86,9 +87,9 @@ private:
     ARParam param;
     ARParamLT *paramLT;
 
-    ARUint8 *videoFrame;
+    std::unique_ptr<ARUint8[]> videoFrame;
     int videoFrameSize;
-    ARUint8 *videoLuma;
+    std::unique_ptr<ARUint8[]> videoLuma;
 
     int width;
     int height;
@@ -96,7 +97,7 @@ private:
     ARHandle *arhandle;
     AR3DHandle *ar3DHandle;
 
-    KpmHandle *kpmHandle;
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;
     AR2HandleT *ar2Handle;
 
 #if WITH_FILTERING
