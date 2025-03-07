@@ -58,7 +58,7 @@ class ARControllerNFT {
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.7.2';
+        this.version = '1.7.3';
         console.info('JsartoolkitNFT ', this.version);
 
         if (typeof cameraPara === 'string') {
