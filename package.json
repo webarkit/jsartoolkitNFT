@@ -63,6 +63,7 @@
     "test-browser": "karma start --browsers Chrome,Firefox,ChromeHeadless,FirefoxHeadless",
     "build-python-bindings": "cd python-bindings && python setup.py build_ext --inplace",
     "test": "karma start",
+    "python-tests": "cd python-bindings && pytest test_arcontrollerNFT.py",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",
