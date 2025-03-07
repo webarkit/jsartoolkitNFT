@@ -1,6 +1,7 @@
 import artoolkitnft_core
 import time
 import asyncio
+import numpy as np
 
 class EventDispatcher:
     def __init__(self):
@@ -237,27 +238,35 @@ class ARControllerNFT(EventDispatcher):
         self.grayscaleEnabled = True
         self.grayscaleSource = data
 
+    def _rgba_to_grayscale(self, rgba_image):
+        # Extract the R, G, B channels
+        r, g, b = rgba_image[:, :, 0], rgba_image[:, :, 1], rgba_image[:, :, 2]
+        # Apply the luminance formula
+        grayscale_image = 0.299 * r + 0.587 * g + 0.114 * b
+        return grayscale_image.astype(np.uint8)
+
     def _copyImageToHeap(self, sourceImage):
-        if not sourceImage:
+        if sourceImage is None:
             print("Error: no provided imageData to ARControllerNFT")
             return
 
-        data = sourceImage.data if sourceImage.data else None
+        if isinstance(sourceImage.data, np.ndarray):
+            data = sourceImage.data
+        else:
+            print("Error: sourceImage.data is not a numpy array")
+            return
 
-        if self.videoLuma:
+        if self.videoLuma is not None:
             if not self.grayscaleEnabled:
-                q = 0
-                for p in range(self.videoSize):
-                    r = data[q + 0]
-                    g = data[q + 1]
-                    b = data[q + 2]
-                    self.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3
-                    q += 4
+                self.videoLuma = self._rgba_to_grayscale(data)
             else:
-                self.videoLuma = self.grayscaleSource
+                if self.grayscaleSource is not None:
+                    self.videoLuma = self.grayscaleSource
+                else:
+                    print("Error: grayscaleSource is not initialized")
 
-        if self.videoLuma:
-            self.artoolkitNFT.passVideoData(data, self.videoLuma)
+        if self.videoLuma is not None:
+            self.artoolkitNFT.passVideoData(np.array(data, dtype=np.uint8), np.array(self.videoLuma, dtype=np.uint8))
             return True
 
         return False
