@@ -268,7 +268,9 @@ class ARControllerNFT(EventDispatcher):
         if self.videoLuma is not None:
             # Ensure videoFrame has the correct shape and dimensions
             videoFrame = data.flatten()
+            print("videoFrame:", videoFrame)
             videoLuma = self.videoLuma.flatten()
+            print("videoLuma:", videoLuma)
             self.artoolkitNFT.passVideoData(np.array(videoFrame, dtype=np.uint8), np.array(videoLuma, dtype=np.uint8))
             return True
 

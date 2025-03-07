@@ -15,6 +15,10 @@ async def main():
     image_path = './pinball-test.png'
     image = Image.open(image_path)
     image = image.convert('RGBA')
+    
+    # Flip the image vertically
+    #image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    
     image_data = np.array(image)
     print('image_data:', image_data)
 
@@ -38,8 +42,6 @@ async def main():
 
     # Process the image
     print("Processing image...")
-    videoFrame = image_data.flatten()
-    videoLuma = image_data[:, :, 0].flatten()
     nft.process(mock_image)
     print("Image processed.")
 
