@@ -34,7 +34,7 @@ class ARControllerNFT(EventDispatcher):
 
         self.artoolkitNFT = None
 
-        self.nftMarkers = []
+        self.nftMarkers = {}  # Initialize as a dictionary
 
         self.transform_mat = [0.0] * 16
         self.transformGL_RH = [0.0] * 16
@@ -266,7 +266,10 @@ class ARControllerNFT(EventDispatcher):
                     print("Error: grayscaleSource is not initialized")
 
         if self.videoLuma is not None:
-            self.artoolkitNFT.passVideoData(np.array(data, dtype=np.uint8), np.array(self.videoLuma, dtype=np.uint8))
+            # Ensure videoFrame has the correct shape and dimensions
+            videoFrame = data.flatten()
+            videoLuma = self.videoLuma.flatten()
+            self.artoolkitNFT.passVideoData(np.array(videoFrame, dtype=np.uint8), np.array(videoLuma, dtype=np.uint8))
             return True
 
         return False
