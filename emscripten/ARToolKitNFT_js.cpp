@@ -47,6 +47,34 @@ int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val vide
   return 0;
 }
 
+int ARToolKitNFT::passVideoLuma(emscripten::val videoFrame) {
+  auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
+
+  auto vli = webarkit::webarkitVideoLumaInit(this->width, this->height, true);
+  if (!vli) {
+    webarkitLOGe("Failed to initialize WebARKitLumaInfo.");
+    return -1;
+  }
+
+  auto out = webarkit::webarkitVideoLuma(vli, vf.data());
+  if (!out) {
+    webarkitLOGe("Failed to process video luma.");
+    webarkit::webarkitVideoLumaFinal(&vli);
+    return -1;
+  }
+
+  if (this->videoFrame) {
+    std::copy(vf.begin(), vf.end(), this->videoFrame.get());
+  }
+
+  if (this->videoLuma) {
+    std::copy(out, out + this->width * this->height, this->videoLuma.get());
+  }
+
+  webarkit::webarkitVideoLumaFinal(&vli);
+  return 0;
+}
+
 emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
   auto NFTMarkerInfo = emscripten::val::object();
   auto pose = emscripten::val::array();
@@ -523,7 +551,7 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
   this->videoFrameSize = width * height * 4 * sizeof(ARUint8);
   // Use unique_ptr to manage video frame memory, ensuring exclusive ownership and automatic deallocation
   this->videoFrame = std::unique_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize]);
-  this->videoLuma = std::unique_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize / 4]);
+  this->videoLuma = std::unique_ptr<ARUint8[]>(new ARUint8[this->width * this->height]);
 
   setCamera(id, cameraID);
 
