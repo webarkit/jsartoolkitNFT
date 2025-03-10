@@ -12,6 +12,7 @@
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKitVideoLuma.h>
 #include "trackingMod.h"
 #include "markerDecompress.h"
 
