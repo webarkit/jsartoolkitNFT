@@ -23,24 +23,46 @@ void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
                 float interpolationFactor) {
   for (auto i = 0; i < 3; i++) {
     for (auto j = 0; j < 4; j++) {
-      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) / interpolationFactor;
+      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) * interpolationFactor;
     }
   }
 }
 
-int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val videoLuma) {
+int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
   auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
   auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
-  
+
+  if (internalLuma) {
+    auto vli = webarkit::webarkitVideoLumaInit(this->width, this->height, true);
+    if (!vli) {
+      webarkitLOGe("Failed to initialize WebARKitLumaInfo.");
+      return -1;
+    }
+
+    auto out = webarkit::webarkitVideoLuma(vli, vf.data());
+    if (!out) {
+      webarkitLOGe("Failed to process video luma.");
+      webarkit::webarkitVideoLumaFinal(&vli);
+      return -1;
+    }
+    if (this->videoLuma) {
+      webarkitLOGd("Copy videoLuma with simd !");
+      std::copy(out, out + this->width * this->height, this->videoLuma.get());
+      webarkit::webarkitVideoLumaFinal(&vli);
+    }
+  }
+
   // Copy data instead of just assigning pointers
   if (this->videoFrame) {
     std::copy(vf.begin(), vf.end(), this->videoFrame.get());
   }
-  
-  if (this->videoLuma) {
-    std::copy(vl.begin(), vl.end(), this->videoLuma.get());
-  }
 
+  if (this->videoLuma) {
+    if (!internalLuma) {
+      webarkitLOGd("Inside videoLuma no simd !");
+      std::copy(vl.begin(), vl.end(), this->videoLuma.get());
+    }
+  }
   return 0;
 }
 
@@ -145,7 +167,7 @@ int ARToolKitNFT::detectNFTMarker() {
 
     for (auto i = 0; i < kpmResultNum; i++) {
       if (kpmResult[i].camPoseF == 0) {
-
+ 
         float trans[3][4];
         this->detectedPage = kpmResult[i].pageNo;
         std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
@@ -319,12 +341,10 @@ int ARToolKitNFT::loadCamera(std::string cparam_name) {
 }
 
 emscripten::val ARToolKitNFT::getCameraLens() {
-
   emscripten::val lens = emscripten::val::array();
-  for (int i = 0; i < 16; i++) {
-    lens.call<void>("push", this->cameraLens[i]);
+  for (const auto& value : this->cameraLens) {
+    lens.call<void>("push", value);
   }
-
   return lens;
 }
 

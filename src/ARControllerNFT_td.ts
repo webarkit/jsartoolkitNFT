@@ -68,6 +68,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private videoLuma: Uint8Array;
   private grayscaleEnabled: boolean;
   private grayscaleSource: Uint8Array;
+  private videoLumaInternal: boolean; // Added videoLumaInternal
 
   private nftMarkerFound: boolean; // = false
   private nftMarkerFoundTime: number;
@@ -137,6 +138,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     this.framesize = null;
     this.videoLuma = null;
+    this.videoLumaInternal = true;
     this.grayscaleEnabled = false;
     this.camera_mat = null;
 
@@ -919,7 +921,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
-    if (this.videoLuma) {
+    if (this.videoLuma && !this.videoLumaInternal) {     
       if (this.grayscaleEnabled == false) {
         let q = 0;
 
@@ -939,7 +941,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     if (this.videoLuma) {
-      this.artoolkitNFT.passVideoData(data, this.videoLuma);
+      this.artoolkitNFT.passVideoData(data, this.videoLuma, this.videoLumaInternal);
       return true;
     }
 

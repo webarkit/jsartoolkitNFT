@@ -299,8 +299,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
   public passVideoData(
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
+    lumaInternal: boolean
   ): void {
-    this.instance.passVideoData(videoFrame, videoLuma);
+    this.instance.passVideoData(videoFrame, videoLuma, lumaInternal);
   }
 
   // ---------------------------------------------------------------------------
