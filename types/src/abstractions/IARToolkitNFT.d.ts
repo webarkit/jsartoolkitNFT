@@ -1,7 +1,7 @@
 import { INFTMarkerInfo } from "./CommonInterfaces";
 export interface IARToolkitNFT {
     getCameraLens(): any;
-    passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array): void;
+    passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
     setup(width: number, height: number, cameraId: number): number;
     setupAR2(): void;
     setDebugMode(mode: boolean): number;

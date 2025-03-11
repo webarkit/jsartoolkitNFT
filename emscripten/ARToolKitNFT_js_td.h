@@ -13,6 +13,7 @@
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKitVideoLuma.h>
 #include "markerDecompress.h"
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
@@ -40,7 +41,7 @@ class ARToolKitNFT
 public:
     ARToolKitNFT();
     ~ARToolKitNFT(); 
-    int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma);
+    int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
     int detectNFTMarker();
     int getKpmImageWidth(KpmHandle *kpmHandle);

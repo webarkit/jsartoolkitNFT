@@ -31,47 +31,42 @@ void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
   }
 }
 
-int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val videoLuma) {
+int ARToolKitNFT::passVideoData(emscripten::val videoFrame,
+                                emscripten::val videoLuma, bool internalLuma) {
   auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
   auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+
+  if (internalLuma) {
+    auto vli = webarkit::webarkitVideoLumaInit(this->width, this->height, true);
+    if (!vli) {
+      webarkitLOGe("Failed to initialize WebARKitLumaInfo.");
+      return -1;
+    }
+
+    auto out = webarkit::webarkitVideoLuma(vli, vf.data());
+    if (!out) {
+      webarkitLOGe("Failed to process video luma.");
+      webarkit::webarkitVideoLumaFinal(&vli);
+      return -1;
+    }
+    if (this->videoLuma) {
+      webarkitLOGd("Copy videoLuma with simd !");
+      std::copy(out, out + this->width * this->height, this->videoLuma.get());
+      webarkit::webarkitVideoLumaFinal(&vli);
+    }
+  }
 
   // Copy data instead of just assigning pointers
   if (this->videoFrame) {
     std::copy(vf.begin(), vf.end(), this->videoFrame.get());
   }
-  
-  if (this->videoLuma) {
-    std::copy(vl.begin(), vl.end(), this->videoLuma.get());
-  }
-
-  return 0;
-}
-
-int ARToolKitNFT::passVideoLuma(emscripten::val videoFrame) {
-  auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
-
-  auto vli = webarkit::webarkitVideoLumaInit(this->width, this->height, true);
-  if (!vli) {
-    webarkitLOGe("Failed to initialize WebARKitLumaInfo.");
-    return -1;
-  }
-
-  auto out = webarkit::webarkitVideoLuma(vli, vf.data());
-  if (!out) {
-    webarkitLOGe("Failed to process video luma.");
-    webarkit::webarkitVideoLumaFinal(&vli);
-    return -1;
-  }
-
-  if (this->videoFrame) {
-    std::copy(vf.begin(), vf.end(), this->videoFrame.get());
-  }
 
   if (this->videoLuma) {
-    std::copy(out, out + this->width * this->height, this->videoLuma.get());
+    if (!internalLuma) {
+      webarkitLOGi("Inside videoLuma no simd !");
+      std::copy(vl.begin(), vl.end(), this->videoLuma.get());
+    }
   }
-
-  webarkit::webarkitVideoLumaFinal(&vli);
   return 0;
 }
 

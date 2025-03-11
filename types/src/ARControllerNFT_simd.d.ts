@@ -19,6 +19,7 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private videoSize;
     private framesize;
     private videoLuma;
+    private videoLumaInternal;
     private grayscaleEnabled;
     private grayscaleSource;
     private nftMarkerFound;
