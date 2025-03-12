@@ -63,7 +63,7 @@ int ARToolKitNFT::passVideoData(emscripten::val videoFrame,
 
   if (this->videoLuma) {
     if (!internalLuma) {
-      webarkitLOGi("Inside videoLuma no simd !");
+      webarkitLOGd("Inside videoLuma no simd !");
       std::copy(vl.begin(), vl.end(), this->videoLuma.get());
     }
   }

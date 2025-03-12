@@ -18,6 +18,7 @@
 #include <AR2/tracking.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKitVideoLuma.h> // Add this header
 #include <emscripten.h>
 #include <emscripten/val.h>
 #include <stdio.h>
@@ -124,8 +125,7 @@ void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
   }
 }
 
-int passVideoData(int id, emscripten::val videoFrame,
-                  emscripten::val videoLuma) {
+int passVideoData(int id, emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
   if (arControllers.find(id) == arControllers.end()) {
     return -1;
   }
@@ -134,16 +134,38 @@ int passVideoData(int id, emscripten::val videoFrame,
 
   auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
   auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
-  
+
+  if (internalLuma) {
+    auto vli = webarkit::webarkitVideoLumaInit(arc->width, arc->height, true);
+    if (!vli) {
+      webarkitLOGe("Failed to initialize WebARKitLumaInfo.");
+      return -1;
+    }
+
+    auto out = webarkit::webarkitVideoLuma(vli, vf.data());
+    if (!out) {
+      webarkitLOGe("Failed to process video luma.");
+      webarkit::webarkitVideoLumaFinal(&vli);
+      return -1;
+    }
+    if (arc->videoLuma) {
+      webarkitLOGd("Copy videoLuma with simd !");
+      std::copy(out, out + arc->width * arc->height, arc->videoLuma.get());
+      webarkit::webarkitVideoLumaFinal(&vli);
+    }
+  }
+
   // Copy data instead of just assigning pointers
   if (arc->videoFrame) {
     std::copy(vf.begin(), vf.end(), arc->videoFrame.get());
   }
-  
-  if (arc->videoLuma) {
-    std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
-  }
 
+  if (arc->videoLuma) {
+    if (!internalLuma) {
+      webarkitLOGd("Inside videoLuma no simd !");
+      std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
+    }
+  }
   return 0;
 }
 
