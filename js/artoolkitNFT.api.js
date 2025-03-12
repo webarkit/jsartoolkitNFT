@@ -56,6 +56,7 @@
         this.framesize = null;
         this.dataHeap = null;
         this.videoLuma = null;
+        this.videoLumaInternal = true,
         this.camera_mat = null;
         this.videoLumaPointer = null;
         this._bwpointer = undefined;
@@ -690,7 +691,7 @@
         const data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
-        if (this.videoLuma) {
+        if (this.videoLuma && !this.videoLumaInternal) {
             let q = 0;
             //Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA (ARToolKitJS.cpp L: 43)
 
@@ -703,7 +704,7 @@
         }
 
         if (this.videoLuma) {
-            artoolkitNFT.passVideoData(this.id, data, this.videoLuma);
+            artoolkitNFT.passVideoData(this.id, data, this.videoLuma, this.videoLumaInternal);
             return true;
         }
 

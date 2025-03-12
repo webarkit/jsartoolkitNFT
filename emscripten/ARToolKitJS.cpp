@@ -163,7 +163,7 @@ extern "C"
   
     if (arc->videoLuma) {
       if (!internalLuma) {
-        webarkitLOGi("Inside videoLuma no simd !");
+        webarkitLOGd("Inside videoLuma no simd !");
         std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
       }
     }
