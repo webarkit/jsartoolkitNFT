@@ -9180,9 +9180,7 @@ function asmFunc(imports) {
      if (!HEAP32[$7 + 204 >> 2] | $3) {
       break label$3
      }
-     $0 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne180100_5d_0__28char_20const__29($4 + 4 | 0, 33589);
-     webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($0);
-     std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($0);
+     std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29(std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne180100_5d_0__28char_20const__29($4 + 4 | 0, 33589));
      $1 = HEAP32[$4 + 24 >> 2];
      $0 = HEAP32[$4 + 20 >> 2];
      if (($1 | 0) == ($0 | 0)) {
