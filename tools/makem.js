@@ -246,6 +246,8 @@ FLAGS += " -s USE_LIBJPEG=1";
 FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 FLAGS += " --bind "; // Ensure --bind is included
+// Uncomment this flag for debugging logs
+//FLAGS += " -D WEBARKIT_DEBUG=1 "
 
 const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
@@ -271,6 +273,7 @@ let DEBUG_FLAGS = " -g2 ";
 DEBUG_FLAGS += " -s ASSERTIONS=1 ";
 DEBUG_FLAGS += " --profiling ";
 DEBUG_FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
+DEBUG_FLAGS += " -D WEBARKIT_DEBUG=1"
 
 const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
