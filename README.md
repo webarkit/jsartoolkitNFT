@@ -25,8 +25,6 @@ Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 - Multi NFT markers !!!
 
-
-
 ## WASM
 
 has **WASM** embedded in a single file!
@@ -50,6 +48,10 @@ From 1.6.0 version has **Pthread** experimental feature 🎉 🎉 🎉
 
 ❕❕❕ ATTENTION: this feature is experimental, and it is not well tested yet. It is not recommended to use it in production.
 You need to set up a server with COOP and COEP headers to use this feature. Read this [Emscripten article](https://emscripten.org/docs/porting/pthreads.html#pthreads-support)
+
+## InternalLuma with simd
+Enable internal luma calculation with simd instructions. This feature is experimental and it is not well tested yet. Set the internalLuma flag to true in the ARControllerNFT constructor, or in the `initWithDimensions / initWithImage` static methods.
+
 ## Using the library 💥
 You can use raw.githack.com links:
 
