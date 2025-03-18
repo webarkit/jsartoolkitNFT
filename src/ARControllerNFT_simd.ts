@@ -109,8 +109,18 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {string} cameraParam
    * @param {boolean} internalLuma
    */
-  constructor(width: number, height: number, cameraParam: string, internalLuma: boolean);
-  constructor(width?: number, height?: number, cameraParam?: string, internalLuma?: boolean) {
+  constructor(
+    width: number,
+    height: number,
+    cameraParam: string,
+    internalLuma: boolean,
+  );
+  constructor(
+    width?: number,
+    height?: number,
+    cameraParam?: string,
+    internalLuma?: boolean,
+  ) {
     // no point in initializing a member as "undefined"
     // replaced it with -1
     this.id = -1;
@@ -175,10 +185,15 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     width: number,
     height: number,
     cameraParam: string,
-    internalLuma: boolean
+    internalLuma: boolean,
   ): Promise<ARControllerNFT> {
     // directly init with given width / height
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam, internalLuma);
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam,
+      internalLuma,
+    );
     return await arControllerNFT._initialize();
   }
 
@@ -205,11 +220,16 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   static async initWithImage(
     image: IImageObj,
     cameraParam: string,
-    internalLuma: boolean
+    internalLuma: boolean,
   ): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam, internalLuma);
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam,
+      internalLuma,
+    );
     return await arControllerNFT._initialize();
   }
 
@@ -249,7 +269,12 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     internalLuma: boolean,
     callback: () => void,
   ): Promise<ARControllerNFT> {
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam, internalLuma);
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam,
+      internalLuma,
+    );
     callback();
     return await arControllerNFT._initialize();
   }
@@ -929,7 +954,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
-    if (this.videoLuma && !this.videoLumaInternal) {     
+    if (this.videoLuma && !this.videoLumaInternal) {
       if (this.grayscaleEnabled == false) {
         let q = 0;
 
@@ -949,7 +974,11 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     if (this.videoLuma) {
-      this.artoolkitNFT.passVideoData(data, this.videoLuma, this.videoLumaInternal);
+      this.artoolkitNFT.passVideoData(
+        data,
+        this.videoLuma,
+        this.videoLumaInternal,
+      );
       return true;
     }
 

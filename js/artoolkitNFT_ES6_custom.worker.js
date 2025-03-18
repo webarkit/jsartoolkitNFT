@@ -98,9 +98,15 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARControllerNFT.customInit(msg.pw, msg.ph, msg.camera_para, true, function () {
-    console.log("Message from the callback.");
-  })
+  ARControllerNFT.customInit(
+    msg.pw,
+    msg.ph,
+    msg.camera_para,
+    true,
+    function () {
+      console.log("Message from the callback.");
+    },
+  )
     .then(onLoad)
     .catch(onError);
 }
