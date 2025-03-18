@@ -65,7 +65,7 @@ function load(msg) {
     console.debug("Loading marker at: ", msg.marker);
 
     const onLoad = function () {
-      ar = new ARControllerNFT(msg.pw, msg.ph, param);
+      ar = new ARControllerNFT(msg.pw, msg.ph, param, true);
       const cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {

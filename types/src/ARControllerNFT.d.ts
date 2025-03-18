@@ -29,10 +29,10 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private _bwpointer;
     constructor();
     constructor(width: number, height: number);
-    constructor(width: number, height: number, cameraParam: string);
-    static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
-    static initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT>;
-    static customInit(width: number, height: number, cameraParam: string, callback: () => void): Promise<ARControllerNFT>;
+    constructor(width: number, height: number, cameraParam: string, internalLuma: boolean);
+    static initWithDimensions(width: number, height: number, cameraParam: string, internalLuma: boolean): Promise<ARControllerNFT>;
+    static initWithImage(image: IImageObj, cameraParam: string, internalLuma: boolean): Promise<ARControllerNFT>;
+    static customInit(width: number, height: number, cameraParam: string, internalLuma: boolean, callback: () => void): Promise<ARControllerNFT>;
     set width(width: number);
     get width(): number;
     set height(height: number);
