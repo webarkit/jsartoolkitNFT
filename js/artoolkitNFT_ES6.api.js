@@ -29,9 +29,10 @@ if (typeof window !== 'undefined') {
     @param {number} width The width of the images to process.
     @param {number} height The height of the images to process.
     @param {ARCameraParamNFT | string} camera The ARCameraParamNFT to use for image processing. If this is a string, the ARControllerNFT treats it as an URL and tries to load it as a ARCameraParamNFT definition file, calling ARControllerNFT#onload on success.
+    @param {boolean} internalLuma Whether to use internal luma processing.
 */
 class ARControllerNFT {
-    constructor(width, height, cameraPara) {
+    constructor(width, height, cameraPara, internalLuma) {
         this.id = undefined;
 
         this.listeners = {};
@@ -53,7 +54,7 @@ class ARControllerNFT {
         this.framesize = null;
         this.dataHeap = null;
         this.videoLuma = null;
-        this.videoLumaInternal = true;
+        this.videoLumaInternal = internalLuma;
         this.camera_mat = null;
         this.videoLumaPointer = null;
         this._bwpointer = undefined;
