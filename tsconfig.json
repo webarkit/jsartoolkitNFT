@@ -30,6 +30,9 @@
         ]
       }
     },
+    "exclude": [
+      "node_modules",
+    ],
     "typedocOptions": {
     "entryPoints": [
       "src/abstractions/AbstractARControllerNFT.ts",

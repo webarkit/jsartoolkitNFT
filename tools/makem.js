@@ -215,7 +215,10 @@ const kpm_sources = [
   return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/", src);
 });
 
-const webarkit_sources = ["WebARKitLog.cpp", "../../../WebARKit/WebARKitVideoLuma.cpp"].map(function (src) {
+const webarkit_sources = [
+  "WebARKitLog.cpp",
+  "../../../WebARKit/WebARKitVideoLuma.cpp",
+].map(function (src) {
   return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/WebARKit/", src);
 });
 
@@ -273,7 +276,7 @@ let DEBUG_FLAGS = " -g2 ";
 DEBUG_FLAGS += " -s ASSERTIONS=1 ";
 DEBUG_FLAGS += " --profiling ";
 DEBUG_FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
-DEBUG_FLAGS += " -D WEBARKIT_DEBUG=1"
+DEBUG_FLAGS += " -D WEBARKIT_DEBUG=1";
 
 const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),

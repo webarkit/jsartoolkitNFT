@@ -39,6 +39,7 @@
     "@babel/core": "7.26.10",
     "@babel/plugin-transform-runtime": "7.26.10",
     "@babel/preset-env": "^7.26.9",
+    "@types/node": "^22.13.10",
     "babel-loader": "10.0.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
@@ -47,7 +48,7 @@
     "prettier": "^3.5.3",
     "qunit": "^2.24.1",
     "ts-loader": "^9.5.2",
-    "typedoc": "^0.27.9",
+    "typedoc": "0.28.0",
     "typescript": "^5.8.2",
     "webpack": "^5.98.0",
     "webpack-cli": "6.0.1"
