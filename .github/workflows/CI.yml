@@ -42,4 +42,4 @@ jobs:
         run: npm test
 
       - name: Build Docs
-        run: npm run build-docs
+        run: npm run docs
