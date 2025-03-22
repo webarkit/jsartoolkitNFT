@@ -5,7 +5,7 @@
  * @author kalwalt github.com/kalwalt
  */
 
-let exec = require("child_process").exec,
+let execFile = require("child_process").execFile,
   path = require("path"),
   fs = require("fs"),
   os = require("os"),
@@ -328,18 +328,17 @@ function clean_builds() {
   }
 }
 
-const compile_arlib = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ar_sources.join(" ") +
-    FLAGS +
-    ZLIB_FLAG +
-    " " +
-    DEFINES +
-    " -r -o {OUTPUT_PATH}libar.o ",
-  OUTPUT_PATH,
-);
+const compile_arlib = [
+  EMCC,
+  ...INCLUDES.split(" "),
+  ...ar_sources,
+  ...FLAGS.split(" "),
+  ZLIB_FLAG,
+  ...DEFINES.split(" "),
+  "-r",
+  "-o",
+  `${OUTPUT_PATH}libar.o`
+];
 
 const compile_thread_arlib = format(
   EMCC +
@@ -588,8 +587,8 @@ function runJob() {
     return;
   }
 
-  console.log("\nRunning command: " + cmd + "\n");
-  exec(cmd, onExec);
+  console.log("\nRunning command: " + cmd.join(" ") + "\n");
+  execFile(cmd[0], cmd.slice(1), onExec);
 }
 
 function addJob(job) {
