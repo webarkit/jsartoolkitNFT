@@ -70,7 +70,7 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "7.26.10",
+    "@babel/runtime": "7.27.0",
     "axios": "1.8.3"
   }
 }
