@@ -313,6 +313,7 @@ const compile_arlib = [
   `${OUTPUT_PATH}libar.o`,
 ];
 
+<<<<<<< HEAD
 const compile_thread_arlib = format(
   EMCC +
     INCLUDES +
@@ -340,6 +341,33 @@ const compile_simd_arlib = format(
     " -r -o {OUTPUT_PATH}libar_simd.o ",
   OUTPUT_PATH,
 );
+=======
+const compile_thread_arlib = [
+  EMCC,
+  ...INCLUDES.split(" "),
+  ...ar_sources_threaded,
+  ...FLAGS.split(" "),
+  ZLIB_FLAG,
+  "-pthread",
+  ...DEFINES.split(" "),
+  "-r",
+  "-o",
+  `${OUTPUT_PATH}libar_td.o`
+];
+
+const compile_simd_arlib = [
+  EMCC,
+  ...INCLUDES.split(" "),
+  ...ar_sources,
+  ...FLAGS.split(" "),
+  ZLIB_FLAG,
+  SIMD128_FLAGS,
+  ...DEFINES.split(" "),
+  "-r",
+  "-o",
+  `${OUTPUT_PATH}libar_simd.o`
+];
+>>>>>>> f4eba86e67d5f1c123c364b2e384d5ea59e9441a
 
 const ALL_BC = " {OUTPUT_PATH}libar.o ";
 const THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
