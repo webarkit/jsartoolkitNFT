@@ -246,11 +246,19 @@ const PRE_ES6_FLAGS =
   " --pre-js " + path.resolve(__dirname, "../js/artoolkitNFT_ES6.api.js");
 
 /* DEBUG FLAGS */
-let DEBUG_FLAGS = " -g2 ";
+
+
+let DEBUG_FLAGS = ""; 
+DEBUG_FLAGS += " -g2 ";
 DEBUG_FLAGS += " -s ASSERTIONS=1 ";
 DEBUG_FLAGS += " --profiling ";
 DEBUG_FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 DEBUG_FLAGS += " -D WEBARKIT_DEBUG=1";
+DEBUG_FLAGS += " -s WASM=0"; // Disable WASM for debugging
+
+let NO_WASM_FLAG = "";
+NO_WASM_FLAG += " -s WASM=0"; // Disable WASM for debugging
+
 
 const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
@@ -313,38 +321,34 @@ const compile_arlib = [
   path.resolve(OUTPUT_PATH, "libar.o"),
 ];
 
-const compile_thread_arlib = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ar_sources_threaded.join(" ") +
-    FLAGS +
-    //ZLIB_FLAG +
-    " " +
-    "-pthread " +
-    DEFINES +
-    " -r -o {OUTPUT_PATH}libar_td.o ",
-  OUTPUT_PATH,
-);
+const compile_thread_arlib = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...ar_sources_threaded,
+  ...FLAGS.split(" "),
+  "-pthread",
+  ...DEFINES.split(" "),
+  "-r",
+  "-o",
+  path.resolve(OUTPUT_PATH, "libar_td.o"),
+];
 
-const compile_simd_arlib = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ar_sources.join(" ") +
-    FLAGS +
-    //ZLIB_FLAG +
-    SIMD128_FLAGS +
-    " " +
-    DEFINES +
-    " -r -o {OUTPUT_PATH}libar_simd.o ",
-  OUTPUT_PATH,
-);
+const compile_simd_arlib = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...ar_sources,
+  ...FLAGS.split(" "),
+  ...SIMD128_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  "-r",
+  "-o",
+  path.resolve(OUTPUT_PATH, "libar_simd.o"),
+];
 
-const ALL_BC = " {OUTPUT_PATH}libar.o ";
-const THREAD_BC = " {OUTPUT_PATH}libar_td.o ";
-const SIMD_BC = " {OUTPUT_PATH}libar_simd.o ";
-const LIBZ_A = " {OUTPUT_PATH}libz.a ";
+const ALL_BC = `${path.resolve(OUTPUT_PATH, "libar.o")}`;
+const THREAD_BC = `${path.resolve(OUTPUT_PATH, "libar_td.o")}`;
+const SIMD_BC = `${path.resolve(OUTPUT_PATH, "libar_simd.o")}`;
+const LIBZ_A = `${path.resolve(OUTPUT_PATH, "libz.a")}`;
 
 const configure_zlib = format(
   "emcmake cmake -B emscripten/build -S emscripten/zlib ..",
@@ -353,178 +357,138 @@ const configure_zlib = format(
 const build_zlib = "cd emscripten/build && emmake make";
 const copy_zlib = `cp emscripten/build/libz.a ${OUTPUT_PATH}libz.a`;
 
-const compile_combine = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ALL_BC +
-    LIBZ_A +
-    MAIN_SOURCES +
-    FLAGS +
-    " -s WASM=0" +
-    " " +
-    DEBUG_FLAGS +
-    DEFINES +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_DEBUG_FILE,
-);
+const compile_combine = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ALL_BC,
+  LIBZ_A,
+  ...MAIN_SOURCES.split(" "),
+  ...FLAGS.split(" "),
+  ...DEBUG_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_DEBUG_FILE),
+];
 
-const compile_combine_min = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ALL_BC +
-    LIBZ_A +
-    MAIN_SOURCES +
-    FLAGS +
-    " -s WASM=0" +
-    " " +
-    DEFINES +
-    PRE_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_MIN_FILE,
-);
+const compile_combine_min = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...ALL_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES.split(" "),
+  ...FLAGS.split(" "),
+  ...NO_WASM_FLAG.split(" "),
+  ...DEFINES.split(" "),
+  ...PRE_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_MIN_FILE),
+];
 
-const compile_wasm = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ALL_BC +
-    LIBZ_A +
-    MAIN_SOURCES +
-    FLAGS +
-    WASM_FLAGS +
-    SIMD128_FLAGS +
-    DEFINES +
-    PRE_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_FILE,
-);
+const compile_wasm = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...ALL_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES.split(" "),
+  ...FLAGS.split(" "),
+  ...WASM_FLAGS.split(" "),
+  ...SIMD128_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...PRE_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_WASM_FILE),
+];
 
-const compile_wasm_thread = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    THREAD_BC +
-    LIBZ_A +
-    MAIN_SOURCES_TD +
-    FLAGS_NO_MEMORY_GROWTH +
-    "-pthread " +
-    WASM_FLAGS +
-    SIMD128_FLAGS +
-    DEFINES +
-    PRE_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_THREAD_FILE,
-);
+const compile_wasm_thread = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...THREAD_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES_TD.split(" "),
+  ...FLAGS_NO_MEMORY_GROWTH.split(" "),
+  "-pthread",
+  ...WASM_FLAGS.split(" "),
+  ...SIMD128_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...PRE_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_THREAD_FILE),
+];
 
-const compile_wasm_embed_ES6 = format(
-  EMCC +
-    " " +
-    INCLUDES +
-    " " +
-    ALL_BC +
-    LIBZ_A +
-    MAIN_SOURCES +
-    FLAGS +
-    WASM_FLAGS +
-    DEFINES +
-    ES6_EMBED_ES6_FLAGS +
-    PRE_ES6_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_EMBED_ES6_FILE,
-);
+const compile_wasm_embed_ES6 = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...ALL_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES.split(" "),
+  ...FLAGS.split(" "),
+  ...WASM_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...ES6_EMBED_ES6_FLAGS.split(" "),
+  ...PRE_ES6_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_WASM_EMBED_ES6_FILE),
+];
 
-const compile_simd_wasm = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    SIMD_BC +
-    LIBZ_A +
-    MAIN_SOURCES +
-    FLAGS +
-    WASM_FLAGS +
-    SIMD128_FLAGS +
-    DEFINES +
-    PRE_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_SIMD_WASM_FILE,
-);
+const compile_simd_wasm = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...SIMD_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES.split(" "),
+  ...FLAGS.split(" "),
+  ...WASM_FLAGS.split(" "),
+  ...SIMD128_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...PRE_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_SIMD_WASM_FILE),
+];
 
-const compile_wasm_es6 = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    ALL_BC +
-    LIBZ_A +
-    MAIN_SOURCES_IMPROVED_ES6 +
-    FLAGS +
-    WASM_FLAGS +
-    DEFINES +
-    ES6_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_ES6_FILE,
-);
+const compile_wasm_es6 = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...ALL_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES_IMPROVED_ES6.split(" "),
+  ...FLAGS.split(" "),
+  ...WASM_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...ES6_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_WASM_ES6_FILE),
+];
 
-const compile_wasm_es6_thread = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    THREAD_BC +
-    LIBZ_A +
-    MAIN_SOURCES_TD_ES6 +
-    FLAGS_NO_MEMORY_GROWTH +
-    "-pthread " +
-    WASM_FLAGS +
-    DEFINES +
-    ES6_TD_FLAGS +
-    " --bind " + // Ensure --bind is included
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_WASM_ES6_TD_FILE,
-);
+const compile_wasm_es6_thread = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...THREAD_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES_TD_ES6.split(" "),
+  ...FLAGS_NO_MEMORY_GROWTH.split(" "),
+  "-pthread",
+  ...WASM_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...ES6_TD_FLAGS.split(" "),
+  "--bind",
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_WASM_ES6_TD_FILE),
+];
 
-const compile_simd_wasm_es6 = format(
-  EMCC +
-    INCLUDES +
-    " " +
-    SIMD_BC +
-    LIBZ_A +
-    MAIN_SOURCES_IMPROVED_ES6 +
-    FLAGS +
-    WASM_FLAGS +
-    SIMD128_FLAGS +
-    DEFINES +
-    ES6_FLAGS +
-    " -o {OUTPUT_PATH}{BUILD_FILE} ",
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  OUTPUT_PATH,
-  BUILD_SIMD_WASM_ES6_FILE,
-);
+const compile_simd_wasm_es6 = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...SIMD_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES_IMPROVED_ES6.split(" "),
+  ...FLAGS.split(" "),
+  ...WASM_FLAGS.split(" "),
+  ...SIMD128_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...ES6_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_SIMD_WASM_ES6_FILE),
+];
 
 /*
  * Run commands
@@ -559,9 +523,12 @@ function runJob() {
   if (Array.isArray(cmd)) {
     console.log("\nRunning command (execFile): " + cmd.join(" ") + "\n");
     execFile(cmd[0], cmd.slice(1), onExec);
+  } else if (typeof cmd === "string") {
+    console.log("\nRunning command (exec): " + cmd + "\n");
+    exec(cmd, onExec);
   } else {
-    console.log("\nRunning command (execFile): " + cmd[0] + " " + cmd.slice(1).join(" ") + "\n");
-    execFile(cmd[0], cmd.slice(1), onExec);
+    console.error("Invalid command type:", cmd);
+    process.exit(1);
   }
 }
 
