@@ -43,8 +43,8 @@ if (!EMSCRIPTEN_ROOT) {
   );
 }
 
-const EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc ") : "emcc ";
-const EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++ ") : "em++ ";
+const EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc") : "emcc";
+const EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++") : "em++";
 const OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
 const MEM = 128 * 1024 * 1024; // 64MB
 
@@ -570,7 +570,7 @@ function addJob(job) {
 }
 
 addJob(clean_builds);
-addJob(["emcc", ...compile_arlib]);
+addJob(compile_arlib);
 addJob(compile_thread_arlib);
 addJob(compile_simd_arlib);
 addJob(configure_zlib);
