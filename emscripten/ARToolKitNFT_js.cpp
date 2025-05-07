@@ -22,15 +22,6 @@ ARToolKitNFT::~ARToolKitNFT() {
   teardown();
 }
 
-void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
-                float interpolationFactor) {
-  for (auto i = 0; i < 3; i++) {
-    for (auto j = 0; j < 4; j++) {
-      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) * interpolationFactor;
-    }
-  }
-}
-
 int ARToolKitNFT::passVideoData(emscripten::val videoFrame,
                                 emscripten::val videoLuma, bool internalLuma) {
   auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
@@ -82,8 +73,6 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
 
 #if WITH_FILTERING
   ARdouble transF[3][4];
-  ARdouble transFLerp[3][4];
-  memset(transFLerp, 0, 3 * 4 * sizeof(ARdouble));
 #endif
 
   float err = -1;
@@ -106,8 +95,6 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
     if (arFilterTransMat(this->ftmi, transF, reset) < 0) {
       webarkitLOGe("arFilterTransMat error with marker %d.", markerIndex);
     }
-
-    matrixLerp(transF, transFLerp, 0.95);
 #endif
 
     if (trackResult < 0) {
@@ -126,7 +113,7 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
 #if WITH_FILTERING
     for (auto x = 0; x < 3; x++) {
       for (auto y = 0; y < 4; y++) {
-        pose.call<void>("push", transFLerp[x][y]);
+        pose.call<void>("push", transF[x][y]);
       }
     }
 #else

@@ -19,15 +19,6 @@ ARToolKitNFT::~ARToolKitNFT() {
   teardown();
 }
 
-void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
-                float interpolationFactor) {
-  for (auto i = 0; i < 3; i++) {
-    for (auto j = 0; j < 4; j++) {
-      dst[i][j] = dst[i][j] + (src[i][j] - dst[i][j]) * interpolationFactor;
-    }
-  }
-}
-
 int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
   auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
   auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
