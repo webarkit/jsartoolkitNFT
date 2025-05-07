@@ -6,6 +6,7 @@
  */
 
 let execFile = require("child_process").execFile,
+  exec = require("child_process").exec,
   path = require("path"),
   fs = require("fs"),
   os = require("os"),
@@ -116,59 +117,32 @@ MAIN_SOURCES_IMPROVED_ES6 = MAIN_SOURCES_IMPROVED_ES6.map(function (src) {
 
 let ar_sources, ar_sources_threaded;
 
-if (platform === "win32") {
-  const glob = require("glob");
+const glob = require("glob");
 
-  function match(pattern) {
-    const r = glob.sync("emscripten/WebARKitLib/lib/SRC/" + pattern);
-    return r;
-  }
-  function matchAll(patterns, prefix = "") {
-    let r = [];
-    for (let pattern of patterns) {
-      r.push(...match(prefix + pattern));
-    }
-    return r;
-  }
-
-  ar_sources = matchAll([
-    "AR/arLabelingSub/*.c",
-    "AR/*.c",
-    "ARICP/*.c",
-    "ARUtil/log.c",
-    "ARUtil/file_utils.c",
-  ]);
-
-  ar_sources_threaded = matchAll([
-    "AR/arLabelingSub/*.c",
-    "AR/*.c",
-    "ARICP/*.c",
-    "ARUtil/log.c",
-    "ARUtil/file_utils.c",
-    "ARUtil/thread_sub.c",
-  ]);
-} else {
-  ar_sources = [
-    "AR/arLabelingSub/*.c",
-    "AR/*.c",
-    "ARICP/*.c",
-    "ARUtil/log.c",
-    "ARUtil/file_utils.c",
-  ].map(function (src) {
-    return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/", src);
-  });
-
-  ar_sources_threaded = [
-    "AR/arLabelingSub/*.c",
-    "AR/*.c",
-    "ARICP/*.c",
-    "ARUtil/log.c",
-    "ARUtil/file_utils.c",
-    "ARUtil/thread_sub.c",
-  ].map(function (src) {
-    return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/", src);
-  });
+function expandGlob(pattern) {
+  return glob
+    .sync(pattern, { cwd: path.resolve(WEBARKITLIB_ROOT, "lib/SRC") })
+    .map((file) => path.resolve(WEBARKITLIB_ROOT, "lib/SRC", file));
 }
+
+ar_sources = [
+  ...expandGlob("AR/arLabelingSub/*.c"),
+  ...expandGlob("AR/*.c"),
+  ...expandGlob("ARICP/*.c"),
+  path.resolve(WEBARKITLIB_ROOT, "lib/SRC/ARUtil/log.c"),
+  path.resolve(WEBARKITLIB_ROOT, "lib/SRC/ARUtil/file_utils.c"),
+];
+
+ar_sources_threaded = [
+  ...expandGlob("AR/arLabelingSub/*.c"),
+  ...expandGlob("AR/*.c"),
+  ...expandGlob("ARICP/*.c"),
+  path.resolve(WEBARKITLIB_ROOT, "lib/SRC/ARUtil/log.c"),
+  path.resolve(WEBARKITLIB_ROOT, "lib/SRC/ARUtil/file_utils.c"),
+  path.resolve(WEBARKITLIB_ROOT, "lib/SRC/ARUtil/thread_sub.c"),
+];
+
+console.log("Resolved ar_sources:", ar_sources);
 
 const ar2_sources = [
   "handle.c",
@@ -238,7 +212,7 @@ let DEFINES = " ";
 if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
 DEFINES += " -D WITH_FILTERING=" + WITH_FILTERING;
 
-let ZLIB_FLAG = " -s USE_ZLIB=1 ";
+//let ZLIB_FLAG = " -s USE_ZLIB=1 ";
 
 let FLAGS = "" + OPTIMIZE_FLAGS;
 FLAGS += " -Wno-warn-absolute-paths";
@@ -329,15 +303,14 @@ function clean_builds() {
 }
 
 const compile_arlib = [
-  EMCC,
+  EMCC.trim(),
   ...INCLUDES.split(" "),
   ...ar_sources,
   ...FLAGS.split(" "),
-  ZLIB_FLAG,
   ...DEFINES.split(" "),
   "-r",
   "-o",
-  `${OUTPUT_PATH}libar.o`
+  `${OUTPUT_PATH}libar.o`,
 ];
 
 const compile_thread_arlib = format(
@@ -346,7 +319,7 @@ const compile_thread_arlib = format(
     " " +
     ar_sources_threaded.join(" ") +
     FLAGS +
-    ZLIB_FLAG +
+    //ZLIB_FLAG +
     " " +
     "-pthread " +
     DEFINES +
@@ -360,7 +333,7 @@ const compile_simd_arlib = format(
     " " +
     ar_sources.join(" ") +
     FLAGS +
-    ZLIB_FLAG +
+    //ZLIB_FLAG +
     SIMD128_FLAGS +
     " " +
     DEFINES +
@@ -377,12 +350,8 @@ const configure_zlib = format(
   "emcmake cmake -B emscripten/build -S emscripten/zlib ..",
 );
 
-const build_zlib = format("cd emscripten/build && emmake make");
-
-const copy_zlib = format(
-  "cp emscripten/build/libz.a {OUTPUT_PATH}libz.a",
-  OUTPUT_PATH,
-);
+const build_zlib = "cd emscripten/build && emmake make";
+const copy_zlib = `cp emscripten/build/libz.a ${OUTPUT_PATH}libz.a`;
 
 const compile_combine = format(
   EMCC +
@@ -587,8 +556,13 @@ function runJob() {
     return;
   }
 
-  console.log("\nRunning command: " + cmd.join(" ") + "\n");
-  execFile(cmd[0], cmd.slice(1), onExec);
+  if (Array.isArray(cmd)) {
+    console.log("\nRunning command (execFile): " + cmd.join(" ") + "\n");
+    execFile(cmd[0], cmd.slice(1), onExec);
+  } else {
+    console.log("\nRunning command (exec): " + cmd + "\n");
+    exec(cmd, onExec);
+  }
 }
 
 function addJob(job) {
