@@ -310,7 +310,7 @@ const compile_arlib = [
   ...DEFINES.split(" "),
   "-r",
   "-o",
-  `${OUTPUT_PATH}libar.o`,
+  path.resolve(OUTPUT_PATH, "libar.o"),
 ];
 
 const compile_thread_arlib = format(
@@ -561,7 +561,11 @@ function runJob() {
     execFile(cmd[0], cmd.slice(1), onExec);
   } else {
     console.log("\nRunning command (exec): " + cmd + "\n");
-    exec(cmd, onExec);
+    const child = exec(cmd, onExec);
+
+    child.on('error', (error) => {
+      console.error('Failed to start process.', error);
+    });
   }
 }
 
