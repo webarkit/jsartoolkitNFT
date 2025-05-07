@@ -18,7 +18,7 @@
 #include <AR2/tracking.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
-#include <WebARKitVideoLuma.h> // Add this header
+#include <WebARKitVideoLuma.h>
 #include <emscripten.h>
 #include <emscripten/val.h>
 #include <stdio.h>
@@ -113,19 +113,6 @@ extern "C"
   /**
           NFT API bindings
   */
-
-  void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
-                  float interpolationFactor)
-  {
-    for (auto i = 0; i < 3; i++)
-    {
-      for (auto j = 0; j < 4; j++)
-      {
-        dst[i][j] = (1 - interpolationFactor) * src[i][j] + dst[i][j] * interpolationFactor;
-      }
-    }
-  }
-
   int passVideoData(int id, emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
     if (arControllers.find(id) == arControllers.end()) {
       return -1;
@@ -190,8 +177,6 @@ extern "C"
 
 #if WITH_FILTERING
     ARdouble transF[3][4];
-    ARdouble transFLerp[3][4];
-    memset(transFLerp, 0, 3 * 4 * sizeof(ARdouble));
 #endif
 
     float err = -1;
@@ -210,8 +195,6 @@ extern "C"
       {
         webarkitLOGe("arFilterTransMat error with marker %d.", markerIndex);
       }
-
-      matrixLerp(transF, transFLerp, 0.95);
 #endif
 
       if (trackResult < 0)
@@ -236,7 +219,7 @@ extern "C"
       {
         for (auto y = 0; y < 4; y++)
         {
-          pose.call<void>("push", transFLerp[x][y]);
+          pose.call<void>("push", transF[x][y]);
         }
       }
 #else
