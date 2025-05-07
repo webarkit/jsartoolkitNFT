@@ -560,12 +560,8 @@ function runJob() {
     console.log("\nRunning command (execFile): " + cmd.join(" ") + "\n");
     execFile(cmd[0], cmd.slice(1), onExec);
   } else {
-    console.log("\nRunning command (exec): " + cmd + "\n");
-    const child = exec(cmd, onExec);
-
-    child.on('error', (error) => {
-      console.error('Failed to start process.', error);
-    });
+    console.log("\nRunning command (execFile): " + cmd[0] + " " + cmd.slice(1).join(" ") + "\n");
+    execFile(cmd[0], cmd.slice(1), onExec);
   }
 }
 
@@ -574,7 +570,7 @@ function addJob(job) {
 }
 
 addJob(clean_builds);
-addJob(compile_arlib);
+addJob(["emcc", ...compile_arlib]);
 addJob(compile_thread_arlib);
 addJob(compile_simd_arlib);
 addJob(configure_zlib);
