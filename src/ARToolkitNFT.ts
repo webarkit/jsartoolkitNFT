@@ -143,7 +143,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
    */
   public async init() {
     const instance = await initARToolkitNFT();
-    this.instance = new instance.ARToolKitNFT();
+    this.instance = new instance.ARToolKitNFT(true);
 
     this.FS = instance.FS;
     this.StringList = instance.StringList;
