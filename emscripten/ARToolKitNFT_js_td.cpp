@@ -15,6 +15,18 @@ ARToolKitNFT::ARToolKitNFT()
   webarkitLOGi("init ARToolKitNFT constructor...");
 }
 
+ARToolKitNFT::ARToolKitNFT(bool withFiltering)
+    : ARToolKitNFT() // Call the default constructor
+{
+    this->withFiltering = withFiltering;
+
+    if (withFiltering) {
+        ftmi = nullptr;
+        filterCutoffFrequency = 60.0;
+        filterSampleRate = 120.0;
+    }
+}
+
 ARToolKitNFT::~ARToolKitNFT() {
   teardown();
 }

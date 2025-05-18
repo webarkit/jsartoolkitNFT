@@ -40,6 +40,7 @@ class ARToolKitNFT
 {
 public:
     ARToolKitNFT();
+    ARToolKitNFT(bool withFiltering);
     ~ARToolKitNFT(); 
     int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
@@ -76,6 +77,13 @@ public:
     int setup(int width, int height, int cameraID);
 
 private:
+    bool withFiltering; // New property
+
+    // Filtering-related variables
+    ARFilterTransMatInfo *ftmi;
+    double filterCutoffFrequency;
+    double filterSampleRate;
+
     std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT);
     void deleteHandle();
 
@@ -96,12 +104,6 @@ private:
 
     std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;  // Changed from std::shared_ptr
     AR2HandleT *ar2Handle;
-
-#if WITH_FILTERING
-    ARFilterTransMatInfo *ftmi;
-    ARdouble filterCutoffFrequency;
-    ARdouble filterSampleRate;
-#endif
 
     int detectedPage;
 
