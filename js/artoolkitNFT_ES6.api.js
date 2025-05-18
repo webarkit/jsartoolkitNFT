@@ -648,7 +648,7 @@ class ARControllerNFT {
       @return {number} 0 (void)
     */
     _initialize() {
-        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id);
+        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, true);
 
         this._initNFT();
 

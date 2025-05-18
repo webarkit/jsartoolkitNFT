@@ -43,52 +43,52 @@ static std::array<float, 12> zeros = {}; // Zero-initialized array
 
 struct arController
 {
-  int id;
+    int id;
 
-  ARParam param;
-  ARParamLT *paramLT = nullptr;
+    ARParam param;
+    ARParamLT *paramLT = nullptr;
 
-  // Replace raw pointers with unique_ptr
-  std::unique_ptr<ARUint8[]> videoFrame = nullptr;
-  int videoFrameSize;
-  std::unique_ptr<ARUint8[]> videoLuma = nullptr;
+    // Replace raw pointers with unique_ptr
+    std::unique_ptr<ARUint8[]> videoFrame = nullptr;
+    int videoFrameSize;
+    std::unique_ptr<ARUint8[]> videoLuma = nullptr;
 
-  int width = 0;
-  int height = 0;
+    int width = 0;
+    int height = 0;
 
-  ARHandle *arhandle = nullptr;
-  AR3DHandle *ar3DHandle = nullptr;
+    ARHandle *arhandle = nullptr;
+    AR3DHandle *ar3DHandle = nullptr;
 
-  // Use unique_ptr with custom deleter for KpmHandle
-  std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle = 
-      std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
-          if (p) kpmDeleteHandle(&p);
-      });
-      
-  AR2HandleT *ar2Handle = nullptr;
+    // Use unique_ptr with custom deleter for KpmHandle
+    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle = 
+        std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
+            if (p) kpmDeleteHandle(&p);
+        });
+        
+    AR2HandleT *ar2Handle = nullptr;
 
-#if WITH_FILTERING
-  ARFilterTransMatInfo *ftmi = nullptr;
-  ARdouble filterCutoffFrequency = 60.0;
-  ARdouble filterSampleRate = 120.0;
-#endif
+    // Filtering-related properties
+    bool withFiltering = false;
+    ARFilterTransMatInfo *ftmi = nullptr;
+    ARdouble filterCutoffFrequency = 60.0;
+    ARdouble filterSampleRate = 120.0;
 
-  int detectedPage = -2; // -2 Tracking not inited, -1 tracking inited OK, >= 0 tracking online on page.
+    int detectedPage = -2; // -2 Tracking not inited, -1 tracking inited OK, >= 0 tracking online on page.
 
-  int surfaceSetCount = 0; // Running NFT marker id
-  AR2SurfaceSetT *surfaceSet[PAGES_MAX] = {nullptr};
-  std::unordered_map<int, AR2SurfaceSetT *> surfaceSets;
-  // nftMarker struct inside arController
-  nftMarker nft;
-  std::vector<nftMarker> nftMarkers;
+    int surfaceSetCount = 0; // Running NFT marker id
+    AR2SurfaceSetT *surfaceSet[PAGES_MAX] = {nullptr};
+    std::unordered_map<int, AR2SurfaceSetT *> surfaceSets;
 
-  ARdouble nearPlane = 0.0001;
-  ARdouble farPlane = 1000.0;
+    nftMarker nft;
+    std::vector<nftMarker> nftMarkers;
 
-  int patt_id = 0; // Running pattern marker id
+    ARdouble nearPlane = 0.0001;
+    ARdouble farPlane = 1000.0;
 
-  ARdouble cameraLens[16];
-  AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
+    int patt_id = 0; // Running pattern marker id
+
+    ARdouble cameraLens[16];
+    AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
 };
 
 std::unordered_map<int, arController> arControllers;
@@ -157,88 +157,67 @@ extern "C"
     return 0;
   }
 
-  emscripten::val getNFTMarkerInfo(int id, int markerIndex)
-  {
-    if (arControllers.find(id) == arControllers.end())
-    {
-      return emscripten::val(ARCONTROLLER_NOT_FOUND);
+  emscripten::val getNFTMarkerInfo(int id, int markerIndex) {
+    if (arControllers.find(id) == arControllers.end()) {
+        return emscripten::val(ARCONTROLLER_NOT_FOUND);
     }
     arController *arc = &(arControllers[id]);
 
     auto NFTMarkerInfo = emscripten::val::object();
     auto pose = emscripten::val::array();
 
-    if (arc->surfaceSetCount <= markerIndex)
-    {
-      return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
+    if (arc->surfaceSetCount <= markerIndex) {
+        return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
     }
 
     float trans[3][4];
-
-#if WITH_FILTERING
-    ARdouble transF[3][4];
-#endif
-
     float err = -1;
-    if (arc->detectedPage == markerIndex)
-    {
-      int trackResult =
-          ar2TrackingMod(arc->ar2Handle, arc->surfaceSet[arc->detectedPage],
-                         arc->videoFrame.get(), trans, &err);
 
-#if WITH_FILTERING
-      std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
+    if (arc->detectedPage == markerIndex) {
+        int trackResult = ar2TrackingMod(arc->ar2Handle, arc->surfaceSet[arc->detectedPage],
+                                         arc->videoFrame.get(), trans, &err);
 
-      bool reset = (trackResult < 0) ? true : false;
+        if (arc->withFiltering) {
+            ARdouble transF[3][4];
+            std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
 
-      if (arFilterTransMat(arc->ftmi, transF, reset) < 0)
-      {
-        webarkitLOGe("arFilterTransMat error with marker %d.", markerIndex);
-      }
-#endif
+            bool reset = (trackResult < 0);
+            if (arFilterTransMat(arc->ftmi, transF, reset) < 0) {
+                webarkitLOGe("arFilterTransMat error with marker %d.", markerIndex);
+            }
 
-      if (trackResult < 0)
-      {
-        webarkitLOGi("Tracking lost. %d", trackResult);
-        arc->detectedPage = -2;
-      }
-      else
-      {
-        ARLOGi("Tracked page %d (max %d).\n", arc->surfaceSet[arc->detectedPage],
-               arc->surfaceSetCount - 1);
-      }
+            for (auto x = 0; x < 3; x++) {
+                for (auto y = 0; y < 4; y++) {
+                    pose.call<void>("push", transF[x][y]);
+                }
+            }
+        } else {
+            for (auto x = 0; x < 3; x++) {
+                for (auto y = 0; y < 4; y++) {
+                    pose.call<void>("push", trans[x][y]);
+                }
+            }
+        }
+
+        if (trackResult < 0) {
+            webarkitLOGi("Tracking lost. %d", trackResult);
+            arc->detectedPage = -2;
+        } else {
+            ARLOGi("Tracked page %d (max %d).\n", arc->surfaceSet[arc->detectedPage],
+                   arc->surfaceSetCount - 1);
+        }
     }
 
-    if (arc->detectedPage == markerIndex)
-    {
-      NFTMarkerInfo.set("id", markerIndex);
-      NFTMarkerInfo.set("error", err);
-      NFTMarkerInfo.set("found", 1);
-#if WITH_FILTERING
-      for (auto x = 0; x < 3; x++)
-      {
-        for (auto y = 0; y < 4; y++)
-        {
-          pose.call<void>("push", transF[x][y]);
-        }
-      }
-#else
-      for (auto x = 0; x < 3; x++)
-      {
-        for (auto y = 0; y < 4; y++)
-        {
-          pose.call<void>("push", trans[x][y]);
-        }
-      }
-#endif
-      NFTMarkerInfo.set("pose", pose);
-    }
-    else
-    {
-      NFTMarkerInfo.set("id", markerIndex);
-      NFTMarkerInfo.set("error", -1);
-      NFTMarkerInfo.set("found", 0);
-      NFTMarkerInfo.set("pose", emscripten::val(emscripten::typed_memory_view(12, zeros.data())));
+    if (arc->detectedPage == markerIndex) {
+        NFTMarkerInfo.set("id", markerIndex);
+        NFTMarkerInfo.set("error", err);
+        NFTMarkerInfo.set("found", 1);
+        NFTMarkerInfo.set("pose", pose);
+    } else {
+        NFTMarkerInfo.set("id", markerIndex);
+        NFTMarkerInfo.set("error", -1);
+        NFTMarkerInfo.set("found", 0);
+        NFTMarkerInfo.set("pose", emscripten::val(emscripten::typed_memory_view(12, zeros.data())));
     }
 
     return NFTMarkerInfo;
@@ -261,20 +240,17 @@ extern "C"
       kpmMatching(arc->kpmHandle.get(), arc->videoLuma.get());
       kpmGetResult(arc->kpmHandle.get(), &kpmResult, &kpmResultNum);
 
-#if WITH_FILTERING
-      arc->ftmi =
-          arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
-#endif
+      if (arc->withFiltering) {
+          arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
+      }
 
-      for (auto i = 0; i < kpmResultNum; i++)
-      {
-        if (kpmResult[i].camPoseF == 0)
-        {
-          float trans[3][4];
-          arc->detectedPage = kpmResult[i].pageNo;
-          std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
-          ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
-        }
+      for (auto i = 0; i < kpmResultNum; i++) {
+          if (kpmResult[i].camPoseF == 0) {
+            float trans[3][4];
+            arc->detectedPage = kpmResult[i].pageNo;
+            std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
+            ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
+          }
       }
     }
     return kpmResultNum;
@@ -799,8 +775,7 @@ extern "C"
    * Setup *
    ********/
 
-  int setup(int width, int height, int cameraID)
-  {
+  int setup(int width, int height, int cameraID, bool enableFiltering) {
     int id = gARControllerID++;
     arController *arc = &(arControllers[id]);
     arc->id = id;
@@ -815,7 +790,11 @@ extern "C"
 
     setCamera(id, cameraID);
 
+    // Set the withFiltering property
+    arc->withFiltering = enableFiltering;
+
     webarkitLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
+    webarkitLOGi("Filtering enabled: %s", enableFiltering ? "true" : "false");
 
     return arc->id;
   }
