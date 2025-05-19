@@ -292,6 +292,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getImageProcMode();
   }
 
+  public setFiltering(enableFiltering: boolean): void{
+    this.instance.setFiltering(enableFiltering);
+  }
+
   public getCameraLens(): any {
     return this.instance.getCameraLens();
   }

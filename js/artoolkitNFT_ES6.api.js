@@ -640,6 +640,16 @@ class ARControllerNFT {
         return artoolkitNFT.getImageProcMode(this.id);
     };
 
+    /**
+     * 
+     * @param {*} enableFiltering 
+     * @returns void
+     * @description Enable or disable filtering for the detected markers.
+     */
+    setFiltering(enableFiltering) {
+        artoolkitNFT.setFiltering(this.id, enableFiltering);
+    }
+
     // private methods
 
     /**
@@ -648,7 +658,7 @@ class ARControllerNFT {
       @return {number} 0 (void)
     */
     _initialize() {
-        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, true);
+        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, false);
 
         this._initNFT();
 
@@ -825,6 +835,7 @@ const artoolkitNFT = {
 
 const FUNCTIONS = [
     'setup',
+    'setFiltering',
     'teardown',
 
     'setupAR2',

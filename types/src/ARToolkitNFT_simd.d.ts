@@ -52,6 +52,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     setupAR2(): void;
     setDebugMode(mode: boolean): number;
     getDebugMode(): boolean;
+    setFiltering(enableFiltering: boolean): void;
     getProcessingImage(): number;
     detectNFTMarker(): number;
     getNFTMarker(markerIndex: number): INFTMarkerInfo;

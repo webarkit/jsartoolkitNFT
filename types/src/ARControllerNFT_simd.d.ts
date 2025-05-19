@@ -73,6 +73,7 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number[]) => void, onError: (err: number) => void): Promise<number[]>;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
+    setFiltering(enableFiltering: boolean): void;
     setGrayData(data: Uint8Array): void;
     private converter;
     private _initialize;
