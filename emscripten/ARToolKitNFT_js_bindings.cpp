@@ -17,6 +17,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("teardown", &ARToolKitNFT::teardown)
       .function("_loadCamera", &ARToolKitNFT::loadCamera)
       .function("setup", &ARToolKitNFT::setup)
+      .function("setFiltering", &ARToolKitNFT::setFiltering)
       .function("getCameraLens", &ARToolKitNFT::getCameraLens)
       .function("passVideoData", &ARToolKitNFT::passVideoData)
       .function("_decompressZFT", &ARToolKitNFT::decompressZFT)

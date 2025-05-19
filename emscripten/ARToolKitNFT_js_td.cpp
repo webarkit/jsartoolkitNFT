@@ -566,4 +566,9 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
   return this->id;
 }
 
+void ARToolKitNFT::setFiltering(bool enableFiltering) {
+  this->withFiltering = enableFiltering;
+  webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
+}
+
 #include "ARToolKitNFT_js_bindings.cpp"

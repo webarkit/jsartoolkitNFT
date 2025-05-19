@@ -75,6 +75,7 @@ public:
     void setImageProcMode(int mode);
     int getImageProcMode();
     int setup(int width, int height, int cameraID);
+    void setFiltering(bool enableFiltering);
 
 private:
     bool withFiltering; // New property

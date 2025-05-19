@@ -115,16 +115,6 @@ extern "C" {
         NFT API bindings
 */
 
-void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
-                float interpolationFactor) {
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 4; j++) {
-      dst[i][j] = (1 - interpolationFactor) * src[i][j] +
-                  dst[i][j] * interpolationFactor;
-    }
-  }
-}
-
 int passVideoData(int id, emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
   if (arControllers.find(id) == arControllers.end()) {
     return -1;
@@ -786,6 +776,15 @@ int setup(int width, int height, int cameraID) {
   webarkitLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
 
   return arc->id;
+}
+
+void setFiltering(bool enableFiltering, int id) {
+  if (arControllers.find(id) == arControllers.end()) {
+    return;
+  }
+  arController *arc = &(arControllers[id]);
+  //arc->withFiltering = enableFiltering;
+  webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
 }
 }
 

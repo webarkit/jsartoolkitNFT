@@ -49,6 +49,7 @@ async function load(msg) {
 
   const onLoad = function () {
     ar = new arTK.ARControllerNFT(msg.pw, msg.ph, param, true);
+    ar.setFiltering(true);
     const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {

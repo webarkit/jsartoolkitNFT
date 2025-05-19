@@ -855,6 +855,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     return this.artoolkitNFT.getImageProcMode();
   }
 
+  public setFiltering(enableFiltering: boolean): void{
+    this.artoolkitNFT.setFiltering(enableFiltering);
+  }
+
   /**
    * Set the custom gray data (videoLuma) in case you want to add additional
    * trasnformation to gray data: for example gaussianblur or boxblur

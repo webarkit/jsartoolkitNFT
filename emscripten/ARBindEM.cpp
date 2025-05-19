@@ -9,6 +9,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 	register_vector<nftMarker>("nftMarkers");
 
 	function("setup", &setup);
+	function("setFiltering", &setFiltering);
 	function("teardown", &teardown);
 
 	function("setupAR2", &setupAR2);

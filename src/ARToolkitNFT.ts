@@ -229,6 +229,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getDebugMode();
   }
 
+  public setFiltering(enableFiltering: boolean): void{
+    this.instance.setFiltering(enableFiltering);
+  }
+
   public getProcessingImage(): number {
     return this.instance.getProcessingImage();
   }

@@ -798,6 +798,15 @@ extern "C"
 
     return arc->id;
   }
+
+  void setFiltering(int id, bool enableFiltering) {
+    if (arControllers.find(id) == arControllers.end()) {
+        return;
+    }
+    arController *arc = &(arControllers[id]);
+    arc->withFiltering = enableFiltering;
+    webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
+}
 }
 
 #include "ARBindEM.cpp"

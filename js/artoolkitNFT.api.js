@@ -635,6 +635,16 @@
         return artoolkitNFT.getImageProcMode(this.id);
     };
 
+    /**
+     * 
+     * @param {*} enableFiltering 
+     * @returns {void} void
+     * @description Enable or disable filtering for the detected markers.
+     */
+    ARControllerNFT.prototype.setFiltering = function(enableFiltering) {
+        artoolkitNFT.setFiltering(this.id, enableFiltering);
+    }
+
     // private methods
 
     /**
@@ -643,7 +653,7 @@
       @return {number} 0 (void)
     */
     ARControllerNFT.prototype._initialize = function () {
-        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, true);
+        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, false);
 
         this._initNFT();
 
@@ -819,6 +829,7 @@
 
     const FUNCTIONS = [
         'setup',
+        'setFiltering',
         'teardown',
 
         'setupAR2',
