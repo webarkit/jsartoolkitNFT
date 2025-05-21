@@ -80,7 +80,7 @@ function load(msg) {
   const onLoad = function (arController) {
     ar = arController;
     console.log(ar);
-    
+
     ar.setFiltering(true);
     const cameraMatrix = ar.getCameraMatrix();
 

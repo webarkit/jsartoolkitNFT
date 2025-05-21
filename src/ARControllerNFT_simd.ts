@@ -855,7 +855,12 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     return this.artoolkitNFT.getImageProcMode();
   }
 
-  public setFiltering(enableFiltering: boolean): void{
+  /**
+   * Set the filtering mode.
+   * @param {boolean} enableFiltering
+   * @return {void}
+   */
+  public setFiltering(enableFiltering: boolean): void {
     this.artoolkitNFT.setFiltering(enableFiltering);
   }
 

@@ -229,9 +229,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getDebugMode();
   }
 
-  public setFiltering(enableFiltering: boolean): void{
-    console.log(this.instance);
-    
+  public setFiltering(enableFiltering: boolean): void {
     this.instance.setFiltering(enableFiltering);
   }
 
