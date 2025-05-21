@@ -247,8 +247,7 @@ const PRE_ES6_FLAGS =
 
 /* DEBUG FLAGS */
 
-
-let DEBUG_FLAGS = ""; 
+let DEBUG_FLAGS = "";
 DEBUG_FLAGS += " -g2 ";
 DEBUG_FLAGS += " -s ASSERTIONS=1 ";
 DEBUG_FLAGS += " --profiling ";
@@ -258,7 +257,6 @@ DEBUG_FLAGS += " -s WASM=0"; // Disable WASM for debugging
 
 let NO_WASM_FLAG = "";
 NO_WASM_FLAG += " -s WASM=0"; // Disable WASM for debugging
-
 
 const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
