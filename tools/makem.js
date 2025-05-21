@@ -15,8 +15,6 @@ let execFile = require("child_process").execFile,
 const platform = os.platform();
 
 let NO_LIBAR = false;
-/* Filtering remote jitter, but makes the tracking swim */
-const WITH_FILTERING = 1;
 
 const arguments = process.argv;
 
@@ -210,7 +208,6 @@ if (HAVE_NFT) {
 
 let DEFINES = " ";
 if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
-DEFINES += " -D WITH_FILTERING=" + WITH_FILTERING;
 
 //let ZLIB_FLAG = " -s USE_ZLIB=1 ";
 
