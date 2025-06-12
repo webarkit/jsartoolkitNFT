@@ -330,6 +330,11 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
   return 0;
 }
 
+void ARToolKitNFT::recalulateCameraLens() {
+  arglCameraFrustumRH(&((this->paramLT)->param), this->nearPlane,
+                      this->farPlane, this->cameraLens);
+}
+
 int ARToolKitNFT::loadCamera(std::string cparam_name) {
   ARParam param;
   if (arParamLoad(cparam_name.c_str(), 1, &param) < 0) {
