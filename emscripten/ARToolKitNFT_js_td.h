@@ -65,6 +65,7 @@ public:
     ARdouble getProjectionNearPlane();
     void setProjectionFarPlane(const ARdouble projectionFarPlane);
     ARdouble getProjectionFarPlane();
+    void recalulateCameraLens();
     void setThreshold(int threshold);
     int getThreshold();
     void setThresholdMode(int mode);
