@@ -330,7 +330,7 @@ int ARToolKitNFT::setCamera(int id, int cameraID) {
   return 0;
 }
 
-void ARToolKitNFT::recalulateCameraLens() {
+void ARToolKitNFT::recalculateCameraLens() {
   arglCameraFrustumRH(&((this->paramLT)->param), this->nearPlane,
                       this->farPlane, this->cameraLens);
 }

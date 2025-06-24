@@ -391,6 +391,18 @@ extern "C"
     return 0;
   }
 
+  int recalculateCameraLens(int id)
+  {
+    if (arControllers.find(id) == arControllers.end())
+    {
+      return -1;
+    }
+    arController *arc = &(arControllers[id]);
+    arglCameraFrustumRH(&((arc->paramLT)->param), arc->nearPlane,
+                        arc->farPlane, arc->cameraLens);
+    return 0;
+  }
+
   /*****************
    * Camera loading *
    *****************/

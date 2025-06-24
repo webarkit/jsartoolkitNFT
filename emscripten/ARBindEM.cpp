@@ -18,6 +18,8 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
 	function("_decompressZFT", &decompressZFT);
 
+	function("recalculateCameraLens", &recalculateCameraLens);
+
 	function("_loadCamera", &loadCamera);
 
 	function("detectNFTMarker", &detectNFTMarker);

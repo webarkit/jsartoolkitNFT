@@ -19,7 +19,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("setup", &ARToolKitNFT::setup)
       .function("setFiltering", &ARToolKitNFT::setFiltering)
       .function("getCameraLens", &ARToolKitNFT::getCameraLens)
-      .function("recalulateCameraLens", &ARToolKitNFT::recalulateCameraLens)
+      .function("recalculateCameraLens", &ARToolKitNFT::recalculateCameraLens)
       .function("passVideoData", &ARToolKitNFT::passVideoData)
       .function("_decompressZFT", &ARToolKitNFT::decompressZFT)
       .function("_addNFTMarkers", &ARToolKitNFT::addNFTMarkers)
