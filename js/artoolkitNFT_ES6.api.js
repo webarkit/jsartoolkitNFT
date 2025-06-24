@@ -517,6 +517,16 @@ class ARControllerNFT {
     };
 
     /**
+     * Recalculates the camera lens based on the current camera parameters.
+     * This is useful if the camera parameters have changed
+     * and you need to update the camera lens accordingly.
+     * @returns {number} 0 (void)
+     */
+    recalculateCameraLens() {
+        return artoolkitNFT.recalculateCameraLens(this.id);
+    }
+
+    /**
       Sets the value of the far plane of the camera.
       @param {number} value the value of the far plane
       @return {number} 0 (void)
@@ -857,6 +867,8 @@ const FUNCTIONS = [
 
     'setProjectionFarPlane',
     'getProjectionFarPlane',
+
+    'recalculateCameraLens',
 
     'setThresholdMode',
     'getThresholdMode',

@@ -528,6 +528,16 @@
         return artoolkitNFT.getProjectionFarPlane(this.id);
     };
 
+    /**
+     * Recalculates the camera lens based on the current camera parameters.
+     * This is useful if the camera parameters have changed
+     * and you need to update the camera lens accordingly.
+     * 
+     * @return {number} 0 (void)
+     */
+    ARControllerNFT.prototype.recalculateCameraLens = function () {
+        return artoolkitNFT.recalculateCameraLens(this.id);
+    }
 
     /**
         Set the labeling threshold mode (auto/manual).
@@ -851,6 +861,8 @@
 
         'setProjectionFarPlane',
         'getProjectionFarPlane',
+
+        'recalculateCameraLens',
 
         'setThresholdMode',
         'getThresholdMode',
