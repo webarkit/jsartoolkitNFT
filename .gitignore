@@ -4,5 +4,13 @@ build/*.a
 node_modules
 docs/*
 emscripten/build
+python-bindings/build
+python-bindings/dist
+python-bindings/emscripten
+python-bindings/*.so
+python-bindings/deps/libjpeg/*
+python-bindings/__pycache__
+python-bindings/*.egg-info
+python-bindings/src/*.egg-info
 .vscode
 .idea

@@ -1,0 +1,22 @@
+[project]
+name = "artoolkitnft"
+version = "0.0.10"
+authors = [
+  { name="Walter Perdan", email="github@kalwaltart.it" },
+]
+description = "This is a Python binding project for jsartoolkitNFT, which integrates WebARKitLib with Python using pybind11. It allows for augmented reality applications to be developed in Python by providing bindings to the underlying C/C++ WebARKitLib library."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+]
+
+[project.urls]
+Homepage = "https://github.com/webarkit/jsartoolkitNFT"
+Issues = "https://github.com/webarkit/jsartoolkitNFT/issues"
+
+[build-system]
+requires = ["setuptools>=42", "wheel", "pybind11"]
+build-backend = "setuptools.build_meta"
