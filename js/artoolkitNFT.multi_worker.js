@@ -99,10 +99,10 @@ function load(msg) {
           marker3: marker3,
         });
         console.log("loadNFTMarker -> ", ids);
-        postMessage({ type: "endLoading", end: true }),
+        (postMessage({ type: "endLoading", end: true }),
           function (err) {
             console.error("Error in loading marker on Worker", err);
-          };
+          });
       });
 
       postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
