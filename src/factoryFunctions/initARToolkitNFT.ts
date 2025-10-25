@@ -35,43 +35,7 @@
  */
 
 import ARToolkitNFT from "../../build/artoolkitNFT_ES6_wasm";
-
-// Type definition for the Emscripten Module returned by ARToolkitNFT factory
-interface ARToolkitNFTModule {
-  ARToolKitNFT: any;
-  FS: any;
-  StringList: any;
-  nftMarkers: any;
-  ERROR_MARKER_INDEX_OUT_OF_BOUNDS: number;
-  AR_DEBUG_DISABLE: number;
-  AR_DEBUG_ENABLE: number;
-  AR_DEFAULT_DEBUG_MODE: number;
-  AR_DEFAULT_LABELING_THRESH: number;
-  AR_IMAGE_PROC_FRAME_IMAGE: number;
-  AR_IMAGE_PROC_FIELD_IMAGE: number;
-  AR_DEFAULT_IMAGE_PROC_MODE: number;
-  AR_MAX_LOOP_COUNT: number;
-  AR_LOOP_BREAK_THRESH: number;
-  AR_LOG_LEVEL_DEBUG: number;
-  AR_LOG_LEVEL_INFO: number;
-  AR_LOG_LEVEL_WARN: number;
-  AR_LOG_LEVEL_ERROR: number;
-  AR_LOG_LEVEL_REL_INFO: number;
-  AR_LABELING_THRESH_MODE_MANUAL: number;
-  AR_LABELING_THRESH_MODE_AUTO_MEDIAN: number;
-  AR_LABELING_THRESH_MODE_AUTO_OTSU: number;
-  AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_NONE: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_PATTERN_EXTRACTION: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_MATCH_GENERIC: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_MATCH_CONTRAST: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_MATCH_BARCODE_NOT_FOUND: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_MATCH_BARCODE_EDC_FAIL: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_MATCH_CONFIDENCE: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR_MULTI: number;
-  AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
-}
+import { ARToolkitNFTModule } from "../abstractions/CommonInterfaces";
 
 export async function initARToolkitNFT(): Promise<ARToolkitNFTModule> {
   return await ARToolkitNFT() as ARToolkitNFTModule;
