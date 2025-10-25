@@ -91,6 +91,7 @@ module.exports = (env, argv) => {
         //path: path.resolve('dist'),
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT_td.js",
+        chunkFilename: "[id].ARToolkitNFT_td.js", // Ensure pthread worker chunks are output
         //library: "ARToolkitNFT",
         libraryTarget: "umd",
         // @see: https://github.com/webpack/webpack/issues/3929
