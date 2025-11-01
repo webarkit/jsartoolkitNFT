@@ -1,14 +1,34 @@
-// Karma configuration
+// Karma configuration - Unified for all legacy builds
+const fs = require('fs');
+const path = require('path');
+
+// --- Dynamic Build File Selection ---
+
+// Get the target build file from an environment variable.
+// Default to the most stable production build if not specified.
+const buildFileToTest = process.env.BUILD_TARGET || 'artoolkitNFT.min.js';
+const buildFilePath = path.join('build', buildFileToTest);
+
+if (!fs.existsSync(buildFilePath)) {
+    console.error(`[Karma] Error: Build file not found: ${buildFilePath}`);
+    console.error(`[Karma] Please run the build script first, or specify a valid BUILD_TARGET.`);
+    process.exit(1);
+}
+
+console.log(`[Karma] Using build file for testing: ${buildFilePath}`);
+
+// --- End Dynamic Selection ---
 
 module.exports = function (config) {
   config.set({
     basePath: "",
     frameworks: ["jasmine"],
 
-    // Use the minified production build, as it is the most stable asm.js target.
+    // Dynamically load the selected build file.
+    // No setup script is needed; the test file handles initialization.
     files: [
-      'build/artoolkitNFT.min.js',
-      'tests/tests-min.test.js',
+      buildFilePath,
+      'tests/tests.test.js', // The single, unified test file
       {
         pattern: 'examples/Data/*',
         watched: false,
@@ -28,7 +48,7 @@ module.exports = function (config) {
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: true,
+    autoWatch: false,
     browsers: ["ChromeHeadless"],
     singleRun: true,
     concurrency: Infinity,
@@ -36,7 +56,8 @@ module.exports = function (config) {
     client: {
         clearContext: false,
         jasmine: {
-            DEFAULT_TIMEOUT_INTERVAL: 20000 // A generous timeout for the entire setup
+            // A generous timeout to allow for Wasm compilation and initialization
+            DEFAULT_TIMEOUT_INTERVAL: 20000
         }
     }
   });
