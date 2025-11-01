@@ -51,7 +51,8 @@
     "karma-jasmine": "^5.1.0",
     "karma-chrome-launcher": "^3.2.0",
     "karma-firefox-launcher": "^2.1.3",
-    "jasmine-core": "^5.1.2"
+    "jasmine-core": "^5.1.2",
+    "cross-env": "^7.0.3"
   },
   "scripts": {
     "dev-ts": "webpack --mode development --progress --watch",
@@ -61,8 +62,12 @@
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
-    "test": "karma start karma.conf.js",
-    "test:watch": "karma start karma.conf.js --no-single-run",
+    "test": "npm run test:all",
+    "test:wasm": "cross-env BUILD_TARGET=artoolkitNFT_wasm.js karma start karma.conf.js",
+    "test:debug": "cross-env BUILD_TARGET=artoolkitNFT.debug.js karma start karma.conf.js",
+    "test:simd": "cross-env BUILD_TARGET=artoolkitNFT_wasm.simd.js karma start karma.conf.js",
+    "test:min": "cross-env BUILD_TARGET=artoolkitNFT.min.js karma start karma.conf.js",
+    "test:all": "npm run test:wasm && npm run test:debug && npm run test:simd && npm run test:min",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",
