@@ -69,8 +69,15 @@ export type NftMarkers = NftMarker[];
 // Emscripten File System interface
 // Based on Emscripten's FS API: https://emscripten.org/docs/api_reference/Filesystem-API.html
 export interface EmscriptenFS {
-  readFile(path: string, opts?: { encoding?: 'binary' | 'utf8'; flags?: string }): Uint8Array | string;
-  writeFile(path: string, data: string | ArrayBufferView, opts?: { flags?: string; encoding?: string }): void;
+  readFile(
+    path: string,
+    opts?: { encoding?: "binary" | "utf8"; flags?: string },
+  ): Uint8Array | string;
+  writeFile(
+    path: string,
+    data: string | ArrayBufferView,
+    opts?: { flags?: string; encoding?: string },
+  ): void;
   unlink(path: string): void;
   // Add more methods as needed: mkdir, rmdir, readdir, stat, etc.
   [key: string]: any; // Allow other FS methods not explicitly typed
@@ -88,7 +95,7 @@ export interface EmscriptenStringList {
 
 // StringList constructor type
 export interface EmscriptenStringListConstructor {
-  new(): EmscriptenStringList;
+  new (): EmscriptenStringList;
 }
 
 // ARToolKitNFT WASM instance interface (the raw Emscripten class instance)
@@ -101,7 +108,11 @@ export interface IARToolKitNFTInstance {
   setupAR2(): void;
 
   // Video data processing
-  passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
+  passVideoData(
+    videoFrame: Uint8ClampedArray,
+    videoLuma: Uint8Array,
+    lumaInternal: boolean,
+  ): void;
 
   // NFT Marker detection and tracking
   detectNFTMarker(): number;
