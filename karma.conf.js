@@ -1,5 +1,4 @@
 // Karma configuration
-// Generated on Mon Mar 07 2022 12:03:44 GMT+0100 (Ora standard dell’Europa centrale)
 
 module.exports = function (config) {
   config.set({
@@ -8,22 +7,25 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
-    frameworks: ["qunit"],
-
-    plugins: ["karma-qunit", "karma-chrome-launcher", "karma-firefox-launcher"],
+    frameworks: ["jasmine"],
 
     // list of files / patterns to load in the browser
     files: [
-      { pattern: "build/artoolkitNFT.min.js", included: true },
-      { pattern: "tests/*.js", included: true },
+      "tests/setup.js", // This MUST be loaded first
+      "build/artoolkitNFT_wasm.js",
+      "tests/tests.test.js",
       {
-        pattern: "examples/Data/camera_para.dat",
+        pattern: "examples/Data/*",
         watched: false,
         included: false,
         served: true,
         nocache: false,
       },
     ],
+
+    proxies: {
+      "/examples/Data/": "/base/examples/Data/",
+    },
 
     // list of files / patterns to exclude
     exclude: [],
@@ -52,10 +54,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-    browsers: [
-      process.platform === "linux" ? "ChromiumHeadless" : "ChromeHeadless",
-      "FirefoxHeadless",
-    ],
+    browsers: ["ChromeHeadless"],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -67,9 +66,8 @@ module.exports = function (config) {
 
     client: {
       clearContext: false,
-      qunit: {
-        showUI: true,
-        testTimeout: 5000,
+      jasmine: {
+        DEFAULT_TIMEOUT_INTERVAL: 10000, // Increased timeout for WebAssembly loading
       },
     },
   });
