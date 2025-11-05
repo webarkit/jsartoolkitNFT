@@ -71,6 +71,6 @@
   "license": "LGPL-3.0",
   "dependencies": {
     "@babel/runtime": "7.28.4",
-    "axios": "1.12.2"
+    "axios": "1.13.2"
   }
 }
