@@ -11,7 +11,7 @@ module.exports = function (config) {
     files: [
       // Load the test file as a module.
       { pattern: 'tests/tests-embed-es6.test.js', type: 'module' },
-      {
+        {
         pattern: 'examples/Data/*',
         watched: false,
         included: false,

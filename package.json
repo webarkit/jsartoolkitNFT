@@ -71,7 +71,7 @@
     "test:embed-es6": "karma start karma-embed-es6.conf.js",
     "test:es6": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.js karma start karma-es6.conf.js",
     "test:es6-simd": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.simd.js karma start karma-es6.conf.js",
-    "test:all": "npm run test:min || true; npm run test:wasm || true; npm run test:simd || true; npm run test:embed-es6 || true; npm run test:es6 || true; npm run test:es6-simd || true",
+    "test:all": "npm run test:min && npm run test:debug && npm run test:wasm && npm run test:simd && npm run test:embed-es6 && npm run test:es6 && npm run test:es6-simd",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",

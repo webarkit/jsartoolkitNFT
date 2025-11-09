@@ -2,31 +2,29 @@
 import ARToolkitNFT from '../build/artoolkitNFT_embed_ES6_wasm.js';
 
 describe('ARControllerNFT (ES6 Embed)', () => {
-    let artoolkit;
     let arController;
 
-    // 1. Get the module object once before all tests.
-    beforeAll(async () => {
-        artoolkit = await ARToolkitNFT();
+    // Use a single, unified beforeAll hook to handle all asynchronous setup.
+    // This creates one controller instance for all tests, avoiding race conditions.
+    beforeAll((done) => {
+        ARToolkitNFT().then((artoolkit) => {
+            const cameraParam = new artoolkit.ARCameraParamNFT('./examples/Data/camera_para.dat', () => {
+                arController = new artoolkit.ARControllerNFT(640, 480, cameraParam);
+                done(); // Signal that all setup is complete
+            }, (err) => {
+                fail(err);
+                done();
+            });
+        });
     }, 20000);
 
-    // 2. Create a new controller before each test using the correct async flow.
-    beforeEach((done) => {
-        const cameraParam = new artoolkit.ARCameraParamNFT('./examples/Data/camera_para.dat', () => {
-            arController = new artoolkit.ARControllerNFT(640, 480, cameraParam);
-            done();
-        }, (err) => {
-            fail(err);
-            done();
-        });
-    });
-
-    afterEach(() => {
-        if (arController && typeof arController.dispose === 'function') {
+    // Dispose of the single controller instance at the very end.
+    afterAll(() => {
+        if (arController) {
             arController.dispose();
-            arController = null;
         }
     });
+
     it('should be initialized', () => {
         expect(arController).toBeDefined();
         expect(arController.id).toBeGreaterThanOrEqual(0);
