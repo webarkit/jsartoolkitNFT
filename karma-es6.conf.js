@@ -1,10 +1,14 @@
 // Karma configuration for the "true" ES6 module builds.
 const path = require('path');
+const fs = require('fs');
 
 // Get the target ES6 build file from an environment variable.
 const buildFile = process.env.BUILD_TARGET_ES6 || 'artoolkitNFT_ES6_wasm.js';
 const buildFilePath = path.resolve(__dirname, 'build', buildFile);
 
+if (!fs.existsSync(buildFilePath)) {
+  throw new Error(`[Karma-ES6] Build file not found: ${buildFilePath}\nPlease ensure the build has been generated before running tests.`);
+}
 console.log(`[Karma-ES6] Using build target: ${buildFile}`);
 
 module.exports = function (config) {
