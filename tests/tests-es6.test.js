@@ -47,7 +47,7 @@ describe('ARToolkitNFT (ES6 Module)', () => {
     });
 
     it('should allow setting and getting the projection near plane', () => {
-        const controllerId = artoolkit.setup(640, 480, 0);
+        artoolkit.setup(640, 480, 0);
         const nearPlane = 123.45;
 
         artoolkit.setProjectionNearPlane(nearPlane);
