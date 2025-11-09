@@ -38,7 +38,7 @@ describe('ARToolkitNFT (ES6 Module)', () => {
     // The getDebugMode() function appears to be bugged in the C++ source.
     // We mark this test as pending (xit) so it doesn't fail the suite.
     xit('should allow setting and getting the debug mode', () => {
-        const controllerId = artoolkit.setup(640, 480, 0);
+        artoolkit.setup(640, 480, 0);
         artoolkit.setDebugMode(true);
         expect(artoolkit.getDebugMode()).toBeTruthy();
 
