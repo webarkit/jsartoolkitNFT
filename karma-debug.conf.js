@@ -23,6 +23,7 @@ module.exports = function (config) {
   config.set({
     basePath: "",
     frameworks: ["jasmine"],
+    plugins: ['karma-jasmine', 'karma-chrome-launcher'],
 
     // Dynamically load the selected build file.
     // No setup script is needed; the test file handles initialization.
