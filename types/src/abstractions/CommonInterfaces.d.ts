@@ -26,7 +26,7 @@ export interface NftMarker {
 export type NftMarkers = NftMarker[];
 export interface EmscriptenFS {
     readFile(path: string, opts?: {
-        encoding?: 'binary' | 'utf8';
+        encoding?: "binary" | "utf8";
         flags?: string;
     }): Uint8Array | string;
     writeFile(path: string, data: string | ArrayBufferView, opts?: {
