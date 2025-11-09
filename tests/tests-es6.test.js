@@ -32,8 +32,7 @@ describe('ARToolkitNFT (ES6 Module)', () => {
     });
 
     it('should setup a controller', () => {
-        const controllerId = artoolkit.setup(640, 480, 0);
-        expect(controllerId).toBeGreaterThanOrEqual(0);
+        expect(artoolkit.setup(640, 480, 0)).toBeGreaterThanOrEqual(0);
     });
 
     // The getDebugMode() function appears to be bugged in the C++ source.
