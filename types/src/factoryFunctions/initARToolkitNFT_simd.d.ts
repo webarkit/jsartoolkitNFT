@@ -1,1 +1,2 @@
-export declare function initARToolkitNFT(): Promise<any>;
+import { ARToolkitNFTModule } from "../abstractions/CommonInterfaces";
+export declare function initARToolkitNFT(): Promise<ARToolkitNFTModule>;

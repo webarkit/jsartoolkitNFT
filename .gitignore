@@ -13,3 +13,4 @@ python-bindings/__pycache__
 python-bindings/*.egg-info
 python-bindings/src/*.egg-info
 .vscode
+.idea

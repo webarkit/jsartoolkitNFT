@@ -143,7 +143,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
    */
   public async init() {
     const instance = await initARToolkitNFT();
-    this.instance = new instance.ARToolKitNFT();
+    this.instance = new instance.ARToolKitNFT(true);
 
     this.FS = instance.FS;
     this.StringList = instance.StringList;
@@ -229,6 +229,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getDebugMode();
   }
 
+  public setFiltering(enableFiltering: boolean): void {
+    this.instance.setFiltering(enableFiltering);
+  }
+
   public getProcessingImage(): number {
     return this.instance.getProcessingImage();
   }
@@ -299,8 +303,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
   public passVideoData(
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
+    lumaInternal: boolean,
   ): void {
-    this.instance.passVideoData(videoFrame, videoLuma);
+    this.instance.passVideoData(videoFrame, videoLuma, lumaInternal);
   }
 
   // ---------------------------------------------------------------------------

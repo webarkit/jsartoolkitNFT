@@ -65,7 +65,8 @@ function load(msg) {
     console.debug("Loading marker at: ", msg.marker);
 
     const onLoad = function () {
-      ar = new ARControllerNFT(msg.pw, msg.ph, param);
+      ar = new ARControllerNFT(msg.pw, msg.ph, param, true);
+      ar.setFiltering(true);
       const cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
@@ -98,10 +99,10 @@ function load(msg) {
           marker3: marker3,
         });
         console.log("loadNFTMarker -> ", ids);
-        postMessage({ type: "endLoading", end: true }),
+        (postMessage({ type: "endLoading", end: true }),
           function (err) {
             console.error("Error in loading marker on Worker", err);
-          };
+          });
       });
 
       postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });

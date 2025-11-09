@@ -32,8 +32,9 @@
      @param {number} width The width of the images to process.
      @param {number} height The height of the images to process.
      @param {ARCameraParamNFT | string} camera The ARCameraParamNFT to use for image processing. If this is a string, the ARControllerNFT treats it as an URL and tries to load it as a ARCameraParamNFT definition file, calling ARControllerNFT#onload on success.
+     @param {boolean} internalLuma Whether to use internal luma processing.
      */
-    const ARControllerNFT = function (width, height, cameraPara) {
+    const ARControllerNFT = function (width, height, cameraPara, internalLuma) {
         this.id = undefined;
         const w = width, h = height;
 
@@ -56,12 +57,13 @@
         this.framesize = null;
         this.dataHeap = null;
         this.videoLuma = null;
+        this.videoLumaInternal = internalLuma;
         this.camera_mat = null;
         this.videoLumaPointer = null;
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.7.2';
+        this.version = '1.7.6';
         console.info('JsartoolkitNFT ', this.version);
         console.warn("This library is deprecated, use the ES6 version instead!! It will be removed in a future release.")
 
@@ -526,6 +528,16 @@
         return artoolkitNFT.getProjectionFarPlane(this.id);
     };
 
+    /**
+     * Recalculates the camera lens based on the current camera parameters.
+     * This is useful if the camera parameters have changed
+     * and you need to update the camera lens accordingly.
+     * 
+     * @return {number} 0 (void)
+     */
+    ARControllerNFT.prototype.recalculateCameraLens = function () {
+        return artoolkitNFT.recalculateCameraLens(this.id);
+    }
 
     /**
         Set the labeling threshold mode (auto/manual).
@@ -633,6 +645,16 @@
         return artoolkitNFT.getImageProcMode(this.id);
     };
 
+    /**
+     * 
+     * @param {*} enableFiltering 
+     * @returns {void} void
+     * @description Enable or disable filtering for the detected markers.
+     */
+    ARControllerNFT.prototype.setFiltering = function(enableFiltering) {
+        artoolkitNFT.setFiltering(this.id, enableFiltering);
+    }
+
     // private methods
 
     /**
@@ -641,7 +663,7 @@
       @return {number} 0 (void)
     */
     ARControllerNFT.prototype._initialize = function () {
-        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id);
+        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, false);
 
         this._initNFT();
 
@@ -690,7 +712,7 @@
         const data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
-        if (this.videoLuma) {
+        if (this.videoLuma && !this.videoLumaInternal) {
             let q = 0;
             //Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA (ARToolKitJS.cpp L: 43)
 
@@ -703,7 +725,7 @@
         }
 
         if (this.videoLuma) {
-            artoolkitNFT.passVideoData(this.id, data, this.videoLuma);
+            artoolkitNFT.passVideoData(this.id, data, this.videoLuma, this.videoLumaInternal);
             return true;
         }
 
@@ -817,6 +839,7 @@
 
     const FUNCTIONS = [
         'setup',
+        'setFiltering',
         'teardown',
 
         'setupAR2',
@@ -838,6 +861,8 @@
 
         'setProjectionFarPlane',
         'getProjectionFarPlane',
+
+        'recalculateCameraLens',
 
         'setThresholdMode',
         'getThresholdMode',

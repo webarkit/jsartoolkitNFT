@@ -9,6 +9,7 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
 
   class_<ARToolKitNFT>("ARToolKitNFT")
       .constructor()
+      .constructor<bool>() // Constructor with filtering option
       .function("detectNFTMarker", &ARToolKitNFT::detectNFTMarker)
       .function("getNFTMarker", &ARToolKitNFT::getNFTMarkerInfo)
       .function("getNFTData", &ARToolKitNFT::getNFTData)
@@ -16,7 +17,9 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("teardown", &ARToolKitNFT::teardown)
       .function("_loadCamera", &ARToolKitNFT::loadCamera)
       .function("setup", &ARToolKitNFT::setup)
+      .function("setFiltering", &ARToolKitNFT::setFiltering)
       .function("getCameraLens", &ARToolKitNFT::getCameraLens)
+      .function("recalculateCameraLens", &ARToolKitNFT::recalculateCameraLens)
       .function("passVideoData", &ARToolKitNFT::passVideoData)
       .function("_decompressZFT", &ARToolKitNFT::decompressZFT)
       .function("_addNFTMarkers", &ARToolKitNFT::addNFTMarkers)

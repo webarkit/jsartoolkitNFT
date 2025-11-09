@@ -292,6 +292,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getImageProcMode();
   }
 
+  public setFiltering(enableFiltering: boolean): void {
+    this.instance.setFiltering(enableFiltering);
+  }
+
   public getCameraLens(): any {
     return this.instance.getCameraLens();
   }
@@ -299,8 +303,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
   public passVideoData(
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
+    lumaInternal: boolean,
   ): void {
-    this.instance.passVideoData(videoFrame, videoLuma);
+    this.instance.passVideoData(videoFrame, videoLuma, lumaInternal);
   }
 
   // ---------------------------------------------------------------------------
@@ -420,6 +425,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
       if (Array.isArray(element)) {
         element.forEach((url) => {
           const filename = prefix + "." + url.split(".").pop();
+
           this.ajax(
             url,
             filename,

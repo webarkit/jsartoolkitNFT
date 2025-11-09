@@ -36,21 +36,24 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.9",
-    "@babel/plugin-transform-runtime": "^7.26.9",
-    "@babel/preset-env": "^7.26.9",
+    "@babel/core": "7.28.5",
+    "@babel/plugin-transform-runtime": "7.28.5",
+    "@babel/preset-env": "7.28.5",
+    "@types/node": "^22.15.21",
     "babel-loader": "10.0.0",
+    "prettier": "^3.6.2",
+    "ts-loader": "^9.5.4",
+    "typedoc": "0.28.14",
+    "typescript": "5.9.3",
+    "webpack": "5.102.1",
+    "webpack-cli": "6.0.1",
     "karma": "^6.4.4",
+    "karma-jasmine": "^5.1.0",
     "karma-chrome-launcher": "^3.2.0",
     "karma-firefox-launcher": "^2.1.3",
-    "karma-qunit": "^4.2.1",
-    "prettier": "^3.5.3",
-    "qunit": "^2.24.1",
-    "ts-loader": "^9.5.2",
-    "typedoc": "^0.27.9",
-    "typescript": "^5.8.2",
-    "webpack": "^5.98.0",
-    "webpack-cli": "6.0.1"
+    "jasmine-core": "^5.1.2",
+    "cross-env": "^7.0.3",
+    "karma-webpack": "^5.0.1"
   },
   "scripts": {
     "dev-ts": "webpack --mode development --progress --watch",
@@ -60,9 +63,16 @@
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
-    "test-browser": "karma start --browsers Chrome,Firefox,ChromeHeadless,FirefoxHeadless",
+    "test": "npm run test:all",
+    "test:min": "cross-env BUILD_TARGET=artoolkitNFT.min.js karma start karma.conf.js",
+    "test:debug": "cross-env BUILD_TARGET=artoolkitNFT.debug.js karma start karma-debug.conf.js",
+    "test:wasm": "cross-env BUILD_TARGET=artoolkitNFT_wasm.js karma start karma.conf.js",
+    "test:simd": "cross-env BUILD_TARGET=artoolkitNFT_wasm.simd.js karma start karma.conf.js",
+    "test:embed-es6": "karma start karma-embed-es6.conf.js",
+    "test:es6": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.js karma start karma-es6.conf.js",
+    "test:es6-simd": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.simd.js karma start karma-es6.conf.js",
+    "test:all": "npm run test:min && npm run test:debug && npm run test:wasm && npm run test:simd && npm run test:embed-es6 && npm run test:es6 && npm run test:es6-simd",
     "build-python-bindings": "cd python-bindings && python setup.py build_ext --inplace",
-    "test": "karma start",
     "python-tests": "cd python-bindings && pytest test_arcontrollerNFT.py",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
@@ -71,7 +81,7 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "^7.26.9",
-    "axios": "^1.8.1"
+    "@babel/runtime": "7.28.4",
+    "axios": "1.13.2"
   }
 }

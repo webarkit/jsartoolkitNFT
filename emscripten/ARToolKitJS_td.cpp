@@ -18,6 +18,7 @@
 #include <AR2/tracking.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKitVideoLuma.h> // Add this header
 #include <emscripten.h>
 #include <emscripten/val.h>
 #include <stdio.h>
@@ -114,18 +115,7 @@ extern "C" {
         NFT API bindings
 */
 
-void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
-                float interpolationFactor) {
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 4; j++) {
-      dst[i][j] = (1 - interpolationFactor) * src[i][j] +
-                  dst[i][j] * interpolationFactor;
-    }
-  }
-}
-
-int passVideoData(int id, emscripten::val videoFrame,
-                  emscripten::val videoLuma) {
+int passVideoData(int id, emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
   if (arControllers.find(id) == arControllers.end()) {
     return -1;
   }
@@ -134,16 +124,38 @@ int passVideoData(int id, emscripten::val videoFrame,
 
   auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
   auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
-  
+
+  if (internalLuma) {
+    auto vli = webarkit::webarkitVideoLumaInit(arc->width, arc->height, true);
+    if (!vli) {
+      webarkitLOGe("Failed to initialize WebARKitLumaInfo.");
+      return -1;
+    }
+
+    auto out = webarkit::webarkitVideoLuma(vli, vf.data());
+    if (!out) {
+      webarkitLOGe("Failed to process video luma.");
+      webarkit::webarkitVideoLumaFinal(&vli);
+      return -1;
+    }
+    if (arc->videoLuma) {
+      webarkitLOGd("Copy videoLuma with simd !");
+      std::copy(out, out + arc->width * arc->height, arc->videoLuma.get());
+      webarkit::webarkitVideoLumaFinal(&vli);
+    }
+  }
+
   // Copy data instead of just assigning pointers
   if (arc->videoFrame) {
     std::copy(vf.begin(), vf.end(), arc->videoFrame.get());
   }
-  
-  if (arc->videoLuma) {
-    std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
-  }
 
+  if (arc->videoLuma) {
+    if (!internalLuma) {
+      webarkitLOGd("Inside videoLuma no simd !");
+      std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
+    }
+  }
   return 0;
 }
 
@@ -382,6 +394,19 @@ int teardown(int id) {
 
   return 0;
 }
+
+int recalculateCameraLens(int id)
+  {
+    if (arControllers.find(id) == arControllers.end())
+    {
+      return -1;
+    }
+    arController *arc = &(arControllers[id]);
+    arglCameraFrustumRH(&((arc->paramLT)->param), arc->nearPlane,
+                        arc->farPlane, arc->cameraLens);
+    return 0;
+  }
+
 
 /*****************
  * Camera loading *
@@ -764,6 +789,15 @@ int setup(int width, int height, int cameraID) {
   webarkitLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
 
   return arc->id;
+}
+
+void setFiltering(bool enableFiltering, int id) {
+  if (arControllers.find(id) == arControllers.end()) {
+    return;
+  }
+  arController *arc = &(arControllers[id]);
+  //arc->withFiltering = enableFiltering;
+  webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
 }
 }
 

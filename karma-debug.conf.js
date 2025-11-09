@@ -1,4 +1,4 @@
-// Karma configuration - Unified for all legacy builds
+// Karma configuration - Specific for the large debug build
 const fs = require('fs');
 const path = require('path');
 
@@ -57,8 +57,8 @@ module.exports = function (config) {
     client: {
         clearContext: false,
         jasmine: {
-            // A generous timeout to allow for Wasm compilation and initialization
-            DEFAULT_TIMEOUT_INTERVAL: 20000
+            // A much more generous timeout for the large debug build
+            DEFAULT_TIMEOUT_INTERVAL: 40000
         }
     }
   });

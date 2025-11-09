@@ -13,6 +13,7 @@
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
+#include <WebARKitVideoLuma.h>
 #include "markerDecompress.h"
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
@@ -39,8 +40,9 @@ class ARToolKitNFT
 {
 public:
     ARToolKitNFT();
+    ARToolKitNFT(bool withFiltering);
     ~ARToolKitNFT(); 
-    int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma);
+    int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
     int detectNFTMarker();
     int getKpmImageWidth(KpmHandle *kpmHandle);
@@ -63,6 +65,7 @@ public:
     ARdouble getProjectionNearPlane();
     void setProjectionFarPlane(const ARdouble projectionFarPlane);
     ARdouble getProjectionFarPlane();
+    void recalculateCameraLens();
     void setThreshold(int threshold);
     int getThreshold();
     void setThresholdMode(int mode);
@@ -73,8 +76,16 @@ public:
     void setImageProcMode(int mode);
     int getImageProcMode();
     int setup(int width, int height, int cameraID);
+    void setFiltering(bool enableFiltering);
 
 private:
+    bool withFiltering; // New property
+
+    // Filtering-related variables
+    ARFilterTransMatInfo *ftmi;
+    double filterCutoffFrequency;
+    double filterSampleRate;
+
     std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT);
     THREAD_HANDLE_T *trackingInit(KpmHandle *kpmHandle);
     void deleteHandle();

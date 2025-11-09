@@ -79,6 +79,9 @@ function load(msg) {
 
   const onLoad = function (arController) {
     ar = arController;
+    console.log(ar);
+
+    ar.setFiltering(true);
     const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
@@ -133,7 +136,7 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para)
+  ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para, true)
     .then(onLoad)
     .catch(onError);
 }

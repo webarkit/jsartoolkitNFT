@@ -1,0 +1,10 @@
+# Source - https://stackoverflow.com/a/78835420
+# Posted by sclarson
+# Retrieved 2025-11-09, License - CC BY-SA 4.0
+
+paths:
+ - 'src'
+ - 'js'
+paths-ignore:
+ - 'dist'
+ - 'build'
