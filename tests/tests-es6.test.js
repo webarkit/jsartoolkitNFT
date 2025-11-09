@@ -48,11 +48,18 @@ describe('ARToolkitNFT (ES6 Module)', () => {
     });
 
     it('should allow setting and getting the projection near plane', () => {
-        // This test confirms the lifecycle (setup -> set/get) is working correctly.
         const controllerId = artoolkit.setup(640, 480, 0);
         const nearPlane = 123.45;
 
         artoolkit.setProjectionNearPlane(nearPlane);
         expect(artoolkit.getProjectionNearPlane()).toBeCloseTo(nearPlane, 2);
+    });
+
+    it('should allow setting and getting the projection far plane', () => {
+        const controllerId = artoolkit.setup(640, 480, 0);
+        const farPlane = 543.21;
+
+        artoolkit.setProjectionFarPlane(farPlane);
+        expect(artoolkit.getProjectionFarPlane()).toBeCloseTo(farPlane, 2);
     });
 });

@@ -21,9 +21,6 @@ describe('ARControllerNFT (ES6 Embed)', () => {
         });
     });
 
-    // The dispose() method in afterEach was causing errors with pending async operations.
-    // It is safe to remove for this test suite.
-
     it('should be initialized', () => {
         expect(arController).toBeDefined();
         expect(arController.id).toBeGreaterThanOrEqual(0);
@@ -52,7 +49,6 @@ describe('ARControllerNFT (ES6 Embed)', () => {
     it('getCameraMatrix should return a valid matrix', () => {
         const cameraMatrix = arController.getCameraMatrix();
         expect(cameraMatrix).toBeTruthy();
-        // Corrected based on the error log: this build returns a plain Array.
         expect(Array.isArray(cameraMatrix)).toBe(true);
         expect(cameraMatrix.length).toBe(16);
     });
@@ -60,8 +56,19 @@ describe('ARControllerNFT (ES6 Embed)', () => {
     it('getTransformationMatrix should return a valid matrix', () => {
         const transformMatrix = arController.getTransformationMatrix();
         expect(transformMatrix).toBeTruthy();
-        // Corrected based on previous logs: this build returns a Float32Array.
         expect(Object.prototype.toString.call(transformMatrix)).toBe('[object Float32Array]');
         expect(transformMatrix.length).toBe(16);
+    });
+
+    it('should allow setting and getting the projection near plane', () => {
+        const nearPlane = 123.45;
+        arController.setProjectionNearPlane(nearPlane);
+        expect(arController.getProjectionNearPlane()).toBeCloseTo(nearPlane, 2);
+    });
+
+    it('should allow setting and getting the projection far plane', () => {
+        const farPlane = 543.21;
+        arController.setProjectionFarPlane(farPlane);
+        expect(arController.getProjectionFarPlane()).toBeCloseTo(farPlane, 2);
     });
 });

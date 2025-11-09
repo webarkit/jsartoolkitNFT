@@ -98,4 +98,16 @@ describe('ARControllerNFT', () => {
         arController.setDebugMode(false);
         expect(arController.getDebugMode()).toBeFalsy();
     });
+
+    it('should allow setting and getting the projection near plane', () => {
+        const nearPlane = 123.45;
+        arController.setProjectionNearPlane(nearPlane);
+        expect(arController.getProjectionNearPlane()).toBeCloseTo(nearPlane, 2);
+    });
+
+    it('should allow setting and getting the projection far plane', () => {
+        const farPlane = 543.21;
+        arController.setProjectionFarPlane(farPlane);
+        expect(arController.getProjectionFarPlane()).toBeCloseTo(farPlane, 2);
+    });
 });
