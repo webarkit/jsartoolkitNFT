@@ -115,7 +115,7 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     this.videoLumaPointer = null;
     this._bwpointer = undefined;
     this._lumaCtx = undefined;
-    this.version = "1.7.5";
+    this.version = "1.7.6";
     console.info("JsartoolkitNFT ", this.version);
     console.warn("This library is deprecated, use the ES6 version instead!! It will be removed in a future release.");
     if (typeof cameraPara === "string") {
