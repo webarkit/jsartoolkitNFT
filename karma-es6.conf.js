@@ -15,6 +15,7 @@ module.exports = function (config) {
   config.set({
     basePath: "",
     frameworks: ["jasmine", "webpack"],
+    plugins: ['karma-jasmine', 'karma-webpack', 'karma-chrome-launcher'],
 
     files: [
       { pattern: 'tests/tests-es6.test.js', type: 'module' },

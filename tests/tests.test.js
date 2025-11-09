@@ -5,7 +5,10 @@ describe('ARControllerNFT', () => {
     // This eliminates race conditions and ensures everything is initialized in the correct order.
     beforeAll((done) => {
         // 1. Poll until the Emscripten runtime is ready.
+        let retryCount = 0;
+        const maxRetries = 200; // 200 * 100ms = 20 seconds maximum
         const interval = setInterval(() => {
+            retryCount++;
             if (window.artoolkitNFT && window.artoolkitNFT.setup) {
                 clearInterval(interval);
 
@@ -22,6 +25,10 @@ describe('ARControllerNFT', () => {
                     fail(err);
                     done();
                 };
+            } else if (retryCount >= maxRetries) {
+                clearInterval(interval);
+                fail('Timeout: artoolkitNFT.setup never became available');
+                done();
             }
         }, 100);
     }, 20000); // A generous 20-second timeout for the entire setup process.

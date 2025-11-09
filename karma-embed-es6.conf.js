@@ -4,6 +4,7 @@ module.exports = function (config) {
   config.set({
     basePath: "",
     frameworks: ["jasmine", "webpack"],
+    plugins: ['karma-jasmine', 'karma-webpack', 'karma-chrome-launcher'],
 
     // The test file is the single entry point.
     // Webpack will handle bundling the imported modules.
