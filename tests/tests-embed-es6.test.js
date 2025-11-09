@@ -21,6 +21,12 @@ describe('ARControllerNFT (ES6 Embed)', () => {
         });
     });
 
+    afterEach(() => {
+        if (arController && typeof arController.dispose === 'function') {
+            arController.dispose();
+            arController = null;
+        }
+    });
     it('should be initialized', () => {
         expect(arController).toBeDefined();
         expect(arController.id).toBeGreaterThanOrEqual(0);
