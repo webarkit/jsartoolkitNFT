@@ -227,8 +227,7 @@ const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
 const WASM_FLAGS = " -s SINGLE_FILE=1";
 const SIMD128_FLAGS = " -msimd128";
-const ES6_FLAGS =
-  " -s EXPORT_ES6=1 -s MODULARIZE=1 -sENVIRONMENT=web ";
+const ES6_FLAGS = " -s EXPORT_ES6=1 -s MODULARIZE=1 -sENVIRONMENT=web ";
 
 const ES6_TD_FLAGS =
   " -s EXPORT_ES6=1 -s MODULARIZE=1 -sENVIRONMENT=web,worker ";
@@ -361,6 +360,7 @@ const compile_combine = [
   ...FLAGS.split(" "),
   ...DEBUG_FLAGS.split(" "),
   ...DEFINES.split(" "),
+  ...PRE_FLAGS.split(" "),
   "-o",
   path.resolve(OUTPUT_PATH, BUILD_DEBUG_FILE),
 ];

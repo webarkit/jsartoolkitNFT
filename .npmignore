@@ -10,3 +10,9 @@ build/*.a
 *.zip
 docs/**/*
 docs/
+python-bindings/
+python-bindings/*
+.idea/
+.idea/*
+.vscode/
+.vscode/*
