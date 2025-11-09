@@ -360,6 +360,7 @@ const compile_combine = [
   ...FLAGS.split(" "),
   ...DEBUG_FLAGS.split(" "),
   ...DEFINES.split(" "),
+  ...PRE_FLAGS.split(" "),
   "-o",
   path.resolve(OUTPUT_PATH, BUILD_DEBUG_FILE),
 ];
