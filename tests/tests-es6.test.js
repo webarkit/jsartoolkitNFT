@@ -55,7 +55,7 @@ describe('ARToolkitNFT (ES6 Module)', () => {
     });
 
     it('should allow setting and getting the projection far plane', () => {
-        const controllerId = artoolkit.setup(640, 480, 0);
+        artoolkit.setup(640, 480, 0);
         const farPlane = 543.21;
 
         artoolkit.setProjectionFarPlane(farPlane);
