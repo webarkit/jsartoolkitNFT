@@ -32,6 +32,7 @@ def build_zlib():
         '-DCMAKE_BUILD_TYPE=Release',
         f'-DCMAKE_INSTALL_PREFIX={install_dir}'
     ]
+    cmake_command += ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5"]
     build_command = ['cmake', '--build', build_dir, '--config', 'Release']
     install_command = ['cmake', '--install', build_dir]
 
@@ -108,10 +109,26 @@ if sys.platform == 'win32':
     if not os.path.exists(vcpkg_path):
         subprocess.run(['git', 'clone', 'https://github.com/microsoft/vcpkg.git'], check=True)
         subprocess.run([os.path.join(vcpkg_path, 'bootstrap-vcpkg.bat')], check=True)
-    # Install necessary tools using choco
-    subprocess.run(['choco', 'install', 'cmake', 'ninja', 'visualstudio2019buildtools', 'visualstudio2019-workload-vctools', '-y'], check=True)
+
+    # Prefer Chocolatey, fall back to winget, otherwise instruct the user
+    choco = shutil.which('choco')
+    winget = shutil.which('winget')
+
+    if choco:
+        subprocess.run(['choco', 'install', 'cmake', 'ninja', 'visualstudio2019buildtools', 'visualstudio2019-workload-vctools', '-y'], check=True)
+    elif winget:
+        # Install common tools with winget where possible
+        subprocess.run(['winget', 'install', '--exact', 'Kitware.CMake', '-e'], check=True)
+        subprocess.run(['winget', 'install', '--exact', 'Ninja', '-e'], check=True)
+        print("If Visual Studio Build Tools are required, install them via Visual Studio Installer or winget; continuing.")
+    else:
+        print("Neither `choco` nor `winget` found. Please install `cmake` and `ninja` and Visual Studio Build Tools manually and ensure they are on PATH.")
+        print("Install Chocolatey: https://chocolatey.org/install or use Windows Package Manager (winget).")
+        sys.exit(1)
+
     subprocess.run([os.path.join(vcpkg_path, 'vcpkg'), 'install', 'pthreads:x64-windows-static'], check=True)
     os.environ['VCPKG_ROOT'] = vcpkg_path
+
 
 # Sort the list of files
 sorted_ar_files = sorted(glob('../emscripten/WebARKitLib/lib/SRC/AR/*.c'))
