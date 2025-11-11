@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.7.6",
+  "version": "1.7.2",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
@@ -72,6 +72,8 @@
     "test:es6": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.js karma start karma-es6.conf.js",
     "test:es6-simd": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.simd.js karma start karma-es6.conf.js",
     "test:all": "npm run test:min && npm run test:debug && npm run test:wasm && npm run test:simd && npm run test:embed-es6 && npm run test:es6 && npm run test:es6-simd",
+    "build-python-bindings": "cd python-bindings && python setup.py build_ext --inplace",
+    "python-tests": "cd python-bindings && pytest test_arcontrollerNFT.py",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",
