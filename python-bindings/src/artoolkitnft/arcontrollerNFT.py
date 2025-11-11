@@ -72,6 +72,7 @@ class ARControllerNFT(EventDispatcher):
         for i in range(nftMarkerCount):
             nftMarkerInfo = self.getNFTMarker(i)
             markerType = artoolkitnft_core.NFT_MARKER
+            print('nftMarkerInfo:', nftMarkerInfo)
 
             if nftMarkerInfo['found']:
                 self.nftMarkerFound = i

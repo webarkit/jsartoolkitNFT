@@ -33,13 +33,32 @@ void matrixLerp(ARdouble src[3][4], ARdouble dst[3][4],
 }
 
 int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uint8_t> videoLuma) {
-  auto videoFramePtr = static_cast<uint8_t *>(videoFrame.request().ptr);
-  auto videoLumaPtr = static_cast<uint8_t *>(videoLuma.request().ptr);
+    auto frame_info = videoFrame.request();
+    auto luma_info = videoLuma.request();
 
-  std::copy(videoFramePtr, videoFramePtr + videoFrame.size(), this->videoFrame.get());
-  std::copy(videoLumaPtr, videoLumaPtr + videoLuma.size(), this->videoLuma.get());
+    ARLOGi("Video Frame Debug:\n");
+    ARLOGi("  Dimensions: %ld\n", frame_info.ndim);
+    ARLOGi("  Shape: Total elements: %ld\n", frame_info.shape[0]);
+    ARLOGi("  Total size: %ld bytes\n", frame_info.size);
+    ARLOGi("  Item size: %ld bytes\n", frame_info.itemsize);
 
-  return 0;
+    ARLOGi("Video Luma Debug:\n");
+    ARLOGi("  Dimensions: %ld\n", luma_info.ndim);
+    ARLOGi("  Shape: Total elements: %ld\n", luma_info.shape[0]);
+    ARLOGi("  Total size: %ld bytes\n", luma_info.size);
+    ARLOGi("  Item size: %ld bytes\n", luma_info.itemsize);
+
+    uint8_t* frame_ptr = static_cast<uint8_t*>(frame_info.ptr);
+    uint8_t* luma_ptr = static_cast<uint8_t*>(luma_info.ptr);
+
+    // Copy flattened data
+    std::copy(frame_ptr, frame_ptr + frame_info.size, this->videoFrame.get());
+    std::copy(luma_ptr, luma_ptr + luma_info.size, this->videoLuma.get());
+
+    ARLOGi("First few frame bytes: %u %u %u %u %u\n", frame_ptr[0], frame_ptr[1], frame_ptr[2], frame_ptr[3], frame_ptr[4]);
+    ARLOGi("First few luma bytes: %u %u %u %u %u\n", luma_ptr[0], luma_ptr[1], luma_ptr[2], luma_ptr[3], luma_ptr[4]);
+
+    return 0;
 }
 
 py::dict ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
@@ -124,9 +143,22 @@ int ARToolKitNFT::detectNFTMarker() {
   int kpmResultNum = -1;
 
   if (this->detectedPage == -2) {
+    ARLOGi("detectedPage = %d\n", this->detectedPage);
     kpmMatching(this->kpmHandle.get(), this->videoLuma.get());
     kpmGetResult(this->kpmHandle.get(), &kpmResult, &kpmResultNum);
-
+      if (kpmResultNum > 0) {
+          ARLOGi("kpmMatching found %d results.\n", kpmResultNum);
+          for (int i = 0; i < kpmResultNum; i++) {
+              ARLOGi("kpmResult[%d]: pageNo = %d, error = %f, inlierNum = %d, camPoseF = %d\n",
+                     i,
+                     kpmResult[i].pageNo,
+                     kpmResult[i].error,
+                     kpmResult[i].inlierNum,
+                     kpmResult[i].camPoseF);
+          }
+      } else {
+          ARLOGi("No kpmResults found.");
+      }
 #if WITH_FILTERING
     this->ftmi = arFilterTransMatInit(this->filterSampleRate,
                                       this->filterCutoffFrequency);
@@ -134,7 +166,7 @@ int ARToolKitNFT::detectNFTMarker() {
 
     for (int i = 0; i < kpmResultNum; i++) {
       if (kpmResult[i].camPoseF == 0) {
-
+          ARLOGi("kpmResult[i].pageNo = %d\n", kpmResult[i].pageNo);
         float trans[3][4];
         this->detectedPage = kpmResult[i].pageNo;
         std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
@@ -178,8 +210,8 @@ int ARToolKitNFT::setupAR2() {
   this->ar2Handle = tempHandle;
   
   // Settings for devices with single-core CPUs.
-  ar2SetTrackingThresh(this->ar2Handle, 5.0);
-  ar2SetSimThresh(this->ar2Handle, 0.50);
+  ar2SetTrackingThresh(this->ar2Handle, 2.0); // Lowering tolerance.
+  ar2SetSimThresh(this->ar2Handle, 0.3);     // Increase similarity tolerance.
   ar2SetSearchFeatureNum(this->ar2Handle, 16);
   ar2SetSearchSize(this->ar2Handle, 6);
   ar2SetTemplateSize1(this->ar2Handle, 6);
