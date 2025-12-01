@@ -43,7 +43,7 @@
     "babel-loader": "10.0.0",
     "prettier": "^3.6.2",
     "ts-loader": "^9.5.4",
-    "typedoc": "0.28.14",
+    "typedoc": "0.28.15",
     "typescript": "5.9.3",
     "webpack": "5.102.1",
     "webpack-cli": "6.0.1",
