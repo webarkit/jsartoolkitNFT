@@ -15,15 +15,20 @@ let execFile = require("child_process").execFile,
 const platform = os.platform();
 
 let NO_LIBAR = false;
+let USE_KPM_EXTENDED = false;
 
-const arguments = process.argv;
+const args = process.argv;
 
-for (let j = 2; j < arguments.length; j++) {
-  if (arguments[j] == "--no-libar") {
+for (let j = 2; j < args.length; j++) {
+  if (args[j] == "--no-libar") {
     NO_LIBAR = true;
     console.log(
       "Building jsartoolkitNFT with --no-libar option, libar will be preserved.",
     );
+  }
+  if (args[j] == "--use-kpm-extended") {
+    USE_KPM_EXTENDED = true;
+    console.log("Building with KPM-extended library for SIMD.");
   }
 }
 
@@ -194,7 +199,10 @@ const webarkit_sources = [
   return path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/WebARKit/", src);
 });
 
+const ar_sources_core = [...ar_sources]; // Save initial sources before modification
+
 if (HAVE_NFT) {
+  // Normal sources always include KPM
   ar_sources = ar_sources
     .concat(ar2_sources)
     .concat(kpm_sources)
@@ -204,6 +212,19 @@ if (HAVE_NFT) {
     .concat(ar2_sources)
     .concat(kpm_sources)
     .concat(webarkit_sources);
+}
+
+// SIMD sources logic
+// If using KPM extended, we only want ar_sources + ar2 + webarkit, NO kpm_include
+let ar_sources_simd = [...ar_sources_core];
+
+if (HAVE_NFT) {
+  ar_sources_simd = ar_sources_simd.concat(ar2_sources).concat(webarkit_sources);
+  if (!USE_KPM_EXTENDED) {
+    ar_sources_simd = ar_sources_simd.concat(kpm_sources);
+  } else {
+    console.log("Excluding KPM sources from SIMD build (linking against library instead).");
+  }
 }
 
 let DEFINES = " ";
@@ -330,7 +351,7 @@ const compile_thread_arlib = [
 const compile_simd_arlib = [
   EMCC.trim(),
   ...INCLUDES.split(" "),
-  ...ar_sources,
+  ...ar_sources_simd,
   ...FLAGS.split(" "),
   ...SIMD128_FLAGS.split(" "),
   ...DEFINES.split(" "),
@@ -350,6 +371,8 @@ const configure_zlib = format(
 
 const build_zlib = "cd emscripten/build && emmake make";
 const copy_zlib = `cp emscripten/build/libz.a ${OUTPUT_PATH}libz.a`;
+
+const setup_kpm = "cmake -P tools/fetch_kpm.cmake";
 
 const compile_combine = [
   EMCC.trim(),
@@ -436,6 +459,7 @@ const compile_simd_wasm = [
   ...SIMD128_FLAGS.split(" "),
   ...DEFINES.split(" "),
   ...PRE_FLAGS.split(" "),
+  ...(USE_KPM_EXTENDED ? [path.resolve(OUTPUT_PATH, "libkpm_extended.a")] : []),
   "-o",
   path.resolve(OUTPUT_PATH, BUILD_SIMD_WASM_FILE),
 ];
@@ -481,6 +505,7 @@ const compile_simd_wasm_es6 = [
   ...SIMD128_FLAGS.split(" "),
   ...DEFINES.split(" "),
   ...ES6_FLAGS.split(" "),
+  ...(USE_KPM_EXTENDED ? [path.resolve(OUTPUT_PATH, "libkpm_extended.a")] : []),
   "-o",
   path.resolve(OUTPUT_PATH, BUILD_SIMD_WASM_ES6_FILE),
 ];
@@ -538,6 +563,9 @@ addJob(compile_simd_arlib);
 addJob(configure_zlib);
 addJob(build_zlib);
 addJob(copy_zlib);
+if (USE_KPM_EXTENDED) {
+  addJob(setup_kpm);
+}
 addJob(compile_combine);
 addJob(compile_wasm);
 addJob(compile_wasm_thread);
