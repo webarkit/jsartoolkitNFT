@@ -60,8 +60,10 @@
     "docs": "typedoc",
     "build-ts": "webpack --mode production",
     "build": "node tools/makem.js; echo Built at `date`",
+    "build-extended-kpm": "node tools/makem.js --use-kpm-extended; echo Built at `date`",
     "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
+    "build-docker-extended-kpm": "docker exec -e KPM_EXTENDED_ROOT emscripten-jsartoolkitnft npm run build-extended-kpm",
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
     "test": "npm run test:all",
     "test:min": "cross-env BUILD_TARGET=artoolkitNFT.min.js karma start karma.conf.js",
@@ -75,7 +77,7 @@
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",
-    "setup-docker": "docker run -dit --name emscripten-jsartoolkitnft -v $(pwd):/src emscripten/emsdk:3.1.69 bash"
+    "setup-docker": "node tools/setup-docker.js"
   },
   "license": "LGPL-3.0",
   "dependencies": {

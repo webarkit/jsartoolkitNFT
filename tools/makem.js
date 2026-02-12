@@ -29,6 +29,7 @@ for (let j = 2; j < args.length; j++) {
   if (args[j] == "--use-kpm-extended") {
     USE_KPM_EXTENDED = true;
     console.log("Building with KPM-extended library for SIMD.");
+    console.log("KPM_EXTENDED_ROOT Env Var:", process.env.KPM_EXTENDED_ROOT);
   }
 }
 
@@ -542,10 +543,10 @@ function runJob() {
 
   if (Array.isArray(cmd)) {
     console.log("\nRunning command (execFile): " + cmd.join(" ") + "\n");
-    execFile(cmd[0], cmd.slice(1), onExec);
+    execFile(cmd[0], cmd.slice(1), { env: process.env }, onExec);
   } else if (typeof cmd === "string") {
     console.log("\nRunning command (exec): " + cmd + "\n");
-    exec(cmd, onExec);
+    exec(cmd, { env: process.env }, onExec);
   } else {
     console.error("Invalid command type:", cmd);
     process.exit(1);
