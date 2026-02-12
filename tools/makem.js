@@ -229,7 +229,10 @@ if (HAVE_NFT) {
 }
 
 let DEFINES = " ";
-if (HAVE_NFT) DEFINES += " -D HAVE_NFT";
+if (HAVE_NFT) {
+  DEFINES += " -D HAVE_NFT";
+  DEFINES += " -D BINARY_FEATURE=1";
+}
 
 //let ZLIB_FLAG = " -s USE_ZLIB=1 ";
 
