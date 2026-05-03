@@ -113,6 +113,32 @@ AR2HandleT *ar2CreateHandleSubMod( int pixFormat, int xsize, int ysize/*, int th
                                            AR2TemplateCandidateT candidate2[] );
  static int    getDeltaS( float  H[8], float  dU[], float  J_U_H[][8], int n );
 
+ int ar2DeleteHandleMod( AR2HandleT **ar2Handle )
+ {
+     int     i;
+
+     if( *ar2Handle == NULL ) return -1;
+
+     (*ar2Handle)->threadNum = 1; // Force single thread for now, since we aren't using threads in this modified version.
+
+     for( i = 0; i < (*ar2Handle)->threadNum; i++ ) {
+         //threadWaitQuit( (*ar2Handle)->threadHandle[i] );
+         //threadFree( &((*ar2Handle)->threadHandle[i]) );
+         if( (*ar2Handle)->arg[i].mfImage   != NULL )  free( (*ar2Handle)->arg[i].mfImage );
+         if( (*ar2Handle)->arg[i].templ  != NULL ) ar2FreeTemplate( (*ar2Handle)->arg[i].templ );
+ #if AR2_CAPABLE_ADAPTIVE_TEMPLATE
+         if( (*ar2Handle)->arg[i].templ2 != NULL ) ar2FreeTemplate ( (*ar2Handle)->arg[i].templ2 );
+ #endif
+     }
+
+     if( (*ar2Handle)->icpHandle != NULL ) icpDeleteHandle( &((*ar2Handle)->icpHandle) );
+     //if( (*ar2Handle)->cparamLT  != NULL ) arParamLTFree( (*ar2Handle)->cparamLT );
+     free( *ar2Handle );
+     *ar2Handle = NULL;
+
+     return 0;
+ }
+
  int ar2TrackingMod( AR2HandleT *ar2Handle, AR2SurfaceSetT *surfaceSet, ARUint8 *dataPtr, float  trans[3][4], float  *err )
  {
      AR2TemplateCandidateT  *candidatePtr;
