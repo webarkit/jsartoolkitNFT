@@ -371,6 +371,10 @@ void deleteHandle(arController *arc) {
     arParamLTFree(&(arc->paramLT));
     arc->paramLT = NULL;
   }
+  if (arc->ar2Handle != nullptr) {
+      ar2DeleteHandle(&(arc->ar2Handle));
+      arc->ar2Handle = nullptr;
+  }
 }
 
 int teardown(int id) {
