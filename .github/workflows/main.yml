@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-24.04  # Upgrade to Ubuntu 24.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Use Node.js from .nvmrc
       uses: actions/setup-node@v4
       with:
         node-version-file: ".nvmrc"
 
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -36,7 +36,7 @@ jobs:
         echo $RELEASE_VERSION
         echo ${{ steps.vars.outputs.tag }}
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: build
         path: |
@@ -53,7 +53,7 @@ jobs:
 
     - run: docker exec emscripten npm run build
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: dist
         path: dist
@@ -62,14 +62,14 @@ jobs:
 
     - name: Commit changes
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-      uses: EndBug/add-and-commit@v9
+      uses: EndBug/add-and-commit@v10
       with:
         default_author: github_actions
         message: new build files from action
         add: '["build", "dist"]'
 
     - name: Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
