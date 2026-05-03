@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-24.04  # Upgrade to Ubuntu 24.04
     name: Node.js CI
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Use Node.js from .nvmrc
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: ".nvmrc"
 
@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
