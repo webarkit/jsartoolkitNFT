@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.7.6",
+  "version": "1.7.7",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
@@ -36,23 +36,23 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "7.28.5",
-    "@babel/plugin-transform-runtime": "7.28.5",
-    "@babel/preset-env": "7.28.5",
-    "@types/node": "^22.15.21",
+    "@babel/core": "7.29.0",
+    "@babel/plugin-transform-runtime": "7.29.0",
+    "@babel/preset-env": "7.29.3",
+    "@types/node": "^24.0.0",
     "babel-loader": "10.0.0",
-    "prettier": "^3.6.2",
-    "ts-loader": "^9.5.4",
-    "typedoc": "0.28.14",
-    "typescript": "5.9.3",
-    "webpack": "5.102.1",
-    "webpack-cli": "6.0.1",
+    "prettier": "^3.7.3",
+    "ts-loader": "^9.5.7",
+    "typedoc": "0.28.19",
+    "typescript": "6.0.3",
+    "webpack": "5.106.2",
+    "webpack-cli": "7.0.2",
     "karma": "^6.4.4",
     "karma-jasmine": "^5.1.0",
     "karma-chrome-launcher": "^3.2.0",
     "karma-firefox-launcher": "^2.1.3",
-    "jasmine-core": "^5.1.2",
-    "cross-env": "^7.0.3",
+    "jasmine-core": "^6.2.0",
+    "cross-env": "^10.1.0",
     "karma-webpack": "^5.0.1"
   },
   "scripts": {
@@ -75,11 +75,11 @@
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",
-    "setup-docker": "docker run -dit --name emscripten-jsartoolkitnft -v $(pwd):/src emscripten/emsdk:3.1.69 bash"
+    "setup-docker": "docker run -dit --name emscripten-jsartoolkitnft -v $(pwd):/src emscripten/emsdk:4.0.17 bash"
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "7.28.4",
-    "axios": "1.13.2"
+    "@babel/runtime": "7.29.2",
+    "axios": "1.15.0"
   }
 }

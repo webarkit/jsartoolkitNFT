@@ -71,6 +71,8 @@ int ar2Tracking2dSub ( AR2HandleT *handle, AR2SurfaceSetT *surfaceSet, AR2Templa
 AR2HandleT *ar2CreateHandleMod( ARParamLT *cparamLT, AR_PIXEL_FORMAT pixFormat/*, int threadNum*/ );
 AR2HandleT *ar2CreateHandleSubMod( int pixFormat, int xsize, int ysize/*, int threadNum*/ );
 
+int ar2DeleteHandleMod( AR2HandleT **ar2Handle );
+
 int             ar2TrackingMod              ( AR2HandleT *ar2Handle, AR2SurfaceSetT *surfaceSet,
                                            ARUint8 *dataPtr, float  trans[3][4], float  *err );
 int             ar2SetInitTrans          ( AR2SurfaceSetT *surfaceSet, float  trans[3][4]    );
