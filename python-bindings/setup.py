@@ -96,7 +96,7 @@ if not os.path.exists(LIBJPEG_DIR):
     download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
 
 # Build libjpeg
-if sys.platform.startswith('linux'):
+if sys.platform.startswith('linux') or sys.platform == 'darwin':
     build_libjpeg()
 
 # Generate config.h from config.h.in

@@ -51,6 +51,55 @@ jobs:
     - name: Run unit tests
       run: npm run python-tests
 
+  build-macos:
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Caches/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt', '**/setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install system dependencies
+      run: |
+        # cmake is needed by setup.py to build the bundled zlib.
+        # libjpeg-9c is downloaded and built from source by setup.py
+        # (same as on Linux), so we only need autotools available,
+        # which ships with the macOS-14 runner by default.
+        brew install cmake
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy setuptools wheel pybind11 pytest pytest-asyncio pillow
+
+    - name: Update submodules
+      run: git submodule update --init
+
+    - name: Build the Python bindings
+      run: |
+        cd python-bindings
+        python setup.py bdist_wheel && pip install dist/*.whl
+
+    - name: Test the build
+      run: |
+        cd python-bindings
+        python example.py
+
+    - name: Run unit tests
+      run: npm run python-tests
+
   build-windows:
     runs-on: windows-2022
 
