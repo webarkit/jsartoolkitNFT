@@ -72,7 +72,6 @@ class ARControllerNFT(EventDispatcher):
         for i in range(nftMarkerCount):
             nftMarkerInfo = self.getNFTMarker(i)
             markerType = artoolkitnft_core.NFT_MARKER
-            print('nftMarkerInfo:', nftMarkerInfo)
 
             if nftMarkerInfo['found']:
                 self.nftMarkerFound = i
@@ -257,11 +256,22 @@ class ARControllerNFT(EventDispatcher):
             print("Error: sourceImage.data is not a numpy array")
             return
 
+        expected_rgba_shape = (self._height, self._width, 4)
+        if data.shape != expected_rgba_shape:
+            print(f"Error: sourceImage.data shape {data.shape} != expected {expected_rgba_shape} "
+                  f"(controller configured for width={self._width}, height={self._height}). "
+                  "Either resize the input image or pass the actual image dimensions to ARControllerNFT().")
+            return False
+
         if self.videoLuma is not None:
             if not self.grayscaleEnabled:
                 self.videoLuma = self._rgba_to_grayscale(data)
             else:
                 if self.grayscaleSource is not None:
+                    expected_luma_shape = (self._height, self._width)
+                    if self.grayscaleSource.shape != expected_luma_shape:
+                        print(f"Error: grayscaleSource shape {self.grayscaleSource.shape} != expected {expected_luma_shape}")
+                        return False
                     self.videoLuma = self.grayscaleSource
                 else:
                     print("Error: grayscaleSource is not initialized")
