@@ -1,13 +1,25 @@
+import os
 from artoolkitnft import arcontrollerNFT
 import numpy as np
 import pytest
 import numpy.testing as npt
 from PIL import Image
 
+# Test image used by test_process_image. The controller is configured to
+# the same dimensions so that the size validation in _copyImageToHeap and
+# passVideoData passes. Reading the dimensions here (rather than
+# hardcoding them) keeps the tests resilient if the image is ever swapped.
+TEST_IMAGE_PATH = os.path.join(os.path.dirname(__file__), 'pinball-demo.jpg')
+with Image.open(TEST_IMAGE_PATH) as _img:
+    TEST_IMAGE_WIDTH, TEST_IMAGE_HEIGHT = _img.size
+
 @pytest.mark.asyncio
 class TestNFT:
     async def asyncSetUp(self):
-        self.nft = arcontrollerNFT.ARControllerNFT(1920, 1021, '../examples/Data/camera_para.dat')
+        self.nft = arcontrollerNFT.ARControllerNFT(
+            TEST_IMAGE_WIDTH, TEST_IMAGE_HEIGHT,
+            '../examples/Data/camera_para.dat',
+        )
         await self.nft._initialize()
         self.nearPlane = 0.1
         self.farPlane = 1000
@@ -89,10 +101,9 @@ class TestNFT:
         await self.asyncSetUp()
         await self.nft.loadNFTMarkers(['../examples/DataNFT/pinball'])
 
-        # Load the test image
-        image_path = './pinball-test.png'
-        image = Image.open(image_path)
-        image = image.convert('RGBA')
+        # Load the test image (dimensions must match the controller — see
+        # TEST_IMAGE_WIDTH / TEST_IMAGE_HEIGHT at module top).
+        image = Image.open(TEST_IMAGE_PATH).convert('RGBA')
         image_data = np.array(image)
         print('image_data:', image_data)
 
