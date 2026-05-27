@@ -138,6 +138,37 @@ Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific p
 
 **JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small library that helps developers to create **WebAR** apps.
 
+## Python bindings 🐍 (experimental)
+
+❕❕❕ ATTENTION: the Python bindings are experimental and the package is published only to **TestPyPI** for now. The API may change without notice and the bindings are not yet recommended for production use.
+
+**JSARToolKitNFT** also provides Python bindings via [pybind11](https://github.com/pybind/pybind11), wrapping the same WebARKitLib C/C++ core used by the JavaScript build. They expose a high-level `ARControllerNFT` class and a lower-level `artoolkitnft_core` extension module so that NFT marker detection can be driven from Python.
+
+Install from **TestPyPI**:
+
+```bash
+pip install -i https://test.pypi.org/simple/ artoolkitnft
+```
+
+### What works
+
+- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`)
+- KPM-based marker detection
+- AR2 tracking with pose matrix output
+- Projection near/far plane setters
+- Threshold and image-processing mode
+- Optional pre-computed grayscale input via `setGrayData`
+- Event listener for `getNFTMarker` / `lostNFTMarker`
+
+### Not yet implemented
+
+- Live camera capture example (the current example processes a single static image)
+- `getKpmImageWidth` / `getKpmImageHeight` (temporarily excluded from the build)
+
+The Python bindings are built and tested on **Linux**, **macOS** and **Windows** via the [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml) workflow.
+
+For full build-from-source instructions, local development tips and the TestPyPI publishing workflow, see [`python-bindings/README.md`](python-bindings/README.md).
+
 ## Project Structure 📂
 
 - `build/` (compiled debug and minified versions of JSARToolKitNFT)
@@ -145,6 +176,7 @@ Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific p
 - `emscripten/` (C/C++ source code for ARToolKitNFT)
 - `examples/` (demos and examples using JSARToolKitNFT)
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
+- `python-bindings/` (experimental Python bindings — see section above)
 - `src/` (source code of ARToolKitNFT with Typescript)
 - `tests/` (tests - WIP)
 - `tools/` (build scripts for building JSARToolKitNFT with Emscripten)
