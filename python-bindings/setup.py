@@ -1,11 +1,39 @@
 from glob import glob
 from setuptools import setup, find_packages
-from pybind11.setup_helpers import Pybind11Extension, build_ext
+from pybind11.setup_helpers import Pybind11Extension, build_ext as _pybind11_build_ext
 import pybind11
 import os
 import shutil
 import subprocess
 import sys
+
+
+class build_ext(_pybind11_build_ext):
+    """Strip C++-only flags when compiling C sources.
+
+    Pybind11Extension (and our own extra_compile_args) add C++ flags such
+    as -std=c++17 unconditionally to every source in the extension.  GCC
+    on Linux accepts this on .c files with a warning, but Apple Clang on
+    macOS errors out with "invalid argument '-std=c++17' not allowed with
+    'C'".  Override the per-file compile step to remove those flags for
+    .c sources only.
+    """
+    def build_extensions(self):
+        original_compile = self.compiler._compile
+
+        def patched_compile(obj, src, ext, cc_args, extra_postargs, pp_opts):
+            if src.endswith('.c'):
+                extra_postargs = [
+                    a for a in extra_postargs
+                    if not a.startswith('-std=c++') and not a.startswith('/std:c++')
+                ]
+            return original_compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
+
+        self.compiler._compile = patched_compile
+        try:
+            super().build_extensions()
+        finally:
+            self.compiler._compile = original_compile
 
 LIBJPEG_VERSION = '9c'
 LIBJPEG_URL = f'http://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
