@@ -266,6 +266,10 @@ void ARToolKitNFT::deleteHandle() {
     arParamLTFree(&(this->paramLT));
     this->paramLT = nullptr;
   }
+  if (this->ar2Handle != nullptr) {
+      ar2DeleteHandle(&(this->ar2Handle));
+      this->ar2Handle = nullptr;
+    }
 }
 
 int ARToolKitNFT::teardown() {

@@ -367,6 +367,10 @@ extern "C"
       arParamLTFree(&(arc->paramLT));
       arc->paramLT = nullptr;
     }
+    if (arc->ar2Handle != nullptr) {
+        ar2DeleteHandleMod(&(arc->ar2Handle));
+        arc->ar2Handle = nullptr;
+    }
   }
 
   int teardown(int id)
