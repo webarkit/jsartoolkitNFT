@@ -165,7 +165,7 @@ pip install -i https://test.pypi.org/simple/ artoolkitnft
 - Live camera capture example (the current example processes a single static image)
 - `getKpmImageWidth` / `getKpmImageHeight` (temporarily excluded from the build)
 
-The Python bindings are built and tested on **Linux** and **Windows** via the [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml) workflow. macOS support is planned — see the open issue tracking the upstream WebARKitLib fix needed to enable it.
+The Python bindings are built and tested on **Linux**, **macOS** and **Windows** via the [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml) workflow.
 
 For full build-from-source instructions, local development tips and the TestPyPI publishing workflow, see [`python-bindings/README.md`](python-bindings/README.md).
 

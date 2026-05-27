@@ -1,11 +1,53 @@
 from glob import glob
 from setuptools import setup, find_packages
-from pybind11.setup_helpers import Pybind11Extension, build_ext
+from pybind11.setup_helpers import Pybind11Extension, build_ext as _pybind11_build_ext
 import pybind11
 import os
 import shutil
 import subprocess
 import sys
+
+
+class build_ext(_pybind11_build_ext):
+    """Per-file compile tweaks not expressible in Pybind11Extension flags.
+
+    Two adjustments live here:
+
+    1. Strip C++-only flags (``-std=c++17`` / ``/std:c++17``) when
+       compiling ``.c`` sources.  Pybind11Extension adds them
+       unconditionally to ``extra_postargs``; GCC and MSVC tolerate
+       this for .c files but Apple Clang errors out with
+       "invalid argument '-std=c++17' not allowed with 'C'".
+
+    2. On macOS, compile ``arUtil.c`` as Objective-C.  The file uses
+       NSURL / NSFileManager / NSBundle inside ``#ifdef __OBJC__``
+       guards; the ``#else`` plain-C fallback has a brace mismatch
+       that is harmless only if the file is never compiled as plain C
+       on Apple targets.  artoolkitx's own CMakeLists does the same
+       (Source/ARX/AR/CMakeLists.txt: ``set_source_files_properties(
+       arUtil.c PROPERTIES COMPILE_FLAGS "-x objective-c" ...)``).
+       The ``-x objective-c`` flag must precede the source file, so
+       it's prepended to ``cc_args`` rather than appended to
+       ``extra_postargs``.
+    """
+    def build_extensions(self):
+        original_compile = self.compiler._compile
+
+        def patched_compile(obj, src, ext, cc_args, extra_postargs, pp_opts):
+            if src.endswith('.c'):
+                extra_postargs = [
+                    a for a in extra_postargs
+                    if not a.startswith('-std=c++') and not a.startswith('/std:c++')
+                ]
+            if sys.platform == 'darwin' and os.path.basename(src) == 'arUtil.c':
+                cc_args = ['-x', 'objective-c'] + list(cc_args)
+            return original_compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
+
+        self.compiler._compile = patched_compile
+        try:
+            super().build_extensions()
+        finally:
+            self.compiler._compile = original_compile
 
 LIBJPEG_VERSION = '9c'
 LIBJPEG_URL = f'http://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
@@ -96,7 +138,7 @@ if not os.path.exists(LIBJPEG_DIR):
     download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
 
 # Build libjpeg
-if sys.platform.startswith('linux'):
+if sys.platform.startswith('linux') or sys.platform == 'darwin':
     build_libjpeg()
 
 # Generate config.h from config.h.in
@@ -148,6 +190,15 @@ include_dirs = [
 library_dirs = []
 libraries = []
 extra_compile_args = []
+extra_link_args = []
+
+if sys.platform == 'darwin':
+    # arUtil.c is compiled as Objective-C on macOS (see build_ext above)
+    # and pulls in Foundation / CoreFoundation symbols (NSURL,
+    # NSFileManager, NSBundle, CFCopyHomeDirectoryURL, …).  Mirror
+    # artoolkitx's Source/ARX/AR/CMakeLists.txt which links the same
+    # frameworks.
+    extra_link_args.extend(['-framework', 'CoreFoundation', '-framework', 'Foundation'])
 
 if sys.platform == 'win32':
     include_dirs.extend([
@@ -201,7 +252,8 @@ ext_modules = [
         libraries=libraries,
         library_dirs=library_dirs,
         language='c++',
-        extra_compile_args=extra_compile_args
+        extra_compile_args=extra_compile_args,
+        extra_link_args=extra_link_args
     ),
 ]
 
