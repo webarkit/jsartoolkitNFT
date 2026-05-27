@@ -36,16 +36,16 @@ int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uin
     auto frame_info = videoFrame.request();
     auto luma_info = videoLuma.request();
 
-    const ssize_t expected_frame_size = (ssize_t)this->width * this->height * 4;
-    const ssize_t expected_luma_size  = (ssize_t)this->width * this->height;
-    if (frame_info.size != expected_frame_size) {
-        ARLOGe("passVideoData: videoFrame size %ld != expected %ld (width=%d * height=%d * 4)\n",
-               (long)frame_info.size, (long)expected_frame_size, this->width, this->height);
+    const int64_t expected_frame_size = (int64_t)this->width * this->height * 4;
+    const int64_t expected_luma_size  = (int64_t)this->width * this->height;
+    if ((int64_t)frame_info.size != expected_frame_size) {
+        ARLOGe("passVideoData: videoFrame size %lld != expected %lld (width=%d * height=%d * 4)\n",
+               (long long)frame_info.size, (long long)expected_frame_size, this->width, this->height);
         return -1;
     }
-    if (luma_info.size != expected_luma_size) {
-        ARLOGe("passVideoData: videoLuma size %ld != expected %ld (width=%d * height=%d)\n",
-               (long)luma_info.size, (long)expected_luma_size, this->width, this->height);
+    if ((int64_t)luma_info.size != expected_luma_size) {
+        ARLOGe("passVideoData: videoLuma size %lld != expected %lld (width=%d * height=%d)\n",
+               (long long)luma_info.size, (long long)expected_luma_size, this->width, this->height);
         return -1;
     }
 
