@@ -76,7 +76,7 @@ To publish the package to TestPyPI on a Linux system, follow these steps:
    Verify that the wheel file has the correct platform tag. You can use the `wheel` tool to inspect the wheel file:
    ```bash
    pip install wheel
-   wheel unpack dist/artoolkitnft-0.0.10-cp38-cp38-manylinux2014_x86_64.whl
+   wheel unpack dist/artoolkitnft-0.0.11-cp38-cp38-manylinux2014_x86_64.whl
    ```
 
 4. **Upload the wheel to TestPyPI**:
@@ -91,9 +91,9 @@ Here is a summary of the commands you need to run:
 pip install --upgrade setuptools wheel twine
 python setup.py sdist bdist_wheel --plat-name manylinux2014_x86_64
 pip install wheel
-wheel unpack dist/artoolkitnft-0.0.10-cp38-cp38-manylinux2014_x86_64.whl
+wheel unpack dist/artoolkitnft-0.0.11-cp38-cp38-manylinux2014_x86_64.whl
 twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
 
-Make sure you replace `dist/artoolkitnft-0.0.10-cp38-cp38-manylinux2014_x86_64.whl` with the actual path to your wheel file if it's different.
+Make sure you replace `dist/artoolkitnft-0.0.11-cp38-cp38-manylinux2014_x86_64.whl` with the actual path to your wheel file if it's different.
 ```
