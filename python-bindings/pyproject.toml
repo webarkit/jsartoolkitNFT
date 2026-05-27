@@ -20,3 +20,9 @@ Issues = "https://github.com/webarkit/jsartoolkitNFT/issues"
 [build-system]
 requires = ["setuptools>=42", "wheel", "pybind11"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "asyncio: mark a test as an asyncio coroutine (handled by pytest-asyncio)",
+]
