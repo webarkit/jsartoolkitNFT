@@ -4,37 +4,28 @@ import numpy as np
 from PIL import Image
 
 async def main():
-    arnft = arcontrollerNFT.ARControllerNFT(1637, 2048, '../examples/Data/camera_para.dat')
+    # Load the test image
+    image_path = './pinball-demo.jpg'
+    img = Image.open(image_path).convert('RGBA')
+    print(f'Original image shape: {img.size}, mode: {img.mode}')
+    w, h = img.size
+
+    arnft = arcontrollerNFT.ARControllerNFT(w, h, '../examples/Data/camera_para.dat')
     nft = await arnft._initialize()
     await nft.loadNFTMarkers(['../examples/DataNFT/pinball'])
-    print(nft)
+    print('nft object is: ', nft)
     
     obj = nft.trackNFTMarkerId(nft.id)
     print('obj is: ', obj)
 
-    # Load the test image
-    image_path = './pinball-test.png'
 
-    image = Image.open(image_path)
-    print(f'Original image shape: {image.size}, mode: {image.mode}')
-    image = image.convert('RGBA')
-    image_gray = image.convert('L')
+    image_gray = img.convert('L')
     gray_data = np.array(image_gray)
     nft.setGrayData(gray_data)
-    # image = image.transpose(Image.Transpose.ROTATE_90)
-    # image = image.transpose(Image.Transpose.ROTATE_270)
-    # image = image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
-    # image = image.transpose(Image.Transpose.ROTATE_90)
-    # image = image.resize((640, 480), Image.Resampling.LANCZOS)
-    # image = image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
-    # image.show()
-    print(f'Input image shape: {image.size}, mode: {image.mode}')
-    print(f"First pixel values: {image.getpixel((0, 0))}")
-    rgba = np.ascontiguousarray(np.array(image), np.uint8)
-    # rgba = np.transpose(rgba, (1, 0, 2))  # Swap height and width dimensions
-    # rgba = np.transpose(rgba)
-    # Flip the image vertically
-    # image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    
+    print(f'Input image shape: {img.size}, mode: {img.mode}')
+    print(f"First pixel values: {img.getpixel((0, 0))}")
+    rgba = np.ascontiguousarray(np.array(img), np.uint8)
 
     # Create a mock image object with the data attribute
     class MockImage:
