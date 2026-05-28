@@ -3,6 +3,36 @@
   "version": "1.8.0",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
+  "exports": {
+    ".": {
+      "node": {
+        "types": "./types/src/index_node.d.ts",
+        "default": "./dist/ARToolkitNFT_node.js"
+      },
+      "browser": {
+        "types": "./types/src/index.d.ts",
+        "default": "./dist/ARToolkitNFT.js"
+      },
+      "default": {
+        "types": "./types/src/index.d.ts",
+        "default": "./dist/ARToolkitNFT.js"
+      }
+    },
+    "./simd": {
+      "types": "./types/src/index_simd.d.ts",
+      "default": "./dist/ARToolkitNFT_simd.js"
+    },
+    "./td": {
+      "types": "./types/src/index_td.d.ts",
+      "default": "./dist/ARToolkitNFT_td.js"
+    },
+    "./node": {
+      "types": "./types/src/index_node.d.ts",
+      "default": "./dist/ARToolkitNFT_node.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
   "keywords": [
     "ARToolKit",
