@@ -197,6 +197,65 @@ The Python bindings are built and tested on **Linux**, **macOS** and **Windows**
 
 For full build-from-source instructions, local development tips and the TestPyPI publishing workflow, see [`python-bindings/README.md`](python-bindings/README.md).
 
+## Node.js 🟢 (experimental)
+
+❕❕❕ ATTENTION: Node.js support is experimental and under active development. The API may change without notice and it is not yet recommended for production use.
+
+**JSARToolKitNFT** ships a dedicated Node.js build (`dist/ARToolkitNFT_node.js`), compiled from the same TypeScript sources and WebARKitLib C/C++ core as the browser build. It lets you run NFT marker detection server-side on static image data, without a browser, camera or `<canvas>`.
+
+When you install the package, Node automatically resolves to this build (see the [`exports`](#using-the-library-) map):
+
+```javascript
+// CommonJS — resolves to the Node build in Node.js
+const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft');
+// or the explicit subpath
+const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft/node');
+```
+
+A minimal example decoding an image with [sharp](https://github.com/lovell/sharp) and feeding the RGBA pixels to the controller:
+
+```javascript
+const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft');
+const sharp = require('sharp');
+
+async function init() {
+  const arControllerNFT = await new ARControllerNFT(2000, 1500, '/camera_para.dat');
+  const ar = await arControllerNFT._initialize();
+
+  // process() expects RGBA pixel data, so add the alpha channel.
+  const data = await sharp('pinball-demo.jpg').ensureAlpha().raw().toBuffer();
+  const imageData = new Uint8Array(data.buffer);
+
+  ar.on('getNFTMarker', (e) => console.log('NFT marker detected: ', e));
+
+  ar.loadNFTMarker('DataNFT/pinball', (id) => {
+    ar.trackNFTMarkerId(id);
+    // NFT tracking needs several iterations before it locks on.
+    for (let i = 0; i < 10; i++) ar.process(imageData);
+  });
+}
+
+init();
+```
+
+### What works
+
+- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`)
+- KPM-based marker detection and AR2 tracking with pose matrix output
+- Event listener for `getNFTMarker`
+- Decoding image input via [sharp](https://github.com/lovell/sharp) or the [canvas](https://github.com/Automattic/node-canvas) package (`process()` expects **RGBA** pixel data)
+
+### Not yet implemented
+
+- Native ESM consumption (`import { ARControllerNFT } from ...`): the Node build is CommonJS for now, so use `require()` or a default `import`
+- Live camera capture (the examples process a single static image)
+
+Runnable examples live in [`examples/node`](examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
+
+```bash
+cd examples/node && node example_dist.js
+```
+
 ## Project Structure 📂
 
 - `build/` (compiled debug and minified versions of JSARToolKitNFT)
