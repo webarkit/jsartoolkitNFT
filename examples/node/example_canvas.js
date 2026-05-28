@@ -14,9 +14,9 @@ global.cancelAnimationFrame = function(id) {
 async function init() {
     console.log(__dirname + '/camera_para.dat');
 
-    let arControllerNFT = new jsartoolkitNFT.ARControllerNFT(1920, 1021, '/camera_para.dat');
+    let arControllerNFT = new jsartoolkitNFT.ARControllerNFT(2000, 1500, '/camera_para.dat');
     let ar = await arControllerNFT._initialize();
-    loadImage('pinball-test2.png').then((image) => {
+    loadImage('pinball-demo.jpg').then((image) => {
 
         console.log('image: ', image.width, image.height);
         const canvas = createCanvas(image.width, image.height);
