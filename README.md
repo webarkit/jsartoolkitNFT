@@ -96,6 +96,34 @@ then:
 import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
 
+The package ships an [`exports`](https://nodejs.org/api/packages.html#package-entry-points) map, so the right build is picked automatically per environment:
+
+- in a **browser / bundler**, `@webarkit/jsartoolkit-nft` resolves to the UMD build (`dist/ARToolkitNFT.js`);
+- in **Node.js**, it resolves to the Node build (`dist/ARToolkitNFT_node.js`, CommonJS).
+
+```javascript
+// browser / bundler -> UMD build
+import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
+
+// Node.js -> Node build
+const { ARToolkitNFT, ARControllerNFT } = require('@webarkit/jsartoolkit-nft')
+```
+
+You can also target a specific build through a named subpath:
+
+| Import | Build |
+| --- | --- |
+| `@webarkit/jsartoolkit-nft` | UMD (browser) / Node (Node.js) |
+| `@webarkit/jsartoolkit-nft/simd` | SIMD WASM build |
+| `@webarkit/jsartoolkit-nft/td` | threaded (pthread) build |
+| `@webarkit/jsartoolkit-nft/node` | Node build |
+
+```javascript
+import '@webarkit/jsartoolkit-nft/simd'
+```
+
+The raw `dist/*` deep-imports (e.g. `@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_simd.js`) still work, and `<script>` / `importScripts` URLs are not affected by the `exports` map. In Node the build is CommonJS, so use `require()` or a default `import` (named `import { ... }` will come with a future ESM build).
+
 **Note**: All the examples in the repository are running the code inside a Worker (don't use it in the main thread!). So i you need to import the library in a worker you need to use the `importScripts` function.
 
 ```javascript
