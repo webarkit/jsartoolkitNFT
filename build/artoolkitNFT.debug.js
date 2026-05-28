@@ -766,7 +766,7 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     this._src = "";
     this.complete = false;
   };
-  // ARToolKit exported JS API
+  // ARToolKitNFT exported JS API
   const artoolkitNFT = {
     UNKNOWN_MARKER: -1,
     NFT_MARKER: 0,

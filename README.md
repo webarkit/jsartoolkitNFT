@@ -96,6 +96,34 @@ then:
 import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 ```
 
+The package ships an [`exports`](https://nodejs.org/api/packages.html#package-entry-points) map, so the right build is picked automatically per environment:
+
+- in a **browser / bundler**, `@webarkit/jsartoolkit-nft` resolves to the UMD build (`dist/ARToolkitNFT.js`);
+- in **Node.js**, it resolves to the Node build (`dist/ARToolkitNFT_node.js`, CommonJS).
+
+```javascript
+// browser / bundler -> UMD build
+import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
+
+// Node.js -> Node build
+const { ARToolkitNFT, ARControllerNFT } = require('@webarkit/jsartoolkit-nft')
+```
+
+You can also target a specific build through a named subpath:
+
+| Import | Build |
+| --- | --- |
+| `@webarkit/jsartoolkit-nft` | UMD (browser) / Node (Node.js) |
+| `@webarkit/jsartoolkit-nft/simd` | SIMD WASM build |
+| `@webarkit/jsartoolkit-nft/td` | threaded (pthread) build |
+| `@webarkit/jsartoolkit-nft/node` | Node build |
+
+```javascript
+import '@webarkit/jsartoolkit-nft/simd'
+```
+
+The raw `dist/*` deep-imports (e.g. `@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_simd.js`) still work, and `<script>` / `importScripts` URLs are not affected by the `exports` map. In Node the build is CommonJS, so use `require()` or a default `import` (named `import { ... }` will come with a future ESM build).
+
 **Note**: All the examples in the repository are running the code inside a Worker (don't use it in the main thread!). So i you need to import the library in a worker you need to use the `importScripts` function.
 
 ```javascript
@@ -168,6 +196,65 @@ pip install -i https://test.pypi.org/simple/ artoolkitnft
 The Python bindings are built and tested on **Linux**, **macOS** and **Windows** via the [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml) workflow.
 
 For full build-from-source instructions, local development tips and the TestPyPI publishing workflow, see [`python-bindings/README.md`](python-bindings/README.md).
+
+## Node.js 🟢 (experimental)
+
+❕❕❕ ATTENTION: Node.js support is experimental and under active development. The API may change without notice and it is not yet recommended for production use.
+
+**JSARToolKitNFT** ships a dedicated Node.js build (`dist/ARToolkitNFT_node.js`), compiled from the same TypeScript sources and WebARKitLib C/C++ core as the browser build. It lets you run NFT marker detection server-side on static image data, without a browser, camera or `<canvas>`.
+
+When you install the package, Node automatically resolves to this build (see the [`exports`](#using-the-library-) map):
+
+```javascript
+// CommonJS — resolves to the Node build in Node.js
+const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft');
+// or the explicit subpath
+const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft/node');
+```
+
+A minimal example decoding an image with [sharp](https://github.com/lovell/sharp) and feeding the RGBA pixels to the controller:
+
+```javascript
+const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft');
+const sharp = require('sharp');
+
+async function init() {
+  const arControllerNFT = await new ARControllerNFT(2000, 1500, '/camera_para.dat');
+  const ar = await arControllerNFT._initialize();
+
+  // process() expects RGBA pixel data, so add the alpha channel.
+  const data = await sharp('pinball-demo.jpg').ensureAlpha().raw().toBuffer();
+  const imageData = new Uint8Array(data.buffer);
+
+  ar.on('getNFTMarker', (e) => console.log('NFT marker detected: ', e));
+
+  ar.loadNFTMarker('DataNFT/pinball', (id) => {
+    ar.trackNFTMarkerId(id);
+    // NFT tracking needs several iterations before it locks on.
+    for (let i = 0; i < 10; i++) ar.process(imageData);
+  });
+}
+
+init();
+```
+
+### What works
+
+- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`)
+- KPM-based marker detection and AR2 tracking with pose matrix output
+- Event listener for `getNFTMarker`
+- Decoding image input via [sharp](https://github.com/lovell/sharp) or the [canvas](https://github.com/Automattic/node-canvas) package (`process()` expects **RGBA** pixel data)
+
+### Not yet implemented
+
+- Native ESM consumption (`import { ARControllerNFT } from ...`): the Node build is CommonJS for now, so use `require()` or a default `import`
+- Live camera capture (the examples process a single static image)
+
+Runnable examples live in [`examples/node`](examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
+
+```bash
+cd examples/node && node example_dist.js
+```
 
 ## Project Structure 📂
 

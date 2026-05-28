@@ -3,6 +3,36 @@
   "version": "1.8.0",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
+  "exports": {
+    ".": {
+      "node": {
+        "types": "./types/src/index_node.d.ts",
+        "default": "./dist/ARToolkitNFT_node.js"
+      },
+      "browser": {
+        "types": "./types/src/index.d.ts",
+        "default": "./dist/ARToolkitNFT.js"
+      },
+      "default": {
+        "types": "./types/src/index.d.ts",
+        "default": "./dist/ARToolkitNFT.js"
+      }
+    },
+    "./simd": {
+      "types": "./types/src/index_simd.d.ts",
+      "default": "./dist/ARToolkitNFT_simd.js"
+    },
+    "./td": {
+      "types": "./types/src/index_td.d.ts",
+      "default": "./dist/ARToolkitNFT_td.js"
+    },
+    "./node": {
+      "types": "./types/src/index_node.d.ts",
+      "default": "./dist/ARToolkitNFT_node.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "description": "Emscripten port of ARToolKit5 to JavaScript. It is a lighter version of Jsartoolkit5 with only NFT markerless support",
   "keywords": [
     "ARToolKit",
@@ -72,6 +102,7 @@
     "test:es6": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.js karma start karma-es6.conf.js",
     "test:es6-simd": "cross-env BUILD_TARGET_ES6=artoolkitNFT_ES6_wasm.simd.js karma start karma-es6.conf.js",
     "test:all": "npm run test:min && npm run test:debug && npm run test:wasm && npm run test:simd && npm run test:embed-es6 && npm run test:es6 && npm run test:es6-simd",
+    "test-node-example": "cd examples/node && node example_dist.js",
     "build-python-bindings": "cd python-bindings && python setup.py build_ext --inplace",
     "python-tests": "cd python-bindings && pytest test_arcontrollerNFT.py",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
@@ -82,6 +113,8 @@
   "license": "LGPL-3.0",
   "dependencies": {
     "@babel/runtime": "7.29.7",
-    "axios": "1.16.1"
+    "axios": "1.16.1",
+    "canvas": "^3.1.0",
+    "sharp": "0.33.5"
   }
 }

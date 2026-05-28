@@ -110,5 +110,25 @@ module.exports = (env, argv) => {
       },
       module,
     },
+    {
+      name: "node",
+      target: "node",
+      devtool,
+      entry: "./src/index_node.ts",
+      output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "ARToolkitNFT_node.js",
+        libraryTarget: "commonjs2",
+      },
+      resolve: {
+        extensions: [".tsx", ".ts", ".js"],
+        fallback: {
+          fs: false,
+          path: false,
+          crypto: false,
+        },
+      },
+      module,
+    },
   ];
 };

@@ -1,0 +1,31 @@
+import { INFTMarkerInfo } from "./CommonInterfaces";
+export interface IARToolkitNFT_node {
+    getCameraLens(id: number): any;
+    passVideoData(id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array): void;
+    setup(width: number, height: number, cameraId: number): number;
+    setupAR2(id: number): void;
+    setDebugMode(id: number, mode: boolean): number;
+    getDebugMode(id: number): boolean;
+    getProcessingImage(id: number): number;
+    setLogLevel(mode: boolean): number;
+    getLogLevel(): number;
+    NFTMarkerInfo: INFTMarkerInfo;
+    loadCamera(cameraParam: string): Promise<number>;
+    setProjectionNearPlane(id: number, value: number): void;
+    getProjectionNearPlane(id: number): number;
+    setProjectionFarPlane(id: number, value: number): void;
+    getProjectionFarPlane(id: number): number;
+    setThresholdMode(id: number, mode: number): number;
+    getThresholdMode(id: number): number;
+    setThreshold(id: number, threshold: number): number;
+    getThreshold(id: number): number;
+    addNFTMarkers(id: number, urls: Array<string>, callback: (ids: number[]) => void, onError: (errorNumber: number) => void): void;
+    detectNFTMarker(id: number): number;
+    getNFTMarker(id: number, markerIndex: number): INFTMarkerInfo;
+    getNFTData(id: number, index: number): object;
+    setImageProcMode(id: number, mode: number): number;
+    getImageProcMode(id: number): number;
+    FS: any;
+    StringList: any;
+    nftMarkers: any;
+}

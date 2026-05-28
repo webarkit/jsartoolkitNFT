@@ -53,6 +53,7 @@ const BUILD_BASE_FILENAME = "artoolkitNFT";
 
 const BUILD_DEBUG_FILE = BUILD_BASE_FILENAME + ".debug.js";
 const BUILD_WASM_FILE = BUILD_BASE_FILENAME + "_wasm.js";
+const BUILD_WASM_NODE_FILE = BUILD_BASE_FILENAME + "_node_wasm.js";
 const BUILD_THREAD_FILE = BUILD_BASE_FILENAME + "_thread.js";
 const BUILD_WASM_EMBED_ES6_FILE = BUILD_BASE_FILENAME + "_embed_ES6_wasm.js";
 const BUILD_SIMD_WASM_FILE = BUILD_BASE_FILENAME + "_wasm.simd.js";
@@ -226,6 +227,8 @@ FLAGS += " --bind "; // Ensure --bind is included
 const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
 const WASM_FLAGS = " -s SINGLE_FILE=1";
+const NODE_FLAGS =
+  ' -s ENVIRONMENT=node -s FORCE_FILESYSTEM -s EXPORTED_RUNTIME_METHODS=["NODEFS","FS"] -lnodefs.js';
 const SIMD128_FLAGS = " -msimd128";
 const ES6_FLAGS = " -s EXPORT_ES6=1 -s MODULARIZE=1 -sENVIRONMENT=web ";
 
@@ -394,6 +397,20 @@ const compile_wasm = [
   path.resolve(OUTPUT_PATH, BUILD_WASM_FILE),
 ];
 
+const compile_wasm_node = [
+  EMCC.trim(),
+  ...INCLUDES.split(" "),
+  ...ALL_BC.split(" "),
+  ...LIBZ_A.split(" "),
+  ...MAIN_SOURCES.split(" "),
+  ...FLAGS.split(" "),
+  ...WASM_FLAGS.split(" "),
+  ...DEFINES.split(" "),
+  ...NODE_FLAGS.split(" "),
+  "-o",
+  path.resolve(OUTPUT_PATH, BUILD_WASM_NODE_FILE),
+];
+
 const compile_wasm_thread = [
   EMCC.trim(),
   ...INCLUDES.split(" "),
@@ -546,6 +563,7 @@ addJob(compile_simd_wasm);
 addJob(compile_wasm_es6);
 addJob(compile_simd_wasm_es6);
 addJob(compile_wasm_es6_thread);
+addJob(compile_wasm_node);
 addJob(compile_combine_min);
 
 if (NO_LIBAR === true) {
