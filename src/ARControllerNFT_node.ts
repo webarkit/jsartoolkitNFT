@@ -300,14 +300,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     for (let i = 0; i < nftMarkerCount; i++) {
       let nftMarkerInfo: IARToolkitNFT_node["NFTMarkerInfo"] = this.getNFTMarker(i);
-      console.log(nftMarkerInfo);
-
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
       if (nftMarkerInfo.found) {
-        console.log("found!!!");
-
         this.nftMarkerFound = <boolean>(<unknown>i);
         this.nftMarkerFoundTime = Date.now();
 
@@ -456,6 +452,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
         listeners[i].call(this, event);
       }
     }
+    // also notify EventEmitter listeners registered via on()
+    this.em.emit(event.name, event);
   }
 
   // debug stuff
@@ -926,9 +924,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
       data = sourceImage.data;
     }*/
 
-    console.log('sourceImage: ', sourceImage);
-
-
     const data = new Uint8Array(this.videoSize * 4);
     //@ts-ignore
     data.set(sourceImage);
@@ -940,8 +935,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
         // Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA
         // see (ARToolKitJS.cpp L: 43)
-        console.log('videoSize: ', this.videoSize);
-
         for (let p = 0; p < this.videoSize; p++) {
           let r = data[q + 0],
             g = data[q + 1],
@@ -959,8 +952,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     if (this.videoLuma) {
-      
-      console.log('videoluma data: ', this.videoLuma);
       //@ts-ignore
       this.artoolkitNFT.passVideoData(this.id, sourceImage, this.videoLuma);
       return true;

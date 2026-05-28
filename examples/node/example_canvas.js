@@ -23,9 +23,8 @@ async function init() {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(image, 0, 0, image.width, image.height);
         const imgData = ctx.getImageData(0, 0, image.width, image.height);
-        console.log('imgData: ', imgData);
         ar.on('getNFTMarker', function(e){
-            console.log("NFT marker detected: ", e);
+            console.log("NFT marker detected: ", e.data.marker);
         });
         const cameraMatrix = ar.getCameraMatrix();
         ar.loadNFTMarker('DataNFT/pinball', function (id) {

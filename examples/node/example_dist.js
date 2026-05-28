@@ -10,7 +10,7 @@ async function init() {
     const imageData = new Uint8Array(data.buffer);
 
     ar.on('getNFTMarker', function (e) {
-        console.log("NFT marker detected: ", e);
+        console.log("NFT marker detected: ", e.data.marker);
     });
 
     const cameraMatrix = ar.getCameraMatrix();
