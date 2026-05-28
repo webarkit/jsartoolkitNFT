@@ -2,38 +2,30 @@ const ARControllerNFT = require('../../node-src/ARControllerNFT.js')
 const sharp = require('sharp')
 
 async function init() {
-    let arControllerNFT = await new ARControllerNFT(1920, 1021, 'camera_para.dat');
-    arControllerNFT._initialize()
-        .then(ar => {
-            //console.log(ar);
-            sharp("pinball-test2.png")
-                //.resize(1920, 1021, 'fill')
-                .raw()
-                .toBuffer()
+    const arControllerNFT = await new ARControllerNFT(2000, 1500, 'camera_para.dat');
+    const ar = await arControllerNFT._initialize();
 
-                .then(data => {
-                    //console.log("data from sharp Buffer: ", data.buffer)
-                    const imageData = new Uint8Array(data.buffer);
-                    //console.log(imageData)
-                    //console.log(ar)
-                    ar.on('getNFTMarker', function(e){
-                        console.log("NFT marker detected: ", e);
-                    })
-                    const cameraMatrix = ar.getCameraMatrix();
-                    // we get an error because process need some video data...
-                    ar.loadNFTMarker('DataNFT/pinball', function (id) {
-                        console.log('marker id is: ', id);
-                        ar.trackNFTMarkerId(id);
-                        let marker = ar.getNFTData(ar.id, 0);
-                        console.log("nftMarker data: ", marker);
-                        console.log("cameraMatrix: ", cameraMatrix);
-                    })
-                    if (ar && ar.process) {
-                        ar.process(imageData);
-                      }
-                    //console.log(artoolkitNFT);
-                })
-        })
+    // process() expects RGBA pixel data, so add the alpha channel.
+    const data = await sharp("pinball-demo.jpg").ensureAlpha().raw().toBuffer();
+    const imageData = new Uint8Array(data.buffer);
+
+    ar.on('getNFTMarker', function (e) {
+        console.log("NFT marker detected: ", e);
+    });
+
+    const cameraMatrix = ar.getCameraMatrix();
+    ar.loadNFTMarker('DataNFT/pinball', function (id) {
+        console.log('marker id is: ', id);
+        ar.trackNFTMarkerId(id);
+        const marker = ar.getNFTData(ar.id, 0);
+        console.log("nftMarker data: ", marker);
+        console.log("cameraMatrix: ", cameraMatrix);
+        // process() must run after the marker is loaded; NFT tracking
+        // needs several iterations before it locks on.
+        for (let i = 0; i < 10; i++) {
+            ar.process(imageData);
+        }
+    });
 }
 
 init()
