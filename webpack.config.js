@@ -118,8 +118,7 @@ module.exports = (env, argv) => {
       output: {
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT_node.js",
-        libraryTarget: "umd",
-        globalObject: "typeof self !== 'undefined' ? self : this",
+        libraryTarget: "commonjs2",
       },
       resolve: {
         extensions: [".tsx", ".ts", ".js"],
