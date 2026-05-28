@@ -1,76 +1,65 @@
-// Karma configuration
-// Generated on Mon Mar 07 2022 12:03:44 GMT+0100 (Ora standard dell’Europa centrale)
+// Karma configuration - Unified for all legacy builds
+const fs = require('fs');
+const path = require('path');
+
+// --- Dynamic Build File Selection ---
+
+// Get the target build file from an environment variable.
+// Default to the most stable production build if not specified.
+const buildFileToTest = process.env.BUILD_TARGET || 'artoolkitNFT.min.js';
+const buildFilePath = path.join('build', buildFileToTest);
+
+if (!fs.existsSync(buildFilePath)) {
+    console.error(`[Karma] Error: Build file not found: ${buildFilePath}`);
+    console.error(`[Karma] Please run the build script first, or specify a valid BUILD_TARGET.`);
+    process.exit(1);
+}
+
+console.log(`[Karma] Using build file for testing: ${buildFilePath}`);
+
+// --- End Dynamic Selection ---
 
 module.exports = function (config) {
   config.set({
-    // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: "",
+    frameworks: ["jasmine"],
+    plugins: ['karma-jasmine', 'karma-chrome-launcher'],
 
-    // frameworks to use
-    // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
-    frameworks: ["qunit"],
-
-    plugins: ["karma-qunit", "karma-chrome-launcher", "karma-firefox-launcher"],
-
-    // list of files / patterns to load in the browser
+    // Dynamically load the selected build file.
+    // No setup script is needed; the test file handles initialization.
     files: [
-      { pattern: "build/artoolkitNFT.min.js", included: true },
-      { pattern: "tests/*.js", included: true },
+      buildFilePath,
+      'tests/tests.test.js', // The single, unified test file
       {
-        pattern: "examples/Data/camera_para.dat",
+        pattern: 'examples/Data/*',
         watched: false,
         included: false,
         served: true,
-        nocache: false,
-      },
+        nocache: false
+      }
     ],
 
-    // list of files / patterns to exclude
+    proxies: {
+        '/examples/Data/': '/base/examples/Data/'
+    },
+
     exclude: [],
-
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
     preprocessors: {},
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://www.npmjs.com/search?q=keywords:karma-reporter
     reporters: ["progress"],
-
-    // web server port
     port: 9876,
-
-    // enable / disable colors in the output (reporters and logs)
     colors: true,
-
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
-
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
-    // start these browsers
-    // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-    browsers: [
-      process.platform === "linux" ? "ChromiumHeadless" : "ChromeHeadless",
-      "FirefoxHeadless",
-    ],
-
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
+    autoWatch: false,
+    browsers: ["ChromeHeadless"],
     singleRun: true,
-
-    // Concurrency level
-    // how many browser instances should be started simultaneously
     concurrency: Infinity,
 
     client: {
-      clearContext: false,
-      qunit: {
-        showUI: true,
-        testTimeout: 5000,
-      },
-    },
+        clearContext: false,
+        jasmine: {
+            // A generous timeout to allow for Wasm compilation and initialization
+            DEFAULT_TIMEOUT_INTERVAL: 20000
+        }
+    }
   });
 };

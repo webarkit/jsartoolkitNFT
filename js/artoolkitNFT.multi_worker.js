@@ -1,5 +1,5 @@
 var browser = (function () {
-  var test = function (regexp) {
+  const test = function (regexp) {
     return regexp.test(navigator.userAgent);
   };
   switch (true) {
@@ -47,8 +47,8 @@ self.onmessage = function (e) {
   }
 };
 
-var next = null;
-var ar = null;
+let next = null;
+let ar = null;
 let markerResult = null;
 let marker1, marker2, marker3;
 
@@ -65,7 +65,8 @@ function load(msg) {
     console.debug("Loading marker at: ", msg.marker);
 
     const onLoad = function () {
-      ar = new ARControllerNFT(msg.pw, msg.ph, param);
+      ar = new ARControllerNFT(msg.pw, msg.ph, param, true);
+      ar.setFiltering(true);
       const cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
@@ -98,10 +99,10 @@ function load(msg) {
           marker3: marker3,
         });
         console.log("loadNFTMarker -> ", ids);
-        postMessage({ type: "endLoading", end: true }),
+        (postMessage({ type: "endLoading", end: true }),
           function (err) {
             console.error("Error in loading marker on Worker", err);
-          };
+          });
       });
 
       postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });

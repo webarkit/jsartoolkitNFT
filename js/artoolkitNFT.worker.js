@@ -65,7 +65,8 @@ function load(msg) {
     console.debug("Loading marker at: ", msg.marker);
 
     const onLoad = function () {
-      ar = new ARControllerNFT(msg.pw, msg.ph, param);
+      ar = new ARControllerNFT(msg.pw, msg.ph, param, true);
+      ar.setFiltering(true);
       const cameraMatrix = ar.getCameraMatrix();
 
       ar.addEventListener("getNFTMarker", function (ev) {
@@ -83,17 +84,23 @@ function load(msg) {
         filter.reset();
       });
 
-      ar.loadNFTMarker(msg.marker, function (id) {
-        ar.trackNFTMarkerId(id);
-        let marker = ar.getNFTData(ar.id, 0);
-        console.log("nftMarker data: ", marker);
-        postMessage({ type: "markerInfos", marker: marker });
-        console.log("loadNFTMarker -> ", id);
-        postMessage({ type: "endLoading", end: true }),
-          function (err) {
-            console.error("Error in loading marker on Worker", err);
-          };
-      });
+      ar.loadNFTMarker(
+        msg.marker,
+        function (id) {
+          ar.trackNFTMarkerId(id);
+          let marker = ar.getNFTData(ar.id, 0);
+          console.log("nftMarker data: ", marker);
+          postMessage({ type: "markerInfos", marker: marker });
+          console.log("loadNFTMarker -> ", id);
+          (postMessage({ type: "endLoading", end: true }),
+            function (err) {
+              console.error("Error in loading marker on Worker", err);
+            });
+        },
+        function () {
+          console.error("Error in loadNFTMarker function on Worker");
+        },
+      );
 
       postMessage({ type: "loaded", proj: JSON.stringify(cameraMatrix) });
     };

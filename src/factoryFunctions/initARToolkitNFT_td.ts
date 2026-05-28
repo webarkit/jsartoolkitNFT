@@ -35,6 +35,8 @@
  */
 
 import ARToolkitNFT from "../../build/artoolkitNFT_ES6_wasm_td";
-export async function initARToolkitNFT() {
-  return await ARToolkitNFT();
+import { ARToolkitNFTModule } from "../abstractions/CommonInterfaces";
+
+export async function initARToolkitNFT(): Promise<ARToolkitNFTModule> {
+  return (await ARToolkitNFT()) as ARToolkitNFTModule;
 }

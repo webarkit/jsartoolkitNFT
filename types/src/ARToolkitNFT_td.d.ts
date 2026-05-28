@@ -68,10 +68,10 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     getThreshold(): number;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
+    setFiltering(enableFiltering: boolean): void;
     getCameraLens(): any;
-    passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array): void;
+    passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
     loadCamera(urlOrData: Uint8Array | string): Promise<number>;
     addNFTMarkers(urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
-    private _storeDataFile;
     private ajax;
 }

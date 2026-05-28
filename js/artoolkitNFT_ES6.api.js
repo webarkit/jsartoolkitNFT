@@ -29,9 +29,10 @@ if (typeof window !== 'undefined') {
     @param {number} width The width of the images to process.
     @param {number} height The height of the images to process.
     @param {ARCameraParamNFT | string} camera The ARCameraParamNFT to use for image processing. If this is a string, the ARControllerNFT treats it as an URL and tries to load it as a ARCameraParamNFT definition file, calling ARControllerNFT#onload on success.
+    @param {boolean} internalLuma Whether to use internal luma processing.
 */
 class ARControllerNFT {
-    constructor(width, height, cameraPara) {
+    constructor(width, height, cameraPara, internalLuma) {
         this.id = undefined;
 
         this.listeners = {};
@@ -53,12 +54,13 @@ class ARControllerNFT {
         this.framesize = null;
         this.dataHeap = null;
         this.videoLuma = null;
+        this.videoLumaInternal = internalLuma;
         this.camera_mat = null;
         this.videoLumaPointer = null;
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.7.1';
+        this.version = '1.7.7';
         console.info('JsartoolkitNFT ', this.version);
 
         if (typeof cameraPara === 'string') {
@@ -515,6 +517,16 @@ class ARControllerNFT {
     };
 
     /**
+     * Recalculates the camera lens based on the current camera parameters.
+     * This is useful if the camera parameters have changed
+     * and you need to update the camera lens accordingly.
+     * @returns {number} 0 (void)
+     */
+    recalculateCameraLens() {
+        return artoolkitNFT.recalculateCameraLens(this.id);
+    }
+
+    /**
       Sets the value of the far plane of the camera.
       @param {number} value the value of the far plane
       @return {number} 0 (void)
@@ -638,6 +650,16 @@ class ARControllerNFT {
         return artoolkitNFT.getImageProcMode(this.id);
     };
 
+    /**
+     * 
+     * @param {*} enableFiltering 
+     * @returns void
+     * @description Enable or disable filtering for the detected markers.
+     */
+    setFiltering(enableFiltering) {
+        artoolkitNFT.setFiltering(this.id, enableFiltering);
+    }
+
     // private methods
 
     /**
@@ -646,7 +668,7 @@ class ARControllerNFT {
       @return {number} 0 (void)
     */
     _initialize() {
-        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id);
+        this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, false);
 
         this._initNFT();
 
@@ -695,7 +717,7 @@ class ARControllerNFT {
         var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
-        if (this.videoLuma) {
+        if (this.videoLuma && !this.videoLumaInternal) {
             let q = 0;
             //Create luma from video data assuming Pixelformat AR_PIXEL_FORMAT_RGBA (ARToolKitJS.cpp L: 43)
 
@@ -708,7 +730,7 @@ class ARControllerNFT {
         }
 
         if (this.videoLuma) {
-            artoolkitNFT.passVideoData(this.id, data, this.videoLuma);
+            artoolkitNFT.passVideoData(this.id, data, this.videoLuma, this.videoLumaInternal);
             return true;
         }
 
@@ -823,6 +845,7 @@ const artoolkitNFT = {
 
 const FUNCTIONS = [
     'setup',
+    'setFiltering',
     'teardown',
 
     'setupAR2',
@@ -844,6 +867,8 @@ const FUNCTIONS = [
 
     'setProjectionFarPlane',
     'getProjectionFarPlane',
+
+    'recalculateCameraLens',
 
     'setThresholdMode',
     'getThresholdMode',
@@ -907,24 +932,118 @@ function addNFTMarkers(arId, urls, callback, onerror) {
             if (callback) callback(markerIds);
         }
     };
+
     const onError = (filename, errorNumber) => {
         console.log("failed to load: ", filename);
         onerror(errorNumber);
     };
 
-    for (var i = 0; i < urls.length; i++) {
+    const loadZFT = (prefix) => {
+        const marker_num = prefix.substring(11);
+        const prefixTemp = '/tempMarkerNFT_' + marker_num;
+
+        const response = Module._decompressZFT(prefix, prefixTemp);
+
+        let contentIsetUint8 = FS.readFile(prefixTemp + '.iset');
+        let contentFsetUint8 = FS.readFile(prefixTemp + '.fset');
+        let contentFset3Uint8 = FS.readFile(prefixTemp + '.fset3');
+
+        FS.unlink(prefixTemp + '.iset');
+        FS.unlink(prefixTemp + '.fset');
+        FS.unlink(prefixTemp + '.fset3');
+
+        let hexStrIset = Uint8ArrayToStr(contentIsetUint8);
+        let hexStrFset = Uint8ArrayToStr(contentFsetUint8);
+        let hexStrFset3 = Uint8ArrayToStr(contentFset3Uint8);
+
+        let contentIset = new Uint8Array(hexStrIset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        let contentFset = new Uint8Array(hexStrFset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        let contentFset3 = new Uint8Array(hexStrFset3.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+
+        writeByteArrayToFS(prefix + '.fset', contentFset, function () {
+        });
+        writeByteArrayToFS(prefix + '.iset', contentIset, function () {
+        });
+        writeByteArrayToFS(prefix + '.fset3', contentFset3, function () {
+        });
+
+    };
+
+    const onSuccessZFT = function(){
+        loadZFT(arguments[1]);
+        onSuccess();
+    }
+
+    for (let i = 0; i < urls.length; i++) {
         const url = urls[i];
         const prefix = '/markerNFT_' + marker_count;
         prefixes.push(prefix);
         const filename1 = prefix + '.fset';
         const filename2 = prefix + '.iset';
         const filename3 = prefix + '.fset3';
+        const filename4 = prefix + '.zft';
 
-        ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
-        ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
-        ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
+        let type = checkZFT(url + '.zft');
+        if(type){
+            pending -= 2;
+            ajax(url + '.zft', filename4, onSuccessZFT, onError.bind(filename4), prefix);
+        }else {
+            ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1), prefix);
+            ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2), prefix);
+            ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3), prefix);
+        }
         marker_count += 1;
     }
+}
+
+function checkZFT(url){
+    let isZFT = null;
+
+    let request = new XMLHttpRequest();
+    request.open('GET', url, false);  // `false` makes the request synchronous
+    request.send(null);
+
+    if (request.status === 200) {
+        isZFT = true;
+    }else if(request.status === 404){
+        isZFT = false;
+    }
+
+    return isZFT;
+}
+
+function Uint8ArrayToStr(array) {
+    let out, i, len, c;
+    let char2, char3;
+
+    out = "";
+    len = array.length;
+    i = 0;
+    while(i < len) {
+        c = array[i++];
+        switch(c >> 4)
+        {
+            case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+            // 0xxxxxxx
+            out += String.fromCharCode(c);
+            break;
+            case 12: case 13:
+            // 110x xxxx   10xx xxxx
+            char2 = array[i++];
+            out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+            break;
+            case 14:
+                // 1110 xxxx  10xx xxxx  10xx xxxx
+                char2 = array[i++];
+                char3 = array[i++];
+                out += String.fromCharCode(((c & 0x0F) << 12) |
+                    ((char2 & 0x3F) << 6) |
+                    ((char3 & 0x3F) << 0));
+                break;
+        }
+    }
+
+    return out;
 }
 
 function bytesToString(array) {
@@ -978,18 +1097,18 @@ function writeStringToFS(target, string, callback) {
     writeByteArrayToFS(target, byteArray, callback);
 }
 
-function writeByteArrayToFS(target, byteArray, callback) {
+function writeByteArrayToFS(target, byteArray, callback, prefix) {
     FS.writeFile(target, byteArray, { encoding: 'binary' });
     // console.log('FS written', target);
 
-    callback(byteArray);
+    callback(byteArray, prefix);
 }
 
 // Eg.
 //	ajax('../bin/Data2/markers.dat', '/Data2/markers.dat', callback);
 //	ajax('../bin/Data/patt.hiro', '/patt.hiro', callback);
 
-function ajax(url, target, callback, errorCallback) {
+function ajax(url, target, callback, errorCallback, prefix) {
     const oReq = new XMLHttpRequest();
     oReq.open('GET', url, true);
     oReq.responseType = 'arraybuffer'; // blob arraybuffer
@@ -999,7 +1118,7 @@ function ajax(url, target, callback, errorCallback) {
             // console.log('ajax done for ', url);
             const arrayBuffer = oReq.response;
             const byteArray = new Uint8Array(arrayBuffer);
-            writeByteArrayToFS(target, byteArray, callback);
+            writeByteArrayToFS(target, byteArray, callback, prefix);
         }
         else {
             errorCallback(this.status);

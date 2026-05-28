@@ -79,7 +79,10 @@ function load(msg) {
 
   const onLoad = function (arController) {
     ar = arController;
-    var cameraMatrix = ar.getCameraMatrix();
+    console.log(ar);
+
+    ar.setFiltering(true);
+    const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
       let mat;
@@ -111,9 +114,14 @@ function load(msg) {
         type: "endLoading",
         end: true,
       });
-    }).catch(function (err) {
-      console.log("Error in loading marker on Worker", err);
-    });
+    }).catch(
+      function (err) {
+        console.log("Error in loading marker on Worker", err);
+      },
+      function (err) {
+        console.error("Error in loadNFTMarker function on Worker", err);
+      },
+    );
 
     postMessage({
       type: "loaded",
@@ -128,7 +136,7 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para)
+  ARControllerNFT.initWithDimensions(msg.pw, msg.ph, msg.camera_para, true)
     .then(onLoad)
     .catch(onError);
 }

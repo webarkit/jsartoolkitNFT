@@ -29,20 +29,26 @@ function load_thread(msg) {
       filter.reset();
     });
 
-    ar.loadNFTMarker(msg.marker, function (id) {
-      ar.trackNFTMarkerId(id);
-      let marker = ar.getNFTData(ar.id, 0);
-      console.log("nftMarker data: ", marker);
-      const markerInfos = new CustomEvent("markerInfos", {
-        detail: { marker: marker },
-      });
-      window.dispatchEvent(markerInfos);
-      console.log("loadNFTMarker -> ", id);
-      const endLoading = new CustomEvent("endLoading", {
-        detail: { end: true },
-      });
-      window.dispatchEvent(endLoading);
-    });
+    ar.loadNFTMarker(
+      msg.marker,
+      function (id) {
+        ar.trackNFTMarkerId(id);
+        let marker = ar.getNFTData(ar.id, 0);
+        console.log("nftMarker data: ", marker);
+        const markerInfos = new CustomEvent("markerInfos", {
+          detail: { marker: marker },
+        });
+        window.dispatchEvent(markerInfos);
+        console.log("loadNFTMarker -> ", id);
+        const endLoading = new CustomEvent("endLoading", {
+          detail: { end: true },
+        });
+        window.dispatchEvent(endLoading);
+      },
+      function (e) {
+        console.error("Error in loadNFTMarker function: ", e);
+      },
+    );
 
     if (ar && ar.process) {
       window.addEventListener("imageDataEvent", function (ev) {

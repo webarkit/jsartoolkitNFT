@@ -1,3 +1,6 @@
 [submodule "emscripten/WebARKitLib"]
 	path = emscripten/WebARKitLib
 	url = https://github.com/webarkit/WebARKitLib
+[submodule "emscripten/zlib"]
+	path = emscripten/zlib
+	url = https://github.com/madler/zlib

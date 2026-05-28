@@ -68,6 +68,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private videoLuma: Uint8Array;
   private grayscaleEnabled: boolean;
   private grayscaleSource: Uint8Array;
+  private videoLumaInternal: boolean; // Added videoLumaInternal
 
   private nftMarkerFound: boolean; // = false
   private nftMarkerFoundTime: number;
@@ -106,9 +107,20 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
+   * @param {boolean} internalLuma
    */
-  constructor(width: number, height: number, cameraParam: string);
-  constructor(width?: number, height?: number, cameraParam?: string) {
+  constructor(
+    width: number,
+    height: number,
+    cameraParam: string,
+    internalLuma: boolean,
+  );
+  constructor(
+    width?: number,
+    height?: number,
+    cameraParam?: string,
+    internalLuma?: boolean,
+  ) {
     // no point in initializing a member as "undefined"
     // replaced it with -1
     this.id = -1;
@@ -137,6 +149,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     this.framesize = null;
     this.videoLuma = null;
+    this.videoLumaInternal = internalLuma; // Initialize videoLumaInternal
     this.grayscaleEnabled = false;
     this.camera_mat = null;
 
@@ -156,7 +169,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    *  Example:
    *  ```js
    *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
-   *    ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat").then(
+   *    ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat", true).then(
    *    (nft) => {
    *      nft.loadNFTMarker();
    *      // other code...
@@ -165,15 +178,22 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
+   * @param {boolean} internalLuma
    * @return {Promise<ARControllerNFT>} this
    */
   static async initWithDimensions(
     width: number,
     height: number,
     cameraParam: string,
+    internalLuma: boolean,
   ): Promise<ARControllerNFT> {
     // directly init with given width / height
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam,
+      internalLuma,
+    );
     return await arControllerNFT._initialize();
   }
 
@@ -186,7 +206,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    *  ```js
    *    import ARControllerNFT from '@webarkit/jsartoolkit-nft'
    *    const image = document.getElementById('image')
-   *    ARControllerNFT.initWithImage(image, "camera_para.dat").then(
+   *    ARControllerNFT.initWithImage(image, "camera_para.dat", true).then(
    *    (nft) => {
    *      nft.loadNFTMarker();
    *      // other code...
@@ -194,15 +214,22 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    *  ```
    * @param {image} image
    * @param {string} cameraParam
+   * @param {boolean} internalLuma
    * @return {Promise<ARControllerNFT>} this
    */
   static async initWithImage(
     image: IImageObj,
     cameraParam: string,
+    internalLuma: boolean,
   ): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam,
+      internalLuma,
+    );
     return await arControllerNFT._initialize();
   }
 
@@ -220,6 +247,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    *    640,
    *    480,
    *    "camera_para.dat",
+   *    true,
    *    function() { // your code here }
    *    ).then(
    *    (nft) => {
@@ -230,6 +258,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
+   * @param {boolean} internalLuma
    * @param {function} callback
    * @return {Promise<ARControllerNFT>} this
    */
@@ -237,9 +266,15 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     width: number,
     height: number,
     cameraParam: string,
+    internalLuma: boolean,
     callback: () => void,
   ): Promise<ARControllerNFT> {
-    const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
+    const arControllerNFT = new ARControllerNFT(
+      width,
+      height,
+      cameraParam,
+      internalLuma,
+    );
     callback();
     return await arControllerNFT._initialize();
   }
@@ -717,8 +752,24 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Loads an NFT marker from the given URL or data string
-   * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
+   * Loads an NFT marker from the given URL or data string.
+   * This method is asynchronous and returns a Promise that resolves to an array of marker IDs.
+   *
+   * Example usage:
+   * ```typescript
+   * import ARControllerNFT from '@webarkit/jsartoolkit-nft';
+   *
+   * const arController = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
+   * arController.loadNFTMarker("path/to/marker.dat", (id) => {
+   *   console.log("Marker loaded with ID:", id);
+   * }, (err) => {
+   *   console.error("Failed to load marker:", err);
+   * });
+   * ```
+   * @param {string} urlOrData - The URL or data string of the NFT marker to load.
+   * @param {function} onSuccess - Callback function to call when the marker is successfully loaded. Receives the marker ID as an argument.
+   * @param {function} onError - Callback function to call when there is an error loading the marker. Receives the error code as an argument.
+   * @return {Promise<number[]>} A Promise that resolves to an array of marker IDs.
    */
   async loadNFTMarker(
     urlOrData: string,
@@ -737,8 +788,24 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Loads an array of NFT markers from the given URLs or data string
-   * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
+   * Loads an array of NFT markers from the given URLs or data strings.
+   * This method is asynchronous and returns a Promise that resolves to an array of marker IDs.
+   *
+   * Example usage:
+   * ```typescript
+   * import ARControllerNFT from '@webarkit/jsartoolkit-nft';
+   *
+   * const arController = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
+   * arController.loadNFTMarkers(["path/to/marker1.dat", "path/to/marker2.dat"], (ids) => {
+   *   console.log("Markers loaded with IDs:", ids);
+   * }, (err) => {
+   *   console.error("Failed to load markers:", err);
+   * });
+   * ```
+   * @param {Array<string>} urlOrData - The array of URLs or data strings of the NFT markers to load.
+   * @param {function} onSuccess - Callback function to call when the markers are successfully loaded. Receives an array of marker IDs as an argument.
+   * @param {function} onError - Callback function to call when there is an error loading the markers. Receives the error code as an argument.
+   * @return {Promise<number[]>} A Promise that resolves to an array of marker IDs.
    */
   async loadNFTMarkers(
     urlOrData: Array<string>,
@@ -786,6 +853,15 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   getImageProcMode(): number {
     return this.artoolkitNFT.getImageProcMode();
+  }
+
+  /**
+   * Set the filtering mode.
+   * @param {boolean} enableFiltering
+   * @return {void}
+   */
+  public setFiltering(enableFiltering: boolean): void {
+    this.artoolkitNFT.setFiltering(enableFiltering);
   }
 
   /**
@@ -887,7 +963,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     // Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
-    if (this.videoLuma) {
+    if (this.videoLuma && !this.videoLumaInternal) {
       if (this.grayscaleEnabled == false) {
         let q = 0;
 
@@ -907,7 +983,11 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     }
 
     if (this.videoLuma) {
-      this.artoolkitNFT.passVideoData(data, this.videoLuma);
+      this.artoolkitNFT.passVideoData(
+        data,
+        this.videoLuma,
+        this.videoLumaInternal,
+      );
       return true;
     }
 

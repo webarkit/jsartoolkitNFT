@@ -69,7 +69,7 @@ function load(msg) {
     ar.addEventListener("getNFTMarker", function (ev) {
       tickCount += 1;
       if (tickCount > WARM_UP_TOLERANCE) {
-        var mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
+        const mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
         markerResult = {
           type: "found",
           matrixGL_RH: JSON.stringify(mat),
@@ -98,9 +98,15 @@ function load(msg) {
   console.debug("Loading camera at:", msg.camera_para);
 
   // we cannot pass the entire ARControllerNFT, so we re-create one inside the Worker, starting from camera_param
-  ARControllerNFT.customInit(msg.pw, msg.ph, msg.camera_para, function () {
-    console.log("Message from the callback.");
-  })
+  ARControllerNFT.customInit(
+    msg.pw,
+    msg.ph,
+    msg.camera_para,
+    true,
+    function () {
+      console.log("Message from the callback.");
+    },
+  )
     .then(onLoad)
     .catch(onError);
 }

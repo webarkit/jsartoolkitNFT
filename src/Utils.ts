@@ -36,8 +36,7 @@
 import axios, { AxiosResponse } from "axios";
 
 export default class Utils {
-  static async fetchRemoteData(url: string) {
-    
+  static async fetchRemoteData(url: string): Promise<Uint8Array> {
     try {
       const response: AxiosResponse<any> = await axios.get(url, {
         responseType: "arraybuffer",
@@ -48,13 +47,15 @@ export default class Utils {
     }
   }
 
-  static async fetchRemoteDataCallback(url: string, callback: any) {
+  static async fetchRemoteDataCallback(
+    url: string,
+    callback: any,
+  ): Promise<any> {
     try {
       const response: any = await axios
         .get(url, { responseType: "arraybuffer" })
         .then((response: any) => {
           const data = new Uint8Array(response.data);
-          console.log(data);
           callback(response);
         });
       return response;
@@ -63,11 +64,78 @@ export default class Utils {
     }
   }
 
-  static string2Uint8Data(string: string) {
+  static string2Uint8Data(string: string): Uint8Array {
     const data = new Uint8Array(string.length);
     for (let i = 0; i < data.length; i++) {
       data[i] = string.charCodeAt(i) & 0xff;
     }
     return data;
+  }
+
+  static Uint8ArrayToStr(array: any): string {
+    let out, i, len, c;
+    let char2, char3;
+
+    out = "";
+    len = array.length;
+    i = 0;
+    while (i < len) {
+      c = array[i++];
+      switch (c >> 4) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+          // 0xxxxxxx
+          out += String.fromCharCode(c);
+          break;
+        case 12:
+        case 13:
+          // 110x xxxx   10xx xxxx
+          char2 = array[i++];
+          out += String.fromCharCode(((c & 0x1f) << 6) | (char2 & 0x3f));
+          break;
+        case 14:
+          // 1110 xxxx  10xx xxxx  10xx xxxx
+          char2 = array[i++];
+          char3 = array[i++];
+          out += String.fromCharCode(
+            ((c & 0x0f) << 12) | ((char2 & 0x3f) << 6) | ((char3 & 0x3f) << 0),
+          );
+          break;
+      }
+    }
+
+    return out;
+  }
+
+  static checkZFT(url: string): boolean {
+    const request = new XMLHttpRequest();
+    request.open("GET", url, false); // `false` makes the request synchronous
+    request.send(null);
+
+    if (request.status === 200) {
+      return true;
+    } else if (request.status === 404) {
+      return false;
+    }
+    return false;
+  }
+  /**
+   * Stores data in the Emscripten filesystem.
+   * Note: FS is provided by emscripten and valid data must be in binary format encoded as Uint8Array
+   * @param {Uint8Array} data - The binary data to store.
+   * @param {string} target - The target file path in the Emscripten filesystem.
+   * @param {any} instance - The instance of the class containing the FS object.
+   * @return {void}
+   */
+  static _storeDataFile(data: Uint8Array, target: string, instance: any) {
+    instance.FS.writeFile(target, data, {
+      encoding: "binary",
+    });
   }
 }

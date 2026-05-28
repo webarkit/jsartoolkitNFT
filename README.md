@@ -3,7 +3,7 @@
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
 ![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
 ![Dependabot Badge](https://flat.badgen.net/github/dependabot/webarkit/jsartoolkit-nft)
-[![Tested with QUnit](https://img.shields.io/badge/tested_with-qunit-9c3493.svg)](https://qunitjs.com/)
+[![Tested with Jasmine](https://img.shields.io/badge/tested_with-Jasmine-8A4182.svg)](https://jasmine.github.io/)
 [![CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml)
 [![Build jsartoolkitNFT CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml)
 
@@ -20,7 +20,7 @@ Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://
 ## Features
 ### Markers Types
 
-**JSARToolKitNFT** support only this type of markers:
+**JSARToolKitNFT** support only this type of marker:
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 - Multi NFT markers !!!
@@ -28,6 +28,11 @@ Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://
 ## WASM
 
 has **WASM** embedded in a single file!
+
+## ZFT
+
+**JSARToolKitNFT** now supports loading NFT markers from `.zft` compressed files. This allows for faster loading times and reduced file sizes.
+
 
 ## ES6
 
@@ -41,8 +46,12 @@ has **WASM** embedded in a single file!
 
 From 1.6.0 version has **Pthread** experimental feature 🎉 🎉 🎉
 
-❕❕❕ ATTENTION: this feature is experimental and it is not well tested yet. It is not recommended to use it in production.
+❕❕❕ ATTENTION: this feature is experimental, and it is not well tested yet. It is not recommended to use it in production.
 You need to set up a server with COOP and COEP headers to use this feature. Read this [Emscripten article](https://emscripten.org/docs/porting/pthreads.html#pthreads-support)
+
+## InternalLuma with simd
+Enable internal luma calculation with simd instructions. This feature is experimental and it is not well tested yet. Set the internalLuma flag to true in the ARControllerNFT constructor, or in the `initWithDimensions / initWithImage` static methods.
+
 ## Using the library 💥
 You can use raw.githack.com links:
 
@@ -129,6 +138,37 @@ Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific p
 
 **JSARToolKitNFT** is used by [ARnft](https://github.com/webarkit/ARnft) a small library that helps developers to create **WebAR** apps.
 
+## Python bindings 🐍 (experimental)
+
+❕❕❕ ATTENTION: the Python bindings are experimental and the package is published only to **TestPyPI** for now. The API may change without notice and the bindings are not yet recommended for production use.
+
+**JSARToolKitNFT** also provides Python bindings via [pybind11](https://github.com/pybind/pybind11), wrapping the same WebARKitLib C/C++ core used by the JavaScript build. They expose a high-level `ARControllerNFT` class and a lower-level `artoolkitnft_core` extension module so that NFT marker detection can be driven from Python.
+
+Install from **TestPyPI**:
+
+```bash
+pip install -i https://test.pypi.org/simple/ artoolkitnft
+```
+
+### What works
+
+- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`)
+- KPM-based marker detection
+- AR2 tracking with pose matrix output
+- Projection near/far plane setters
+- Threshold and image-processing mode
+- Optional pre-computed grayscale input via `setGrayData`
+- Event listener for `getNFTMarker` / `lostNFTMarker`
+
+### Not yet implemented
+
+- Live camera capture example (the current example processes a single static image)
+- `getKpmImageWidth` / `getKpmImageHeight` (temporarily excluded from the build)
+
+The Python bindings are built and tested on **Linux**, **macOS** and **Windows** via the [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml) workflow.
+
+For full build-from-source instructions, local development tips and the TestPyPI publishing workflow, see [`python-bindings/README.md`](python-bindings/README.md).
+
 ## Project Structure 📂
 
 - `build/` (compiled debug and minified versions of JSARToolKitNFT)
@@ -136,6 +176,7 @@ Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific p
 - `emscripten/` (C/C++ source code for ARToolKitNFT)
 - `examples/` (demos and examples using JSARToolKitNFT)
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
+- `python-bindings/` (experimental Python bindings — see section above)
 - `src/` (source code of ARToolKitNFT with Typescript)
 - `tests/` (tests - WIP)
 - `tools/` (build scripts for building JSARToolKitNFT with Emscripten)

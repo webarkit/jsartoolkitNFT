@@ -143,7 +143,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
    */
   public async init() {
     const instance = await initARToolkitNFT();
-    this.instance = new instance.ARToolKitNFT();
+    this.instance = new instance.ARToolKitNFT(true);
 
     this.FS = instance.FS;
     this.StringList = instance.StringList;
@@ -229,6 +229,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getDebugMode();
   }
 
+  public setFiltering(enableFiltering: boolean): void {
+    this.instance.setFiltering(enableFiltering);
+  }
+
   public getProcessingImage(): number {
     return this.instance.getProcessingImage();
   }
@@ -299,8 +303,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
   public passVideoData(
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
+    lumaInternal: boolean,
   ): void {
-    this.instance.passVideoData(videoFrame, videoLuma);
+    this.instance.passVideoData(videoFrame, videoLuma, lumaInternal);
   }
 
   // ---------------------------------------------------------------------------
@@ -309,8 +314,8 @@ export class ARToolkitNFT implements IARToolkitNFT {
   /**
    * Load the camera, this is an important and required step, Internally fill
    * the ARParam struct.
-   * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
-   * @return {number} a number, the internal id.
+   * @param {Uint8Array|string} urlOrData: the camera parameter, usually a path to a .dat file
+   * @return {Promise<number>} a promise that resolves to a number, the internal id.
    */
   public async loadCamera(urlOrData: Uint8Array | string): Promise<number> {
     const target = "/camera_param_" + this.cameraCount++;
@@ -329,7 +334,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
       }
     }
 
-    this._storeDataFile(data, target);
+    Utils._storeDataFile(data, target, this);
 
     // return the internal marker ID
     return this.instance._loadCamera(target);
@@ -338,19 +343,19 @@ export class ARToolkitNFT implements IARToolkitNFT {
   /**
    * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
    * the url of the file without the extension. If fails to load it raise an error.
-   * @param {number} arId internal id
    * @param {Array<string>} urls  array of urls of the descriptors files without ext
    * @param {function} callback the callback to retrieve the ids.
    * @param {function} onError2 the error callback.
+   * @return {Array<number>} an array of ids.
    */
   public addNFTMarkers(
     urls: Array<string | Array<string>>,
     callback: (filename: number[]) => void,
     onError2: (errorNumber: number) => void,
   ): Array<number> {
-    var prefixes: any = [];
-    var pending = urls.length * 3;
-    var onSuccess = (filename: Uint8Array) => {
+    const prefixes: any = [];
+    let pending = urls.length * 3;
+    const onSuccess = (filename: Uint8Array) => {
       pending -= 1;
       if (pending === 0) {
         const vec = new this.StringList();
@@ -358,7 +363,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
         for (let i = 0; i < prefixes.length; i++) {
           vec.push_back(prefixes[i]);
         }
-        var ret = this.instance._addNFTMarkers(vec);
+        const ret = this.instance._addNFTMarkers(vec);
         for (let i = 0; i < ret.size(); i++) {
           markerIds.push(ret.get(i));
         }
@@ -367,15 +372,54 @@ export class ARToolkitNFT implements IARToolkitNFT {
         if (callback) callback(markerIds);
       }
     };
-    var onError = (filename: string, errorNumber?: number) => {
+    const onError = (filename: string, errorNumber?: number) => {
       console.log("failed to load: ", filename);
       onError2(errorNumber);
+    };
+
+    const loadZFT = (prefix: any) => {
+      const marker_num = prefix.substring(11);
+      const prefixTemp = "/tempMarkerNFT_" + marker_num;
+
+      const response = this.instance._decompressZFT(prefix, prefixTemp);
+
+      let contentIsetUint8 = this.FS.readFile(prefixTemp + ".iset");
+      let contentFsetUint8 = this.FS.readFile(prefixTemp + ".fset");
+      let contentFset3Uint8 = this.FS.readFile(prefixTemp + ".fset3");
+
+      this.FS.unlink(prefixTemp + ".iset");
+      this.FS.unlink(prefixTemp + ".fset");
+      this.FS.unlink(prefixTemp + ".fset3");
+
+      let hexStrIset = Utils.Uint8ArrayToStr(contentIsetUint8);
+      let hexStrFset = Utils.Uint8ArrayToStr(contentFsetUint8);
+      let hexStrFset3 = Utils.Uint8ArrayToStr(contentFset3Uint8);
+
+      let contentIset = new Uint8Array(
+        hexStrIset.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+      );
+      let contentFset = new Uint8Array(
+        hexStrFset.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+      );
+      let contentFset3 = new Uint8Array(
+        hexStrFset3.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
+      );
+
+      Utils._storeDataFile(contentFset, prefix + ".fset", this);
+      Utils._storeDataFile(contentIset, prefix + ".iset", this);
+      Utils._storeDataFile(contentFset3, prefix + ".fset3", this);
+      onSuccess(contentFset);
+    };
+
+    const onSuccessZFT = function () {
+      loadZFT(arguments[1]);
+      //onSuccess(contentFset);
     };
 
     let Ids: Array<number> = [];
 
     urls.forEach((element, index) => {
-      var prefix = "/markerNFT_" + this.markerNFTCount;
+      const prefix = "/markerNFT_" + this.markerNFTCount;
       prefixes.push(prefix);
 
       if (Array.isArray(element)) {
@@ -387,33 +431,50 @@ export class ARToolkitNFT implements IARToolkitNFT {
             filename,
             onSuccess.bind(filename),
             onError.bind(filename),
+            prefix,
           );
         });
 
         this.markerNFTCount += 1;
       } else {
-        var filename1 = prefix + ".fset";
-        var filename2 = prefix + ".iset";
-        var filename3 = prefix + ".fset3";
+        const filename1 = prefix + ".fset";
+        const filename2 = prefix + ".iset";
+        const filename3 = prefix + ".fset3";
+        const filename4 = prefix + ".zft";
 
-        this.ajax(
-          element + ".fset",
-          filename1,
-          onSuccess.bind(filename1),
-          onError.bind(filename1),
-        );
-        this.ajax(
-          element + ".iset",
-          filename2,
-          onSuccess.bind(filename2),
-          onError.bind(filename2),
-        );
-        this.ajax(
-          element + ".fset3",
-          filename3,
-          onSuccess.bind(filename3),
-          onError.bind(filename3),
-        );
+        let type = Utils.checkZFT(element + ".zft");
+        if (type) {
+          pending -= 2;
+          this.ajax(
+            element + ".zft",
+            filename4,
+            onSuccessZFT.bind(filename4),
+            onError.bind(filename4),
+            prefix,
+          );
+        } else {
+          this.ajax(
+            element + ".fset",
+            filename1,
+            onSuccess.bind(filename1),
+            onError.bind(filename1),
+            prefix,
+          );
+          this.ajax(
+            element + ".iset",
+            filename2,
+            onSuccess.bind(filename2),
+            onError.bind(filename2),
+            prefix,
+          );
+          this.ajax(
+            element + ".fset3",
+            filename3,
+            onSuccess.bind(filename3),
+            onError.bind(filename3),
+            prefix,
+          );
+        }
 
         this.markerNFTCount += 1;
       }
@@ -427,48 +488,40 @@ export class ARToolkitNFT implements IARToolkitNFT {
   // ---------------------------------------------------------------------------
 
   // implementation
-  /**
-   * Used internally by LoadCamera method
-   * @return {void}
-   */
-  private _storeDataFile(data: Uint8Array, target: string) {
-    // FS is provided by emscripten
-    // Note: valid data must be in binary format encoded as Uint8Array
-    this.FS.writeFile(target, data, {
-      encoding: "binary",
-    });
-  }
 
   /**
    * Used internally by the addNFTMarkers method
-   * @param url url of the marker.
-   * @param target the target of the marker.
-   * @param callback callback  to get the binary data.
-   * @param errorCallback the error callback.
+   * @param {string} url url of the marker.
+   * @param {string} target the target of the marker.
+   * @param {function} callback callback to get the binary data.
+   * @param {function} errorCallback the error callback.
+   * @param {string} prefix the prefix for the marker.
    */
   private ajax(
     url: string,
     target: string,
     callback: (byteArray: Uint8Array) => void,
     errorCallback: (url: string, message: number) => void,
+    prefix: string,
   ) {
-    var oReq = new XMLHttpRequest();
+    const oReq = new XMLHttpRequest();
     oReq.open("GET", url, true);
     oReq.responseType = "arraybuffer"; // blob arraybuffer
     const writeByteArrayToFS = (
       target: string,
       byteArray: Uint8Array,
-      callback: (byteArray: Uint8Array) => void,
+      callback: (byteArray: Uint8Array, prefix: string) => void,
+      prefix: string,
     ) => {
-      this.FS.writeFile(target, byteArray, { encoding: "binary" });
-      callback(byteArray);
+      Utils._storeDataFile(byteArray, target, this);
+      callback(byteArray, prefix);
     };
 
     oReq.onload = function () {
       if (this.status == 200) {
-        var arrayBuffer = oReq.response;
-        var byteArray = new Uint8Array(arrayBuffer);
-        writeByteArrayToFS(target, byteArray, callback);
+        const arrayBuffer = oReq.response;
+        const byteArray = new Uint8Array(arrayBuffer);
+        writeByteArrayToFS(target, byteArray, callback, prefix);
       } else {
         errorCallback(url, this.status);
       }
