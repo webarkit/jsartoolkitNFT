@@ -195,11 +195,10 @@ export default function start(
     if (!msg) {
       world = null;
     } else {
-        world =
-          typeof msg.matrixGL_RH === "string"
-            ? JSON.parse(msg.matrixGL_RH)
-            : msg.matrixGL_RH;
-      index = JSON.parse(msg.index);
+      world =
+        typeof msg.matrixGL_RH === "string"
+          ? JSON.parse(msg.matrixGL_RH)
+          : msg.matrixGL_RH;
     }
   };
 
