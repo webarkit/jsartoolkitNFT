@@ -1,6 +1,6 @@
 import ARToolkitNFT from "../build/artoolkitNFT_embed_ES6_wasm.js";
 // Import OneEuroFilter class into the worker.
-import { OneEuroFilter } from "./one-euro-filter-ES6.js";
+import { OneEuroFilter } from "./OneEuroFilter.mjs";
 
 self.onmessage = function (e) {
   const msg = e.data;
@@ -29,7 +29,7 @@ let tickCount = 0;
 const oef = true;
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
-const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
+const filter = new OneEuroFilter(filterMinCF, filterBeta);
 
 function oefFilter(matrixGL_RH) {
   tickCount += 1;
@@ -61,7 +61,7 @@ async function load(msg) {
       }
       markerResult = {
         type: "found",
-        matrixGL_RH: JSON.stringify(mat),
+        matrixGL_RH: mat,
       };
     });
 
