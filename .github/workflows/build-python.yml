@@ -129,8 +129,11 @@ jobs:
         key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
 
     - name: Install vcpkg
+      shell: pwsh
       run: |
-        git clone https://github.com/microsoft/vcpkg.git
+        if (-not (Test-Path vcpkg)) {
+          git clone https://github.com/microsoft/vcpkg.git
+        }
         .\vcpkg\bootstrap-vcpkg.bat
 
     - name: Install libjpeg-turbo
