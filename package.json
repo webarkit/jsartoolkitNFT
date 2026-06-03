@@ -113,7 +113,7 @@
   "license": "LGPL-3.0",
   "dependencies": {
     "@babel/runtime": "7.29.7",
-    "axios": "1.16.1",
+    "axios": "1.17.0",
     "canvas": "^3.1.0",
     "sharp": "0.33.5"
   }
