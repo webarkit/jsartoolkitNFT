@@ -89,8 +89,8 @@
     "dev-ts": "webpack --mode development --progress --watch",
     "docs": "typedoc",
     "build-ts": "webpack --mode production",
-    "build": "node tools/makem.js; echo Built at `date`",
-    "build-no-libar": "node tools/makem.js --no-libar; echo Built at `date`",
+    "build": "node tools/makem.js && node -e \"console.log('Built at', new Date())\"",
+    "build-no-libar": "node tools/makem.js --no-libar && node -e \"console.log('Built at', new Date())\"",
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
     "test": "npm run test:all",
@@ -108,7 +108,7 @@
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
     "format": "prettier --write .",
-    "setup-docker": "docker run -dit --name emscripten-jsartoolkitnft -v $(pwd):/src emscripten/emsdk:4.0.17 bash"
+    "setup-docker": "node tools/docker-setup.js"
   },
   "license": "LGPL-3.0",
   "dependencies": {
