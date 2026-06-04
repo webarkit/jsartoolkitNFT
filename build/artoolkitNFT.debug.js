@@ -1699,11 +1699,11 @@ function asmFunc(imports) {
  }
  
  function arMatrixAlloc($0, $1) {
-  return $1187($0, $1, 3);
+  return $1192($0, $1, 3);
  }
  
  function arMatrixAllocf($0, $1) {
-  return $1187($0, $1, 2);
+  return $1192($0, $1, 2);
  }
  
  function arMatrixAllocMul($0, $1) {
@@ -4532,7 +4532,7 @@ function asmFunc(imports) {
  }
  
  function std____2____split_buffer_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint________split_buffer_28_29($0) {
-  $1188($0, 20);
+  $1193($0, 20);
  }
  
  function std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______throw_length_error_5babi_ne200100_5d_28_29() {
@@ -4575,7 +4575,7 @@ function asmFunc(imports) {
  }
  
  function std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_______swap_out_circular_buffer_28std____2____split_buffer_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float______29($0, $1) {
-  $1196($0, $1, 12, -12);
+  $1201($0, $1, 12, -12);
  }
  
  function std____2__allocator_vision__Point3d_float____allocate_5babi_ne200100_5d_28unsigned_20long_29($0) {
@@ -4636,7 +4636,7 @@ function asmFunc(imports) {
  }
  
  function std____2____split_buffer_unsigned_20char_2c_20std____2__allocator_unsigned_20char________split_buffer_28_29($0) {
-  $1188($0, 1);
+  $1193($0, 1);
  }
  
  function vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($0, $1, $2) {
@@ -5253,11 +5253,11 @@ function asmFunc(imports) {
  }
  
  function std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint______swap_out_circular_buffer_28std____2____split_buffer_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint_____29($0, $1) {
-  $1196($0, $1, 36, -36);
+  $1201($0, $1, 36, -36);
  }
  
  function std____2____split_buffer_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint________split_buffer_28_29($0) {
-  $1188($0, 36);
+  $1193($0, 36);
  }
  
  function std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint______throw_length_error_5babi_ne200100_5d_28_29() {
@@ -5386,7 +5386,7 @@ function asmFunc(imports) {
  }
  
  function std____2____split_buffer_float_2c_20std____2__allocator_float________split_buffer_28_29($0) {
-  $1188($0, 4);
+  $1193($0, 4);
  }
  
  function std____2__allocator_float___allocate_5babi_ne200100_5d_28unsigned_20long_29($0) {
@@ -5470,7 +5470,7 @@ function asmFunc(imports) {
  }
  
  function std____2____split_buffer_std____2__pair_float_2c_20unsigned_20long__2c_20std____2__allocator_std____2__pair_float_2c_20unsigned_20long_________split_buffer_28_29($0) {
-  $1188($0, 8);
+  $1193($0, 8);
  }
  
  function std____2__allocator_std____2__pair_float_2c_20unsigned_20long____allocate_5babi_ne200100_5d_28unsigned_20long_29($0) {
@@ -6022,12 +6022,24 @@ function asmFunc(imports) {
  }
  
  function std____2__unique_ptr_vision__VisualDatabaseImpl_2c_20std____2__default_delete_vision__VisualDatabaseImpl____reset_5babi_ne200100_5d_28vision__VisualDatabaseImpl__29($0, $1) {
-  var $2 = 0;
+  var $2 = 0, $3 = 0;
   $2 = HEAP32[$0 >> 2];
   HEAP32[$0 >> 2] = $1;
   if ($2) {
    if ($2) {
-    std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float___________hash_table_28_29($2 + 4 | 0);
+    $3 = $2 + 4 | 0;
+    $0 = HEAP32[$3 + 8 >> 2];
+    while (1) {
+     if ($0) {
+      $1 = HEAP32[$0 >> 2];
+      std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 12 | 0);
+      emscripten_builtin_free($0);
+      $0 = $1;
+      continue;
+     }
+     break;
+    };
+    std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($3);
     std____2__unique_ptr_vision__VisualDatabase_vision__FREAKExtractor_2c_20vision__BinaryFeatureStore_2c_20vision__BinaryFeatureMatcher_96___2c_20std____2__default_delete_vision__VisualDatabase_vision__FREAKExtractor_2c_20vision__BinaryFeatureStore_2c_20vision__BinaryFeatureMatcher_96______reset_5babi_ne200100_5d_28vision__VisualDatabase_vision__FREAKExtractor_2c_20vision__BinaryFeatureStore_2c_20vision__BinaryFeatureMatcher_96____29($2, 0);
    }
    emscripten_builtin_free($2);
@@ -6035,21 +6047,21 @@ function asmFunc(imports) {
  }
  
  function std____2__unique_ptr_vision__VisualDatabase_vision__FREAKExtractor_2c_20vision__BinaryFeatureStore_2c_20vision__BinaryFeatureMatcher_96___2c_20std____2__default_delete_vision__VisualDatabase_vision__FREAKExtractor_2c_20vision__BinaryFeatureStore_2c_20vision__BinaryFeatureMatcher_96______reset_5babi_ne200100_5d_28vision__VisualDatabase_vision__FREAKExtractor_2c_20vision__BinaryFeatureStore_2c_20vision__BinaryFeatureMatcher_96____29($0, $1) {
-  var $2 = 0, $3 = 0;
+  var $2 = 0;
   $2 = HEAP32[$0 >> 2];
   HEAP32[$0 >> 2] = $1;
   if ($2) {
    if ($2) {
-    $0 = $2 + 788 | 0;
+    $0 = $2 + 772 | 0;
     std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 24 | 0);
     std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 12 | 0);
     std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0);
-    $0 = $2 + 652 | 0;
-    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 124 | 0);
-    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 112 | 0);
-    std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int________hash_table_28_29($0 + 92 | 0);
-    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($2 + 636 | 0);
-    $0 = $2 + 160 | 0;
+    $0 = $2 + 644 | 0;
+    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 116 | 0);
+    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 104 | 0);
+    std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____destroy_28std____2____tree_node_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20void____29($0 + 92 | 0, HEAP32[$0 + 96 >> 2]);
+    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($2 + 628 | 0);
+    $0 = $2 + 152 | 0;
     std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 144 | 0);
     $1 = $0 + 92 | 0;
     std____2__vector_vision__Image_2c_20std____2__allocator_vision__Image_____vector_5babi_ne200100_5d_28_29($1 + 40 | 0);
@@ -6066,85 +6078,13 @@ function asmFunc(imports) {
      emscripten_builtin_free(HEAP32[HEAP32[$1 + 12 >> 2] >> 2]);
     }
     __stack_pointer = $1 + 16 | 0;
-    vision__BinomialPyramid32f___BinomialPyramid32f_28_29($2 + 92 | 0);
-    $3 = $2 + 72 | 0;
-    $0 = HEAP32[$3 + 8 >> 2];
-    while (1) {
-     if ($0) {
-      $1 = HEAP32[$0 >> 2];
-      std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($0 + 12 | 0);
-      emscripten_builtin_free($0);
-      $0 = $1;
-      continue;
-     }
-     break;
-    };
-    std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($3);
+    vision__BinomialPyramid32f___BinomialPyramid32f_28_29($2 + 84 | 0);
+    std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void____29($2 + 72 | 0, HEAP32[$2 + 76 >> 2]);
     std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($2 - -64 | 0);
     std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($2 + 12 | 0);
    }
    emscripten_builtin_free($2);
   }
- }
- 
- function std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29($0, $1) {
-  var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0;
-  block : {
-   $2 = HEAP32[$0 + 4 >> 2];
-   if (!$2) {
-    break block
-   }
-   $0 = HEAP32[$0 >> 2];
-   $3 = HEAP32[$1 >> 2];
-   $1 = $3 & $2 - 1;
-   $4 = __wasm_popcnt_i32($2);
-   block1 : {
-    if ($4 >>> 0 <= 1) {
-     break block1
-    }
-    $1 = $3;
-    if ($1 >>> 0 < $2 >>> 0) {
-     break block1
-    }
-    $1 = ($1 >>> 0) % ($2 >>> 0) | 0;
-   }
-   $0 = HEAP32[($1 << 2) + $0 >> 2];
-   if (!$0) {
-    break block
-   }
-   $5 = $1;
-   $6 = $2 - 1 | 0;
-   $4 = $4 >>> 0 > 1;
-   while (1) {
-    $0 = HEAP32[$0 >> 2];
-    if (!$0) {
-     break block
-    }
-    $1 = HEAP32[$0 + 4 >> 2];
-    if (($3 | 0) != ($1 | 0)) {
-     block2 : {
-      if (!$4) {
-       $1 = $1 & $6;
-       break block2;
-      }
-      if ($1 >>> 0 < $2 >>> 0) {
-       break block2
-      }
-      $1 = ($1 >>> 0) % ($2 >>> 0) | 0;
-     }
-     if (($1 | 0) != ($5 | 0)) {
-      break block
-     }
-     continue;
-    }
-    if (HEAP32[$0 + 8 >> 2] != ($3 | 0)) {
-     continue
-    }
-    break;
-   };
-   return $0;
-  }
-  return 0;
  }
  
  function vision__Keyframe_96___Keyframe_28_29($0) {
@@ -6361,7 +6301,7 @@ function asmFunc(imports) {
     } else {
      $4 = 0
     }
-    void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________rehash_true__28unsigned_20long_29($0, $3 >>> 0 > $4 >>> 0 ? $3 : $4);
+    void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float__________rehash_true__28unsigned_20long_29($0, $3 >>> 0 > $4 >>> 0 ? $3 : $4);
     $3 = HEAP32[$0 + 4 >> 2];
     $4 = $3 - 1 | 0;
     if (!($3 & $4)) {
@@ -6495,12 +6435,12 @@ function asmFunc(imports) {
   return $2 + 24 | 0;
  }
  
- function std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0) {
-  var $1 = 0;
-  $1 = HEAP32[$0 >> 2];
-  HEAP32[$0 >> 2] = 0;
+ function std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void____29($0, $1) {
   if ($1) {
-   emscripten_builtin_free($1)
+   std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void____29($0, HEAP32[$1 >> 2]);
+   std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void____29($0, HEAP32[$1 + 4 >> 2]);
+   std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($1 + 20 | 0);
+   emscripten_builtin_free($1);
   }
  }
  
@@ -6623,20 +6563,13 @@ function asmFunc(imports) {
   wasm2js_trap();
  }
  
- function std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float___________hash_table_28_29($0) {
-  var $1 = 0, $2 = 0;
-  $1 = HEAP32[$0 + 8 >> 2];
-  while (1) {
-   if ($1) {
-    $2 = HEAP32[$1 >> 2];
-    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($1 + 12 | 0);
-    emscripten_builtin_free($1);
-    $1 = $2;
-    continue;
-   }
-   break;
-  };
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0);
+ function std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0) {
+  var $1 = 0;
+  $1 = HEAP32[$0 >> 2];
+  HEAP32[$0 >> 2] = 0;
+  if ($1) {
+   emscripten_builtin_free($1)
+  }
  }
  
  function vision__Logger__getInstance_28_29() {
@@ -6678,122 +6611,145 @@ function asmFunc(imports) {
   }
  }
  
- function void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________rehash_true__28unsigned_20long_29($0, $1) {
-  var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = Math_fround(0), $7 = 0, $8 = 0, $9 = 0;
-  block1 : {
-   $2 = 2;
-   block : {
-    if (($1 | 0) == 1) {
+ function std____2____tree_node_base_void_____20std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________find_equal_int__28std____2____tree_end_node_std____2____tree_node_base_void_______2c_20int_20const__29($0, $1, $2) {
+  var $3 = 0, $4 = 0;
+  $4 = $0 + 4 | 0;
+  $3 = HEAP32[$0 + 4 >> 2];
+  block : {
+   if (!$3) {
+    $0 = $4;
+    break block;
+   }
+   $2 = HEAP32[$2 >> 2];
+   while (1) {
+    $0 = $3;
+    $3 = HEAP32[$0 + 16 >> 2];
+    if (($3 | 0) > ($2 | 0)) {
+     $4 = $0;
+     $3 = HEAP32[$0 >> 2];
+     if ($3) {
+      continue
+     }
+     break block;
+    }
+    if (($2 | 0) <= ($3 | 0)) {
      break block
     }
-    $2 = $1;
-    if (!($1 - 1 & $1)) {
-     break block
+    $4 = $0 + 4 | 0;
+    $3 = HEAP32[$0 + 4 >> 2];
+    if ($3) {
+     continue
     }
-    $2 = std____2____next_prime_28unsigned_20long_29($1);
-   }
-   $1 = $2;
-   $3 = HEAP32[$0 + 4 >> 2];
-   if ($1 >>> 0 <= $3 >>> 0) {
-    if ($1 >>> 0 >= $3 >>> 0) {
-     break block1
-    }
-    $6 = Math_fround(Math_ceil(Math_fround(Math_fround(HEAPU32[$0 + 12 >> 2]) / HEAPF32[$0 + 16 >> 2])));
-    if ($6 < Math_fround(4294967296.0) & $6 >= Math_fround(0.0)) {
-     $2 = ~~$6 >>> 0
-    } else {
-     $2 = 0
-    }
-    if ($3 >>> 0 < 3 | __wasm_popcnt_i32($3) >>> 0 > 1) {
-     $2 = std____2____next_prime_28unsigned_20long_29($2)
-    } else {
-     $2 = $2 >>> 0 < 2 ? $2 : 1 << 32 - Math_clz32($2 - 1 | 0)
-    }
-    $1 = $1 >>> 0 > $2 >>> 0 ? $1 : $2;
-    if ($3 >>> 0 <= $1 >>> 0) {
-     break block1
-    }
-   }
-   block2 : {
-    if ($1) {
-     $3 = $1;
-     void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______29($0, std____2__allocator_float___allocate_5babi_ne200100_5d_28unsigned_20long_29($1));
-     HEAP32[$0 + 4 >> 2] = $1;
-     $7 = HEAP32[$0 >> 2];
-     while (1) if (($4 | 0) == ($3 | 0)) {
-      $1 = HEAP32[$0 + 8 >> 2];
-      if (!$1) {
-       break block2
-      }
-      $4 = $0 + 8 | 0;
-      $2 = HEAP32[$1 + 4 >> 2];
-      $0 = __wasm_popcnt_i32($3);
-      block3 : {
-       if ($0 >>> 0 <= 1) {
-        $2 = $3 - 1 & $2;
-        break block3;
-       }
-       if ($2 >>> 0 < $3 >>> 0) {
-        break block3
-       }
-       $2 = ($2 >>> 0) % ($3 >>> 0) | 0;
-      }
-      HEAP32[($2 << 2) + $7 >> 2] = $4;
-      $8 = $3 - 1 | 0;
-      $9 = $0 >>> 0 > 1;
-      while (1) {
-       $0 = HEAP32[$1 >> 2];
-       if (!$0) {
-        break block2
-       }
-       $4 = HEAP32[$0 + 4 >> 2];
-       block4 : {
-        if (!$9) {
-         $4 = $4 & $8;
-         break block4;
-        }
-        if ($4 >>> 0 < $3 >>> 0) {
-         break block4
-        }
-        $4 = ($4 >>> 0) % ($3 >>> 0) | 0;
-       }
-       block5 : {
-        if (($2 | 0) == ($4 | 0)) {
-         break block5
-        }
-        $5 = ($4 << 2) + $7 | 0;
-        if (!HEAP32[$5 >> 2]) {
-         HEAP32[$5 >> 2] = $1;
-         $2 = $4;
-         break block5;
-        }
-        HEAP32[$1 >> 2] = HEAP32[$0 >> 2];
-        HEAP32[$0 >> 2] = HEAP32[HEAP32[$5 >> 2] >> 2];
-        HEAP32[HEAP32[$5 >> 2] >> 2] = $0;
-        continue;
-       }
-       $1 = $0;
-       continue;
-      };
-     } else {
-      HEAP32[($4 << 2) + $7 >> 2] = 0;
-      $4 = $4 + 1 | 0;
-      continue;
-     };
-    }
-    void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______29($0, 0);
-    HEAP32[$0 + 4 >> 2] = 0;
-   }
+    break;
+   };
   }
+  HEAP32[$1 >> 2] = $0;
+  return $4;
  }
  
- function void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______29($0, $1) {
-  var $2 = 0;
-  $2 = HEAP32[$0 >> 2];
-  HEAP32[$0 >> 2] = $1;
-  if ($2) {
-   emscripten_builtin_free($2)
+ function std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________insert_node_at_28std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____2c_20std____2____tree_node_base_void____29($0, $1, $2, $3) {
+  var $4 = 0, $5 = 0;
+  HEAP32[$3 + 8 >> 2] = $1;
+  HEAP32[$3 >> 2] = 0;
+  HEAP32[$3 + 4 >> 2] = 0;
+  HEAP32[$2 >> 2] = $3;
+  $1 = HEAP32[HEAP32[$0 >> 2] >> 2];
+  if ($1) {
+   HEAP32[$0 >> 2] = $1
   }
+  $5 = HEAP32[$0 + 4 >> 2];
+  HEAP8[$3 + 12 | 0] = ($5 | 0) == ($3 | 0);
+  block : {
+   while (1) {
+    if (($3 | 0) == ($5 | 0)) {
+     break block
+    }
+    $2 = HEAP32[$3 + 8 >> 2];
+    if (HEAPU8[$2 + 12 | 0]) {
+     break block
+    }
+    $1 = HEAP32[$2 + 8 >> 2];
+    $4 = HEAP32[$1 >> 2];
+    if (($4 | 0) == ($2 | 0)) {
+     $4 = HEAP32[$1 + 4 >> 2];
+     if (!(!$4 | HEAPU8[$4 + 12 | 0])) {
+      HEAP8[$2 + 12 | 0] = 1;
+      HEAP8[$1 + 12 | 0] = ($1 | 0) == ($5 | 0);
+      HEAP8[$4 + 12 | 0] = 1;
+      $3 = $1;
+      continue;
+     }
+     if (HEAP32[$2 >> 2] != ($3 | 0)) {
+      void_20std____2____tree_left_rotate_5babi_ne200100_5d_std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($2);
+      $2 = HEAP32[$2 + 8 >> 2];
+      $1 = HEAP32[$2 + 8 >> 2];
+     }
+     HEAP8[$2 + 12 | 0] = 1;
+     HEAP8[$1 + 12 | 0] = 0;
+     void_20std____2____tree_right_rotate_5babi_ne200100_5d_std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($1);
+     break block;
+    }
+    if (!(HEAPU8[$4 + 12 | 0] | !$4)) {
+     HEAP8[$2 + 12 | 0] = 1;
+     HEAP8[$1 + 12 | 0] = ($1 | 0) == ($5 | 0);
+     HEAP8[$4 + 12 | 0] = 1;
+     $3 = $1;
+     continue;
+    }
+    break;
+   };
+   if (HEAP32[$2 >> 2] == ($3 | 0)) {
+    void_20std____2____tree_right_rotate_5babi_ne200100_5d_std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($2);
+    $2 = HEAP32[$2 + 8 >> 2];
+    $1 = HEAP32[$2 + 8 >> 2];
+   }
+   HEAP8[$2 + 12 | 0] = 1;
+   HEAP8[$1 + 12 | 0] = 0;
+   void_20std____2____tree_left_rotate_5babi_ne200100_5d_std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($1);
+  }
+  HEAP32[$0 + 8 >> 2] = HEAP32[$0 + 8 >> 2] + 1;
+ }
+ 
+ function void_20std____2____tree_left_rotate_5babi_ne200100_5d_std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($0) {
+  var $1 = 0, $2 = 0;
+  $2 = HEAP32[$0 + 4 >> 2];
+  $1 = HEAP32[$2 >> 2];
+  HEAP32[$0 + 4 >> 2] = $1;
+  if ($1) {
+   HEAP32[$1 + 8 >> 2] = $0
+  }
+  $1 = HEAP32[$0 + 8 >> 2];
+  HEAP32[$2 + 8 >> 2] = $1;
+  block : {
+   if (HEAP32[$1 >> 2] == ($0 | 0)) {
+    HEAP32[$1 >> 2] = $2;
+    break block;
+   }
+   HEAP32[$1 + 4 >> 2] = $2;
+  }
+  HEAP32[$2 >> 2] = $0;
+  HEAP32[$0 + 8 >> 2] = $2;
+ }
+ 
+ function void_20std____2____tree_right_rotate_5babi_ne200100_5d_std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($0) {
+  var $1 = 0, $2 = 0;
+  $2 = HEAP32[$0 >> 2];
+  $1 = HEAP32[$2 + 4 >> 2];
+  HEAP32[$0 >> 2] = $1;
+  if ($1) {
+   HEAP32[$1 + 8 >> 2] = $0
+  }
+  $1 = HEAP32[$0 + 8 >> 2];
+  HEAP32[$2 + 8 >> 2] = $1;
+  block : {
+   if (HEAP32[$1 >> 2] == ($0 | 0)) {
+    HEAP32[$1 >> 2] = $2;
+    break block;
+   }
+   HEAP32[$1 + 4 >> 2] = $2;
+  }
+  HEAP32[$2 + 4 >> 2] = $0;
+  HEAP32[$0 + 8 >> 2] = $2;
  }
  
  function std____2__vector_int_2c_20std____2__allocator_int____resize_28unsigned_20long_29($0, $1) {
@@ -6914,19 +6870,19 @@ function asmFunc(imports) {
  }
  
  function vision__BinaryHierarchicalClustering_96___build_28vision__Node_96___2c_20unsigned_20char_20const__2c_20int_2c_20int_20const__2c_20int_29($0, $1, $2, $3, $4, $5) {
-  var $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = 0, $22 = 0, $23 = 0;
-  $8 = __stack_pointer - 32 | 0;
-  __stack_pointer = $8;
+  var $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = 0, $22 = 0, $23 = 0, $24 = 0;
+  $10 = __stack_pointer - 16 | 0;
+  __stack_pointer = $10;
   block4 : {
-   block18 : {
+   block20 : {
     block15 : {
      block14 : {
       block13 : {
        block10 : {
         $6 = HEAP32[$0 + 16 >> 2];
-        $10 = HEAP32[$0 + 108 >> 2];
+        $8 = HEAP32[$0 + 108 >> 2];
         block : {
-         if (((($6 | 0) > ($10 | 0) ? $6 : $10) | 0) >= ($5 | 0)) {
+         if (((($6 | 0) > ($8 | 0) ? $6 : $8) | 0) >= ($5 | 0)) {
           HEAP8[$1 + 100 | 0] = 1;
           std____2__vector_int_2c_20std____2__allocator_int____resize_28unsigned_20long_29($1 + 116 | 0, $5);
           $2 = 0;
@@ -6941,12 +6897,11 @@ function asmFunc(imports) {
            continue;
           };
          }
-         HEAP32[$8 + 16 >> 2] = 0;
-         HEAP32[$8 + 20 >> 2] = 0;
-         HEAP32[$8 + 8 >> 2] = 0;
-         HEAP32[$8 + 12 >> 2] = 0;
-         HEAP32[$8 + 24 >> 2] = 1065353216;
-         $10 = $2;
+         HEAP32[$10 + 8 >> 2] = 0;
+         HEAP32[$10 + 12 >> 2] = 0;
+         $16 = $10 + 8 | 0;
+         HEAP32[$10 + 4 >> 2] = $16;
+         $14 = $2;
          $11 = __stack_pointer - 16 | 0;
          __stack_pointer = $11;
          $7 = $0 + 12 | 0;
@@ -6967,8 +6922,8 @@ function asmFunc(imports) {
               }
               $2 = -1;
               HEAP32[$11 + 12 >> 2] = -1;
-              $15 = $7 + 24 | 0;
-              std____2__vector_int_2c_20std____2__allocator_int____resize_28unsigned_20long_2c_20int_20const__29($15, $5, $11 + 12 | 0);
+              $17 = $7 + 24 | 0;
+              std____2__vector_int_2c_20std____2__allocator_int____resize_28unsigned_20long_2c_20int_20const__29($17, $5, $11 + 12 | 0);
               HEAP32[$11 + 8 >> 2] = -1;
               $12 = $7 + 36 | 0;
               std____2__vector_int_2c_20std____2__allocator_int____resize_28unsigned_20long_2c_20int_20const__29($12, $5, $11 + 8 | 0);
@@ -6976,7 +6931,7 @@ function asmFunc(imports) {
               $6 = HEAP32[$7 + 48 >> 2];
               void_20vision__SequentialVector_int__28int__2c_20int_2c_20int_29($6, HEAP32[$7 + 52 >> 2] - $6 >> 2);
               while (1) {
-               if (HEAP32[$7 + 8 >> 2] <= ($16 | 0)) {
+               if (HEAP32[$7 + 8 >> 2] <= ($18 | 0)) {
                 if (HEAP32[$7 + 4 >> 2] != HEAP32[$7 + 16 >> 2] - HEAP32[$7 + 12 >> 2] >> 2) {
                  std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15909), 15978), 9969), 187), 10441), 16180));
                  break block4;
@@ -6984,10 +6939,10 @@ function asmFunc(imports) {
                } else {
                 $6 = HEAP32[$7 + 48 >> 2];
                 void_20vision__ArrayShuffle_int__28int__2c_20int_2c_20int_2c_20int__29($6, HEAP32[$7 + 52 >> 2] - $6 >> 2, HEAP32[$7 + 4 >> 2], HEAP32[$7 >> 2]);
-                $21 = HEAP32[$7 + 48 >> 2];
-                $17 = HEAP32[$7 + 4 >> 2];
+                $22 = HEAP32[$7 + 48 >> 2];
+                $19 = HEAP32[$7 + 4 >> 2];
                 $13 = 0;
-                $9 = 0;
+                $6 = 0;
                 block8 : {
                  block7 : {
                   block6 : {
@@ -6999,30 +6954,30 @@ function asmFunc(imports) {
                      if (($3 | 0) < ($5 | 0)) {
                       break block6
                      }
-                     if (($17 | 0) <= 0) {
+                     if (($19 | 0) <= 0) {
                       break block7
                      }
-                     $22 = ($5 | 0) > 0 ? $5 : 0;
+                     $23 = ($5 | 0) > 0 ? $5 : 0;
                      label1 : while (1) {
-                      if (($13 | 0) == ($22 | 0)) {
+                      if (($13 | 0) == ($23 | 0)) {
                        break block8
                       }
-                      $18 = $13 << 2;
-                      $23 = $18 + $4 | 0;
-                      $14 = 0;
-                      $6 = -1;
-                      while (1) if (($14 | 0) == ($17 | 0)) {
+                      $20 = $13 << 2;
+                      $24 = $20 + $4 | 0;
+                      $15 = 0;
+                      $8 = -1;
+                      while (1) if (($15 | 0) == ($19 | 0)) {
                        $13 = $13 + 1 | 0;
-                       $9 = $6 + $9 | 0;
+                       $6 = $6 + $8 | 0;
                        continue label1;
                       } else {
-                       $19 = ($14 << 2) + $21 | 0;
-                       $20 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29($10 + Math_imul(HEAP32[$23 >> 2], 96) | 0, $10 + Math_imul(HEAP32[(HEAP32[$19 >> 2] << 2) + $4 >> 2], 96) | 0);
-                       if ($20 >>> 0 < $6 >>> 0) {
-                        HEAP32[HEAP32[$12 >> 2] + $18 >> 2] = HEAP32[$19 >> 2];
-                        $6 = $20;
+                       $21 = ($15 << 2) + $22 | 0;
+                       $9 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29(Math_imul(HEAP32[$24 >> 2], 96) + $14 | 0, Math_imul(HEAP32[(HEAP32[$21 >> 2] << 2) + $4 >> 2], 96) + $14 | 0);
+                       if ($9 >>> 0 < $8 >>> 0) {
+                        HEAP32[HEAP32[$12 >> 2] + $20 >> 2] = HEAP32[$21 >> 2];
+                        $8 = $9;
                        }
-                       $14 = $14 + 1 | 0;
+                       $15 = $15 + 1 | 0;
                        continue;
                       };
                      };
@@ -7043,16 +6998,15 @@ function asmFunc(imports) {
                  abort();
                  wasm2js_trap();
                 }
-                $6 = $9;
-                if ($6 >>> 0 < $2 >>> 0) {
-                 std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____swap_28std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____29($15, $12);
+                if ($2 >>> 0 > $6 >>> 0) {
+                 std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____swap_28std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____29($17, $12);
                  $2 = HEAP32[$7 + 4 >> 2] << 2;
                  if ($2) {
                   wasm2js_memory_copy(HEAP32[$7 + 12 >> 2], HEAP32[$7 + 48 >> 2], $2)
                  }
                  $2 = $6;
                 }
-                $16 = $16 + 1 | 0;
+                $18 = $18 + 1 | 0;
                 continue;
                }
                break;
@@ -7072,17 +7026,17 @@ function asmFunc(imports) {
           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 17398), 15978), 9969), 157), 10441), 17825));
           break block4;
          }
-         $6 = HEAP32[$0 + 40 >> 2];
-         $9 = HEAP32[$0 + 36 >> 2];
-         if ($6 - $9 >> 2 != ($5 | 0)) {
+         $8 = HEAP32[$0 + 40 >> 2];
+         $6 = HEAP32[$0 + 36 >> 2];
+         if ($8 - $6 >> 2 != ($5 | 0)) {
           break block10
          }
          $2 = 0;
          block12 : {
           while (1) {
            block11 : {
-            if ($6 - $9 >> 2 >>> 0 <= $2 >>> 0) {
-             $2 = HEAP32[$8 + 20 >> 2];
+            if ($8 - $6 >> 2 >>> 0 <= $2 >>> 0) {
+             $2 = HEAP32[$10 + 12 >> 2];
              if (($2 | 0) != 1) {
               break block11
              }
@@ -7100,23 +7054,67 @@ function asmFunc(imports) {
               continue;
              };
             }
-            $6 = $9;
-            $9 = $2 << 2;
-            $6 = HEAP32[$6 + $9 >> 2];
+            $12 = $2 << 2;
+            $6 = HEAP32[$12 + $6 >> 2];
             if (($6 | 0) == -1) {
              break block13
             }
             if (($5 | 0) <= ($6 | 0)) {
              break block14
             }
-            $6 = ($6 << 2) + $4 | 0;
-            if (HEAP32[$6 >> 2] >= ($3 | 0)) {
+            $9 = ($6 << 2) + $4 | 0;
+            if (HEAP32[$9 >> 2] >= ($3 | 0)) {
              break block15
             }
-            int__20std____2__vector_int_2c_20std____2__allocator_int____emplace_back_int_20const___28int_20const__29(std____2__unordered_map_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float________operator_5b_5d_28int_20const__29($8 + 8 | 0, $6), $4 + $9 | 0);
+            $6 = __stack_pointer - 16 | 0;
+            __stack_pointer = $6;
+            HEAP32[$6 + 4 >> 2] = $9;
+            $8 = __stack_pointer - 16 | 0;
+            __stack_pointer = $8;
+            $7 = $10 + 4 | 0;
+            $13 = std____2____tree_node_base_void_____20std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________find_equal_int__28std____2____tree_end_node_std____2____tree_node_base_void_______2c_20int_20const__29($7, $8 + 12 | 0, $9);
+            $11 = HEAP32[$13 >> 2];
+            if ($11) {
+             $9 = 0
+            } else {
+             $9 = operator_20new_28unsigned_20long_29(32);
+             HEAP32[$8 + 4 >> 2] = $7;
+             HEAP32[$8 >> 2] = $9;
+             $11 = HEAP32[HEAP32[$6 + 4 >> 2] >> 2];
+             HEAP32[$9 + 28 >> 2] = 0;
+             HEAP32[$9 + 20 >> 2] = 0;
+             HEAP32[$9 + 24 >> 2] = 0;
+             HEAP32[$9 + 16 >> 2] = $11;
+             HEAP8[$8 + 8 | 0] = 1;
+             std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________insert_node_at_28std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____2c_20std____2____tree_node_base_void____29($7, HEAP32[$8 + 12 >> 2], $13, HEAP32[$8 >> 2]);
+             $11 = HEAP32[$8 >> 2];
+             HEAP32[$8 >> 2] = 0;
+             $9 = HEAP32[$8 >> 2];
+             HEAP32[$8 >> 2] = 0;
+             if ($9) {
+              block17 : {
+               block16 : {
+                if (HEAPU8[$8 + 8 | 0] == 1) {
+                 std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($9 + 20 | 0);
+                 break block16;
+                }
+                if (!$9) {
+                 break block17
+                }
+               }
+               emscripten_builtin_free($9);
+              }
+             }
+             $9 = 1;
+            }
+            HEAP8[$6 + 12 | 0] = $9;
+            HEAP32[$6 + 8 >> 2] = $11;
+            __stack_pointer = $8 + 16 | 0;
+            __stack_pointer = $6 + 16 | 0;
+            int__20std____2__vector_int_2c_20std____2__allocator_int____emplace_back_int_20const___28int_20const__29(HEAP32[$6 + 8 >> 2] + 20 | 0, $4 + $12 | 0);
             $2 = $2 + 1 | 0;
-            $9 = HEAP32[$0 + 36 >> 2];
-            $6 = HEAP32[$0 + 40 >> 2];
+            $6 = HEAP32[$0 + 36 >> 2];
+            $8 = HEAP32[$0 + 40 >> 2];
             continue;
            }
            break;
@@ -7126,34 +7124,34 @@ function asmFunc(imports) {
           $5 = $1 + 104 | 0;
           $1 = $5;
           $6 = HEAP32[$1 >> 2];
-          block17 : {
-           block16 : {
+          block19 : {
+           block18 : {
             if ($2 >>> 0 > HEAP32[$1 + 8 >> 2] - $6 >> 2 >>> 0) {
              if ($2 >>> 0 >= 1073741824) {
-              break block16
+              break block18
              }
              $1 = std____2____split_buffer_float_2c_20std____2__allocator_float_______split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_float___29($4 + 12 | 0, $2, HEAP32[$1 + 4 >> 2] - $6 >> 2, $1);
              std____2__vector_float_2c_20std____2__allocator_float______swap_out_circular_buffer_28std____2____split_buffer_float_2c_20std____2__allocator_float_____29($5, $1);
              std____2____split_buffer_float_2c_20std____2__allocator_float________split_buffer_28_29($1);
             }
             __stack_pointer = $4 + 32 | 0;
-            break block17;
+            break block19;
            }
            std____2__vector_std____2__pair_float_2c_20int__2c_20std____2__allocator_std____2__pair_float_2c_20int_______throw_length_error_5babi_ne200100_5d_28_29();
            wasm2js_trap();
           }
-          $2 = HEAP32[$8 + 16 >> 2];
+          $2 = HEAP32[$10 + 4 >> 2];
           while (1) {
-           if (!$2) {
+           if (($2 | 0) == ($16 | 0)) {
             break block12
            }
-           if (HEAP32[$2 + 16 >> 2] == HEAP32[$2 + 12 >> 2]) {
-            break block18
+           if (HEAP32[$2 + 24 >> 2] == HEAP32[$2 + 20 >> 2]) {
+            break block20
            }
            $1 = operator_20new_28unsigned_20long_29(128);
            $4 = HEAP32[$0 + 4 >> 2];
            HEAP32[$0 + 4 >> 2] = $4 + 1;
-           $6 = HEAP32[$2 + 8 >> 2];
+           $6 = HEAP32[$2 + 16 >> 2];
            HEAP32[$1 + 104 >> 2] = 0;
            HEAP32[$1 + 108 >> 2] = 0;
            HEAP32[$1 >> 2] = $4;
@@ -7161,34 +7159,34 @@ function asmFunc(imports) {
            HEAP32[$1 + 116 >> 2] = 0;
            HEAP32[$1 + 120 >> 2] = 0;
            HEAP32[$1 + 124 >> 2] = 0;
-           wasm2js_memory_copy($1 + 4 | 0, $10 + Math_imul($6, 96) | 0, 96);
-           HEAP32[$8 + 4 >> 2] = $1;
+           wasm2js_memory_copy($1 + 4 | 0, Math_imul($6, 96) + $14 | 0, 96);
+           HEAP32[$10 >> 2] = $1;
            HEAP8[$1 + 100 | 0] = 0;
-           int__20std____2__vector_int_2c_20std____2__allocator_int____emplace_back_int_20const___28int_20const__29($5, $8 + 4 | 0);
-           $1 = HEAP32[$2 + 12 >> 2];
-           vision__BinaryHierarchicalClustering_96___build_28vision__Node_96___2c_20unsigned_20char_20const__2c_20int_2c_20int_20const__2c_20int_29($0, HEAP32[$8 + 4 >> 2], $10, $3, $1, HEAP32[$2 + 16 >> 2] - $1 >> 2);
-           $2 = HEAP32[$2 >> 2];
+           int__20std____2__vector_int_2c_20std____2__allocator_int____emplace_back_int_20const___28int_20const__29($5, $10);
+           $1 = HEAP32[$2 + 20 >> 2];
+           vision__BinaryHierarchicalClustering_96___build_28vision__Node_96___2c_20unsigned_20char_20const__2c_20int_2c_20int_20const__2c_20int_29($0, HEAP32[$10 >> 2], $14, $3, $1, HEAP32[$2 + 24 >> 2] - $1 >> 2);
+           $2 = std____2____tree_end_node_std____2____tree_node_base_void______20std____2____tree_next_iter_5babi_ne200100_5d_std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($2);
            continue;
           };
          }
-         std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float___________hash_table_28_29($8 + 8 | 0);
+         std____2____tree_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20void____29($10 + 4 | 0, HEAP32[$10 + 8 >> 2]);
         }
-        __stack_pointer = $8 + 32 | 0;
+        __stack_pointer = $10 + 16 | 0;
         return;
        }
-       std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 13503), 13644), 9969), 363), 10441), 13919));
+       std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 13503), 13644), 9969), 372), 10441), 13919));
        break block4;
       }
-      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14311), 13644), 9969), 365), 10441), 14374));
+      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14311), 13644), 9969), 374), 10441), 14374));
       break block4;
      }
-     std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14688), 13644), 9969), 366), 10441), 14791));
+     std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14688), 13644), 9969), 375), 10441), 14791));
      break block4;
     }
-    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15175), 13644), 9969), 367), 10441), 14791));
+    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15175), 13644), 9969), 376), 10441), 14791));
     break block4;
    }
-   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15394), 13644), 9969), 387), 10441), 15538));
+   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15394), 13644), 9969), 396), 10441), 15538));
   }
   abort();
   wasm2js_trap();
@@ -7216,6 +7214,32 @@ function asmFunc(imports) {
    __stack_pointer = $3 + 32 | 0;
   }
   HEAP32[$5 + 4 >> 2] = $0;
+ }
+ 
+ function std____2____tree_end_node_std____2____tree_node_base_void______20std____2____tree_next_iter_5babi_ne200100_5d_std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($0) {
+  var $1 = 0;
+  $1 = HEAP32[$0 + 4 >> 2];
+  if ($1) {
+   $0 = $1;
+   while (1) {
+    $1 = $0;
+    $0 = HEAP32[$0 >> 2];
+    if ($0) {
+     continue
+    }
+    break;
+   };
+   return $1;
+  }
+  while (1) {
+   $1 = $0;
+   $0 = HEAP32[$0 + 8 >> 2];
+   if (($1 | 0) != HEAP32[$0 >> 2]) {
+    continue
+   }
+   break;
+  };
+  return $0;
  }
  
  function std____2__vector_int_2c_20std____2__allocator_int____resize_28unsigned_20long_2c_20int_20const__29($0, $1, $2) {
@@ -7309,6 +7333,133 @@ function asmFunc(imports) {
   return __wasm_popcnt_i32(HEAP32[$1 + 92 >> 2] ^ HEAP32[$0 + 92 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 88 >> 2] ^ HEAP32[$0 + 88 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 84 >> 2] ^ HEAP32[$0 + 84 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 80 >> 2] ^ HEAP32[$0 + 80 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 76 >> 2] ^ HEAP32[$0 + 76 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 72 >> 2] ^ HEAP32[$0 + 72 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 68 >> 2] ^ HEAP32[$0 + 68 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 64 >> 2] ^ HEAP32[$0 + 64 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 60 >> 2] ^ HEAP32[$0 + 60 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 56 >> 2] ^ HEAP32[$0 + 56 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 52 >> 2] ^ HEAP32[$0 + 52 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 48 >> 2] ^ HEAP32[$0 + 48 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 44 >> 2] ^ HEAP32[$0 + 44 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 40 >> 2] ^ HEAP32[$0 + 40 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 36 >> 2] ^ HEAP32[$0 + 36 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 32 >> 2] ^ HEAP32[$0 + 32 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 28 >> 2] ^ HEAP32[$0 + 28 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 24 >> 2] ^ HEAP32[$0 + 24 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 20 >> 2] ^ HEAP32[$0 + 20 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 16 >> 2] ^ HEAP32[$0 + 16 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 12 >> 2] ^ HEAP32[$0 + 12 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 8 >> 2] ^ HEAP32[$0 + 8 >> 2]) + (__wasm_popcnt_i32(HEAP32[$1 + 4 >> 2] ^ HEAP32[$0 + 4 >> 2]) + __wasm_popcnt_i32(HEAP32[$1 >> 2] ^ HEAP32[$0 >> 2]) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0;
  }
  
+ function std____2____tree_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20void____29($0, $1) {
+  if ($1) {
+   std____2____tree_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20void____29($0, HEAP32[$1 >> 2]);
+   std____2____tree_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int_______destroy_28std____2____tree_node_std____2____value_type_int_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20void____29($0, HEAP32[$1 + 4 >> 2]);
+   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($1 + 20 | 0);
+   emscripten_builtin_free($1);
+  }
+ }
+ 
+ function void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float__________rehash_true__28unsigned_20long_29($0, $1) {
+  var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = Math_fround(0), $7 = 0, $8 = 0, $9 = 0;
+  block1 : {
+   $2 = 2;
+   block : {
+    if (($1 | 0) == 1) {
+     break block
+    }
+    $2 = $1;
+    if (!($1 - 1 & $1)) {
+     break block
+    }
+    $2 = std____2____next_prime_28unsigned_20long_29($1);
+   }
+   $1 = $2;
+   $3 = HEAP32[$0 + 4 >> 2];
+   if ($1 >>> 0 <= $3 >>> 0) {
+    if ($1 >>> 0 >= $3 >>> 0) {
+     break block1
+    }
+    $6 = Math_fround(Math_ceil(Math_fround(Math_fround(HEAPU32[$0 + 12 >> 2]) / HEAPF32[$0 + 16 >> 2])));
+    if ($6 < Math_fround(4294967296.0) & $6 >= Math_fround(0.0)) {
+     $2 = ~~$6 >>> 0
+    } else {
+     $2 = 0
+    }
+    if ($3 >>> 0 < 3 | __wasm_popcnt_i32($3) >>> 0 > 1) {
+     $2 = std____2____next_prime_28unsigned_20long_29($2)
+    } else {
+     $2 = $2 >>> 0 < 2 ? $2 : 1 << 32 - Math_clz32($2 - 1 | 0)
+    }
+    $1 = $1 >>> 0 > $2 >>> 0 ? $1 : $2;
+    if ($3 >>> 0 <= $1 >>> 0) {
+     break block1
+    }
+   }
+   block2 : {
+    if ($1) {
+     $3 = $1;
+     void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______29($0, std____2__allocator_float___allocate_5babi_ne200100_5d_28unsigned_20long_29($1));
+     HEAP32[$0 + 4 >> 2] = $1;
+     $7 = HEAP32[$0 >> 2];
+     while (1) if (($4 | 0) == ($3 | 0)) {
+      $1 = HEAP32[$0 + 8 >> 2];
+      if (!$1) {
+       break block2
+      }
+      $4 = $0 + 8 | 0;
+      $2 = HEAP32[$1 + 4 >> 2];
+      $0 = __wasm_popcnt_i32($3);
+      block3 : {
+       if ($0 >>> 0 <= 1) {
+        $2 = $3 - 1 & $2;
+        break block3;
+       }
+       if ($2 >>> 0 < $3 >>> 0) {
+        break block3
+       }
+       $2 = ($2 >>> 0) % ($3 >>> 0) | 0;
+      }
+      HEAP32[($2 << 2) + $7 >> 2] = $4;
+      $8 = $3 - 1 | 0;
+      $9 = $0 >>> 0 > 1;
+      while (1) {
+       $0 = HEAP32[$1 >> 2];
+       if (!$0) {
+        break block2
+       }
+       $4 = HEAP32[$0 + 4 >> 2];
+       block4 : {
+        if (!$9) {
+         $4 = $4 & $8;
+         break block4;
+        }
+        if ($4 >>> 0 < $3 >>> 0) {
+         break block4
+        }
+        $4 = ($4 >>> 0) % ($3 >>> 0) | 0;
+       }
+       block5 : {
+        if (($2 | 0) == ($4 | 0)) {
+         break block5
+        }
+        $5 = ($4 << 2) + $7 | 0;
+        if (!HEAP32[$5 >> 2]) {
+         HEAP32[$5 >> 2] = $1;
+         $2 = $4;
+         break block5;
+        }
+        HEAP32[$1 >> 2] = HEAP32[$0 >> 2];
+        HEAP32[$0 >> 2] = HEAP32[HEAP32[$5 >> 2] >> 2];
+        HEAP32[HEAP32[$5 >> 2] >> 2] = $0;
+        continue;
+       }
+       $1 = $0;
+       continue;
+      };
+     } else {
+      HEAP32[($4 << 2) + $7 >> 2] = 0;
+      $4 = $4 + 1 | 0;
+      continue;
+     };
+    }
+    void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______29($0, 0);
+    HEAP32[$0 + 4 >> 2] = 0;
+   }
+  }
+ }
+ 
+ function void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______29($0, $1) {
+  var $2 = 0;
+  $2 = HEAP32[$0 >> 2];
+  HEAP32[$0 >> 2] = $1;
+  if ($2) {
+   emscripten_builtin_free($2)
+  }
+ }
+ 
  function vision__FindHoughSimilarity_28vision__HoughSimilarityVoting__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20int_2c_20int_2c_20int_29($0, $1, $2, $3, $4, $5, $6, $7) {
   var $8 = Math_fround(0), $9 = 0, $10 = Math_fround(0), $11 = 0, $12 = 0, $13 = Math_fround(0), $14 = 0, $15 = 0, $16 = 0.0, $17 = Math_fround(0), $18 = 0, $19 = Math_fround(0), $20 = 0, $21 = Math_fround(0), $22 = Math_fround(0), $23 = 0, $24 = Math_fround(0), $25 = 0, $26 = 0, $27 = 0, $28 = 0, $29 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0.0, $34 = Math_fround(0), $35 = Math_fround(0), $36 = 0;
   $15 = __stack_pointer - 32 | 0;
@@ -7345,7 +7496,7 @@ function asmFunc(imports) {
      HEAP32[$0 + 88 >> 2] = 0;
      HEAP8[$0 + 16 | 0] = 1;
      $1 = $0 + 92 | 0;
-     std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int_____clear_28_29($1);
+     std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____clear_28_29($1);
      HEAPF32[$0 + 12 >> 2] = $7 >> 1;
      HEAPF32[$0 + 8 >> 2] = $6 >> 1;
      HEAP32[$0 + 4 >> 2] = $7;
@@ -7356,11 +7507,11 @@ function asmFunc(imports) {
      $3 = 0;
      $9 = __stack_pointer - 16 | 0;
      __stack_pointer = $9;
-     std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int_____clear_28_29($1);
+     std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____clear_28_29($1);
      if ($11) {
-      $23 = $0 + 112 | 0;
+      $23 = $0 + 104 | 0;
       std____2__vector_float_2c_20std____2__allocator_float____resize_28unsigned_20long_29($23, $11 << 2);
-      $29 = $0 + 124 | 0;
+      $29 = $0 + 116 | 0;
       std____2__vector_int_2c_20std____2__allocator_int____resize_28unsigned_20long_29($29, $11);
       if (HEAPU8[$0 + 16 | 0] == 1) {
        $20 = __stack_pointer - 16 | 0;
@@ -7545,10 +7696,10 @@ function asmFunc(imports) {
            HEAPF32[$9 + 8 >> 2] = Math_fround($21 - Math_fround(Math_fround($8 * $13) + Math_fround($24 * $10))) + Math_fround(Math_fround($8 * HEAPF32[$0 + 8 >> 2]) + Math_fround($10 * HEAPF32[$0 + 12 >> 2]));
            break block8;
           }
-          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 7815), 13118), 3164), 468), 3735), 8359));
+          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 7815), 13118), 3164), 476), 3735), 8359));
           break block3;
          }
-         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 9091), 13118), 3164), 469), 3735), 8359));
+         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 9091), 13118), 3164), 477), 3735), 8359));
          break block3;
         }
         $8 = HEAPF32[$9 + 8 >> 2];
@@ -7698,37 +7849,37 @@ function asmFunc(imports) {
                  $5 = $6;
                  break block18;
                 }
-                std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 1113), 13118), 3164), 360), 3735), 4118));
+                std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 1113), 13118), 3164), 368), 3735), 4118));
                 break block3;
                }
-               std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 4890), 13118), 3164), 361), 3735), 4118));
+               std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 4890), 13118), 3164), 369), 3735), 4118));
                break block3;
               }
-              std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 5762), 13118), 3164), 362), 3735), 6454));
+              std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 5762), 13118), 3164), 370), 3735), 6454));
               break block3;
              }
-             std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 7305), 13118), 3164), 363), 3735), 6454));
+             std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 7305), 13118), 3164), 371), 3735), 6454));
              break block3;
             }
-            std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 7815), 13118), 3164), 364), 3735), 8359));
+            std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 7815), 13118), 3164), 372), 3735), 8359));
             break block3;
            }
-           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 9091), 13118), 3164), 365), 3735), 8359));
+           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 9091), 13118), 3164), 373), 3735), 8359));
            break block3;
           }
-          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 9867), 13118), 3164), 366), 3735), 10259));
+          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 9867), 13118), 3164), 374), 3735), 10259));
           break block3;
          }
-         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 10772), 13118), 3164), 367), 3735), 10259));
+         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 10772), 13118), 3164), 375), 3735), 10259));
          break block3;
         }
         if ($5) {
-         $1 = HEAP32[$0 + 112 >> 2] + ($2 << 4) | 0;
+         $1 = HEAP32[$0 + 104 >> 2] + ($2 << 4) | 0;
          HEAPF32[$1 >> 2] = HEAPF32[$0 + 68 >> 2];
          HEAPF32[$1 + 4 >> 2] = HEAPF32[$0 + 72 >> 2];
          HEAPF32[$1 + 8 >> 2] = HEAPF32[$0 + 76 >> 2];
          HEAPF32[$1 + 12 >> 2] = HEAPF32[$0 + 80 >> 2];
-         HEAP32[HEAP32[$0 + 124 >> 2] + ($2 << 2) >> 2] = $3;
+         HEAP32[HEAP32[$0 + 116 >> 2] + ($2 << 2) >> 2] = $3;
          $2 = $2 + 1 | 0;
         }
         $3 = $3 + 1 | 0;
@@ -7740,17 +7891,15 @@ function asmFunc(imports) {
      __stack_pointer = $9 + 16 | 0;
      HEAP32[$15 + 4 >> 2] = 0;
      HEAP32[$15 >> 2] = -1;
-     $0 = $0 + 100 | 0;
-     $8 = HEAPF32[$15 + 4 >> 2];
+     $1 = $0 + 96 | 0;
+     $0 = HEAP32[$0 + 92 >> 2];
      while (1) {
-      $0 = HEAP32[$0 >> 2];
-      if ($0) {
-       if (!(Math_fround(HEAPU32[$0 + 12 >> 2]) > $8)) {
-        continue
+      if (($0 | 0) != ($1 | 0)) {
+       if (HEAPF32[$15 + 4 >> 2] < Math_fround(HEAPU32[$0 + 20 >> 2])) {
+        HEAP32[$15 >> 2] = HEAP32[$0 + 16 >> 2];
+        HEAPF32[$15 + 4 >> 2] = HEAPU32[$0 + 20 >> 2];
        }
-       HEAP32[$15 >> 2] = HEAP32[$0 + 8 >> 2];
-       $8 = Math_fround(HEAPU32[$0 + 12 >> 2]);
-       HEAPF32[$15 + 4 >> 2] = $8;
+       $0 = std____2____tree_end_node_std____2____tree_node_base_void______20std____2____tree_next_iter_5babi_ne200100_5d_std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($0);
        continue;
       }
       break;
@@ -7836,38 +7985,38 @@ function asmFunc(imports) {
             }
             break block7;
            }
-           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19928), 20036), 9969), 190), 10441), 20124));
+           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19928), 20036), 9969), 198), 10441), 20124));
            break block8;
           }
-          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20224), 20036), 9969), 191), 10441), 20124));
+          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20224), 20036), 9969), 199), 10441), 20124));
           break block8;
          }
-         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20264), 20036), 9969), 192), 10441), 20349));
+         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20264), 20036), 9969), 200), 10441), 20349));
          break block8;
         }
-        std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20421), 20036), 9969), 193), 10441), 20349));
+        std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20421), 20036), 9969), 201), 10441), 20349));
         break block8;
        }
-       std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20515), 20036), 9969), 194), 10441), 20608));
+       std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20515), 20036), 9969), 202), 10441), 20608));
        break block8;
       }
-      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20687), 20036), 9969), 195), 10441), 20608));
+      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20687), 20036), 9969), 203), 10441), 20608));
       break block8;
      }
-     std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20792), 20036), 9969), 196), 10441), 20888));
+     std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 20792), 20036), 9969), 204), 10441), 20888));
      break block8;
     }
-    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 21005), 20036), 9969), 197), 10441), 20888));
+    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 21005), 20036), 9969), 205), 10441), 20888));
    }
    abort();
    wasm2js_trap();
   }
   HEAP32[$0 + 4 >> 2] = HEAP32[$0 >> 2];
   block9 : {
-   $3 = HEAP32[$1 + 128 >> 2] - HEAP32[$1 + 124 >> 2] >> 2;
+   $3 = HEAP32[$1 + 120 >> 2] - HEAP32[$1 + 116 >> 2] >> 2;
    if ($3 >>> 0 <= HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] >> 3 >>> 0) {
     $5 = ($3 | 0) > 0 ? $3 : 0;
-    $3 = HEAP32[$1 + 112 >> 2];
+    $3 = HEAP32[$1 + 104 >> 2];
     while (1) {
      if (($5 | 0) == ($8 | 0)) {
       break block9
@@ -7887,19 +8036,19 @@ function asmFunc(imports) {
      HEAPF32[$4 + 20 >> 2] = $6;
      if ($6 >= Math_fround(0.0)) {
       if (!(!(HEAPF32[$4 + 28 >> 2] < Math_fround(1.0)) | !(HEAPF32[$4 + 24 >> 2] < Math_fround(1.0)) | (!(HEAPF32[$4 + 20 >> 2] < Math_fround(1.0)) | !(HEAPF32[$4 + 16 >> 2] < Math_fround(1.0))))) {
-       vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($0, HEAP32[$2 >> 2] + (HEAP32[HEAP32[$1 + 124 >> 2] + ($8 << 2) >> 2] << 3) | 0)
+       vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($0, HEAP32[$2 >> 2] + (HEAP32[HEAP32[$1 + 116 >> 2] + ($8 << 2) >> 2] << 3) | 0)
       }
       $3 = $3 + 16 | 0;
       $8 = $8 + 1 | 0;
       continue;
      } else {
-      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 21094), 20036), 9969), 333), 10441), 21189));
+      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 21094), 20036), 9969), 341), 10441), 21189));
       abort();
       wasm2js_trap();
      }
     };
    }
-   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19847), 8983), 9969), 342), 10441), 19909));
+   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19847), 8983), 9969), 350), 10441), 19909));
    abort();
    wasm2js_trap();
   }
@@ -9343,29 +9492,11 @@ function asmFunc(imports) {
   HEAPF32[$0 + 32 >> 2] = Math_fround(HEAPF32[$1 + 32 >> 2] * $2) + HEAPF32[$0 + 32 >> 2];
  }
  
- function std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int________hash_table_28_29($0) {
-  std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int_______deallocate_node_28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20void______29(HEAP32[$0 + 8 >> 2]);
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0);
- }
- 
- function std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int_____clear_28_29($0) {
-  var $1 = 0, $2 = 0, $3 = 0;
-  if (HEAP32[$0 + 12 >> 2]) {
-   std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int_______deallocate_node_28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20void______29(HEAP32[$0 + 8 >> 2]);
-   HEAP32[$0 + 8 >> 2] = 0;
-   $2 = HEAP32[$0 >> 2];
-   $3 = HEAP32[$0 + 4 >> 2];
-   while (1) {
-    if (($1 | 0) == ($3 | 0)) {
-     HEAP32[$0 + 12 >> 2] = 0
-    } else {
-     HEAP32[($1 << 2) + $2 >> 2] = 0;
-     $1 = $1 + 1 | 0;
-     continue;
-    }
-    break;
-   };
-  }
+ function std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____clear_28_29($0) {
+  std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____destroy_28std____2____tree_node_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20void____29($0, HEAP32[$0 + 4 >> 2]);
+  HEAP32[$0 >> 2] = $0 + 4;
+  HEAP32[$0 + 4 >> 2] = 0;
+  HEAP32[$0 + 8 >> 2] = 0;
  }
  
  function vision__HoughSimilarityVoting__getBinIndex_28int_2c_20int_2c_20int_2c_20int_29_20const($0, $1, $2, $3, $4) {
@@ -9411,214 +9542,144 @@ function asmFunc(imports) {
             }
             return $0;
            }
-           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14027), 13118), 3164), 165), 3735), 14226));
+           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14027), 13118), 3164), 173), 3735), 14226));
            break block8;
           }
-          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14442), 13118), 3164), 166), 3735), 14226));
+          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14442), 13118), 3164), 174), 3735), 14226));
           break block8;
          }
-         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14739), 13118), 3164), 167), 3735), 14815));
+         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 14739), 13118), 3164), 175), 3735), 14815));
          break block8;
         }
-        std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15135), 13118), 3164), 168), 3735), 14815));
+        std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15135), 13118), 3164), 176), 3735), 14815));
         break block8;
        }
-       std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15357), 13118), 3164), 169), 3735), 15601));
+       std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15357), 13118), 3164), 177), 3735), 15601));
        break block8;
       }
-      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15750), 13118), 3164), 170), 3735), 15601));
+      std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 15750), 13118), 3164), 178), 3735), 15601));
       break block8;
      }
-     std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 16086), 13118), 3164), 171), 3735), 16232));
+     std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 16086), 13118), 3164), 179), 3735), 16232));
      break block8;
     }
-    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 16390), 13118), 3164), 172), 3735), 16232));
+    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 16390), 13118), 3164), 180), 3735), 16232));
     break block8;
    }
-   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 16753), 13118), 3164), 176), 3735), 13845));
+   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 16753), 13118), 3164), 184), 3735), 13845));
   }
   abort();
   wasm2js_trap();
  }
  
  function vision__HoughSimilarityVoting__voteAtIndex_28int_2c_20unsigned_20int_29($0, $1) {
-  var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = Math_fround(0), $10 = 0, $11 = 0, $12 = Math_fround(0);
-  $6 = __stack_pointer - 16 | 0;
-  __stack_pointer = $6;
+  var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0;
+  $5 = __stack_pointer - 16 | 0;
+  __stack_pointer = $5;
   if (($1 | 0) >= 0) {
-   HEAP32[$6 + 8 >> 2] = $1;
-   $5 = $0 + 92 | 0;
-   $0 = std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29($5, $6 + 8 | 0);
-   block7 : {
-    if (!$0) {
-     HEAP32[$6 + 12 >> 2] = 1;
-     HEAP32[$6 + 8 >> 2] = $1;
-     $8 = __stack_pointer - 16 | 0;
-     __stack_pointer = $8;
-     $1 = 0;
-     $7 = __stack_pointer - 16 | 0;
-     __stack_pointer = $7;
-     $0 = HEAP32[$6 + 8 >> 2];
-     block3 : {
-      block : {
-       $2 = HEAP32[$5 + 4 >> 2];
-       if (!$2) {
-        break block
-       }
-       $11 = HEAP32[$5 >> 2];
-       $10 = __wasm_popcnt_i32($2);
-       $1 = $0 & $2 - 1;
-       block1 : {
-        if ($10 >>> 0 <= 1) {
-         break block1
-        }
-        $1 = $0;
-        if ($0 >>> 0 < $2 >>> 0) {
-         break block1
-        }
-        $1 = ($0 >>> 0) % ($2 >>> 0) | 0;
-       }
-       $4 = HEAP32[$11 + ($1 << 2) >> 2];
-       if (!$4) {
-        break block
-       }
-       $11 = $2 - 1 | 0;
-       $10 = $10 >>> 0 > 1;
-       while (1) {
-        $4 = HEAP32[$4 >> 2];
-        if (!$4) {
-         break block
-        }
-        $3 = HEAP32[$4 + 4 >> 2];
-        if (($0 | 0) != ($3 | 0)) {
-         block2 : {
-          if (!$10) {
-           $3 = $3 & $11;
-           break block2;
-          }
-          if ($2 >>> 0 > $3 >>> 0) {
-           break block2
-          }
-          $3 = ($3 >>> 0) % ($2 >>> 0) | 0;
-         }
-         if (($1 | 0) != ($3 | 0)) {
-          break block
-         }
-         continue;
-        }
-        if (($0 | 0) != HEAP32[$4 + 8 >> 2]) {
+   HEAP32[$5 + 8 >> 2] = $1;
+   $6 = $0 + 92 | 0;
+   $2 = HEAP32[$6 + 4 >> 2];
+   $3 = $6 + 4 | 0;
+   $4 = $3;
+   $7 = $5 + 8 | 0;
+   $9 = HEAP32[$7 >> 2];
+   while (1) {
+    if ($2) {
+     $8 = HEAPU32[$2 + 16 >> 2] < $9 >>> 0;
+     $4 = $8 ? $4 : $2;
+     $2 = HEAP32[($8 ? 4 : 0) + $2 >> 2];
+     continue;
+    }
+    break;
+   };
+   $2 = $4;
+   if (!(($3 | 0) != ($2 | 0) & HEAPU32[$7 >> 2] >= HEAPU32[$2 + 16 >> 2])) {
+    $2 = $3
+   }
+   block2 : {
+    if (($0 + 96 | 0) == ($2 | 0)) {
+     HEAP32[$5 + 12 >> 2] = 1;
+     HEAP32[$5 + 8 >> 2] = $1;
+     $4 = __stack_pointer - 16 | 0;
+     __stack_pointer = $4;
+     $3 = __stack_pointer - 16 | 0;
+     __stack_pointer = $3;
+     $1 = $6 + 4 | 0;
+     $2 = HEAP32[$6 + 4 >> 2];
+     block1 : {
+      if (!$2) {
+       $0 = $1;
+       break block1;
+      }
+      $9 = HEAP32[$7 >> 2];
+      while (1) {
+       $0 = $2;
+       $8 = HEAP32[$2 + 16 >> 2];
+       if ($8 >>> 0 > $9 >>> 0) {
+        $1 = $2;
+        $2 = HEAP32[$2 >> 2];
+        if ($2) {
          continue
         }
-        break;
-       };
-       $0 = 0;
-       break block3;
-      }
-      $3 = operator_20new_28unsigned_20long_29(16);
-      HEAP32[$7 + 8 >> 2] = $5;
-      HEAP32[$7 + 4 >> 2] = $3;
-      HEAP32[$3 + 4 >> 2] = $0;
-      HEAP32[$3 >> 2] = 0;
-      HEAP32[$3 + 8 >> 2] = HEAP32[$6 + 8 >> 2];
-      HEAP32[$3 + 12 >> 2] = HEAP32[$6 + 12 >> 2];
-      HEAP8[$7 + 12 | 0] = 1;
-      $9 = Math_fround(HEAP32[$5 + 12 >> 2] + 1 >>> 0);
-      $12 = HEAPF32[$5 + 16 >> 2];
-      block4 : {
-       if ($9 > Math_fround($12 * Math_fround($2 >>> 0)) ? 0 : $2) {
-        break block4
+        break block1;
        }
-       $2 = ($2 - 1 & $2) != 0 | $2 >>> 0 < 3 | $2 << 1;
-       $9 = Math_fround(Math_ceil(Math_fround($9 / $12)));
-       if ($9 < Math_fround(4294967296.0) & $9 >= Math_fround(0.0)) {
-        $1 = ~~$9 >>> 0
-       } else {
-        $1 = 0
+       if ($9 >>> 0 <= $8 >>> 0) {
+        break block1
        }
-       void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________rehash_true__28unsigned_20long_29($5, $1 >>> 0 < $2 >>> 0 ? $2 : $1);
-       $2 = HEAP32[$5 + 4 >> 2];
-       $1 = $2 - 1 | 0;
-       if (!($1 & $2)) {
-        $1 = $0 & $1;
-        break block4;
+       $1 = $0 + 4 | 0;
+       $2 = HEAP32[$0 + 4 >> 2];
+       if ($2) {
+        continue
        }
-       if ($0 >>> 0 < $2 >>> 0) {
-        $1 = $0;
-        break block4;
-       }
-       $1 = ($0 >>> 0) % ($2 >>> 0) | 0;
-      }
-      $0 = $1 << 2;
-      $1 = HEAP32[$5 >> 2];
-      $3 = $0 + $1 | 0;
-      $0 = HEAP32[$3 >> 2];
-      block5 : {
-       if (!$0) {
-        $4 = HEAP32[$7 + 4 >> 2];
-        HEAP32[$4 >> 2] = HEAP32[$5 + 8 >> 2];
-        HEAP32[$5 + 8 >> 2] = $4;
-        HEAP32[$3 >> 2] = $5 + 8;
-        $0 = HEAP32[$4 >> 2];
-        if (!$0) {
-         break block5
-        }
-        $3 = HEAP32[$0 + 4 >> 2];
-        $0 = $2 - 1 | 0;
-        block6 : {
-         if (!($0 & $2)) {
-          $3 = $0 & $3;
-          break block6;
-         }
-         if ($2 >>> 0 > $3 >>> 0) {
-          break block6
-         }
-         $3 = ($3 >>> 0) % ($2 >>> 0) | 0;
-        }
-        HEAP32[$1 + ($3 << 2) >> 2] = $4;
-        break block5;
-       }
-       $4 = HEAP32[$7 + 4 >> 2];
-       HEAP32[$4 >> 2] = HEAP32[$0 >> 2];
-       HEAP32[$0 >> 2] = $4;
-      }
-      HEAP32[$7 + 4 >> 2] = 0;
-      HEAP32[$5 + 12 >> 2] = HEAP32[$5 + 12 >> 2] + 1;
-      $0 = HEAP32[$7 + 4 >> 2];
-      HEAP32[$7 + 4 >> 2] = 0;
-      if ($0) {
-       emscripten_builtin_free($0)
-      }
-      $0 = 1;
+       break;
+      };
      }
-     HEAP8[$8 + 12 | 0] = $0;
-     HEAP32[$8 + 8 >> 2] = $4;
-     __stack_pointer = $7 + 16 | 0;
-     HEAP32[$6 >> 2] = HEAP32[$8 + 8 >> 2];
-     HEAP8[$6 + 4 | 0] = HEAPU8[$8 + 12 | 0];
-     __stack_pointer = $8 + 16 | 0;
-     break block7;
+     HEAP32[$3 + 12 >> 2] = $0;
+     $0 = HEAP32[$1 >> 2];
+     if ($0) {
+      $1 = 0
+     } else {
+      $0 = operator_20new_28unsigned_20long_29(24);
+      HEAP32[$3 + 4 >> 2] = $6;
+      HEAP32[$3 >> 2] = $0;
+      HEAP32[$0 + 16 >> 2] = HEAP32[$7 >> 2];
+      HEAP32[$0 + 20 >> 2] = HEAP32[$7 + 4 >> 2];
+      HEAP8[$3 + 8 | 0] = 1;
+      std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________insert_node_at_28std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____2c_20std____2____tree_node_base_void____29($6, HEAP32[$3 + 12 >> 2], $1, HEAP32[$3 >> 2]);
+      $0 = HEAP32[$3 >> 2];
+      HEAP32[$3 >> 2] = 0;
+      $1 = HEAP32[$3 >> 2];
+      HEAP32[$3 >> 2] = 0;
+      if ($1) {
+       emscripten_builtin_free($1)
+      }
+      $1 = 1;
+     }
+     HEAP8[$4 + 12 | 0] = $1;
+     HEAP32[$4 + 8 >> 2] = $0;
+     __stack_pointer = $3 + 16 | 0;
+     HEAP32[$5 >> 2] = HEAP32[$4 + 8 >> 2];
+     HEAP8[$5 + 4 | 0] = HEAPU8[$4 + 12 | 0];
+     __stack_pointer = $4 + 16 | 0;
+     break block2;
     }
-    HEAP32[$0 + 12 >> 2] = HEAP32[$0 + 12 >> 2] + 1;
+    HEAP32[$2 + 20 >> 2] = HEAP32[$2 + 20 >> 2] + 1;
    }
-   __stack_pointer = $6 + 16 | 0;
+   __stack_pointer = $5 + 16 | 0;
    return;
   }
-  std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 13559), 13118), 3164), 290), 3735), 13845));
+  std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 13559), 13118), 3164), 298), 3735), 13845));
   abort();
   wasm2js_trap();
  }
  
- function std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int_______deallocate_node_28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20void______29($0) {
-  var $1 = 0;
-  while (1) {
-   if ($0) {
-    $1 = HEAP32[$0 >> 2];
-    emscripten_builtin_free($0);
-    $0 = $1;
-    continue;
-   }
-   break;
-  };
+ function std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____destroy_28std____2____tree_node_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20void____29($0, $1) {
+  if ($1) {
+   std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____destroy_28std____2____tree_node_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20void____29($0, HEAP32[$1 >> 2]);
+   std____2____tree_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____map_value_compare_unsigned_20int_2c_20std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__less_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____value_type_unsigned_20int_2c_20unsigned_20int_____destroy_28std____2____tree_node_std____2____value_type_unsigned_20int_2c_20unsigned_20int__2c_20void____29($0, HEAP32[$1 + 4 >> 2]);
+   emscripten_builtin_free($1);
+  }
  }
  
  function vision__BinaryFeatureStore__resize_28unsigned_20long_29($0, $1) {
@@ -10045,23 +10106,23 @@ function asmFunc(imports) {
  }
  
  function webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($0) {
-  $1197($0, 74960, 74456, 74452);
+  $1202($0, 74960, 74456, 74452);
  }
  
  function webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($0, $1) {
-  $1198($0, $1, 24345, 75633, 74456, 74452);
+  $1203($0, $1, 24345, 75633, 74456, 74452);
  }
  
  function webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($0, $1) {
-  $1198($0, $1, 24350, 75811, 74456, 74452);
+  $1203($0, $1, 24350, 75811, 74456, 74452);
  }
  
  function webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($0) {
-  $1197($0, 75954, 74464, 74460);
+  $1202($0, 75954, 74464, 74460);
  }
  
  function webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($0, $1) {
-  $1198($0, $1, 24345, 76643, 74464, 74460);
+  $1203($0, $1, 24345, 76643, 74464, 74460);
  }
  
  function webarkit__webarkitVideoLumaFinal_28webarkit__WebARKitLumaInfo___29($0) {
@@ -10073,12 +10134,12 @@ function asmFunc(imports) {
   if (!$1) {
    return
   }
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($1 + 16 | 0);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($1 + 16 | 0);
   emscripten_builtin_free($1);
   HEAP32[$0 >> 2] = 0;
  }
  
- function __cxx_global_array_dtor_821($0) {
+ function __cxx_global_array_dtor_813($0) {
   $0 = $0 | 0;
   var $1 = 0;
   $0 = HEAP32[19509];
@@ -10092,7 +10153,7 @@ function asmFunc(imports) {
    }
    break;
   };
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29(78028);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29(78028);
  }
  
  function __cxx_global_array_dtor_2($0) {
@@ -10108,7 +10169,7 @@ function asmFunc(imports) {
    }
    break;
   };
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29(78048);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29(78048);
  }
  
  function passVideoData($0, $1, $2, $3) {
@@ -10121,7 +10182,7 @@ function asmFunc(imports) {
   __stack_pointer = $4;
   HEAP32[$4 + 44 >> 2] = $0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $4 + 44 | 0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $4 + 44 | 0)) {
     $2 = -1;
     break block;
    }
@@ -10152,8 +10213,8 @@ function asmFunc(imports) {
       }
       HEAP32[$2 + 4 >> 2] = 0;
       $6 = $0 + 16 | 0;
-      void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______29($6, $5);
-      std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($2 + 4 | 0);
+      void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______29($6, $5);
+      std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($2 + 4 | 0);
       block2 : {
        if (HEAP32[$0 + 16 >> 2]) {
         $1 = $0;
@@ -10162,7 +10223,7 @@ function asmFunc(imports) {
        $5 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($2 + 4 | 0, 2908);
        webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($5);
        std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($5);
-       std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($6);
+       std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($6);
        emscripten_builtin_free($0);
       }
       __stack_pointer = $2 + 16 | 0;
@@ -10252,6 +10313,66 @@ function asmFunc(imports) {
   }
   __stack_pointer = $4 + 48 | 0;
   return $2 | 0;
+ }
+ 
+ function std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29($0, $1) {
+  var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0;
+  block : {
+   $2 = HEAP32[$0 + 4 >> 2];
+   if (!$2) {
+    break block
+   }
+   $0 = HEAP32[$0 >> 2];
+   $3 = HEAP32[$1 >> 2];
+   $1 = $3 & $2 - 1;
+   $4 = __wasm_popcnt_i32($2);
+   block1 : {
+    if ($4 >>> 0 <= 1) {
+     break block1
+    }
+    $1 = $3;
+    if ($1 >>> 0 < $2 >>> 0) {
+     break block1
+    }
+    $1 = ($1 >>> 0) % ($2 >>> 0) | 0;
+   }
+   $0 = HEAP32[($1 << 2) + $0 >> 2];
+   if (!$0) {
+    break block
+   }
+   $5 = $1;
+   $6 = $2 - 1 | 0;
+   $4 = $4 >>> 0 > 1;
+   while (1) {
+    $0 = HEAP32[$0 >> 2];
+    if (!$0) {
+     break block
+    }
+    $1 = HEAP32[$0 + 4 >> 2];
+    if (($3 | 0) != ($1 | 0)) {
+     block2 : {
+      if (!$4) {
+       $1 = $1 & $6;
+       break block2;
+      }
+      if ($1 >>> 0 < $2 >>> 0) {
+       break block2
+      }
+      $1 = ($1 >>> 0) % ($2 >>> 0) | 0;
+     }
+     if (($1 | 0) != ($5 | 0)) {
+      break block
+     }
+     continue;
+    }
+    if (HEAP32[$0 + 8 >> 2] != ($3 | 0)) {
+     continue
+    }
+    break;
+   };
+   return $0;
+  }
+  return 0;
  }
  
  function std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) {
@@ -10372,7 +10493,7 @@ function asmFunc(imports) {
     } else {
      $4 = 0
     }
-    void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________rehash_true__28unsigned_20long_29(78028, $1 >>> 0 > $4 >>> 0 ? $1 : $4);
+    void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float__________rehash_true__28unsigned_20long_29(78028, $1 >>> 0 > $4 >>> 0 ? $1 : $4);
     $2 = HEAP32[19508];
     $4 = $2 - 1 | 0;
     if (!($2 & $4)) {
@@ -10510,7 +10631,7 @@ function asmFunc(imports) {
   HEAP32[$7 + 216 >> 2] = $2;
   HEAP32[$7 + 220 >> 2] = $1;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $7 + 220 | 0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $7 + 220 | 0)) {
     emscripten__val_20emscripten__val__internalCallWithPolicy__28emscripten__internal__EM_INVOKER_KIND_293_2c_20emscripten__internal__WithPolicies___2c_20emscripten__val_2c_20int___28emscripten___EM_VAL__2c_20char_20const__2c_20int__29($0, 74468);
     break block;
    }
@@ -12232,19 +12353,19 @@ function asmFunc(imports) {
  
  function detectNFTMarker($0) {
   $0 = $0 | 0;
-  var $1 = 0, $2 = 0, $3 = Math_fround(0), $4 = 0, $5 = 0, $6 = 0, $7 = Math_fround(0), $8 = 0, $9 = 0, $10 = 0, $11 = Math_fround(0), $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = Math_fround(0), $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = 0.0, $22 = 0.0, $23 = 0, $24 = Math_fround(0), $25 = 0, $26 = 0, $27 = 0, $28 = 0.0, $29 = 0.0, $30 = 0.0, $31 = 0.0, $32 = 0, $33 = Math_fround(0), $34 = 0.0, $35 = 0, $36 = 0.0, $37 = 0, $38 = 0.0, $39 = 0.0, $40 = 0.0, $41 = 0.0, $42 = Math_fround(0), $43 = Math_fround(0), $44 = 0, $45 = Math_fround(0), $46 = Math_fround(0), $47 = Math_fround(0), $48 = 0.0, $49 = 0, $50 = 0.0, $51 = Math_fround(0), $52 = 0.0, $53 = 0.0, $54 = 0, $55 = 0.0, $56 = 0.0, $57 = Math_fround(0), $58 = 0, $59 = 0, $60 = 0, $61 = 0, $62 = 0.0, $63 = 0, $64 = 0, $65 = 0, $66 = Math_fround(0), $67 = 0.0, $68 = Math_fround(0), $69 = Math_fround(0), $70 = 0, $71 = 0, $72 = 0.0, $73 = 0, $74 = 0.0, $75 = 0, $76 = 0, $77 = 0, $78 = 0, $79 = Math_fround(0), $80 = Math_fround(0), $81 = Math_fround(0), $82 = Math_fround(0), $83 = Math_fround(0), $84 = Math_fround(0), $85 = Math_fround(0), $86 = Math_fround(0), $87 = Math_fround(0), $88 = Math_fround(0), $89 = Math_fround(0), $90 = Math_fround(0), $91 = Math_fround(0), $92 = Math_fround(0), $93 = Math_fround(0), $94 = Math_fround(0), $95 = Math_fround(0), $96 = Math_fround(0), $97 = Math_fround(0), $98 = Math_fround(0), $99 = Math_fround(0), $100 = Math_fround(0), $101 = Math_fround(0), $102 = Math_fround(0), $103 = Math_fround(0), $104 = Math_fround(0), $105 = Math_fround(0), $106 = Math_fround(0), $107 = Math_fround(0), $108 = Math_fround(0), $109 = Math_fround(0), $110 = Math_fround(0), $111 = Math_fround(0), $112 = Math_fround(0), $113 = Math_fround(0), $114 = Math_fround(0), $115 = Math_fround(0), $116 = Math_fround(0), $117 = Math_fround(0), $118 = Math_fround(0), $119 = Math_fround(0), $120 = Math_fround(0), $121 = Math_fround(0), $122 = Math_fround(0), $123 = Math_fround(0), $124 = Math_fround(0), $125 = Math_fround(0), $126 = Math_fround(0), $127 = Math_fround(0), $128 = Math_fround(0), $129 = Math_fround(0), $130 = Math_fround(0), $131 = Math_fround(0), $132 = Math_fround(0), $133 = Math_fround(0), $134 = Math_fround(0), $135 = Math_fround(0), $136 = Math_fround(0), $137 = Math_fround(0), $138 = Math_fround(0), $139 = Math_fround(0), $140 = 0.0, $141 = 0, $142 = 0, $143 = 0, $144 = 0, $145 = Math_fround(0), $146 = Math_fround(0), $147 = Math_fround(0), $148 = Math_fround(0), $149 = Math_fround(0), $150 = Math_fround(0), $151 = Math_fround(0), $152 = Math_fround(0), $153 = 0.0, $154 = 0.0, $155 = 0.0, wasm2js_i32$0 = 0, wasm2js_f32$0 = Math_fround(0);
-  $61 = __stack_pointer + -64 | 0;
-  __stack_pointer = $61;
-  HEAP32[$61 + 60 >> 2] = $0;
+  var $1 = 0, $2 = 0, $3 = Math_fround(0), $4 = 0, $5 = 0, $6 = 0, $7 = Math_fround(0), $8 = 0, $9 = 0, $10 = 0, $11 = Math_fround(0), $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = Math_fround(0), $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = 0.0, $22 = 0.0, $23 = 0, $24 = Math_fround(0), $25 = 0, $26 = 0, $27 = 0, $28 = 0.0, $29 = 0.0, $30 = 0.0, $31 = 0.0, $32 = 0, $33 = Math_fround(0), $34 = 0.0, $35 = 0, $36 = 0.0, $37 = 0.0, $38 = 0, $39 = 0.0, $40 = 0.0, $41 = 0.0, $42 = Math_fround(0), $43 = Math_fround(0), $44 = 0, $45 = Math_fround(0), $46 = Math_fround(0), $47 = Math_fround(0), $48 = 0.0, $49 = 0, $50 = 0.0, $51 = Math_fround(0), $52 = 0.0, $53 = 0.0, $54 = 0, $55 = 0.0, $56 = 0.0, $57 = Math_fround(0), $58 = 0, $59 = 0, $60 = 0, $61 = 0, $62 = 0, $63 = 0.0, $64 = 0, $65 = 0, $66 = Math_fround(0), $67 = 0.0, $68 = Math_fround(0), $69 = Math_fround(0), $70 = 0, $71 = 0, $72 = 0.0, $73 = 0, $74 = 0.0, $75 = 0, $76 = 0, $77 = 0, $78 = 0, $79 = Math_fround(0), $80 = Math_fround(0), $81 = Math_fround(0), $82 = Math_fround(0), $83 = Math_fround(0), $84 = Math_fround(0), $85 = Math_fround(0), $86 = Math_fround(0), $87 = Math_fround(0), $88 = Math_fround(0), $89 = Math_fround(0), $90 = Math_fround(0), $91 = Math_fround(0), $92 = Math_fround(0), $93 = Math_fround(0), $94 = Math_fround(0), $95 = Math_fround(0), $96 = Math_fround(0), $97 = Math_fround(0), $98 = Math_fround(0), $99 = Math_fround(0), $100 = Math_fround(0), $101 = Math_fround(0), $102 = Math_fround(0), $103 = Math_fround(0), $104 = Math_fround(0), $105 = Math_fround(0), $106 = Math_fround(0), $107 = Math_fround(0), $108 = Math_fround(0), $109 = Math_fround(0), $110 = Math_fround(0), $111 = Math_fround(0), $112 = Math_fround(0), $113 = Math_fround(0), $114 = Math_fround(0), $115 = Math_fround(0), $116 = Math_fround(0), $117 = Math_fround(0), $118 = Math_fround(0), $119 = Math_fround(0), $120 = Math_fround(0), $121 = Math_fround(0), $122 = Math_fround(0), $123 = Math_fround(0), $124 = Math_fround(0), $125 = Math_fround(0), $126 = Math_fround(0), $127 = Math_fround(0), $128 = Math_fround(0), $129 = Math_fround(0), $130 = Math_fround(0), $131 = Math_fround(0), $132 = Math_fround(0), $133 = Math_fround(0), $134 = Math_fround(0), $135 = Math_fround(0), $136 = Math_fround(0), $137 = Math_fround(0), $138 = Math_fround(0), $139 = Math_fround(0), $140 = 0.0, $141 = 0, $142 = 0, $143 = 0, $144 = 0, $145 = Math_fround(0), $146 = Math_fround(0), $147 = Math_fround(0), $148 = Math_fround(0), $149 = Math_fround(0), $150 = Math_fround(0), $151 = Math_fround(0), $152 = Math_fround(0), $153 = 0.0, $154 = 0.0, $155 = 0.0, wasm2js_i32$0 = 0, wasm2js_f32$0 = Math_fround(0);
+  $62 = __stack_pointer + -64 | 0;
+  __stack_pointer = $62;
+  HEAP32[$62 + 60 >> 2] = $0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $61 + 60 | 0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $62 + 60 | 0)) {
     $1 = -1;
     break block;
    }
-   $64 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($61 + 60 | 0);
-   HEAP32[$61 + 56 >> 2] = 0;
+   $64 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($62 + 60 | 0);
+   HEAP32[$62 + 56 >> 2] = 0;
    $1 = -1;
-   HEAP32[$61 + 52 >> 2] = -1;
+   HEAP32[$62 + 52 >> 2] = -1;
    if (HEAP32[$64 + 264 >> 2] != -2) {
     break block
    }
@@ -12252,7 +12373,7 @@ function asmFunc(imports) {
    __stack_pointer = $54;
    __inlined_func$kpmMatching$6 : {
     block19 : {
-     block196 : {
+     block197 : {
       $27 = HEAP32[$64 + 224 >> 2];
       $44 = HEAP32[$64 + 204 >> 2];
       block0 : {
@@ -12296,12 +12417,12 @@ function asmFunc(imports) {
             if (!$44) {
              break block7
             }
-            $13 = ($1 | 0) > 0 ? $1 : 0;
+            $12 = ($1 | 0) > 0 ? $1 : 0;
             $17 = ($0 | 0) > 0 ? $0 : 0;
             $0 = $44;
             $1 = $0;
             while (1) {
-             if (($8 | 0) == ($13 | 0)) {
+             if (($8 | 0) == ($12 | 0)) {
               break block9
              }
              $0 = $0 + $14 | 0;
@@ -12374,7 +12495,7 @@ function asmFunc(imports) {
              break block7
             }
             $14 = ($1 | 0) > 0 ? $1 : 0;
-            $13 = ($0 | 0) > 0 ? $0 : 0;
+            $12 = ($0 | 0) > 0 ? $0 : 0;
             $1 = $44;
             while (1) {
              if (($4 | 0) == ($14 | 0)) {
@@ -12386,7 +12507,7 @@ function asmFunc(imports) {
              $10 = $2 + Math_imul($9, $0 + 1 | 0) | 0;
              $0 = 0;
              while (1) {
-              if (($0 | 0) != ($13 | 0)) {
+              if (($0 | 0) != ($12 | 0)) {
                HEAP8[$1 | 0] = (HEAPU8[$5 + 2 | 0] + (HEAPU8[$5 + 1 | 0] + (HEAPU8[$5 | 0] + (HEAPU8[$10 + 2 | 0] + (HEAPU8[$10 + 1 | 0] + (HEAPU8[$10 | 0] + (HEAPU8[$6 + 2 | 0] + (HEAPU8[$6 + 1 | 0] + HEAPU8[$6 | 0] | 0) | 0) | 0) | 0) | 0) | 0) | 0) >>> 0) / 9;
                $0 = $0 + 1 | 0;
                $5 = $5 + 3 | 0;
@@ -12413,7 +12534,7 @@ function asmFunc(imports) {
            break block7
           }
           $14 = ($1 | 0) > 0 ? $1 : 0;
-          $13 = ($0 | 0) > 0 ? $0 : 0;
+          $12 = ($0 | 0) > 0 ? $0 : 0;
           $4 = $44;
           while (1) {
            if (($8 | 0) == ($14 | 0)) {
@@ -12426,7 +12547,7 @@ function asmFunc(imports) {
            $0 = $2 + Math_imul($9, $0 | 1) | 0;
            $1 = 0;
            while (1) {
-            if (($1 | 0) != ($13 | 0)) {
+            if (($1 | 0) != ($12 | 0)) {
              HEAP8[$4 | 0] = HEAPU8[$5 + 3 | 0] + (HEAPU8[$5 + 2 | 0] + (HEAPU8[$5 + 1 | 0] + (HEAPU8[$5 | 0] + (HEAPU8[$10 + 3 | 0] + (HEAPU8[$10 + 2 | 0] + (HEAPU8[$10 + 1 | 0] + (HEAPU8[$10 | 0] + (HEAPU8[$0 + 3 | 0] + (HEAPU8[$0 + 2 | 0] + (HEAPU8[$0 + 1 | 0] + (HEAPU8[$0 | 0] + (HEAPU8[$6 + 3 | 0] + (HEAPU8[$6 + 2 | 0] + (HEAPU8[$6 + 1 | 0] + HEAPU8[$6 | 0] | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) | 0) >>> 4;
              $1 = $1 + 1 | 0;
              $5 = $5 + 4 | 0;
@@ -12458,11 +12579,11 @@ function asmFunc(imports) {
        $76 = __stack_pointer - 32 | 0;
        __stack_pointer = $76;
        $14 = HEAP32[HEAP32[$0 >> 2] >> 2];
-       $13 = $14 + 92 | 0;
-       $1 = HEAP32[$14 + 96 >> 2];
+       $12 = $14 + 84 | 0;
+       $1 = HEAP32[$14 + 88 >> 2];
        block11 : {
         block10 : {
-         if (($1 | 0) == HEAP32[$14 + 100 >> 2]) {
+         if (($1 | 0) == HEAP32[$14 + 92 >> 2]) {
           $4 = HEAP32[$58 + 4 >> 2];
           break block10;
          }
@@ -12490,11 +12611,11 @@ function asmFunc(imports) {
         $2 = HEAP32[$58 + 4 >> 2];
         $9 = HEAP32[$58 + 8 >> 2];
         $1 = 0;
-        HEAP32[$13 + 24 >> 2] = 1068827891;
-        HEAP32[$13 + 28 >> 2] = 1077455420;
-        HEAP32[$13 + 20 >> 2] = 3;
-        HEAP32[$13 + 16 >> 2] = $5;
-        std____2__vector_vision__Image_2c_20std____2__allocator_vision__Image____resize_28unsigned_20long_29($13 + 4 | 0, Math_imul($5, 3));
+        HEAP32[$12 + 24 >> 2] = 1068827891;
+        HEAP32[$12 + 28 >> 2] = 1077455420;
+        HEAP32[$12 + 20 >> 2] = 3;
+        HEAP32[$12 + 16 >> 2] = $5;
+        std____2__vector_vision__Image_2c_20std____2__allocator_vision__Image____resize_28unsigned_20long_29($12 + 4 | 0, Math_imul($5, 3));
         $0 = ($5 | 0) > 0 ? $5 : 0;
         label9 : while (1) {
          if (($0 | 0) != ($1 | 0)) {
@@ -12502,12 +12623,12 @@ function asmFunc(imports) {
           $18 = $2 >>> $1 | 0;
           $4 = 0;
           while (1) {
-           $6 = HEAP32[$13 + 20 >> 2];
+           $6 = HEAP32[$12 + 20 >> 2];
            if ($6 >>> 0 <= $4 >>> 0) {
             $1 = $1 + 1 | 0;
             continue label9;
            } else {
-            vision__Image__alloc_28vision__ImageType_2c_20unsigned_20long_2c_20unsigned_20long_2c_20int_2c_20unsigned_20long_29((HEAP32[$13 + 4 >> 2] + (Math_imul($1, $6) << 5) | 0) + ($4 << 5) | 0, 2, $18, $5, 1);
+            vision__Image__alloc_28vision__ImageType_2c_20unsigned_20long_2c_20unsigned_20long_2c_20int_2c_20unsigned_20long_29((HEAP32[$12 + 4 >> 2] + (Math_imul($1, $6) << 5) | 0) + ($4 << 5) | 0, 2, $18, $5, 1);
             $4 = $4 + 1 | 0;
             continue;
            }
@@ -12515,7 +12636,7 @@ function asmFunc(imports) {
          }
          break;
         };
-        $0 = $13 + 32 | 0;
+        $0 = $12 + 32 | 0;
         $1 = HEAP32[$0 >> 2];
         $5 = Math_imul($2, $9);
         $2 = HEAP32[$0 + 4 >> 2] - $1 >> 1;
@@ -12599,8 +12720,8 @@ function asmFunc(imports) {
           HEAP32[$0 + 4 >> 2] = $1 + ($5 << 1)
          }
         }
-        std____2__vector_float_2c_20std____2__allocator_float____resize_28unsigned_20long_29($13 + 44 | 0, $5);
-        std____2__vector_float_2c_20std____2__allocator_float____resize_28unsigned_20long_29($13 + 56 | 0, $5);
+        std____2__vector_float_2c_20std____2__allocator_float____resize_28unsigned_20long_29($12 + 44 | 0, $5);
+        std____2__vector_float_2c_20std____2__allocator_float____resize_28unsigned_20long_29($12 + 56 | 0, $5);
        }
        $18 = vision__ScopedTimer__ScopedTimer_28char_20const__29($76, 4133);
        block18 : {
@@ -12612,8 +12733,8 @@ function asmFunc(imports) {
              if (HEAP32[$58 + 16 >> 2] != 1) {
               break block14
              }
-             $0 = HEAP32[$13 + 4 >> 2];
-             if ((Math_imul(HEAP32[$13 + 20 >> 2], HEAP32[$13 + 16 >> 2]) | 0) != HEAP32[$13 + 8 >> 2] - $0 >> 5) {
+             $0 = HEAP32[$12 + 4 >> 2];
+             if ((Math_imul(HEAP32[$12 + 20 >> 2], HEAP32[$12 + 16 >> 2]) | 0) != HEAP32[$12 + 8 >> 2] - $0 >> 5) {
               break block15
              }
              if (HEAP32[$58 + 4 >> 2] != HEAP32[$0 + 4 >> 2]) {
@@ -12622,17 +12743,17 @@ function asmFunc(imports) {
              if (HEAP32[$58 + 8 >> 2] != HEAP32[$0 + 8 >> 2]) {
               break block17
              }
-             vision__BinomialPyramid32f__apply_filter_28vision__Image__2c_20vision__Image_20const__29($13, $0, $58);
-             $0 = HEAP32[$13 + 4 >> 2];
-             vision__BinomialPyramid32f__apply_filter_28vision__Image__2c_20vision__Image_20const__29($13, $0 + 32 | 0, $0);
-             $0 = HEAP32[$13 + 4 >> 2];
-             vision__BinomialPyramid32f__apply_filter_twice_28vision__Image__2c_20vision__Image_20const__29($13, $0 - -64 | 0, $0 + 32 | 0);
+             vision__BinomialPyramid32f__apply_filter_28vision__Image__2c_20vision__Image_20const__29($12, $0, $58);
+             $0 = HEAP32[$12 + 4 >> 2];
+             vision__BinomialPyramid32f__apply_filter_28vision__Image__2c_20vision__Image_20const__29($12, $0 + 32 | 0, $0);
+             $0 = HEAP32[$12 + 4 >> 2];
+             vision__BinomialPyramid32f__apply_filter_twice_28vision__Image__2c_20vision__Image_20const__29($12, $0 - -64 | 0, $0 + 32 | 0);
              $4 = 1;
              while (1) {
-              if (HEAPU32[$13 + 16 >> 2] <= $4 >>> 0) {
+              if (HEAPU32[$12 + 16 >> 2] <= $4 >>> 0) {
                break block18
               }
-              $0 = HEAP32[$13 + 4 >> 2] + (Math_imul(HEAP32[$13 + 20 >> 2], $4) << 5) | 0;
+              $0 = HEAP32[$12 + 4 >> 2] + (Math_imul(HEAP32[$12 + 20 >> 2], $4) << 5) | 0;
               $10 = HEAP32[$0 + 24 >> 2];
               $6 = HEAP32[$0 - 8 >> 2];
               $1 = 0;
@@ -12659,10 +12780,10 @@ function asmFunc(imports) {
                }
                break;
               };
-              $0 = HEAP32[$13 + 4 >> 2] + (Math_imul(HEAP32[$13 + 20 >> 2], $4) << 5) | 0;
-              vision__BinomialPyramid32f__apply_filter_28vision__Image__2c_20vision__Image_20const__29($13, $0 + 32 | 0, $0);
-              $0 = HEAP32[$13 + 4 >> 2] + (Math_imul(HEAP32[$13 + 20 >> 2], $4) << 5) | 0;
-              vision__BinomialPyramid32f__apply_filter_twice_28vision__Image__2c_20vision__Image_20const__29($13, $0 - -64 | 0, $0 + 32 | 0);
+              $0 = HEAP32[$12 + 4 >> 2] + (Math_imul(HEAP32[$12 + 20 >> 2], $4) << 5) | 0;
+              vision__BinomialPyramid32f__apply_filter_28vision__Image__2c_20vision__Image_20const__29($12, $0 + 32 | 0, $0);
+              $0 = HEAP32[$12 + 4 >> 2] + (Math_imul(HEAP32[$12 + 20 >> 2], $4) << 5) | 0;
+              vision__BinomialPyramid32f__apply_filter_twice_28vision__Image__2c_20vision__Image_20const__29($12, $0 - -64 | 0, $0 + 32 | 0);
               $4 = $4 + 1 | 0;
               continue;
              };
@@ -12685,20 +12806,20 @@ function asmFunc(imports) {
        vision__ScopedTimer___ScopedTimer_28_29($18);
        $65 = __stack_pointer - 48 | 0;
        __stack_pointer = $65;
-       $18 = $14 + 160 | 0;
-       $0 = HEAP32[$13 + 4 >> 2];
-       if (!(HEAP32[$14 + 160 >> 2] == HEAP32[$0 + 4 >> 2] & HEAP32[$14 + 164 >> 2] == HEAP32[$0 + 8 >> 2])) {
+       $18 = $14 + 152 | 0;
+       $0 = HEAP32[$12 + 4 >> 2];
+       if (!(HEAP32[$14 + 152 >> 2] == HEAP32[$0 + 4 >> 2] & HEAP32[$14 + 156 >> 2] == HEAP32[$0 + 8 >> 2])) {
         $1 = 0;
         $5 = 0;
         $0 = $18 + 32 | 0;
         block21 : {
-         if (HEAP32[$13 + 8 >> 2] != HEAP32[$13 + 4 >> 2]) {
-          $2 = HEAP32[vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($13, 0, 0) >> 2];
-          $4 = HEAP32[vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($13, 0, 0) + 4 >> 2];
-          $9 = HEAP32[vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($13, 0, 0) + 8 >> 2];
-          $6 = HEAP32[$13 + 16 >> 2];
+         if (HEAP32[$12 + 8 >> 2] != HEAP32[$12 + 4 >> 2]) {
+          $2 = HEAP32[vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($12, 0, 0) >> 2];
+          $4 = HEAP32[vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($12, 0, 0) + 4 >> 2];
+          $9 = HEAP32[vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($12, 0, 0) + 8 >> 2];
+          $6 = HEAP32[$12 + 16 >> 2];
           HEAP32[$0 + 12 >> 2] = $6;
-          $8 = HEAP32[$13 + 20 >> 2] - 1 | 0;
+          $8 = HEAP32[$12 + 20 >> 2] - 1 | 0;
           HEAP32[$0 + 16 >> 2] = $8;
           std____2__vector_vision__Image_2c_20std____2__allocator_vision__Image____resize_28unsigned_20long_29($0, Math_imul($6, $8));
           label17 : while (1) {
@@ -12724,11 +12845,11 @@ function asmFunc(imports) {
          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 1214), 2028), 3164), 53), 3735), 4174));
          break block19;
         }
-        $0 = HEAP32[$13 + 4 >> 2];
+        $0 = HEAP32[$12 + 4 >> 2];
         $9 = HEAP32[$0 + 4 >> 2];
         $6 = HEAP32[$0 + 8 >> 2];
-        $4 = HEAP32[$13 + 16 >> 2];
-        $2 = HEAP32[$13 + 20 >> 2];
+        $4 = HEAP32[$12 + 16 >> 2];
+        $2 = HEAP32[$12 + 20 >> 2];
         $0 = $18 + 92 | 0;
         HEAPF32[$0 + 24 >> 2] = .800000011920929;
         HEAP32[$0 + 20 >> 2] = 5;
@@ -12756,7 +12877,7 @@ function asmFunc(imports) {
          }
          break;
         };
-        $0 = HEAP32[$13 + 4 >> 2];
+        $0 = HEAP32[$12 + 4 >> 2];
         HEAP32[$18 >> 2] = HEAP32[$0 + 4 >> 2];
         HEAP32[$18 + 4 >> 2] = HEAP32[$0 + 8 >> 2];
         $0 = $18 + 16 | 0;
@@ -12865,7 +12986,7 @@ function asmFunc(imports) {
        std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($0);
        __stack_pointer = $2 + 16 | 0;
        $0 = HEAP32[$14 + 64 >> 2];
-       $1 = HEAP32[$13 + 4 >> 2];
+       $1 = HEAP32[$12 + 4 >> 2];
        HEAP32[$0 >> 2] = HEAP32[$1 + 4 >> 2];
        HEAP32[$0 + 4 >> 2] = HEAP32[$1 + 8 >> 2];
        $73 = $65 + 16 | 0;
@@ -12878,12 +12999,12 @@ function asmFunc(imports) {
          block28 : {
           block27 : {
            block26 : {
-            if ($13) {
+            if ($12) {
              if (!$18) {
               break block26
              }
-             $0 = HEAP32[$13 + 4 >> 2];
-             if (($0 | 0) == HEAP32[$13 + 8 >> 2]) {
+             $0 = HEAP32[$12 + 4 >> 2];
+             if (($0 | 0) == HEAP32[$12 + 8 >> 2]) {
               break block27
              }
              if (HEAP32[$0 + 4 >> 2] != HEAP32[$18 >> 2]) {
@@ -12897,7 +13018,7 @@ function asmFunc(imports) {
              __stack_pointer = $49;
              block144 : {
               block30 : {
-               if (HEAP32[$13 + 16 >> 2] <= 0) {
+               if (HEAP32[$12 + 16 >> 2] <= 0) {
                 std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 6609), 2028), 3164), 147), 3735), 7095));
                 break block30;
                }
@@ -12906,27 +13027,27 @@ function asmFunc(imports) {
                 block32 : {
                  block31 : {
                   if (HEAP32[$1 + 36 >> 2] != HEAP32[$1 + 32 >> 2]) {
-                   if (HEAP32[$13 + 16 >> 2] <= 0) {
+                   if (HEAP32[$12 + 16 >> 2] <= 0) {
                     break block31
                    }
-                   if (!__dynamic_cast($13, 17756, 22988)) {
+                   if (!__dynamic_cast($12, 17756, 22988)) {
                     break block32
                    }
                    label24 : while (1) {
                     $8 = 0;
-                    if (HEAPU32[$1 + 44 >> 2] <= $12 >>> 0) {
+                    if (HEAPU32[$1 + 44 >> 2] <= $13 >>> 0) {
                      break block33
                     }
                     label25 : while (1) {
                      $0 = HEAP32[$1 + 48 >> 2];
                      if ($0 >>> 0 <= $8 >>> 0) {
-                      $12 = $12 + 1 | 0;
+                      $13 = $13 + 1 | 0;
                       continue label24;
                      } else {
-                      $2 = (HEAP32[$1 + 32 >> 2] + (Math_imul($0, $12) << 5) | 0) + ($8 << 5) | 0;
-                      $4 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($13, $12, $8);
+                      $2 = (HEAP32[$1 + 32 >> 2] + (Math_imul($0, $13) << 5) | 0) + ($8 << 5) | 0;
+                      $4 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($12, $13, $8);
                       $8 = $8 + 1 | 0;
-                      $9 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($13, $12, $8);
+                      $9 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($12, $13, $8);
                       block43 : {
                        block42 : {
                         block41 : {
@@ -13075,8 +13196,8 @@ function asmFunc(imports) {
                          $6 = $10 - 32 | 0;
                          $19 = ($4 | 0) % HEAP32[$9 + 48 >> 2] | 0;
                          $2 = HEAP32[$10 - 28 >> 2];
-                         $12 = HEAP32[$10 + 4 >> 2];
-                         if (($2 | 0) != ($12 | 0)) {
+                         $13 = HEAP32[$10 + 4 >> 2];
+                         if (($2 | 0) != ($13 | 0)) {
                           $0 = $2 >>> 1 | 0;
                           break block44;
                          }
@@ -13103,36 +13224,36 @@ function asmFunc(imports) {
                            }
                            $24 = Math_fround(Math_fround(Math_fround($0 >>> 0) * $7) + $11);
                            $4 = 1;
-                           $12 = $0 - 1 | 0;
-                           $59 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $12);
+                           $13 = $0 - 1 | 0;
+                           $59 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $13);
                            $23 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $0);
                            $2 = $0 + 1 | 0;
                            $25 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $2);
-                           $32 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $12);
-                           $63 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $0);
+                           $32 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $13);
+                           $60 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $0);
                            $26 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $2);
-                           $35 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $12);
-                           $37 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $0);
+                           $35 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $13);
+                           $38 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $0);
                            $20 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $2);
                            while (1) if (($4 | 0) == ($144 | 0)) {
                             $0 = $2;
                             continue label28;
                            } else {
                             $0 = $4 << 2;
-                            $3 = HEAPF32[$0 + $63 >> 2];
+                            $3 = HEAPF32[$0 + $60 >> 2];
                             block48 : {
                              if ($46 > Math_fround($3 * $3)) {
                               break block48
                              }
-                             $12 = $4 - 1 << 2;
-                             $42 = HEAPF32[$12 + $59 >> 2];
+                             $13 = $4 - 1 << 2;
+                             $42 = HEAPF32[$13 + $59 >> 2];
                              block50 : {
                               block49 : {
                                if (!($42 < $3) | !($3 > HEAPF32[$0 + $59 >> 2])) {
                                 break block49
                                }
                                $15 = $4 + 1 << 2;
-                               if (!($3 > HEAPF32[$15 + $59 >> 2]) | !($3 > HEAPF32[$12 + $23 >> 2]) | (!($3 > HEAPF32[$0 + $23 >> 2]) | !($3 > HEAPF32[$15 + $23 >> 2])) | (!($3 > HEAPF32[$12 + $25 >> 2]) | !($3 > HEAPF32[$0 + $25 >> 2]) | (!($3 > HEAPF32[$15 + $25 >> 2]) | !($3 > HEAPF32[$12 + $32 >> 2]))) | (!($3 > HEAPF32[$0 + $32 >> 2]) | !($3 > HEAPF32[$15 + $32 >> 2]) | (!($3 > HEAPF32[$12 + $63 >> 2]) | !($3 > HEAPF32[$15 + $63 >> 2])) | (!($3 > HEAPF32[$12 + $26 >> 2]) | !($3 > HEAPF32[$0 + $26 >> 2]) | (!($3 > HEAPF32[$15 + $26 >> 2]) | !($3 > HEAPF32[$12 + $35 >> 2])))) | (!($3 > HEAPF32[$0 + $35 >> 2]) | !($3 > HEAPF32[$15 + $35 >> 2]) | (!($3 > HEAPF32[$12 + $37 >> 2]) | !($3 > HEAPF32[$0 + $37 >> 2])) | (!($3 > HEAPF32[$0 + $20 >> 2]) | (!($3 > HEAPF32[$15 + $37 >> 2]) | !($3 > HEAPF32[$12 + $20 >> 2]))))) {
+                               if (!($3 > HEAPF32[$15 + $59 >> 2]) | !($3 > HEAPF32[$13 + $23 >> 2]) | (!($3 > HEAPF32[$0 + $23 >> 2]) | !($3 > HEAPF32[$15 + $23 >> 2])) | (!($3 > HEAPF32[$13 + $25 >> 2]) | !($3 > HEAPF32[$0 + $25 >> 2]) | (!($3 > HEAPF32[$15 + $25 >> 2]) | !($3 > HEAPF32[$13 + $32 >> 2]))) | (!($3 > HEAPF32[$0 + $32 >> 2]) | !($3 > HEAPF32[$15 + $32 >> 2]) | (!($3 > HEAPF32[$13 + $60 >> 2]) | !($3 > HEAPF32[$15 + $60 >> 2])) | (!($3 > HEAPF32[$13 + $26 >> 2]) | !($3 > HEAPF32[$0 + $26 >> 2]) | (!($3 > HEAPF32[$15 + $26 >> 2]) | !($3 > HEAPF32[$13 + $35 >> 2])))) | (!($3 > HEAPF32[$0 + $35 >> 2]) | !($3 > HEAPF32[$15 + $35 >> 2]) | (!($3 > HEAPF32[$13 + $38 >> 2]) | !($3 > HEAPF32[$0 + $38 >> 2])) | (!($3 > HEAPF32[$0 + $20 >> 2]) | (!($3 > HEAPF32[$15 + $38 >> 2]) | !($3 > HEAPF32[$13 + $20 >> 2]))))) {
                                 break block49
                                }
                                if ($3 > HEAPF32[$15 + $20 >> 2]) {
@@ -13143,14 +13264,14 @@ function asmFunc(imports) {
                                break block48
                               }
                               $15 = $4 + 1 << 2;
-                              if (!($3 < HEAPF32[$15 + $59 >> 2]) | !($3 < HEAPF32[$12 + $23 >> 2]) | (!($3 < HEAPF32[$0 + $23 >> 2]) | !($3 < HEAPF32[$15 + $23 >> 2])) | (!($3 < HEAPF32[$12 + $25 >> 2]) | !($3 < HEAPF32[$0 + $25 >> 2]) | (!($3 < HEAPF32[$15 + $25 >> 2]) | !($3 < HEAPF32[$12 + $32 >> 2]))) | (!($3 < HEAPF32[$0 + $32 >> 2]) | !($3 < HEAPF32[$15 + $32 >> 2]) | (!($3 < HEAPF32[$12 + $63 >> 2]) | !($3 < HEAPF32[$15 + $63 >> 2])) | (!($3 < HEAPF32[$12 + $26 >> 2]) | !($3 < HEAPF32[$0 + $26 >> 2]) | (!($3 < HEAPF32[$15 + $26 >> 2]) | !($3 < HEAPF32[$12 + $35 >> 2])))) | (!($3 < HEAPF32[$0 + $35 >> 2]) | !($3 < HEAPF32[$15 + $35 >> 2]) | (!($3 < HEAPF32[$12 + $37 >> 2]) | !($3 < HEAPF32[$0 + $37 >> 2])) | (!($3 < HEAPF32[$15 + $37 >> 2]) | !($3 < HEAPF32[$12 + $20 >> 2]) | (!($3 < HEAPF32[$0 + $20 >> 2]) | !($3 < HEAPF32[$15 + $20 >> 2]))))) {
+                              if (!($3 < HEAPF32[$15 + $59 >> 2]) | !($3 < HEAPF32[$13 + $23 >> 2]) | (!($3 < HEAPF32[$0 + $23 >> 2]) | !($3 < HEAPF32[$15 + $23 >> 2])) | (!($3 < HEAPF32[$13 + $25 >> 2]) | !($3 < HEAPF32[$0 + $25 >> 2]) | (!($3 < HEAPF32[$15 + $25 >> 2]) | !($3 < HEAPF32[$13 + $32 >> 2]))) | (!($3 < HEAPF32[$0 + $32 >> 2]) | !($3 < HEAPF32[$15 + $32 >> 2]) | (!($3 < HEAPF32[$13 + $60 >> 2]) | !($3 < HEAPF32[$15 + $60 >> 2])) | (!($3 < HEAPF32[$13 + $26 >> 2]) | !($3 < HEAPF32[$0 + $26 >> 2]) | (!($3 < HEAPF32[$15 + $26 >> 2]) | !($3 < HEAPF32[$13 + $35 >> 2])))) | (!($3 < HEAPF32[$0 + $35 >> 2]) | !($3 < HEAPF32[$15 + $35 >> 2]) | (!($3 < HEAPF32[$13 + $38 >> 2]) | !($3 < HEAPF32[$0 + $38 >> 2])) | (!($3 < HEAPF32[$15 + $38 >> 2]) | !($3 < HEAPF32[$13 + $20 >> 2]) | (!($3 < HEAPF32[$0 + $20 >> 2]) | !($3 < HEAPF32[$15 + $20 >> 2]))))) {
                                break block48
                               }
                              }
                              HEAPF32[$8 + 36 >> 2] = $3;
                              HEAP32[$8 + 28 >> 2] = $19;
                              HEAP32[$8 + 24 >> 2] = $17;
-                             $3 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($13, $17, $16);
+                             $3 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($12, $17, $16);
                              HEAPF32[$8 + 16 >> 2] = $24;
                              HEAPF32[$8 + 40 >> 2] = $3;
                              HEAPF32[$8 + 12 >> 2] = Math_fround(Math_fround($4 >>> 0) * $7) + $11;
@@ -13189,7 +13310,7 @@ function asmFunc(imports) {
                          } else {
                           $2 = 0
                          }
-                         $63 = $2 >>> 0 <= 2 ? 2 : $2;
+                         $60 = $2 >>> 0 <= 2 ? 2 : $2;
                          $42 = Math_fround(1 << $17);
                          $43 = Math_fround(ldexp($17 - 1 | 0) + -.5);
                          $45 = Math_fround($19 | 0);
@@ -13203,20 +13324,20 @@ function asmFunc(imports) {
                           $16 = Math_fround($11 + Math_fround(.5));
                           $24 = Math_fround($11 + Math_fround(-.5));
                           $4 = 2;
-                          $12 = $0 - 1 | 0;
-                          $35 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $12);
+                          $13 = $0 - 1 | 0;
+                          $35 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $13);
                           $23 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $0);
                           $2 = $0 + 1 | 0;
                           $25 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $2);
-                          $32 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $12);
-                          $37 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $0);
+                          $32 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $13);
+                          $38 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $0);
                           $26 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $2);
-                          while (1) if (($4 | 0) == ($63 | 0)) {
+                          while (1) if (($4 | 0) == ($60 | 0)) {
                            $0 = $2;
                            continue label30;
                           } else {
-                           $12 = $4 << 2;
-                           $0 = $12 + $37 | 0;
+                           $13 = $4 << 2;
+                           $0 = $13 + $38 | 0;
                            $3 = HEAPF32[$0 >> 2];
                            block53 : {
                             if ($46 > Math_fround($3 * $3)) {
@@ -13228,11 +13349,11 @@ function asmFunc(imports) {
                             $70 = $15 + $35 | 0;
                             block55 : {
                              block54 : {
-                              if (!(HEAPF32[$70 >> 2] < $3) | !(HEAPF32[$12 + $35 >> 2] < $3)) {
+                              if (!(HEAPF32[$70 >> 2] < $3) | !(HEAPF32[$13 + $35 >> 2] < $3)) {
                                break block54
                               }
                               $20 = $4 + 1 << 2;
-                              if (!(HEAPF32[$20 + $35 >> 2] < $3) | !(HEAPF32[$15 + $23 >> 2] < $3) | (!(HEAPF32[$12 + $23 >> 2] < $3) | !(HEAPF32[$20 + $23 >> 2] < $3)) | (!(HEAPF32[$15 + $25 >> 2] < $3) | !(HEAPF32[$12 + $25 >> 2] < $3) | (!(HEAPF32[$20 + $25 >> 2] < $3) | !(HEAPF32[$15 + $32 >> 2] < $3))) | (!(HEAPF32[$12 + $32 >> 2] < $3) | !(HEAPF32[$20 + $32 >> 2] < $3) | (!(HEAPF32[$15 + $37 >> 2] < $3) | !(HEAPF32[$20 + $37 >> 2] < $3)) | (!(HEAPF32[$20 + $26 >> 2] < $3) | (!(HEAPF32[$15 + $26 >> 2] < $3) | !(HEAPF32[$12 + $26 >> 2] < $3))))) {
+                              if (!(HEAPF32[$20 + $35 >> 2] < $3) | !(HEAPF32[$15 + $23 >> 2] < $3) | (!(HEAPF32[$13 + $23 >> 2] < $3) | !(HEAPF32[$20 + $23 >> 2] < $3)) | (!(HEAPF32[$15 + $25 >> 2] < $3) | !(HEAPF32[$13 + $25 >> 2] < $3) | (!(HEAPF32[$20 + $25 >> 2] < $3) | !(HEAPF32[$15 + $32 >> 2] < $3))) | (!(HEAPF32[$13 + $32 >> 2] < $3) | !(HEAPF32[$20 + $32 >> 2] < $3) | (!(HEAPF32[$15 + $38 >> 2] < $3) | !(HEAPF32[$20 + $38 >> 2] < $3)) | (!(HEAPF32[$20 + $26 >> 2] < $3) | (!(HEAPF32[$15 + $26 >> 2] < $3) | !(HEAPF32[$13 + $26 >> 2] < $3))))) {
                                break block54
                               }
                               $47 = Math_fround($7 + Math_fround(-.5));
@@ -13282,11 +13403,11 @@ function asmFunc(imports) {
                               }
                               $3 = HEAPF32[$0 >> 2];
                              }
-                             if (!(HEAPF32[$70 >> 2] > $3) | !(HEAPF32[$12 + $35 >> 2] > $3)) {
+                             if (!(HEAPF32[$70 >> 2] > $3) | !(HEAPF32[$13 + $35 >> 2] > $3)) {
                               break block53
                              }
                              $20 = $4 + 1 << 2;
-                             if (!(HEAPF32[$20 + $35 >> 2] > $3) | !(HEAPF32[$15 + $23 >> 2] > $3) | (!(HEAPF32[$12 + $23 >> 2] > $3) | !(HEAPF32[$20 + $23 >> 2] > $3)) | (!(HEAPF32[$15 + $25 >> 2] > $3) | !(HEAPF32[$12 + $25 >> 2] > $3) | (!(HEAPF32[$20 + $25 >> 2] > $3) | !(HEAPF32[$15 + $32 >> 2] > $3))) | (!(HEAPF32[$12 + $32 >> 2] > $3) | !(HEAPF32[$20 + $32 >> 2] > $3) | (!(HEAPF32[$15 + $37 >> 2] > $3) | !(HEAPF32[$20 + $37 >> 2] > $3)) | (!(HEAPF32[$20 + $26 >> 2] > $3) | (!(HEAPF32[$15 + $26 >> 2] > $3) | !(HEAPF32[$12 + $26 >> 2] > $3))))) {
+                             if (!(HEAPF32[$20 + $35 >> 2] > $3) | !(HEAPF32[$15 + $23 >> 2] > $3) | (!(HEAPF32[$13 + $23 >> 2] > $3) | !(HEAPF32[$20 + $23 >> 2] > $3)) | (!(HEAPF32[$15 + $25 >> 2] > $3) | !(HEAPF32[$13 + $25 >> 2] > $3) | (!(HEAPF32[$20 + $25 >> 2] > $3) | !(HEAPF32[$15 + $32 >> 2] > $3))) | (!(HEAPF32[$13 + $32 >> 2] > $3) | !(HEAPF32[$20 + $32 >> 2] > $3) | (!(HEAPF32[$15 + $38 >> 2] > $3) | !(HEAPF32[$20 + $38 >> 2] > $3)) | (!(HEAPF32[$20 + $26 >> 2] > $3) | (!(HEAPF32[$15 + $26 >> 2] > $3) | !(HEAPF32[$13 + $26 >> 2] > $3))))) {
                               break block53
                              }
                              $47 = Math_fround($7 + Math_fround(-.5));
@@ -13322,7 +13443,7 @@ function asmFunc(imports) {
                             HEAP32[$8 + 28 >> 2] = $19;
                             HEAP32[$8 + 24 >> 2] = $17;
                             HEAPF32[$8 + 36 >> 2] = HEAPF32[$0 >> 2];
-                            $3 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($13, $17, $45);
+                            $3 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($12, $17, $45);
                             HEAPF32[$8 + 16 >> 2] = $51;
                             HEAPF32[$8 + 12 >> 2] = Math_fround($57 * $42) + $43;
                             HEAPF32[$8 + 40 >> 2] = $3;
@@ -13349,7 +13470,7 @@ function asmFunc(imports) {
                     break block57;
                    }
                    $4 = $1;
-                   if (($0 | 0) != ($12 | 0) | ($12 | 0) != HEAP32[$5 + 4 >> 2]) {
+                   if (($0 | 0) != ($13 | 0) | ($13 | 0) != HEAP32[$5 + 4 >> 2]) {
                     continue
                    }
                    block58 : {
@@ -13361,8 +13482,8 @@ function asmFunc(imports) {
                      $0 = 1;
                      $2 = $2 - 1 | 0;
                      $59 = $2 >>> 0 <= 1 ? 1 : $2;
-                     $2 = $12 - 1 | 0;
-                     $63 = $2 >>> 0 <= 1 ? 1 : $2;
+                     $2 = $13 - 1 | 0;
+                     $60 = $2 >>> 0 <= 1 ? 1 : $2;
                      $42 = Math_fround(1 << $17);
                      $43 = Math_fround(ldexp($17 - 1 | 0) + -.5);
                      $45 = Math_fround($19 | 0);
@@ -13375,20 +13496,20 @@ function asmFunc(imports) {
                       $11 = Math_fround(Math_fround($0 << 1 >>> 0) + Math_fround(.5));
                       $16 = Math_fround($11 + Math_fround(2.0));
                       $24 = Math_fround($11 + Math_fround(-2.0));
-                      $12 = $0 - 1 | 0;
-                      $35 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $12);
-                      $37 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $0);
+                      $13 = $0 - 1 | 0;
+                      $35 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $13);
+                      $38 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $0);
                       $2 = $0 + 1 | 0;
                       $23 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($10, $2);
-                      $25 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $12);
+                      $25 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $13);
                       $32 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $0);
                       $26 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $2);
-                      while (1) if (($4 | 0) == ($63 | 0)) {
+                      while (1) if (($4 | 0) == ($60 | 0)) {
                        $0 = $2;
                        continue label33;
                       } else {
-                       $12 = $4 << 2;
-                       $0 = $12 + $37 | 0;
+                       $13 = $4 << 2;
+                       $0 = $13 + $38 | 0;
                        $3 = HEAPF32[$0 >> 2];
                        block59 : {
                         if ($46 > Math_fround($3 * $3)) {
@@ -13399,11 +13520,11 @@ function asmFunc(imports) {
                         $70 = $15 + $35 | 0;
                         block61 : {
                          block60 : {
-                          if (!(HEAPF32[$70 >> 2] < $3) | !(HEAPF32[$12 + $35 >> 2] < $3)) {
+                          if (!(HEAPF32[$70 >> 2] < $3) | !(HEAPF32[$13 + $35 >> 2] < $3)) {
                            break block60
                           }
                           $20 = $4 + 1 << 2;
-                          if (!(HEAPF32[$20 + $35 >> 2] < $3) | !(HEAPF32[$15 + $37 >> 2] < $3) | (!(HEAPF32[$20 + $37 >> 2] < $3) | !(HEAPF32[$15 + $23 >> 2] < $3)) | (!(HEAPF32[$12 + $23 >> 2] < $3) | !(HEAPF32[$20 + $23 >> 2] < $3) | (!(HEAPF32[$15 + $25 >> 2] < $3) | !(HEAPF32[$12 + $25 >> 2] < $3))) | (!(HEAPF32[$20 + $25 >> 2] < $3) | !(HEAPF32[$15 + $32 >> 2] < $3) | (!(HEAPF32[$12 + $32 >> 2] < $3) | !(HEAPF32[$20 + $32 >> 2] < $3)) | (!(HEAPF32[$20 + $26 >> 2] < $3) | (!(HEAPF32[$15 + $26 >> 2] < $3) | !(HEAPF32[$12 + $26 >> 2] < $3))))) {
+                          if (!(HEAPF32[$20 + $35 >> 2] < $3) | !(HEAPF32[$15 + $38 >> 2] < $3) | (!(HEAPF32[$20 + $38 >> 2] < $3) | !(HEAPF32[$15 + $23 >> 2] < $3)) | (!(HEAPF32[$13 + $23 >> 2] < $3) | !(HEAPF32[$20 + $23 >> 2] < $3) | (!(HEAPF32[$15 + $25 >> 2] < $3) | !(HEAPF32[$13 + $25 >> 2] < $3))) | (!(HEAPF32[$20 + $25 >> 2] < $3) | !(HEAPF32[$15 + $32 >> 2] < $3) | (!(HEAPF32[$13 + $32 >> 2] < $3) | !(HEAPF32[$20 + $32 >> 2] < $3)) | (!(HEAPF32[$20 + $26 >> 2] < $3) | (!(HEAPF32[$15 + $26 >> 2] < $3) | !(HEAPF32[$13 + $26 >> 2] < $3))))) {
                            break block60
                           }
                           $47 = Math_fround($7 + Math_fround(-2.0));
@@ -13453,11 +13574,11 @@ function asmFunc(imports) {
                           }
                           $3 = HEAPF32[$0 >> 2];
                          }
-                         if (!(HEAPF32[$70 >> 2] > $3) | !(HEAPF32[$12 + $35 >> 2] > $3)) {
+                         if (!(HEAPF32[$70 >> 2] > $3) | !(HEAPF32[$13 + $35 >> 2] > $3)) {
                           break block59
                          }
                          $20 = $4 + 1 << 2;
-                         if (!(HEAPF32[$20 + $35 >> 2] > $3) | !(HEAPF32[$15 + $37 >> 2] > $3) | (!(HEAPF32[$20 + $37 >> 2] > $3) | !(HEAPF32[$15 + $23 >> 2] > $3)) | (!(HEAPF32[$12 + $23 >> 2] > $3) | !(HEAPF32[$20 + $23 >> 2] > $3) | (!(HEAPF32[$15 + $25 >> 2] > $3) | !(HEAPF32[$12 + $25 >> 2] > $3))) | (!(HEAPF32[$20 + $25 >> 2] > $3) | !(HEAPF32[$15 + $32 >> 2] > $3) | (!(HEAPF32[$12 + $32 >> 2] > $3) | !(HEAPF32[$20 + $32 >> 2] > $3)) | (!(HEAPF32[$20 + $26 >> 2] > $3) | (!(HEAPF32[$15 + $26 >> 2] > $3) | !(HEAPF32[$12 + $26 >> 2] > $3))))) {
+                         if (!(HEAPF32[$20 + $35 >> 2] > $3) | !(HEAPF32[$15 + $38 >> 2] > $3) | (!(HEAPF32[$20 + $38 >> 2] > $3) | !(HEAPF32[$15 + $23 >> 2] > $3)) | (!(HEAPF32[$13 + $23 >> 2] > $3) | !(HEAPF32[$20 + $23 >> 2] > $3) | (!(HEAPF32[$15 + $25 >> 2] > $3) | !(HEAPF32[$13 + $25 >> 2] > $3))) | (!(HEAPF32[$20 + $25 >> 2] > $3) | !(HEAPF32[$15 + $32 >> 2] > $3) | (!(HEAPF32[$13 + $32 >> 2] > $3) | !(HEAPF32[$20 + $32 >> 2] > $3)) | (!(HEAPF32[$20 + $26 >> 2] > $3) | (!(HEAPF32[$15 + $26 >> 2] > $3) | !(HEAPF32[$13 + $26 >> 2] > $3))))) {
                           break block59
                          }
                          $47 = Math_fround($7 + Math_fround(-2.0));
@@ -13493,7 +13614,7 @@ function asmFunc(imports) {
                         HEAP32[$8 + 28 >> 2] = $19;
                         HEAP32[$8 + 24 >> 2] = $17;
                         HEAPF32[$8 + 36 >> 2] = HEAPF32[$0 >> 2];
-                        $3 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($13, $17, $45);
+                        $3 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($12, $17, $45);
                         HEAPF32[$8 + 16 >> 2] = $51;
                         HEAPF32[$8 + 12 >> 2] = Math_fround(Math_fround($4 >>> 0) * $42) + $43;
                         HEAPF32[$8 + 40 >> 2] = $3;
@@ -13523,7 +13644,7 @@ function asmFunc(imports) {
                $2 = 0;
                $0 = __stack_pointer - 80 | 0;
                __stack_pointer = $0;
-               $12 = $9 + 60 | 0;
+               $13 = $9 + 60 | 0;
                $3 = HEAPF32[$9 + 56 >> 2];
                $7 = Math_fround($3 + Math_fround(1.0));
                $46 = Math_fround(Math_fround($7 * $7) / $3);
@@ -13614,7 +13735,7 @@ function asmFunc(imports) {
                                 $6 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($6, $23);
                                 $35 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($8, $1);
                                 $19 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($4, $19);
-                                $37 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($4, $1);
+                                $38 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($4, $1);
                                 $23 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($4, $23);
                                 vision__ComputeSubpixelDerivatives_28float__2c_20float__2c_20float__2c_20float__2c_20float__2c_20vision__Image_20const__2c_20int_2c_20int_29($15 + 28 | 0, $15 + 24 | 0, $15 + 20 | 0, $15 + 16 | 0, $15 + 12 | 0, $8, $10, $1);
                                 $4 = $10 << 2;
@@ -13622,7 +13743,7 @@ function asmFunc(imports) {
                                 $24 = HEAPF32[$4 + $25 >> 2];
                                 $33 = HEAPF32[$4 + $23 >> 2];
                                 $45 = HEAPF32[$4 + $19 >> 2];
-                                $6 = $4 + $37 | 0;
+                                $6 = $4 + $38 | 0;
                                 $3 = HEAPF32[$6 >> 2];
                                 $19 = $4 + $26 | 0;
                                 $7 = HEAPF32[$19 >> 2];
@@ -14012,8 +14133,8 @@ function asmFunc(imports) {
                      if (!($24 < Math_fround(HEAPU32[$4 + 4 >> 2])) | !($16 >= Math_fround(0.0)) | !($16 < Math_fround(HEAPU32[$4 + 8 >> 2]))) {
                       break block94
                      }
-                     (wasm2js_i32$0 = $17, wasm2js_f32$0 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($13, $1, $3)), HEAPF32[wasm2js_i32$0 + 28 >> 2] = wasm2js_f32$0;
-                     wasm2js_memory_copy(HEAP32[$12 >> 2] + Math_imul($2, 36) | 0, $17, 36);
+                     (wasm2js_i32$0 = $17, wasm2js_f32$0 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($12, $1, $3)), HEAPF32[wasm2js_i32$0 + 28 >> 2] = wasm2js_f32$0;
+                     wasm2js_memory_copy(HEAP32[$13 >> 2] + Math_imul($2, 36) | 0, $17, 36);
                      $2 = $2 + 1 | 0;
                     }
                     $5 = $5 + 1 | 0;
@@ -14021,21 +14142,21 @@ function asmFunc(imports) {
                    }
                    break;
                   };
-                  $4 = HEAP32[$12 >> 2];
-                  $1 = (HEAP32[$12 + 4 >> 2] - $4 | 0) / 36 | 0;
+                  $4 = HEAP32[$13 >> 2];
+                  $1 = (HEAP32[$13 + 4 >> 2] - $4 | 0) / 36 | 0;
                   block98 : {
                    if ($1 >>> 0 < $2 >>> 0) {
                     $5 = __stack_pointer - 32 | 0;
                     __stack_pointer = $5;
                     $1 = $2 - $1 | 0;
-                    $2 = HEAP32[$12 + 4 >> 2];
+                    $2 = HEAP32[$13 + 4 >> 2];
                     block97 : {
-                     if ($1 >>> 0 <= (HEAP32[$12 + 8 >> 2] - $2 | 0) / 36 >>> 0) {
-                      $4 = HEAP32[$12 + 4 >> 2];
+                     if ($1 >>> 0 <= (HEAP32[$13 + 8 >> 2] - $2 | 0) / 36 >>> 0) {
+                      $4 = HEAP32[$13 + 4 >> 2];
                       $1 = $4 + Math_imul($1, 36) | 0;
                       while (1) {
                        if (($1 | 0) == ($4 | 0)) {
-                        HEAP32[$12 + 4 >> 2] = $1
+                        HEAP32[$13 + 4 >> 2] = $1
                        } else {
                         wasm2js_memory_fill($4, 0, 36);
                         $4 = $4 + 36 | 0;
@@ -14045,7 +14166,7 @@ function asmFunc(imports) {
                       };
                       break block97;
                      }
-                     $2 = std____2____split_buffer_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint_______split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint___29($5 + 12 | 0, std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($12, $1 + (($2 - HEAP32[$12 >> 2] | 0) / 36 | 0) | 0), (HEAP32[$12 + 4 >> 2] - HEAP32[$12 >> 2] | 0) / 36 | 0, $12);
+                     $2 = std____2____split_buffer_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint_______split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint___29($5 + 12 | 0, std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($13, $1 + (($2 - HEAP32[$13 >> 2] | 0) / 36 | 0) | 0), (HEAP32[$13 + 4 >> 2] - HEAP32[$13 >> 2] | 0) / 36 | 0, $13);
                      $4 = HEAP32[$2 + 8 >> 2];
                      $1 = $4 + Math_imul($1, 36) | 0;
                      while (1) {
@@ -14057,14 +14178,14 @@ function asmFunc(imports) {
                       break;
                      };
                      HEAP32[$2 + 8 >> 2] = $1;
-                     std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint______swap_out_circular_buffer_28std____2____split_buffer_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint_____29($12, $2);
+                     std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint______swap_out_circular_buffer_28std____2____split_buffer_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint_____29($13, $2);
                      std____2____split_buffer_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint________split_buffer_28_29($2);
                     }
                     __stack_pointer = $5 + 32 | 0;
                     break block98;
                    }
                    if ($1 >>> 0 > $2 >>> 0) {
-                    HEAP32[$12 + 4 >> 2] = $4 + Math_imul($2, 36)
+                    HEAP32[$13 + 4 >> 2] = $4 + Math_imul($2, 36)
                    }
                   }
                   __stack_pointer = $0 + 80 | 0;
@@ -14077,7 +14198,7 @@ function asmFunc(imports) {
                 break block30;
                }
                vision__ScopedTimer___ScopedTimer_28_29($32);
-               $37 = vision__ScopedTimer__ScopedTimer_28char_20const__29($49, 14772);
+               $38 = vision__ScopedTimer__ScopedTimer_28char_20const__29($49, 14772);
                $17 = __stack_pointer - 16 | 0;
                __stack_pointer = $17;
                block119 : {
@@ -14106,11 +14227,11 @@ function asmFunc(imports) {
                     $23 = $17 + 4 | 0;
                     HEAP32[$23 + 4 >> 2] = HEAP32[$23 >> 2];
                     std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____reserve_28unsigned_20long_29($23, $4);
-                    $12 = HEAP32[$9 + 16 >> 2];
-                    $19 = (HEAP32[$9 + 20 >> 2] - $12 | 0) / 12 | 0;
+                    $13 = HEAP32[$9 + 16 >> 2];
+                    $19 = (HEAP32[$9 + 20 >> 2] - $13 | 0) / 12 | 0;
                     label38 : while (1) {
                      if (($0 | 0) != ($19 | 0)) {
-                      $2 = $12 + Math_imul($0, 12) | 0;
+                      $2 = $13 + Math_imul($0, 12) | 0;
                       $1 = HEAP32[$2 >> 2];
                       $25 = (HEAP32[$2 + 4 >> 2] - $1 | 0) / 12 | 0;
                       $2 = 0;
@@ -14212,9 +14333,9 @@ function asmFunc(imports) {
                                    break block103;
                                   }
                                   if (($2 | 0) <= 7) {
-                                   $12 = $8 - 8 | 0;
+                                   $13 = $8 - 8 | 0;
                                    while (1) {
-                                    if (($1 | 0) != ($12 | 0)) {
+                                    if (($1 | 0) != ($13 | 0)) {
                                      $6 = __stack_pointer - 16 | 0;
                                      __stack_pointer = $6;
                                      HEAP8[$6 + 15 | 0] = 0;
@@ -14251,7 +14372,7 @@ function asmFunc(imports) {
                                   }
                                   $2 = ($2 << 2 & -8) + $1 | 0;
                                   $6 = $8 - 8 | 0;
-                                  $12 = bool_20std____2____sort3_5babi_ne200100_5d_std____2___ClassicAlgPolicy_2c_20std____2__greater_std____2__pair_float_2c_20unsigned_20long____2c_20std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_200__28std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_20std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_20std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_20std____2__greater_std____2__pair_float_2c_20unsigned_20long____29($1, $2, $6);
+                                  $13 = bool_20std____2____sort3_5babi_ne200100_5d_std____2___ClassicAlgPolicy_2c_20std____2__greater_std____2__pair_float_2c_20unsigned_20long____2c_20std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_200__28std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_20std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_20std____2____wrap_iter_std____2__pair_float_2c_20unsigned_20long____2c_20std____2__greater_std____2__pair_float_2c_20unsigned_20long____29($1, $2, $6);
                                   HEAP32[$10 + 12 >> 2] = $1;
                                   HEAP32[$10 + 8 >> 2] = $6;
                                   if (!bool_20std____2__operator__5babi_ne200100_5d_float_2c_20unsigned_20long_2c_20float_2c_20unsigned_20long__28std____2__pair_float_2c_20unsigned_20long__20const__2c_20std____2__pair_float_2c_20unsigned_20long__20const__29($2, $1)) {
@@ -14259,8 +14380,8 @@ function asmFunc(imports) {
                                     block108 : {
                                      $26 = HEAP32[$10 + 8 >> 2] - 8 | 0;
                                      HEAP32[$10 + 8 >> 2] = $26;
-                                     $63 = HEAP32[$10 + 12 >> 2];
-                                     if (($63 | 0) == ($26 | 0)) {
+                                     $60 = HEAP32[$10 + 12 >> 2];
+                                     if (($60 | 0) == ($26 | 0)) {
                                       break block108
                                      }
                                      if (!bool_20std____2__operator__5babi_ne200100_5d_float_2c_20unsigned_20long_2c_20float_2c_20unsigned_20long__28std____2__pair_float_2c_20unsigned_20long__20const__2c_20std____2__pair_float_2c_20unsigned_20long__20const__29($2, $26)) {
@@ -14270,7 +14391,7 @@ function asmFunc(imports) {
                                     break;
                                    };
                                    $5 = HEAP32[$10 + 12 >> 2];
-                                   if (($26 | 0) == ($63 | 0)) {
+                                   if (($26 | 0) == ($60 | 0)) {
                                     break block109
                                    }
                                    $3 = HEAPF32[$5 >> 2];
@@ -14280,7 +14401,7 @@ function asmFunc(imports) {
                                    $26 = HEAP32[$5 + 4 >> 2];
                                    HEAP32[$5 + 4 >> 2] = HEAP32[$6 + 4 >> 2];
                                    HEAP32[$6 + 4 >> 2] = $26;
-                                   $12 = $12 ? 2 : 1;
+                                   $13 = $13 ? 2 : 1;
                                   }
                                   $5 = HEAP32[$10 + 12 >> 2] + 8 | 0;
                                   HEAP32[$10 + 12 >> 2] = $5;
@@ -14316,7 +14437,7 @@ function asmFunc(imports) {
                                     $5 = $6 + 8 | 0;
                                     HEAP32[$10 + 12 >> 2] = $5;
                                     $2 = ($2 | 0) == ($6 | 0) ? HEAP32[$10 + 8 >> 2] : $2;
-                                    $12 = $12 + 1 | 0;
+                                    $13 = $13 + 1 | 0;
                                     continue;
                                    }
                                   };
@@ -14339,14 +14460,14 @@ function asmFunc(imports) {
                                  $6 = HEAP32[$5 + 4 >> 2];
                                  HEAP32[$5 + 4 >> 2] = HEAP32[$2 + 4 >> 2];
                                  HEAP32[$2 + 4 >> 2] = $6;
-                                 $12 = $12 + 1 | 0;
+                                 $13 = $13 + 1 | 0;
                                  $5 = HEAP32[$10 + 12 >> 2];
                                 }
                                 if (($5 | 0) == ($19 | 0)) {
                                  break block103
                                 }
                                 block112 : {
-                                 if ($12) {
+                                 if ($13) {
                                   break block112
                                  }
                                  $2 = $1;
@@ -14523,13 +14644,13 @@ function asmFunc(imports) {
                         std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint______throw_length_error_5babi_ne200100_5d_28_29();
                         wasm2js_trap();
                        }
-                       $12 = HEAP32[$0 + 8 >> 2] - HEAP32[$0 >> 2] | 0;
-                       $19 = $12 >> 2;
-                       $1 = std____2____split_buffer_std____2__pair_float_2c_20unsigned_20long__2c_20std____2__allocator_std____2__pair_float_2c_20unsigned_20long________split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_std____2__pair_float_2c_20unsigned_20long____29($8 + 12 | 0, $12 >>> 0 >= 2147483640 ? 536870911 : $1 >>> 0 < $19 >>> 0 ? $19 : $1, HEAP32[$0 + 4 >> 2] - HEAP32[$0 >> 2] >> 3, $0);
-                       $12 = HEAP32[$1 + 8 >> 2];
+                       $13 = HEAP32[$0 + 8 >> 2] - HEAP32[$0 >> 2] | 0;
+                       $19 = $13 >> 2;
+                       $1 = std____2____split_buffer_std____2__pair_float_2c_20unsigned_20long__2c_20std____2__allocator_std____2__pair_float_2c_20unsigned_20long________split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_std____2__pair_float_2c_20unsigned_20long____29($8 + 12 | 0, $13 >>> 0 >= 2147483640 ? 536870911 : $1 >>> 0 < $19 >>> 0 ? $19 : $1, HEAP32[$0 + 4 >> 2] - HEAP32[$0 >> 2] >> 3, $0);
+                       $13 = HEAP32[$1 + 8 >> 2];
                        $19 = HEAP32[$15 + 12 >> 2];
-                       HEAP32[$12 >> 2] = HEAP32[$15 + 8 >> 2];
-                       HEAP32[$12 + 4 >> 2] = $19;
+                       HEAP32[$13 >> 2] = HEAP32[$15 + 8 >> 2];
+                       HEAP32[$13 + 4 >> 2] = $19;
                        HEAP32[$1 + 8 >> 2] = HEAP32[$1 + 8 >> 2] + 8;
                        std____2__vector_float_2c_20std____2__allocator_float______swap_out_circular_buffer_28std____2____split_buffer_float_2c_20std____2__allocator_float_____29($0, $1);
                        $0 = HEAP32[$0 + 4 >> 2];
@@ -14570,7 +14691,7 @@ function asmFunc(imports) {
                 std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 17329), 2028), 3164), 469), 3735), 17801));
                 break block30;
                }
-               vision__ScopedTimer___ScopedTimer_28_29($37);
+               vision__ScopedTimer___ScopedTimer_28_29($38);
                $32 = vision__ScopedTimer__ScopedTimer_28char_20const__29($49, 14968);
                $4 = 0;
                $15 = 0;
@@ -14592,13 +14713,13 @@ function asmFunc(imports) {
                 HEAP32[$9 + 76 >> 2] = HEAP32[$9 + 72 >> 2];
                 $23 = $9 + 72 | 0;
                 std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____reserve_28unsigned_20long_29($23, HEAP32[$9 + 64 >> 2] - HEAP32[$9 + 60 >> 2] | 0);
-                $12 = 0;
+                $13 = 0;
                 block123 : {
                  block121 : {
                   while (1) {
-                   $0 = HEAP32[$13 + 4 >> 2];
-                   if (HEAP32[$13 + 8 >> 2] - $0 >> 5 >>> 0 > $12 >>> 0) {
-                    $1 = $12 << 5;
+                   $0 = HEAP32[$12 + 4 >> 2];
+                   if (HEAP32[$12 + 8 >> 2] - $0 >> 5 >>> 0 > $13 >>> 0) {
+                    $1 = $13 << 5;
                     $0 = $1 + $0 | 0;
                     $10 = HEAP32[$0 + 4 >> 2];
                     if (($10 | 0) != (HEAP32[$0 + 12 >> 2] >>> 2 | 0)) {
@@ -14712,7 +14833,7 @@ function asmFunc(imports) {
                     $7 = Math_fround($7 - HEAPF32[$2 >> 2]);
                     HEAPF32[$1 + 12 >> 2] = Math_sqrt(Math_fround(Math_fround($3 * $3) + Math_fround($7 * $7)));
                     (wasm2js_i32$0 = $1, wasm2js_f32$0 = Math_fround(+atan2f($7, $3) + 3.141592653589793)), HEAPF32[wasm2js_i32$0 + 8 >> 2] = wasm2js_f32$0;
-                    $12 = $12 + 1 | 0;
+                    $13 = $13 + 1 | 0;
                     continue;
                    }
                    break;
@@ -14738,7 +14859,7 @@ function asmFunc(imports) {
                  $11 = Math_fround(Math_fround(HEAPF32[$0 + 4 >> 2] * $24) + $16);
                  $42 = HEAPF32[$0 >> 2];
                  $3 = Math_fround(0.0);
-                 $0 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($13, $1, 0);
+                 $0 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($12, $1, 0);
                  $7 = Math_fround(0.0);
                  $16 = Math_fround(Math_fround($42 * $24) + $16);
                  block124 : {
@@ -14753,7 +14874,7 @@ function asmFunc(imports) {
                   $7 = $16;
                  }
                  $16 = Math_fround($46 * $24);
-                 $0 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($13, HEAP32[($19 + HEAP32[$25 >> 2] | 0) + 12 >> 2], 0);
+                 $0 = vision__GaussianScaleSpacePyramid__get_28unsigned_20long_2c_20unsigned_20long_29_20const($12, HEAP32[($19 + HEAP32[$25 >> 2] | 0) + 12 >> 2], 0);
                  block125 : {
                   if ($11 < Math_fround(0.0)) {
                    break block125
@@ -14818,7 +14939,7 @@ function asmFunc(imports) {
                        }
                        $10 = $4 + $1 | 0;
                        $2 = $2 - 1 | 0;
-                       $12 = ($2 | 0) > ($10 | 0) ? $10 : $2;
+                       $13 = ($2 | 0) > ($10 | 0) ? $10 : $2;
                        $1 = $1 - $4 | 0;
                        $2 = ($1 | 0) > 0 ? $1 : 0;
                        $1 = $0 + $4 | 0;
@@ -14831,13 +14952,13 @@ function asmFunc(imports) {
                        $46 = Math_fround(Math_ceil(Math_fround($16 * $16)));
                        label61 : while (1) {
                         block127 : {
-                         if (($2 | 0) > ($12 | 0)) {
+                         if (($2 | 0) > ($13 | 0)) {
                           $0 = 0;
                           break block127;
                          }
                          $11 = Math_fround(Math_fround($2 >>> 0) - $3);
                          $42 = Math_fround($11 * $11);
-                         $37 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $2);
+                         $38 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($5, $2);
                          $0 = $1;
                          while (1) {
                           if (($0 | 0) > ($35 | 0)) {
@@ -14848,7 +14969,7 @@ function asmFunc(imports) {
                           $11 = Math_fround($42 + Math_fround($11 * $11));
                           if (!($11 > $46)) {
                            block135 : {
-                            $6 = $37 + ($0 << 3) | 0;
+                            $6 = $38 + ($0 << 3) | 0;
                             $4 = HEAP32[$9 + 100 >> 2];
                             $16 = Math_fround(+Math_fround(HEAPF32[$6 >> 2] * Math_fround($4 | 0)) * .159154943091895);
                             $11 = Math_fround($24 * $11);
@@ -15042,16 +15163,16 @@ function asmFunc(imports) {
                            $7 = Math_fround(HEAP32[$9 + 100 >> 2]);
                            $21 = +Math_fround(Math_fround(Math_fround($24 + Math_fround(.5)) + $7) / $7) * 6.283185307179586;
                            wasm2js_scratch_store_f64(+$21);
-                           $12 = wasm2js_scratch_load_i32(1) | 0;
+                           $13 = wasm2js_scratch_load_i32(1) | 0;
                            $5 = wasm2js_scratch_load_i32(0) | 0;
-                           $4 = $12 >>> 20 & 2047;
+                           $4 = $13 >>> 20 & 2047;
                            block140 : {
                             if (($4 | 0) == 2047) {
                              $21 = $21 * 6.283185307179586;
                              $22 = $21 / $21;
                              break block140;
                             }
-                            $1 = $12 << 1 | $5 >>> 31;
+                            $1 = $13 << 1 | $5 >>> 31;
                             $2 = ($1 | 0) == -2144189450;
                             $6 = $5 << 1;
                             if ($2 & $6 >>> 0 <= 2827508272 | $1 >>> 0 < 2150777846) {
@@ -15062,7 +15183,7 @@ function asmFunc(imports) {
                              if (!$4) {
                               $4 = 0;
                               $2 = $5 << 12;
-                              $1 = $12 << 12 | $5 >>> 20;
+                              $1 = $13 << 12 | $5 >>> 20;
                               if (($1 | 0) >= 0 | ($1 | 0) > 0) {
                                while (1) {
                                 $4 = $4 - 1 | 0;
@@ -15080,14 +15201,14 @@ function asmFunc(imports) {
                                $10 = $5 << $1;
                                $2 = 0;
                               } else {
-                               $10 = (1 << $1) - 1 & $5 >>> 32 - $1 | $12 << $1;
+                               $10 = (1 << $1) - 1 & $5 >>> 32 - $1 | $13 << $1;
                                $2 = $5 << $1;
                               }
                               $1 = $10;
                               break block141;
                              }
                              $2 = $5;
-                             $1 = $12 & 1048575 | 1048576;
+                             $1 = $13 & 1048575 | 1048576;
                             }
                             if (($4 | 0) > 1025) {
                              while (1) {
@@ -15141,8 +15262,8 @@ function asmFunc(imports) {
                               break;
                              }
                             }
-                            $6 = $12 & -2147483648;
-                            $12 = $1 + -1048576 | $4 << 20;
+                            $6 = $13 & -2147483648;
+                            $13 = $1 + -1048576 | $4 << 20;
                             $10 = 1 - $4 | 0;
                             $5 = $10 & 31;
                             if (($10 & 63) >>> 0 >= 32) {
@@ -15154,7 +15275,7 @@ function asmFunc(imports) {
                             }
                             $1 = ($4 | 0) > 0;
                             wasm2js_scratch_store_i32(0, ($1 ? $2 : $5) | 0);
-                            wasm2js_scratch_store_i32(1, ($1 ? $12 : $10) | $6);
+                            wasm2js_scratch_store_i32(1, ($1 ? $13 : $10) | $6);
                             $22 = +wasm2js_scratch_load_f64();
                            }
                            HEAPF32[$20 >> 2] = $22;
@@ -15250,37 +15371,37 @@ function asmFunc(imports) {
               continue;
              };
             }
-            std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 8511), 8983), 9969), 212), 10441), 10681));
+            std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 8511), 8983), 9969), 220), 10441), 10681));
             break block19;
            }
-           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 11165), 8983), 9969), 213), 10441), 11648));
+           std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 11165), 8983), 9969), 221), 10441), 11648));
            break block19;
           }
-          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 12098), 8983), 9969), 214), 10441), 12245));
+          std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 12098), 8983), 9969), 222), 10441), 12245));
           break block19;
          }
-         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 12717), 8983), 9969), 215), 10441), 12913));
+         std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 12717), 8983), 9969), 223), 10441), 12913));
          break block19;
         }
-        std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 13265), 8983), 9969), 216), 10441), 12913));
+        std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 13265), 8983), 9969), 224), 10441), 12913));
         break block19;
        }
        $18 = $142 + 8 | 0;
        HEAP32[$18 >> 2] = 96;
        vision__BinaryFeatureStore__resize_28unsigned_20long_29($18, (HEAP32[$6 + 4 >> 2] - HEAP32[$6 >> 2] | 0) / 20 | 0);
-       $145 = HEAPF32[$14 + 604 >> 2];
-       $146 = HEAPF32[$14 + 608 >> 2];
-       $147 = HEAPF32[$14 + 612 >> 2];
-       $148 = HEAPF32[$14 + 616 >> 2];
-       $149 = HEAPF32[$14 + 620 >> 2];
-       $150 = HEAPF32[$14 + 624 >> 2];
-       $151 = HEAPF32[$14 + 628 >> 2];
-       $152 = HEAPF32[$14 + 632 >> 2];
+       $145 = HEAPF32[$14 + 596 >> 2];
+       $146 = HEAPF32[$14 + 600 >> 2];
+       $147 = HEAPF32[$14 + 604 >> 2];
+       $148 = HEAPF32[$14 + 608 >> 2];
+       $149 = HEAPF32[$14 + 612 >> 2];
+       $150 = HEAPF32[$14 + 616 >> 2];
+       $151 = HEAPF32[$14 + 620 >> 2];
+       $152 = HEAPF32[$14 + 624 >> 2];
        $4 = 0;
        $10 = 0;
        block148 : {
         block146 : {
-         if ($13) {
+         if ($12) {
           $8 = HEAP32[$6 + 4 >> 2];
           $1 = HEAP32[$6 >> 2];
           if ((HEAP32[$18 + 20 >> 2] - HEAP32[$18 + 16 >> 2] | 0) != ($8 - $1 | 0)) {
@@ -15294,143 +15415,143 @@ function asmFunc(imports) {
              break block19;
             }
            } else {
-            $12 = HEAP32[$18 + 4 >> 2] + Math_imul(HEAP32[$18 >> 2], $4) | 0;
+            $13 = HEAP32[$18 + 4 >> 2] + Math_imul(HEAP32[$18 >> 2], $4) | 0;
             $9 = __stack_pointer - 160 | 0;
             __stack_pointer = $9;
             $2 = __stack_pointer - 16 | 0;
             __stack_pointer = $2;
-            $46 = HEAPF32[$14 + 356 >> 2];
-            $42 = HEAPF32[$14 + 360 >> 2];
-            $43 = HEAPF32[$14 + 348 >> 2];
-            $47 = HEAPF32[$14 + 352 >> 2];
-            $33 = HEAPF32[$14 + 340 >> 2];
-            $45 = HEAPF32[$14 + 344 >> 2];
-            $51 = HEAPF32[$14 + 332 >> 2];
-            $57 = HEAPF32[$14 + 336 >> 2];
-            $68 = HEAPF32[$14 + 324 >> 2];
-            $69 = HEAPF32[$14 + 328 >> 2];
-            $66 = HEAPF32[$14 + 316 >> 2];
-            $79 = HEAPF32[$14 + 320 >> 2];
-            $80 = HEAPF32[$14 + 404 >> 2];
-            $81 = HEAPF32[$14 + 408 >> 2];
-            $82 = HEAPF32[$14 + 396 >> 2];
-            $83 = HEAPF32[$14 + 400 >> 2];
-            $84 = HEAPF32[$14 + 388 >> 2];
-            $85 = HEAPF32[$14 + 392 >> 2];
-            $86 = HEAPF32[$14 + 380 >> 2];
-            $87 = HEAPF32[$14 + 384 >> 2];
-            $88 = HEAPF32[$14 + 372 >> 2];
-            $89 = HEAPF32[$14 + 376 >> 2];
-            $90 = HEAPF32[$14 + 364 >> 2];
-            $91 = HEAPF32[$14 + 368 >> 2];
-            $92 = HEAPF32[$14 + 452 >> 2];
-            $93 = HEAPF32[$14 + 456 >> 2];
-            $94 = HEAPF32[$14 + 444 >> 2];
-            $95 = HEAPF32[$14 + 448 >> 2];
-            $96 = HEAPF32[$14 + 436 >> 2];
-            $97 = HEAPF32[$14 + 440 >> 2];
-            $98 = HEAPF32[$14 + 428 >> 2];
-            $99 = HEAPF32[$14 + 432 >> 2];
-            $100 = HEAPF32[$14 + 420 >> 2];
-            $101 = HEAPF32[$14 + 424 >> 2];
-            $102 = HEAPF32[$14 + 412 >> 2];
-            $103 = HEAPF32[$14 + 416 >> 2];
-            $104 = HEAPF32[$14 + 500 >> 2];
-            $105 = HEAPF32[$14 + 504 >> 2];
-            $106 = HEAPF32[$14 + 492 >> 2];
-            $107 = HEAPF32[$14 + 496 >> 2];
-            $108 = HEAPF32[$14 + 484 >> 2];
-            $109 = HEAPF32[$14 + 488 >> 2];
-            $110 = HEAPF32[$14 + 476 >> 2];
-            $111 = HEAPF32[$14 + 480 >> 2];
-            $112 = HEAPF32[$14 + 468 >> 2];
-            $113 = HEAPF32[$14 + 472 >> 2];
-            $114 = HEAPF32[$14 + 460 >> 2];
-            $115 = HEAPF32[$14 + 464 >> 2];
-            $116 = HEAPF32[$14 + 548 >> 2];
-            $117 = HEAPF32[$14 + 552 >> 2];
-            $118 = HEAPF32[$14 + 540 >> 2];
-            $119 = HEAPF32[$14 + 544 >> 2];
-            $120 = HEAPF32[$14 + 532 >> 2];
-            $121 = HEAPF32[$14 + 536 >> 2];
-            $122 = HEAPF32[$14 + 524 >> 2];
-            $123 = HEAPF32[$14 + 528 >> 2];
-            $124 = HEAPF32[$14 + 516 >> 2];
-            $125 = HEAPF32[$14 + 520 >> 2];
-            $126 = HEAPF32[$14 + 508 >> 2];
-            $127 = HEAPF32[$14 + 512 >> 2];
-            $128 = HEAPF32[$14 + 596 >> 2];
-            $129 = HEAPF32[$14 + 600 >> 2];
-            $130 = HEAPF32[$14 + 588 >> 2];
-            $131 = HEAPF32[$14 + 592 >> 2];
-            $132 = HEAPF32[$14 + 580 >> 2];
-            $133 = HEAPF32[$14 + 584 >> 2];
-            $134 = HEAPF32[$14 + 572 >> 2];
-            $135 = HEAPF32[$14 + 576 >> 2];
-            $136 = HEAPF32[$14 + 564 >> 2];
-            $137 = HEAPF32[$14 + 568 >> 2];
+            $46 = HEAPF32[$14 + 348 >> 2];
+            $42 = HEAPF32[$14 + 352 >> 2];
+            $43 = HEAPF32[$14 + 340 >> 2];
+            $47 = HEAPF32[$14 + 344 >> 2];
+            $33 = HEAPF32[$14 + 332 >> 2];
+            $45 = HEAPF32[$14 + 336 >> 2];
+            $51 = HEAPF32[$14 + 324 >> 2];
+            $57 = HEAPF32[$14 + 328 >> 2];
+            $68 = HEAPF32[$14 + 316 >> 2];
+            $69 = HEAPF32[$14 + 320 >> 2];
+            $66 = HEAPF32[$14 + 308 >> 2];
+            $79 = HEAPF32[$14 + 312 >> 2];
+            $80 = HEAPF32[$14 + 396 >> 2];
+            $81 = HEAPF32[$14 + 400 >> 2];
+            $82 = HEAPF32[$14 + 388 >> 2];
+            $83 = HEAPF32[$14 + 392 >> 2];
+            $84 = HEAPF32[$14 + 380 >> 2];
+            $85 = HEAPF32[$14 + 384 >> 2];
+            $86 = HEAPF32[$14 + 372 >> 2];
+            $87 = HEAPF32[$14 + 376 >> 2];
+            $88 = HEAPF32[$14 + 364 >> 2];
+            $89 = HEAPF32[$14 + 368 >> 2];
+            $90 = HEAPF32[$14 + 356 >> 2];
+            $91 = HEAPF32[$14 + 360 >> 2];
+            $92 = HEAPF32[$14 + 444 >> 2];
+            $93 = HEAPF32[$14 + 448 >> 2];
+            $94 = HEAPF32[$14 + 436 >> 2];
+            $95 = HEAPF32[$14 + 440 >> 2];
+            $96 = HEAPF32[$14 + 428 >> 2];
+            $97 = HEAPF32[$14 + 432 >> 2];
+            $98 = HEAPF32[$14 + 420 >> 2];
+            $99 = HEAPF32[$14 + 424 >> 2];
+            $100 = HEAPF32[$14 + 412 >> 2];
+            $101 = HEAPF32[$14 + 416 >> 2];
+            $102 = HEAPF32[$14 + 404 >> 2];
+            $103 = HEAPF32[$14 + 408 >> 2];
+            $104 = HEAPF32[$14 + 492 >> 2];
+            $105 = HEAPF32[$14 + 496 >> 2];
+            $106 = HEAPF32[$14 + 484 >> 2];
+            $107 = HEAPF32[$14 + 488 >> 2];
+            $108 = HEAPF32[$14 + 476 >> 2];
+            $109 = HEAPF32[$14 + 480 >> 2];
+            $110 = HEAPF32[$14 + 468 >> 2];
+            $111 = HEAPF32[$14 + 472 >> 2];
+            $112 = HEAPF32[$14 + 460 >> 2];
+            $113 = HEAPF32[$14 + 464 >> 2];
+            $114 = HEAPF32[$14 + 452 >> 2];
+            $115 = HEAPF32[$14 + 456 >> 2];
+            $116 = HEAPF32[$14 + 540 >> 2];
+            $117 = HEAPF32[$14 + 544 >> 2];
+            $118 = HEAPF32[$14 + 532 >> 2];
+            $119 = HEAPF32[$14 + 536 >> 2];
+            $120 = HEAPF32[$14 + 524 >> 2];
+            $121 = HEAPF32[$14 + 528 >> 2];
+            $122 = HEAPF32[$14 + 516 >> 2];
+            $123 = HEAPF32[$14 + 520 >> 2];
+            $124 = HEAPF32[$14 + 508 >> 2];
+            $125 = HEAPF32[$14 + 512 >> 2];
+            $126 = HEAPF32[$14 + 500 >> 2];
+            $127 = HEAPF32[$14 + 504 >> 2];
+            $128 = HEAPF32[$14 + 588 >> 2];
+            $129 = HEAPF32[$14 + 592 >> 2];
+            $130 = HEAPF32[$14 + 580 >> 2];
+            $131 = HEAPF32[$14 + 584 >> 2];
+            $132 = HEAPF32[$14 + 572 >> 2];
+            $133 = HEAPF32[$14 + 576 >> 2];
+            $134 = HEAPF32[$14 + 564 >> 2];
+            $135 = HEAPF32[$14 + 568 >> 2];
+            $136 = HEAPF32[$14 + 556 >> 2];
+            $137 = HEAPF32[$14 + 560 >> 2];
             $17 = Math_imul($10, 20);
             $0 = $17 + $1 | 0;
             $11 = HEAPF32[$0 >> 2];
             $16 = HEAPF32[$0 + 4 >> 2];
-            $138 = HEAPF32[$14 + 556 >> 2];
-            $139 = HEAPF32[$14 + 560 >> 2];
+            $138 = HEAPF32[$14 + 548 >> 2];
+            $139 = HEAPF32[$14 + 552 >> 2];
             $7 = HEAPF32[$0 + 8 >> 2];
             $1 = $2 + 12 | 0;
             $5 = $2 + 8 | 0;
             $3 = Math_fround($152 * HEAPF32[$0 + 12 >> 2]);
             $24 = $3 < Math_fround(1.0) ? Math_fround(1.0) : $3;
-            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($13, $1, $5, Math_fround($151 * $24));
+            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($12, $1, $5, Math_fround($151 * $24));
             $0 = $9;
             $3 = Math_fround($24 * cosf($7));
             $7 = Math_fround($24 * sinf($7));
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($138 * $3) - Math_fround($139 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $138) + Math_fround($3 * $139))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $136) - Math_fround($137 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $136) + Math_fround($3 * $137))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 4 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $134) - Math_fround($135 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $134) + Math_fround($3 * $135))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 8 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $132) - Math_fround($133 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $132) + Math_fround($3 * $133))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 12 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $130) - Math_fround($131 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $130) + Math_fround($3 * $131))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 16 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $128) - Math_fround($129 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $128) + Math_fround($3 * $129))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 20 >> 2] = wasm2js_f32$0;
-            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($13, $1, $5, Math_fround($150 * $24));
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $126) - Math_fround($127 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $126) + Math_fround($3 * $127))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 24 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $124) - Math_fround($125 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $124) + Math_fround($3 * $125))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 28 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $122) - Math_fround($123 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $122) + Math_fround($3 * $123))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 32 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $120) - Math_fround($121 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $120) + Math_fround($3 * $121))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 36 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $118) - Math_fround($119 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $118) + Math_fround($3 * $119))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 40 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $116) - Math_fround($117 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $116) + Math_fround($3 * $117))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 44 >> 2] = wasm2js_f32$0;
-            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($13, $1, $5, Math_fround($149 * $24));
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $114) - Math_fround($115 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $114) + Math_fround($3 * $115))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 48 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $112) - Math_fround($113 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $112) + Math_fround($3 * $113))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 52 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $110) - Math_fround($111 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $110) + Math_fround($3 * $111))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 56 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $108) - Math_fround($109 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $108) + Math_fround($3 * $109))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 60 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $106) - Math_fround($107 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $106) + Math_fround($3 * $107))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 64 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $104) - Math_fround($105 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $104) + Math_fround($3 * $105))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 68 >> 2] = wasm2js_f32$0;
-            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($13, $1, $5, Math_fround($148 * $24));
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $102) - Math_fround($103 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $102) + Math_fround($3 * $103))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 72 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $100) - Math_fround($101 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $100) + Math_fround($3 * $101))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 76 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $98) - Math_fround($99 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $98) + Math_fround($3 * $99))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 80 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $96) - Math_fround($97 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $96) + Math_fround($3 * $97))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 84 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $94) - Math_fround($95 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $94) + Math_fround($3 * $95))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 88 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $92) - Math_fround($93 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $92) + Math_fround($3 * $93))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 92 >> 2] = wasm2js_f32$0;
-            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($13, $1, $5, Math_fround($147 * $24));
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $90) - Math_fround($91 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $90) + Math_fround($3 * $91))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 96 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $88) - Math_fround($89 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $88) + Math_fround($3 * $89))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 100 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $86) - Math_fround($87 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $86) + Math_fround($3 * $87))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 104 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $84) - Math_fround($85 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $84) + Math_fround($3 * $85))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 108 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $82) - Math_fround($83 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $82) + Math_fround($3 * $83))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 112 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $80) - Math_fround($81 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $80) + Math_fround($3 * $81))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 116 >> 2] = wasm2js_f32$0;
-            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($13, $1, $5, Math_fround($146 * $24));
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $66) - Math_fround($79 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $66) + Math_fround($3 * $79))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 120 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $68) - Math_fround($69 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $68) + Math_fround($3 * $69))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 124 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $51) - Math_fround($57 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $51) + Math_fround($3 * $57))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 128 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $33) - Math_fround($45 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $33) + Math_fround($3 * $45))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 132 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $43) - Math_fround($47 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $43) + Math_fround($3 * $47))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 136 >> 2] = wasm2js_f32$0;
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, Math_fround($11 + Math_fround(Math_fround($3 * $46) - Math_fround($42 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $46) + Math_fround($3 * $42))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 140 >> 2] = wasm2js_f32$0;
-            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($13, $1, $5, Math_fround($145 * $24));
-            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($13, $11, $16, HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 144 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($138 * $3) - Math_fround($139 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $138) + Math_fround($3 * $139))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $136) - Math_fround($137 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $136) + Math_fround($3 * $137))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 4 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $134) - Math_fround($135 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $134) + Math_fround($3 * $135))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 8 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $132) - Math_fround($133 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $132) + Math_fround($3 * $133))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 12 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $130) - Math_fround($131 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $130) + Math_fround($3 * $131))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 16 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $128) - Math_fround($129 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $128) + Math_fround($3 * $129))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 20 >> 2] = wasm2js_f32$0;
+            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($12, $1, $5, Math_fround($150 * $24));
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $126) - Math_fround($127 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $126) + Math_fround($3 * $127))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 24 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $124) - Math_fround($125 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $124) + Math_fround($3 * $125))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 28 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $122) - Math_fround($123 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $122) + Math_fround($3 * $123))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 32 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $120) - Math_fround($121 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $120) + Math_fround($3 * $121))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 36 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $118) - Math_fround($119 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $118) + Math_fround($3 * $119))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 40 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $116) - Math_fround($117 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $116) + Math_fround($3 * $117))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 44 >> 2] = wasm2js_f32$0;
+            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($12, $1, $5, Math_fround($149 * $24));
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $114) - Math_fround($115 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $114) + Math_fround($3 * $115))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 48 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $112) - Math_fround($113 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $112) + Math_fround($3 * $113))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 52 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $110) - Math_fround($111 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $110) + Math_fround($3 * $111))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 56 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $108) - Math_fround($109 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $108) + Math_fround($3 * $109))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 60 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $106) - Math_fround($107 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $106) + Math_fround($3 * $107))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 64 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $104) - Math_fround($105 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $104) + Math_fround($3 * $105))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 68 >> 2] = wasm2js_f32$0;
+            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($12, $1, $5, Math_fround($148 * $24));
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $102) - Math_fround($103 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $102) + Math_fround($3 * $103))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 72 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $100) - Math_fround($101 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $100) + Math_fround($3 * $101))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 76 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $98) - Math_fround($99 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $98) + Math_fround($3 * $99))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 80 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $96) - Math_fround($97 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $96) + Math_fround($3 * $97))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 84 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $94) - Math_fround($95 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $94) + Math_fround($3 * $95))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 88 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $92) - Math_fround($93 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $92) + Math_fround($3 * $93))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 92 >> 2] = wasm2js_f32$0;
+            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($12, $1, $5, Math_fround($147 * $24));
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $90) - Math_fround($91 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $90) + Math_fround($3 * $91))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 96 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $88) - Math_fround($89 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $88) + Math_fround($3 * $89))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 100 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $86) - Math_fround($87 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $86) + Math_fround($3 * $87))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 104 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $84) - Math_fround($85 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $84) + Math_fround($3 * $85))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 108 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $82) - Math_fround($83 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $82) + Math_fround($3 * $83))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 112 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $80) - Math_fround($81 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $80) + Math_fround($3 * $81))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 116 >> 2] = wasm2js_f32$0;
+            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($12, $1, $5, Math_fround($146 * $24));
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $66) - Math_fround($79 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $66) + Math_fround($3 * $79))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 120 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $68) - Math_fround($69 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $68) + Math_fround($3 * $69))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 124 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $51) - Math_fround($57 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $51) + Math_fround($3 * $57))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 128 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $33) - Math_fround($45 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $33) + Math_fround($3 * $45))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 132 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $43) - Math_fround($47 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $43) + Math_fround($3 * $47))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 136 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, Math_fround($11 + Math_fround(Math_fround($3 * $46) - Math_fround($42 * $7))), Math_fround($16 + Math_fround(Math_fround($7 * $46) + Math_fround($3 * $42))), HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 140 >> 2] = wasm2js_f32$0;
+            vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($12, $1, $5, Math_fround($145 * $24));
+            (wasm2js_i32$0 = $0, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($12, $11, $16, HEAP32[$2 + 12 >> 2], HEAP32[$2 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 144 >> 2] = wasm2js_f32$0;
             __stack_pointer = $2 + 16 | 0;
             $5 = 0;
             $2 = 0;
-            wasm2js_memory_fill($12, 0, 84);
+            wasm2js_memory_fill($13, 0, 84);
             $8 = 36;
             while (1) {
              if (($5 | 0) == 37) {
@@ -15446,7 +15567,7 @@ function asmFunc(imports) {
               $5 = $1;
               while (1) {
                if (($0 | 0) != ($2 | 0)) {
-                $49 = $12 + (($2 | 0) / 8 | 0) | 0;
+                $49 = $13 + (($2 | 0) / 8 | 0) | 0;
                 HEAP8[$49 | 0] = HEAPU8[$49 | 0] | (HEAPF32[$15 >> 2] < HEAPF32[$9 + ($5 << 2) >> 2]) << ($2 & 7);
                 $5 = $5 + 1 | 0;
                 $2 = $2 + 1 | 0;
@@ -15502,417 +15623,420 @@ function asmFunc(imports) {
        HEAP32[$65 + 12 >> 2] = ($1 - $2 | 0) / 20;
        vision__Logger__write_28vision__LoggerPriorityLevel_2c_20char_20const__2c_20____29($0, 18315, $65);
        std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($73);
-       $6 = HEAP32[$14 + 64 >> 2];
-       $13 = __stack_pointer - 96 | 0;
-       __stack_pointer = $13;
+       $12 = HEAP32[$14 + 64 >> 2];
+       $8 = __stack_pointer - 96 | 0;
+       __stack_pointer = $8;
        HEAP32[$14 + 24 >> 2] = -1;
        HEAP32[$14 + 16 >> 2] = HEAP32[$14 + 12 >> 2];
        $35 = $14 + 28 | 0;
-       $32 = $14 + 788 | 0;
-       $25 = $14 + 652 | 0;
-       $18 = $14 + 636 | 0;
-       $10 = $14 + 80 | 0;
-       $15 = $6 + 24 | 0;
-       block170 : {
+       $32 = $14 + 772 | 0;
+       $25 = $14 + 644 | 0;
+       $18 = $14 + 628 | 0;
+       $38 = $14 + 76 | 0;
+       $15 = $12 + 24 | 0;
+       $10 = HEAP32[$14 + 72 >> 2];
+       block171 : {
         while (1) {
          block150 : {
-          block158 : {
-           $10 = HEAP32[$10 >> 2];
-           if ($10) {
-            $49 = vision__ScopedTimer__ScopedTimer_28char_20const__29($13 + 48 | 0, 18402);
-            $0 = HEAP32[$10 + 12 >> 2];
-            $1 = $0 + 8 | 0;
-            block157 : {
-             if (HEAPU8[$14 + 8 | 0] == 1) {
-              $9 = $0 + 36 | 0;
-              $0 = 0;
-              $17 = __stack_pointer - 16 | 0;
-              __stack_pointer = $17;
-              HEAP32[$18 + 4 >> 2] = HEAP32[$18 >> 2];
-              $2 = HEAP32[$6 + 28 >> 2];
-              $4 = HEAP32[$6 + 24 >> 2];
-              $5 = ($2 - $4 | 0) / 20 | 0;
-              block156 : {
-               block153 : {
-                block149 : {
-                 if (($2 | 0) == ($4 | 0) | HEAP32[$1 + 20 >> 2] == HEAP32[$1 + 16 >> 2]) {
-                  break block149
-                 }
-                 std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____reserve_28unsigned_20long_29($18, $5);
-                 $12 = 0;
-                 while (1) {
-                  $2 = (HEAP32[$6 + 28 >> 2] - HEAP32[$6 + 24 >> 2] | 0) / 20 | 0;
-                  if ($2 >>> 0 <= $12 >>> 0) {
-                   $0 = HEAP32[$18 + 4 >> 2] - HEAP32[$18 >> 2] >> 3;
-                   if ($2 >>> 0 >= $0 >>> 0) {
-                    break block149
-                   }
-                   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19421), 19171), 9969), 175), 10441), 19513));
-                   break block150;
+          block163 : {
+           block158 : {
+            if (($10 | 0) != ($38 | 0)) {
+             $49 = vision__ScopedTimer__ScopedTimer_28char_20const__29($8 + 48 | 0, 18402);
+             $0 = HEAP32[$10 + 20 >> 2];
+             $1 = $0 + 8 | 0;
+             block157 : {
+              if (HEAPU8[$14 + 8 | 0] == 1) {
+               $9 = $0 + 36 | 0;
+               $0 = 0;
+               $17 = __stack_pointer - 16 | 0;
+               __stack_pointer = $17;
+               HEAP32[$18 + 4 >> 2] = HEAP32[$18 >> 2];
+               $2 = HEAP32[$12 + 28 >> 2];
+               $4 = HEAP32[$12 + 24 >> 2];
+               $5 = ($2 - $4 | 0) / 20 | 0;
+               block156 : {
+                block153 : {
+                 block149 : {
+                  if (($2 | 0) == ($4 | 0) | HEAP32[$1 + 20 >> 2] == HEAP32[$1 + 16 >> 2]) {
+                   break block149
                   }
-                  $19 = HEAP32[$6 + 12 >> 2] + Math_imul(HEAP32[$6 + 8 >> 2], $12) | 0;
-                  $2 = $19;
-                  block151 : {
-                   if (HEAP32[$9 + 8 >> 2]) {
-                    HEAP32[$9 + 100 >> 2] = 0;
-                    HEAP32[$9 + 76 >> 2] = HEAP32[$9 + 72 >> 2];
-                    $0 = $9 + 84 | 0;
-                    while (1) {
-                     if (HEAP32[$9 + 84 >> 2] != HEAP32[$9 + 88 >> 2]) {
-                      std____2__priority_queue_vision__PriorityQueueItem_96__2c_20std____2__vector_vision__PriorityQueueItem_96__2c_20std____2__allocator_vision__PriorityQueueItem_96____2c_20std____2__less_vision__PriorityQueueItem_96_____pop_28_29($0);
-                      continue;
-                     }
-                     break;
-                    };
-                    vision__BinaryHierarchicalClustering_96___query_28std____2__priority_queue_vision__PriorityQueueItem_96__2c_20std____2__vector_vision__PriorityQueueItem_96__2c_20std____2__allocator_vision__PriorityQueueItem_96____2c_20std____2__less_vision__PriorityQueueItem_96_____2c_20vision__Node_96__20const__2c_20unsigned_20char_20const__29_20const($9, $0, HEAP32[$9 + 8 >> 2], $2);
-                    break block151;
-                   }
-                   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19644), 13644), 9969), 405), 10441), 23610));
-                   break block150;
-                  }
-                  $23 = HEAP32[$6 + 24 >> 2] + Math_imul($12, 20) | 0;
-                  $8 = 0;
-                  $4 = -1;
-                  $5 = 2147483647;
-                  $0 = -1;
-                  block152 : {
-                   while (1) {
-                    $2 = HEAP32[$9 + 72 >> 2];
-                    if (HEAP32[$9 + 76 >> 2] - $2 >> 2 >>> 0 <= $8 >>> 0) {
-                     block154 : {
-                      if (($0 | 0) == -1) {
-                       break block152
-                      }
-                      if (($5 | 0) == -1) {
-                       break block153
-                      }
-                      if (($4 | 0) != -1) {
-                       break block154
-                      }
-                      HEAP32[$17 + 12 >> 2] = $5;
-                      HEAP32[$17 + 8 >> 2] = $12;
-                      vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $17 + 8 | 0);
-                      break block152;
-                     }
-                    } else {
-                     $26 = $8 << 2;
-                     $2 = HEAP32[$26 + $2 >> 2];
-                     block155 : {
-                      if (HEAPU8[$23 + 16 | 0] != HEAPU8[(HEAP32[$1 + 16 >> 2] + Math_imul($2, 20) | 0) + 16 | 0]) {
-                       break block155
-                      }
-                      $2 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29($19, HEAP32[$1 + 4 >> 2] + Math_imul($2, HEAP32[$1 >> 2]) | 0);
-                      if ($2 >>> 0 < $0 >>> 0) {
-                       $5 = HEAP32[$26 + HEAP32[$9 + 72 >> 2] >> 2];
-                       $4 = $0;
-                       $0 = $2;
-                       break block155;
-                      }
-                      $4 = $2 >>> 0 < $4 >>> 0 ? $2 : $4;
-                     }
-                     $8 = $8 + 1 | 0;
-                     continue;
+                  std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____reserve_28unsigned_20long_29($18, $5);
+                  $6 = 0;
+                  while (1) {
+                   $2 = (HEAP32[$12 + 28 >> 2] - HEAP32[$12 + 24 >> 2] | 0) / 20 | 0;
+                   if ($2 >>> 0 <= $6 >>> 0) {
+                    $0 = HEAP32[$18 + 4 >> 2] - HEAP32[$18 >> 2] >> 3;
+                    if ($2 >>> 0 >= $0 >>> 0) {
+                     break block149
                     }
-                    break;
-                   };
-                   if (!(HEAPF32[$18 + 12 >> 2] > Math_fround(Math_fround($0 >>> 0) / Math_fround($4 >>> 0)))) {
-                    break block152
+                    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19421), 19171), 9969), 175), 10441), 19513));
+                    break block150;
                    }
-                   HEAP32[$17 + 12 >> 2] = $5;
-                   HEAP32[$17 + 8 >> 2] = $12;
-                   vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $17 + 8 | 0);
-                  }
-                  $12 = $12 + 1 | 0;
-                  continue;
-                 };
-                }
-                __stack_pointer = $17 + 16 | 0;
-                break block156;
-               }
-               std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19099), 19171), 9969), 160), 10441), 19332));
-               break block150;
-              }
-              if (HEAPU32[$14 >> 2] <= $0 >>> 0) {
-               break block157
-              }
-              break block158;
-             }
-             $4 = 0;
-             $12 = 0;
-             $8 = __stack_pointer - 16 | 0;
-             __stack_pointer = $8;
-             HEAP32[$18 + 4 >> 2] = HEAP32[$18 >> 2];
-             $0 = HEAP32[$6 + 28 >> 2];
-             $2 = HEAP32[$6 + 24 >> 2];
-             $9 = ($0 - $2 | 0) / 20 | 0;
-             block159 : {
-              $5 = $1;
-              if (($0 | 0) == ($2 | 0) | HEAP32[$1 + 20 >> 2] == HEAP32[$1 + 16 >> 2]) {
-               break block159
-              }
-              std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____reserve_28unsigned_20long_29($18, $9);
-              while (1) {
-               $0 = HEAP32[$6 + 24 >> 2];
-               $1 = (HEAP32[$6 + 28 >> 2] - $0 | 0) / 20 | 0;
-               if ($1 >>> 0 <= $12 >>> 0) {
-                $4 = HEAP32[$18 + 4 >> 2] - HEAP32[$18 >> 2] >> 3;
-                if ($1 >>> 0 >= $4 >>> 0) {
-                 break block159
-                }
-                std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19421), 19171), 9969), 112), 10441), 19513));
-                break block150;
-               } else {
-                $17 = $0 + Math_imul($12, 20) | 0;
-                $19 = HEAP32[$6 + 12 >> 2] + Math_imul(HEAP32[$6 + 8 >> 2], $12) | 0;
-                $4 = 0;
-                $1 = 2147483647;
-                $2 = -1;
-                $0 = -1;
-                block160 : {
-                 while (1) {
-                  $9 = HEAP32[$5 + 16 >> 2];
-                  if ((HEAP32[$5 + 20 >> 2] - $9 | 0) / 20 >>> 0 <= $4 >>> 0) {
-                   block161 : {
-                    if (($0 | 0) == -1) {
-                     break block160
+                   $19 = HEAP32[$12 + 12 >> 2] + Math_imul(HEAP32[$12 + 8 >> 2], $6) | 0;
+                   $2 = $19;
+                   block151 : {
+                    if (HEAP32[$9 + 8 >> 2]) {
+                     HEAP32[$9 + 100 >> 2] = 0;
+                     HEAP32[$9 + 76 >> 2] = HEAP32[$9 + 72 >> 2];
+                     $0 = $9 + 84 | 0;
+                     while (1) {
+                      if (HEAP32[$9 + 84 >> 2] != HEAP32[$9 + 88 >> 2]) {
+                       std____2__priority_queue_vision__PriorityQueueItem_96__2c_20std____2__vector_vision__PriorityQueueItem_96__2c_20std____2__allocator_vision__PriorityQueueItem_96____2c_20std____2__less_vision__PriorityQueueItem_96_____pop_28_29($0);
+                       continue;
+                      }
+                      break;
+                     };
+                     vision__BinaryHierarchicalClustering_96___query_28std____2__priority_queue_vision__PriorityQueueItem_96__2c_20std____2__vector_vision__PriorityQueueItem_96__2c_20std____2__allocator_vision__PriorityQueueItem_96____2c_20std____2__less_vision__PriorityQueueItem_96_____2c_20vision__Node_96__20const__2c_20unsigned_20char_20const__29_20const($9, $0, HEAP32[$9 + 8 >> 2], $2);
+                     break block151;
                     }
-                    if (($2 | 0) != -1) {
-                     break block161
-                    }
-                    HEAP32[$8 + 12 >> 2] = $1;
-                    HEAP32[$8 + 8 >> 2] = $12;
-                    vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $8 + 8 | 0);
-                    break block160;
+                    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19644), 13644), 9969), 414), 10441), 23610));
+                    break block150;
                    }
-                  } else {
-                   block162 : {
-                    if (HEAPU8[$17 + 16 | 0] != HEAPU8[($9 + Math_imul($4, 20) | 0) + 16 | 0]) {
-                     break block162
-                    }
-                    $9 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29($19, HEAP32[$5 + 4 >> 2] + Math_imul(HEAP32[$5 >> 2], $4) | 0);
-                    if ($9 >>> 0 < $0 >>> 0) {
-                     $2 = $0;
-                     $1 = $4;
-                     $0 = $9;
-                     break block162;
-                    }
-                    $2 = $2 >>> 0 > $9 >>> 0 ? $9 : $2;
-                   }
-                   $4 = $4 + 1 | 0;
-                   continue;
-                  }
-                  break;
-                 };
-                 if (!(HEAPF32[$18 + 12 >> 2] > Math_fround(Math_fround($0 >>> 0) / Math_fround($2 >>> 0)))) {
-                  break block160
-                 }
-                 HEAP32[$8 + 12 >> 2] = $1;
-                 HEAP32[$8 + 8 >> 2] = $12;
-                 vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $8 + 8 | 0);
-                }
-                $12 = $12 + 1 | 0;
-                continue;
-               }
-              };
-             }
-             __stack_pointer = $8 + 16 | 0;
-             if (HEAPU32[$14 >> 2] > $4 >>> 0) {
-              break block158
-             }
-            }
-            vision__ScopedTimer___ScopedTimer_28_29($49);
-            $0 = HEAP32[$10 + 12 >> 2];
-            $12 = $13 + 48 | 0;
-            $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($12, 18496);
-            $19 = $0 + 24 | 0;
-            $0 = HEAP32[$10 + 12 >> 2];
-            $0 = vision__FindHoughSimilarity_28vision__HoughSimilarityVoting__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20int_2c_20int_2c_20int_29($25, $15, $19, $18, HEAP32[$6 >> 2], HEAP32[$6 + 4 >> 2], HEAP32[$0 >> 2], HEAP32[$0 + 4 >> 2]);
-            vision__ScopedTimer___ScopedTimer_28_29($1);
-            if (($0 | 0) < 0) {
-             continue
-            }
-            HEAP32[$13 + 92 >> 2] = 0;
-            HEAP32[$13 + 84 >> 2] = 0;
-            HEAP32[$13 + 88 >> 2] = 0;
-            $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($12, 18513);
-            $23 = $13 + 84 | 0;
-            vision__FindHoughMatches_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20vision__HoughSimilarityVoting_20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20float_29($23, $25, $18, $0);
-            vision__ScopedTimer___ScopedTimer_28_29($1);
-            $17 = $13 + 16 | 0;
-            $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18674);
-            $1 = HEAP32[$10 + 12 >> 2];
-            $1 = vision__EstimateHomography_28float__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20vision__RobustHomography_float___2c_20int_2c_20int_29($12, $15, $19, $23, $32, HEAP32[$1 >> 2], HEAP32[$1 + 4 >> 2]);
-            vision__ScopedTimer___ScopedTimer_28_29($0);
-            if ($1) {
-             HEAP32[$13 + 12 >> 2] = 0;
-             HEAP32[$13 + 4 >> 2] = 0;
-             HEAP32[$13 + 8 >> 2] = 0;
-             $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18718);
-             $37 = $13 + 4 | 0;
-             vision__FindInliers_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20float_20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20float_29($37, $12, $15, $19, $23, HEAPF32[$14 + 4 >> 2]);
-             $1 = HEAP32[$14 >> 2];
-             $2 = HEAP32[$13 + 4 >> 2];
-             $4 = HEAP32[$13 + 8 >> 2];
-             vision__ScopedTimer___ScopedTimer_28_29($0);
-             block163 : {
-              if ($1 >>> 0 > $4 - $2 >> 3 >>> 0) {
-               break block163
-              }
-              $20 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18735);
-              $49 = HEAP32[$10 + 12 >> 2];
-              $4 = 0;
-              $8 = 0;
-              $9 = __stack_pointer + -64 | 0;
-              __stack_pointer = $9;
-              HEAP32[$18 + 4 >> 2] = HEAP32[$18 >> 2];
-              block169 : {
-               block165 : {
-                block164 : {
-                 if (HEAP32[$6 + 28 >> 2] == HEAP32[$6 + 24 >> 2] | HEAP32[$49 + 28 >> 2] == HEAP32[$49 + 24 >> 2]) {
-                  break block164
-                 }
-                 if (!bool_20vision__MatrixInverse3x3_float__28float__2c_20float_20const__2c_20float_29($9 + 16 | 0, $12, Math_fround(0.0))) {
-                  break block165
-                 }
-                 std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____reserve_28unsigned_20long_29($18, (HEAP32[$6 + 28 >> 2] - HEAP32[$6 + 24 >> 2] | 0) / 20 | 0);
-                 while (1) {
-                  $0 = HEAP32[$6 + 24 >> 2];
-                  $1 = (HEAP32[$6 + 28 >> 2] - $0 | 0) / 20 | 0;
-                  if ($1 >>> 0 <= $8 >>> 0) {
-                   $4 = HEAP32[$18 + 4 >> 2] - HEAP32[$18 >> 2] >> 3;
-                   if ($1 >>> 0 >= $4 >>> 0) {
-                    break block164
-                   }
-                   std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19421), 19171), 9969), 256), 10441), 19513));
-                   break block150;
-                  } else {
-                   $26 = $0 + Math_imul($8, 20) | 0;
-                   $3 = HEAPF32[$26 >> 2];
-                   $7 = HEAPF32[$26 + 4 >> 2];
-                   $11 = Math_fround(HEAPF32[$9 + 48 >> 2] + Math_fround(Math_fround(HEAPF32[$9 + 40 >> 2] * $3) + Math_fround($7 * HEAPF32[$9 + 44 >> 2])));
-                   $16 = Math_fround(Math_fround(HEAPF32[$9 + 36 >> 2] + Math_fround(Math_fround(HEAPF32[$9 + 28 >> 2] * $3) + Math_fround($7 * HEAPF32[$9 + 32 >> 2]))) / $11);
-                   $3 = Math_fround(Math_fround(HEAPF32[$9 + 24 >> 2] + Math_fround(Math_fround(HEAPF32[$9 + 16 >> 2] * $3) + Math_fround($7 * HEAPF32[$9 + 20 >> 2]))) / $11);
-                   $59 = HEAP32[$6 + 12 >> 2] + Math_imul(HEAP32[$6 + 8 >> 2], $8) | 0;
-                   $4 = 0;
-                   $1 = -1;
-                   $2 = 2147483647;
+                   $23 = HEAP32[$12 + 24 >> 2] + Math_imul($6, 20) | 0;
+                   $13 = 0;
+                   $4 = -1;
+                   $5 = 2147483647;
                    $0 = -1;
-                   block166 : {
+                   block152 : {
                     while (1) {
-                     $5 = HEAP32[$49 + 24 >> 2];
-                     if ((HEAP32[$49 + 28 >> 2] - $5 | 0) / 20 >>> 0 <= $4 >>> 0) {
-                      block167 : {
+                     $2 = HEAP32[$9 + 72 >> 2];
+                     if (HEAP32[$9 + 76 >> 2] - $2 >> 2 >>> 0 <= $13 >>> 0) {
+                      block154 : {
                        if (($0 | 0) == -1) {
-                        break block166
+                        break block152
                        }
-                       if (($1 | 0) != -1) {
-                        break block167
+                       if (($5 | 0) == -1) {
+                        break block153
                        }
-                       HEAP32[$9 + 12 >> 2] = $2;
-                       HEAP32[$9 + 8 >> 2] = $8;
-                       vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $9 + 8 | 0);
-                       break block166;
+                       if (($4 | 0) != -1) {
+                        break block154
+                       }
+                       HEAP32[$17 + 12 >> 2] = $5;
+                       HEAP32[$17 + 8 >> 2] = $6;
+                       vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $17 + 8 | 0);
+                       break block152;
                       }
                      } else {
-                      $5 = $5 + Math_imul($4, 20) | 0;
-                      block168 : {
-                       if (HEAPU8[$26 + 16 | 0] != HEAPU8[$5 + 16 | 0]) {
-                        break block168
+                      $26 = $13 << 2;
+                      $2 = HEAP32[$26 + $2 >> 2];
+                      block155 : {
+                       if (HEAPU8[$23 + 16 | 0] != HEAPU8[(HEAP32[$1 + 16 >> 2] + Math_imul($2, 20) | 0) + 16 | 0]) {
+                        break block155
                        }
-                       $7 = Math_fround($3 - HEAPF32[$5 >> 2]);
-                       $11 = Math_fround($7 * $7);
-                       $7 = Math_fround($16 - HEAPF32[$5 + 4 >> 2]);
-                       if (Math_fround($11 + Math_fround($7 * $7)) > Math_fround(100.0)) {
-                        break block168
+                       $2 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29($19, HEAP32[$1 + 4 >> 2] + Math_imul($2, HEAP32[$1 >> 2]) | 0);
+                       if ($2 >>> 0 < $0 >>> 0) {
+                        $5 = HEAP32[$26 + HEAP32[$9 + 72 >> 2] >> 2];
+                        $4 = $0;
+                        $0 = $2;
+                        break block155;
                        }
-                       $5 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29($59, HEAP32[$49 + 12 >> 2] + Math_imul(HEAP32[$49 + 8 >> 2], $4) | 0);
-                       if ($5 >>> 0 < $0 >>> 0) {
-                        $2 = $4;
-                        $1 = $0;
-                        $0 = $5;
-                        break block168;
-                       }
-                       $1 = $1 >>> 0 > $5 >>> 0 ? $5 : $1;
+                       $4 = $2 >>> 0 < $4 >>> 0 ? $2 : $4;
                       }
-                      $4 = $4 + 1 | 0;
+                      $13 = $13 + 1 | 0;
                       continue;
                      }
                      break;
                     };
-                    if (!(HEAPF32[$18 + 12 >> 2] > Math_fround(Math_fround($0 >>> 0) / Math_fround($1 >>> 0)))) {
-                     break block166
+                    if (!(HEAPF32[$18 + 12 >> 2] > Math_fround(Math_fround($0 >>> 0) / Math_fround($4 >>> 0)))) {
+                     break block152
                     }
-                    HEAP32[$9 + 12 >> 2] = $2;
-                    HEAP32[$9 + 8 >> 2] = $8;
-                    vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $9 + 8 | 0);
+                    HEAP32[$17 + 12 >> 2] = $5;
+                    HEAP32[$17 + 8 >> 2] = $6;
+                    vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $17 + 8 | 0);
                    }
-                   $8 = $8 + 1 | 0;
+                   $6 = $6 + 1 | 0;
                    continue;
-                  }
-                 };
+                  };
+                 }
+                 __stack_pointer = $17 + 16 | 0;
+                 break block156;
                 }
-                __stack_pointer = $9 - -64 | 0;
-                break block169;
+                std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19099), 19171), 9969), 160), 10441), 19332));
+                break block150;
                }
-               std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 22325), 19171), 9969), 196), 10441), 22350));
-               break block150;
+               if (HEAPU32[$14 >> 2] <= $0 >>> 0) {
+                break block157
+               }
+               break block158;
               }
-              $0 = HEAP32[$14 >> 2];
-              vision__ScopedTimer___ScopedTimer_28_29($20);
-              if ($0 >>> 0 > $4 >>> 0) {
-               break block163
+              $4 = 0;
+              $6 = 0;
+              $13 = __stack_pointer - 16 | 0;
+              __stack_pointer = $13;
+              HEAP32[$18 + 4 >> 2] = HEAP32[$18 >> 2];
+              $0 = HEAP32[$12 + 28 >> 2];
+              $2 = HEAP32[$12 + 24 >> 2];
+              $9 = ($0 - $2 | 0) / 20 | 0;
+              block159 : {
+               $5 = $1;
+               if (($0 | 0) == ($2 | 0) | HEAP32[$1 + 20 >> 2] == HEAP32[$1 + 16 >> 2]) {
+                break block159
+               }
+               std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____reserve_28unsigned_20long_29($18, $9);
+               while (1) {
+                $0 = HEAP32[$12 + 24 >> 2];
+                $1 = (HEAP32[$12 + 28 >> 2] - $0 | 0) / 20 | 0;
+                if ($1 >>> 0 <= $6 >>> 0) {
+                 $4 = HEAP32[$18 + 4 >> 2] - HEAP32[$18 >> 2] >> 3;
+                 if ($1 >>> 0 >= $4 >>> 0) {
+                  break block159
+                 }
+                 std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19421), 19171), 9969), 112), 10441), 19513));
+                 break block150;
+                } else {
+                 $17 = $0 + Math_imul($6, 20) | 0;
+                 $19 = HEAP32[$12 + 12 >> 2] + Math_imul(HEAP32[$12 + 8 >> 2], $6) | 0;
+                 $4 = 0;
+                 $1 = 2147483647;
+                 $2 = -1;
+                 $0 = -1;
+                 block160 : {
+                  while (1) {
+                   $9 = HEAP32[$5 + 16 >> 2];
+                   if ((HEAP32[$5 + 20 >> 2] - $9 | 0) / 20 >>> 0 <= $4 >>> 0) {
+                    block161 : {
+                     if (($0 | 0) == -1) {
+                      break block160
+                     }
+                     if (($2 | 0) != -1) {
+                      break block161
+                     }
+                     HEAP32[$13 + 12 >> 2] = $1;
+                     HEAP32[$13 + 8 >> 2] = $6;
+                     vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $13 + 8 | 0);
+                     break block160;
+                    }
+                   } else {
+                    block162 : {
+                     if (HEAPU8[$17 + 16 | 0] != HEAPU8[($9 + Math_imul($4, 20) | 0) + 16 | 0]) {
+                      break block162
+                     }
+                     $9 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29($19, HEAP32[$5 + 4 >> 2] + Math_imul(HEAP32[$5 >> 2], $4) | 0);
+                     if ($9 >>> 0 < $0 >>> 0) {
+                      $2 = $0;
+                      $1 = $4;
+                      $0 = $9;
+                      break block162;
+                     }
+                     $2 = $2 >>> 0 > $9 >>> 0 ? $9 : $2;
+                    }
+                    $4 = $4 + 1 | 0;
+                    continue;
+                   }
+                   break;
+                  };
+                  if (!(HEAPF32[$18 + 12 >> 2] > Math_fround(Math_fround($0 >>> 0) / Math_fround($2 >>> 0)))) {
+                   break block160
+                  }
+                  HEAP32[$13 + 12 >> 2] = $1;
+                  HEAP32[$13 + 8 >> 2] = $6;
+                  vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $13 + 8 | 0);
+                 }
+                 $6 = $6 + 1 | 0;
+                 continue;
+                }
+               };
               }
-              $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18822);
-              $0 = HEAP32[$10 + 12 >> 2];
-              $0 = vision__FindHoughSimilarity_28vision__HoughSimilarityVoting__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20int_2c_20int_2c_20int_29($25, $15, $19, $18, HEAP32[$6 >> 2], HEAP32[$6 + 4 >> 2], HEAP32[$0 >> 2], HEAP32[$0 + 4 >> 2]);
-              vision__ScopedTimer___ScopedTimer_28_29($1);
-              if (($0 | 0) < 0) {
-               break block163
+              __stack_pointer = $13 + 16 | 0;
+              if (HEAPU32[$14 >> 2] > $4 >>> 0) {
+               break block158
               }
-              $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18839);
-              vision__FindHoughMatches_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20vision__HoughSimilarityVoting_20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20float_29($23, $25, $18, $0);
-              vision__ScopedTimer___ScopedTimer_28_29($1);
-              $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 19002);
-              $1 = HEAP32[$10 + 12 >> 2];
-              $1 = vision__EstimateHomography_28float__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20vision__RobustHomography_float___2c_20int_2c_20int_29($12, $15, $19, $23, $32, HEAP32[$1 >> 2], HEAP32[$1 + 4 >> 2]);
-              vision__ScopedTimer___ScopedTimer_28_29($0);
-              if (!$1) {
-               break block163
-              }
-              HEAP32[$13 + 8 >> 2] = HEAP32[$13 + 4 >> 2];
-              $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 19048);
-              vision__FindInliers_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20float_20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20float_29($37, $12, $15, $19, $23, HEAPF32[$14 + 4 >> 2]);
-              vision__ScopedTimer___ScopedTimer_28_29($0);
-              $0 = HEAP32[$13 + 8 >> 2];
-              $1 = HEAP32[$13 + 4 >> 2];
-              $2 = $0 - $1 | 0;
-              if (HEAPU32[$14 >> 2] > $2 >> 3 >>> 0) {
-               break block163
-              }
-              $4 = HEAP32[$14 + 16 >> 2];
-              $5 = HEAP32[$14 + 12 >> 2];
-              if ($2 >>> 0 <= $4 - $5 >>> 0) {
-               break block163
-              }
-              wasm2js_memory_copy($35, $12, 36);
-              HEAP32[$14 + 12 >> 2] = $1;
-              HEAP32[$13 + 4 >> 2] = $5;
-              HEAP32[$14 + 16 >> 2] = $0;
-              HEAP32[$13 + 8 >> 2] = $4;
-              $0 = HEAP32[$14 + 20 >> 2];
-              HEAP32[$14 + 20 >> 2] = HEAP32[$13 + 12 >> 2];
-              HEAP32[$13 + 12 >> 2] = $0;
-              HEAP32[$14 + 24 >> 2] = HEAP32[$10 + 8 >> 2];
              }
-             std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($13 + 4 | 0);
+             vision__ScopedTimer___ScopedTimer_28_29($49);
+             $0 = HEAP32[$10 + 20 >> 2];
+             $6 = $8 + 48 | 0;
+             $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($6, 18496);
+             $19 = $0 + 24 | 0;
+             $0 = HEAP32[$10 + 20 >> 2];
+             $0 = vision__FindHoughSimilarity_28vision__HoughSimilarityVoting__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20int_2c_20int_2c_20int_29($25, $15, $19, $18, HEAP32[$12 >> 2], HEAP32[$12 + 4 >> 2], HEAP32[$0 >> 2], HEAP32[$0 + 4 >> 2]);
+             vision__ScopedTimer___ScopedTimer_28_29($1);
+             if (($0 | 0) < 0) {
+              break block163
+             }
+             HEAP32[$8 + 92 >> 2] = 0;
+             HEAP32[$8 + 84 >> 2] = 0;
+             HEAP32[$8 + 88 >> 2] = 0;
+             $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($6, 18513);
+             $23 = $8 + 84 | 0;
+             vision__FindHoughMatches_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20vision__HoughSimilarityVoting_20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20float_29($23, $25, $18, $0);
+             vision__ScopedTimer___ScopedTimer_28_29($1);
+             $17 = $8 + 16 | 0;
+             $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18674);
+             $1 = HEAP32[$10 + 20 >> 2];
+             $1 = vision__EstimateHomography_28float__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20vision__RobustHomography_float___2c_20int_2c_20int_29($6, $15, $19, $23, $32, HEAP32[$1 >> 2], HEAP32[$1 + 4 >> 2]);
+             vision__ScopedTimer___ScopedTimer_28_29($0);
+             if ($1) {
+              HEAP32[$8 + 12 >> 2] = 0;
+              HEAP32[$8 + 4 >> 2] = 0;
+              HEAP32[$8 + 8 >> 2] = 0;
+              $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18718);
+              $20 = $8 + 4 | 0;
+              vision__FindInliers_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20float_20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20float_29($20, $6, $15, $19, $23, HEAPF32[$14 + 4 >> 2]);
+              $1 = HEAP32[$14 >> 2];
+              $2 = HEAP32[$8 + 4 >> 2];
+              $4 = HEAP32[$8 + 8 >> 2];
+              vision__ScopedTimer___ScopedTimer_28_29($0);
+              block164 : {
+               if ($1 >>> 0 > $4 - $2 >> 3 >>> 0) {
+                break block164
+               }
+               $59 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18735);
+               $49 = HEAP32[$10 + 20 >> 2];
+               $4 = 0;
+               $13 = 0;
+               $9 = __stack_pointer + -64 | 0;
+               __stack_pointer = $9;
+               HEAP32[$18 + 4 >> 2] = HEAP32[$18 >> 2];
+               block170 : {
+                block166 : {
+                 block165 : {
+                  if (HEAP32[$12 + 28 >> 2] == HEAP32[$12 + 24 >> 2] | HEAP32[$49 + 28 >> 2] == HEAP32[$49 + 24 >> 2]) {
+                   break block165
+                  }
+                  if (!bool_20vision__MatrixInverse3x3_float__28float__2c_20float_20const__2c_20float_29($9 + 16 | 0, $6, Math_fround(0.0))) {
+                   break block166
+                  }
+                  std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____reserve_28unsigned_20long_29($18, (HEAP32[$12 + 28 >> 2] - HEAP32[$12 + 24 >> 2] | 0) / 20 | 0);
+                  while (1) {
+                   $0 = HEAP32[$12 + 24 >> 2];
+                   $1 = (HEAP32[$12 + 28 >> 2] - $0 | 0) / 20 | 0;
+                   if ($1 >>> 0 <= $13 >>> 0) {
+                    $4 = HEAP32[$18 + 4 >> 2] - HEAP32[$18 >> 2] >> 3;
+                    if ($1 >>> 0 >= $4 >>> 0) {
+                     break block165
+                    }
+                    std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 19421), 19171), 9969), 256), 10441), 19513));
+                    break block150;
+                   } else {
+                    $26 = $0 + Math_imul($13, 20) | 0;
+                    $3 = HEAPF32[$26 >> 2];
+                    $7 = HEAPF32[$26 + 4 >> 2];
+                    $11 = Math_fround(HEAPF32[$9 + 48 >> 2] + Math_fround(Math_fround(HEAPF32[$9 + 40 >> 2] * $3) + Math_fround($7 * HEAPF32[$9 + 44 >> 2])));
+                    $16 = Math_fround(Math_fround(HEAPF32[$9 + 36 >> 2] + Math_fround(Math_fround(HEAPF32[$9 + 28 >> 2] * $3) + Math_fround($7 * HEAPF32[$9 + 32 >> 2]))) / $11);
+                    $3 = Math_fround(Math_fround(HEAPF32[$9 + 24 >> 2] + Math_fround(Math_fround(HEAPF32[$9 + 16 >> 2] * $3) + Math_fround($7 * HEAPF32[$9 + 20 >> 2]))) / $11);
+                    $60 = HEAP32[$12 + 12 >> 2] + Math_imul(HEAP32[$12 + 8 >> 2], $13) | 0;
+                    $4 = 0;
+                    $1 = -1;
+                    $2 = 2147483647;
+                    $0 = -1;
+                    block167 : {
+                     while (1) {
+                      $5 = HEAP32[$49 + 24 >> 2];
+                      if ((HEAP32[$49 + 28 >> 2] - $5 | 0) / 20 >>> 0 <= $4 >>> 0) {
+                       block168 : {
+                        if (($0 | 0) == -1) {
+                         break block167
+                        }
+                        if (($1 | 0) != -1) {
+                         break block168
+                        }
+                        HEAP32[$9 + 12 >> 2] = $2;
+                        HEAP32[$9 + 8 >> 2] = $13;
+                        vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $9 + 8 | 0);
+                        break block167;
+                       }
+                      } else {
+                       $5 = $5 + Math_imul($4, 20) | 0;
+                       block169 : {
+                        if (HEAPU8[$26 + 16 | 0] != HEAPU8[$5 + 16 | 0]) {
+                         break block169
+                        }
+                        $7 = Math_fround($3 - HEAPF32[$5 >> 2]);
+                        $11 = Math_fround($7 * $7);
+                        $7 = Math_fround($16 - HEAPF32[$5 + 4 >> 2]);
+                        if (Math_fround($11 + Math_fround($7 * $7)) > Math_fround(100.0)) {
+                         break block169
+                        }
+                        $5 = vision__HammingDistance768_28unsigned_20int_20const__2c_20unsigned_20int_20const__29($60, HEAP32[$49 + 12 >> 2] + Math_imul(HEAP32[$49 + 8 >> 2], $4) | 0);
+                        if ($5 >>> 0 < $0 >>> 0) {
+                         $2 = $4;
+                         $1 = $0;
+                         $0 = $5;
+                         break block169;
+                        }
+                        $1 = $1 >>> 0 > $5 >>> 0 ? $5 : $1;
+                       }
+                       $4 = $4 + 1 | 0;
+                       continue;
+                      }
+                      break;
+                     };
+                     if (!(HEAPF32[$18 + 12 >> 2] > Math_fround(Math_fround($0 >>> 0) / Math_fround($1 >>> 0)))) {
+                      break block167
+                     }
+                     HEAP32[$9 + 12 >> 2] = $2;
+                     HEAP32[$9 + 8 >> 2] = $13;
+                     vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($18, $9 + 8 | 0);
+                    }
+                    $13 = $13 + 1 | 0;
+                    continue;
+                   }
+                  };
+                 }
+                 __stack_pointer = $9 - -64 | 0;
+                 break block170;
+                }
+                std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(81568, 22325), 19171), 9969), 196), 10441), 22350));
+                break block150;
+               }
+               $0 = HEAP32[$14 >> 2];
+               vision__ScopedTimer___ScopedTimer_28_29($59);
+               if ($0 >>> 0 > $4 >>> 0) {
+                break block164
+               }
+               $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18822);
+               $0 = HEAP32[$10 + 20 >> 2];
+               $0 = vision__FindHoughSimilarity_28vision__HoughSimilarityVoting__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20int_2c_20int_2c_20int_29($25, $15, $19, $18, HEAP32[$12 >> 2], HEAP32[$12 + 4 >> 2], HEAP32[$0 >> 2], HEAP32[$0 + 4 >> 2]);
+               vision__ScopedTimer___ScopedTimer_28_29($1);
+               if (($0 | 0) < 0) {
+                break block164
+               }
+               $1 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 18839);
+               vision__FindHoughMatches_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20vision__HoughSimilarityVoting_20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20int_2c_20float_29($23, $25, $18, $0);
+               vision__ScopedTimer___ScopedTimer_28_29($1);
+               $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 19002);
+               $1 = HEAP32[$10 + 20 >> 2];
+               $1 = vision__EstimateHomography_28float__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20vision__RobustHomography_float___2c_20int_2c_20int_29($6, $15, $19, $23, $32, HEAP32[$1 >> 2], HEAP32[$1 + 4 >> 2]);
+               vision__ScopedTimer___ScopedTimer_28_29($0);
+               if (!$1) {
+                break block164
+               }
+               HEAP32[$8 + 8 >> 2] = HEAP32[$8 + 4 >> 2];
+               $0 = vision__ScopedTimer__ScopedTimer_28char_20const__29($17, 19048);
+               vision__FindInliers_28std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____2c_20float_20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint___20const__2c_20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t___20const__2c_20float_29($20, $6, $15, $19, $23, HEAPF32[$14 + 4 >> 2]);
+               vision__ScopedTimer___ScopedTimer_28_29($0);
+               $0 = HEAP32[$8 + 8 >> 2];
+               $1 = HEAP32[$8 + 4 >> 2];
+               $2 = $0 - $1 | 0;
+               if (HEAPU32[$14 >> 2] > $2 >> 3 >>> 0) {
+                break block164
+               }
+               $4 = HEAP32[$14 + 16 >> 2];
+               $5 = HEAP32[$14 + 12 >> 2];
+               if ($2 >>> 0 <= $4 - $5 >>> 0) {
+                break block164
+               }
+               wasm2js_memory_copy($35, $6, 36);
+               HEAP32[$14 + 12 >> 2] = $1;
+               HEAP32[$8 + 4 >> 2] = $5;
+               HEAP32[$14 + 16 >> 2] = $0;
+               HEAP32[$8 + 8 >> 2] = $4;
+               $0 = HEAP32[$14 + 20 >> 2];
+               HEAP32[$14 + 20 >> 2] = HEAP32[$8 + 12 >> 2];
+               HEAP32[$8 + 12 >> 2] = $0;
+               HEAP32[$14 + 24 >> 2] = HEAP32[$10 + 16 >> 2];
+              }
+              std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($8 + 4 | 0);
+             }
+             std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($8 + 84 | 0);
+             break block163;
             }
-            std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($13 + 84 | 0);
-            continue;
+            __stack_pointer = $8 + 96 | 0;
+            break block171;
            }
-           __stack_pointer = $13 + 96 | 0;
-           break block170;
+           vision__ScopedTimer___ScopedTimer_28_29($49);
           }
-          vision__ScopedTimer___ScopedTimer_28_29($49);
+          $10 = std____2____tree_end_node_std____2____tree_node_base_void______20std____2____tree_next_iter_5babi_ne200100_5d_std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____28std____2____tree_node_base_void____29($10);
           continue;
          }
          break;
@@ -15927,14 +16051,14 @@ function asmFunc(imports) {
        $1 = HEAP32[$0 + 4 >> 2];
        $0 = HEAP32[$0 >> 2];
        HEAP32[$27 + 48 >> 2] = ($1 - $0 | 0) / 20;
-       block171 : {
+       block172 : {
         if (($0 | 0) == ($1 | 0)) {
          $1 = 0;
          $0 = HEAP32[$27 + 56 >> 2];
          $0 = ($0 | 0) > 0 ? $0 : 0;
          while (1) {
           if (($0 | 0) == ($1 | 0)) {
-           break block171
+           break block172
           }
           HEAP32[(HEAP32[$27 + 52 >> 2] + Math_imul($1, 68) | 0) + 60 >> 2] = -1;
           $1 = $1 + 1 | 0;
@@ -15946,23 +16070,23 @@ function asmFunc(imports) {
         HEAP32[$27 + 44 >> 2] = $0;
         if ($0) {
          $0 = vision__VisualDatabaseFacade__getQueryFeaturePoints_28_29_20const(HEAP32[$27 >> 2]);
-         block172 : {
+         block173 : {
           if (($71 | 0) == 1) {
            $1 = 0;
            while (1) {
             if (HEAP32[$27 + 48 >> 2] <= ($1 | 0)) {
-             break block172
+             break block173
             }
             $2 = HEAP32[$0 >> 2] + Math_imul($1, 20) | 0;
             $3 = HEAPF32[$2 + 4 >> 2];
             $7 = HEAPF32[$2 >> 2];
             $2 = HEAP32[$27 + 4 >> 2];
-            block173 : {
+            block174 : {
              if ($2) {
               $4 = $2 + 184 | 0;
               $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
               arParamObserv2IdealLTf($4, $7, $3, $2, $2 + 4 | 0);
-              break block173;
+              break block174;
              }
              $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
              HEAPF32[$2 + 4 >> 2] = $3;
@@ -15973,23 +16097,23 @@ function asmFunc(imports) {
            };
           }
           $1 = 0;
-          block175 : {
+          block176 : {
            switch ($71 - 2 | 0) {
            case 3:
             while (1) {
              if (HEAP32[$27 + 48 >> 2] <= ($1 | 0)) {
-              break block172
+              break block173
              }
              $2 = HEAP32[$0 >> 2] + Math_imul($1, 20) | 0;
              $3 = HEAPF32[$2 + 4 >> 2];
              $7 = HEAPF32[$2 >> 2];
              $2 = HEAP32[$27 + 4 >> 2];
-             block178 : {
+             block179 : {
               if ($2) {
                $4 = $2 + 184 | 0;
                $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
                arParamObserv2IdealLTf($4, Math_fround($7 * Math_fround(1.5)), Math_fround($3 * Math_fround(1.5)), $2, $2 + 4 | 0);
-               break block178;
+               break block179;
               }
               $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
               HEAPF32[$2 + 4 >> 2] = $3 * Math_fround(1.5);
@@ -16001,18 +16125,18 @@ function asmFunc(imports) {
            case 0:
             while (1) {
              if (HEAP32[$27 + 48 >> 2] <= ($1 | 0)) {
-              break block172
+              break block173
              }
              $2 = HEAP32[$0 >> 2] + Math_imul($1, 20) | 0;
              $3 = HEAPF32[$2 + 4 >> 2];
              $7 = HEAPF32[$2 >> 2];
              $2 = HEAP32[$27 + 4 >> 2];
-             block179 : {
+             block180 : {
               if ($2) {
                $4 = $2 + 184 | 0;
                $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
                arParamObserv2IdealLTf($4, Math_fround($7 + $7), Math_fround($3 + $3), $2, $2 + 4 | 0);
-               break block179;
+               break block180;
               }
               $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
               HEAPF32[$2 + 4 >> 2] = $3 + $3;
@@ -16024,18 +16148,18 @@ function asmFunc(imports) {
            case 2:
             while (1) {
              if (HEAP32[$27 + 48 >> 2] <= ($1 | 0)) {
-              break block172
+              break block173
              }
              $2 = HEAP32[$0 >> 2] + Math_imul($1, 20) | 0;
              $3 = HEAPF32[$2 + 4 >> 2];
              $7 = HEAPF32[$2 >> 2];
              $2 = HEAP32[$27 + 4 >> 2];
-             block180 : {
+             block181 : {
               if ($2) {
                $4 = $2 + 184 | 0;
                $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
                arParamObserv2IdealLTf($4, Math_fround($7 * Math_fround(3.0)), Math_fround($3 * Math_fround(3.0)), $2, $2 + 4 | 0);
-               break block180;
+               break block181;
               }
               $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
               HEAPF32[$2 + 4 >> 2] = $3 * Math_fround(3.0);
@@ -16045,23 +16169,23 @@ function asmFunc(imports) {
              continue;
             };
            default:
-            break block175;
+            break block176;
            };
           }
           while (1) {
            if (HEAP32[$27 + 48 >> 2] <= ($1 | 0)) {
-            break block172
+            break block173
            }
            $2 = HEAP32[$0 >> 2] + Math_imul($1, 20) | 0;
            $3 = HEAPF32[$2 + 4 >> 2];
            $7 = HEAPF32[$2 >> 2];
            $2 = HEAP32[$27 + 4 >> 2];
-           block181 : {
+           block182 : {
             if ($2) {
              $4 = $2 + 184 | 0;
              $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
              arParamObserv2IdealLTf($4, Math_fround($7 * Math_fround(4.0)), Math_fround($3 * Math_fround(4.0)), $2, $2 + 4 | 0);
-             break block181;
+             break block182;
             }
             $2 = HEAP32[$27 + 44 >> 2] + ($1 << 3) | 0;
             HEAPF32[$2 + 4 >> 2] = $3 * Math_fround(4.0);
@@ -16075,15 +16199,15 @@ function asmFunc(imports) {
          $0 = HEAP32[$27 + 56 >> 2];
          $0 = ($0 | 0) > 0 ? $0 : 0;
          while (1) if (($0 | 0) == ($1 | 0)) {
-          $12 = HEAP32[HEAP32[HEAP32[$27 >> 2] >> 2] >> 2];
-          $1 = HEAP32[$12 + 24 >> 2];
+          $13 = HEAP32[HEAP32[HEAP32[$27 >> 2] >> 2] >> 2];
+          $1 = HEAP32[$13 + 24 >> 2];
           if (!$1) {
-           break block171
+           break block172
           }
           $17 = HEAP32[(($1 << 2) + $27 | 0) + 60 >> 2];
           $2 = Math_imul($17, 68);
           if (HEAP32[($2 + HEAP32[$27 + 52 >> 2] | 0) + 64 >> 2]) {
-           break block171
+           break block172
           }
           $4 = HEAP32[$27 + 4 >> 2];
           $5 = HEAP32[$27 >> 2];
@@ -16097,50 +16221,50 @@ function asmFunc(imports) {
           $0 = __stack_pointer - 224 | 0;
           __stack_pointer = $0;
           $10 = -1;
-          $2 = HEAP32[$12 + 12 >> 2];
-          $9 = HEAP32[$12 + 16 >> 2] - $2 | 0;
+          $2 = HEAP32[$13 + 12 >> 2];
+          $9 = HEAP32[$13 + 16 >> 2] - $2 | 0;
           $14 = $9 >> 3;
-          block182 : {
+          block183 : {
            if ($14 >>> 0 < 4) {
-            break block182
+            break block183
            }
-           block194 : {
-            $13 = emscripten_builtin_malloc($9 << 1);
-            if ($13) {
+           block195 : {
+            $12 = emscripten_builtin_malloc($9 << 1);
+            if ($12) {
              $9 = emscripten_builtin_malloc(Math_imul($14, 24));
              if (!$9) {
-              break block196
+              break block197
              }
              $18 = HEAP32[$1 >> 2];
              $5 = HEAP32[$5 >> 2];
              while (1) {
-              if (($14 | 0) != ($60 | 0)) {
-               $1 = $13 + ($60 << 4) | 0;
-               $6 = $2 + ($60 << 3) | 0;
+              if (($14 | 0) != ($61 | 0)) {
+               $1 = $12 + ($61 << 4) | 0;
+               $6 = $2 + ($61 << 3) | 0;
                $8 = $5 + Math_imul(HEAP32[$6 >> 2], 20) | 0;
                HEAPF64[$1 >> 3] = HEAPF32[$8 >> 2];
                HEAPF64[$1 + 8 >> 3] = HEAPF32[$8 + 4 >> 2];
-               $1 = $9 + Math_imul($60, 24) | 0;
+               $1 = $9 + Math_imul($61, 24) | 0;
                $6 = $18 + Math_imul(HEAP32[$6 + 4 >> 2], 12) | 0;
                HEAPF64[$1 >> 3] = HEAPF32[$6 >> 2];
                $3 = HEAPF32[$6 + 4 >> 2];
                HEAP32[$1 + 16 >> 2] = 0;
                HEAP32[$1 + 20 >> 2] = 0;
                HEAPF64[$1 + 8 >> 3] = $3;
-               $60 = $60 + 1 | 0;
+               $61 = $61 + 1 | 0;
                continue;
               }
               break;
              };
              HEAP32[$0 + 212 >> 2] = $9;
-             HEAP32[$0 + 208 >> 2] = $13;
+             HEAP32[$0 + 208 >> 2] = $12;
              HEAP32[$0 + 216 >> 2] = $14;
              $2 = $4 + 8 | 0;
              $6 = 0;
              $5 = -1;
-             block193 : {
+             block194 : {
               if (($14 | 0) < 4) {
-               break block193
+               break block194
               }
               while (1) {
                if (($6 | 0) != ($14 | 0)) {
@@ -16149,23 +16273,23 @@ function asmFunc(imports) {
                 if (HEAPF64[($1 + $9 | 0) + 16 >> 3] == 0.0) {
                  continue
                 }
-                break block193;
+                break block194;
                }
                break;
               };
               if (HEAPF64[$2 >> 3] == 0.0 | HEAPF64[$2 + 32 >> 3] != 0.0 | (HEAPF64[$2 + 40 >> 3] == 0.0 | HEAPF64[$2 + 64 >> 3] != 0.0) | (HEAPF64[$2 + 72 >> 3] != 0.0 | HEAPF64[$2 + 80 >> 3] != 1.0 | (HEAPF64[$2 + 24 >> 3] != 0.0 | HEAPF64[$2 + 56 >> 3] != 0.0)) | HEAPF64[$2 + 88 >> 3] != 0.0) {
-               break block193
+               break block194
               }
-              block185 : {
+              block186 : {
                $1 = $14 << 1;
                $4 = arMatrixAlloc($1, 8);
                if (!$4) {
                 arLog(0, 3, 1419, 0);
-                break block185;
+                break block186;
                }
-               block186 : {
-                block192 : {
-                 block191 : {
+               block187 : {
+                block193 : {
+                 block192 : {
                   $18 = arMatrixAlloc($1, 1);
                   if ($18) {
                    $5 = 0;
@@ -16184,8 +16308,8 @@ function asmFunc(imports) {
                      HEAP32[$1 + 36 >> 2] = 0;
                      HEAP32[$1 + 40 >> 2] = 0;
                      HEAP32[$1 + 44 >> 2] = 0;
-                     $60 = $5 << 4;
-                     $8 = $60 + $13 | 0;
+                     $61 = $5 << 4;
+                     $8 = $61 + $12 | 0;
                      HEAPF64[$1 + 48 >> 3] = HEAPF64[$8 >> 3] * -HEAPF64[$6 >> 3];
                      $21 = HEAPF64[$8 >> 3];
                      $28 = HEAPF64[$6 + 8 >> 3];
@@ -16203,7 +16327,7 @@ function asmFunc(imports) {
                      HEAPF64[$1 + 96 >> 3] = $21;
                      HEAPF64[$1 + 112 >> 3] = HEAPF64[$8 + 8 >> 3] * -HEAPF64[$6 >> 3];
                      HEAPF64[$1 + 120 >> 3] = HEAPF64[$8 + 8 >> 3] * -HEAPF64[$6 + 8 >> 3];
-                     $1 = $60 + HEAP32[$18 >> 2] | 0;
+                     $1 = $61 + HEAP32[$18 >> 2] | 0;
                      HEAPF64[$1 >> 3] = HEAPF64[$8 >> 3];
                      HEAPF64[$1 + 8 >> 3] = HEAPF64[$8 + 8 >> 3];
                      $5 = $5 + 1 | 0;
@@ -16216,7 +16340,7 @@ function asmFunc(imports) {
                     arImageProcFinal($4);
                     arImageProcFinal($18);
                     arLog(0, 3, 3276, 0);
-                    break block185;
+                    break block186;
                    }
                    $6 = arMatrixAllocMul($1, $4);
                    if (!$6) {
@@ -16224,7 +16348,7 @@ function asmFunc(imports) {
                     arImageProcFinal($18);
                     arImageProcFinal($1);
                     arLog(0, 3, 3790, 0);
-                    break block185;
+                    break block186;
                    }
                    $14 = arMatrixAllocMul($1, $18);
                    if (!$14) {
@@ -16233,7 +16357,7 @@ function asmFunc(imports) {
                     arImageProcFinal($1);
                     arImageProcFinal($6);
                     arLog(0, 3, 4377, 0);
-                    break block185;
+                    break block186;
                    }
                    if ((arMatrixSelfInv($6) | 0) < 0) {
                     arImageProcFinal($4);
@@ -16242,7 +16366,7 @@ function asmFunc(imports) {
                     arImageProcFinal($6);
                     arImageProcFinal($14);
                     arLog(0, 3, 5188, 0);
-                    break block185;
+                    break block186;
                    }
                    $8 = arMatrixAllocMul($6, $14);
                    if (!$8) {
@@ -16252,7 +16376,7 @@ function asmFunc(imports) {
                     arImageProcFinal($6);
                     arImageProcFinal($14);
                     arLog(0, 3, 5939, 0);
-                    break block185;
+                    break block186;
                    }
                    $5 = HEAP32[$8 >> 2];
                    $29 = HEAPF64[$5 + 40 >> 3];
@@ -16265,7 +16389,7 @@ function asmFunc(imports) {
                    $36 = HEAPF64[$2 + 40 >> 3];
                    $52 = HEAPF64[$5 + 24 >> 3];
                    $31 = HEAPF64[$2 + 48 >> 3];
-                   $38 = HEAPF64[$5 >> 3];
+                   $37 = HEAPF64[$5 >> 3];
                    $40 = HEAPF64[$2 + 16 >> 3];
                    $30 = HEAPF64[$5 + 48 >> 3];
                    arImageProcFinal($4);
@@ -16277,7 +16401,7 @@ function asmFunc(imports) {
                    $41 = ($29 - $31) / $36;
                    $39 = ($48 - $40 - $22 * $41) / $28;
                    $29 = ($52 - $31 * $30) / $36;
-                   $52 = ($38 - $40 * $30 - $22 * $29) / $28;
+                   $52 = ($37 - $40 * $30 - $22 * $29) / $28;
                    $48 = Math_sqrt($30 * $30 + ($52 * $52 + $29 * $29));
                    $53 = $22;
                    $22 = ($55 - $31 * $21) / $36;
@@ -16289,16 +16413,16 @@ function asmFunc(imports) {
                    $155 = 1.0 / $36;
                    $34 = $52 / $48;
                    $36 = $22 / $28;
-                   $38 = $29 / $48;
+                   $37 = $29 / $48;
                    $40 = $31 / $28;
-                   $22 = $34 * $36 - $38 * $40;
+                   $22 = $34 * $36 - $37 * $40;
                    $28 = $21 / $28;
-                   $62 = $30 / $48;
-                   $30 = $38 * $28 - $62 * $36;
-                   $31 = $62 * $40 - $34 * $28;
+                   $63 = $30 / $48;
+                   $30 = $37 * $28 - $63 * $36;
+                   $31 = $63 * $40 - $34 * $28;
                    $21 = $22 * $22 + ($30 * $30 + $31 * $31);
                    if ($21 == 0.0) {
-                    break block186
+                    break block187
                    }
                    $29 = Math_sqrt($21);
                    $21 = $22 / $29;
@@ -16306,34 +16430,34 @@ function asmFunc(imports) {
                    $30 = -$22;
                    $6 = 0;
                    $31 = $31 / $29;
-                   $56 = $31 * $34 - $38 * $22;
-                   block187 : {
+                   $56 = $31 * $34 - $37 * $22;
+                   block188 : {
                     if ($56 != 0.0) {
-                     $39 = $38;
+                     $39 = $37;
                      $50 = $34;
                      $41 = $31;
                      $29 = $22;
                      $1 = 0;
-                     $48 = $62;
-                     break block187;
+                     $48 = $63;
+                     break block188;
                     }
-                    $30 = $21 * $34 + $62 * $30;
+                    $30 = $21 * $34 + $63 * $30;
                     $6 = $30 != 0.0;
                     $41 = $6 ? $21 : $31;
-                    $50 = $6 ? $34 : $62;
-                    $39 = $6 ? $62 : $38;
+                    $50 = $6 ? $34 : $63;
+                    $39 = $6 ? $63 : $37;
                     $29 = $6 ? $22 : $21;
                     $56 = $41 * $50 - $39 * $29;
                     $21 = $6 ? $31 : $22;
                     $1 = $30 == 0.0;
                     $30 = -$29;
-                    $48 = $6 ? $38 : $34;
+                    $48 = $6 ? $37 : $34;
                    }
                    if ($56 == 0.0) {
-                    break block186
+                    break block187
                    }
                    $22 = ($39 * $21 - $41 * $48) / $56;
-                   $31 = $62 * $28 + ($34 * $40 + $38 * $36);
+                   $31 = $63 * $28 + ($34 * $40 + $37 * $36);
                    $31 = $31 < 0.0 ? -$31 : $31;
                    $74 = (Math_sqrt($31 + 1.0) + Math_sqrt(1.0 - $31)) * .5;
                    $31 = $74 * $41 / $56;
@@ -16344,7 +16468,7 @@ function asmFunc(imports) {
                    $39 = $22 * $22 + $55 * $55 + 1.0;
                    $48 = $53 * $53 - $39 * ($31 * $31 + $52 * $52 + -1.0);
                    if ($48 < 0.0) {
-                    break block186
+                    break block187
                    }
                    $67 = Math_sqrt($48);
                    $50 = (-$53 - $67) / $39;
@@ -16353,7 +16477,7 @@ function asmFunc(imports) {
                    $53 = ($67 - $53) / $39;
                    $39 = $55 * $53 + $52;
                    $31 = $22 * $53 + $31;
-                   block188 : {
+                   block189 : {
                     if ($6) {
                      $22 = $41;
                      $41 = $21;
@@ -16364,7 +16488,7 @@ function asmFunc(imports) {
                      $53 = $48;
                      $48 = $72;
                      $72 = $50;
-                     break block188;
+                     break block189;
                     }
                     if (!$1) {
                      $22 = $21;
@@ -16374,7 +16498,7 @@ function asmFunc(imports) {
                      $31 = $53;
                      $53 = $48;
                      $48 = $50;
-                     break block188;
+                     break block189;
                     }
                     $30 = -$21;
                     $22 = $29;
@@ -16384,7 +16508,7 @@ function asmFunc(imports) {
                    }
                    $6 = 0;
                    $56 = $41 * $40 + $36 * $30;
-                   block189 : {
+                   block190 : {
                     if ($56 != 0.0) {
                      $67 = $28;
                      $39 = $36;
@@ -16392,7 +16516,7 @@ function asmFunc(imports) {
                      $29 = $41;
                      $30 = $21;
                      $1 = 0;
-                     break block189;
+                     break block190;
                     }
                     $140 = $22 * $40 + $28 * $30;
                     $6 = $140 != 0.0;
@@ -16406,7 +16530,7 @@ function asmFunc(imports) {
                     $1 = $140 == 0.0;
                    }
                    if ($56 == 0.0) {
-                    break block186
+                    break block187
                    }
                    $41 = ($39 * $22 - $29 * $67) / $56;
                    $56 = $74 * $29 / $56;
@@ -16417,7 +16541,7 @@ function asmFunc(imports) {
                    $67 = $41 * $41 + $22 * $22 + 1.0;
                    $21 = $50 * $50 - $67 * ($56 * $56 + $39 * $39 + -1.0);
                    if ($21 < 0.0) {
-                    break block186
+                    break block187
                    }
                    $28 = Math_sqrt($21);
                    $21 = (-$50 - $28) / $67;
@@ -16427,14 +16551,14 @@ function asmFunc(imports) {
                    $22 = ($28 - $50) / $67;
                    $34 = $34 * $22 + $39;
                    $28 = $41 * $22 + $56;
-                   block190 : {
+                   block191 : {
                     if ($6) {
                      $40 = $28;
                      $36 = $22;
                      $28 = $34;
                      $22 = $30;
                      $30 = $29;
-                     break block190;
+                     break block191;
                     }
                     if (!$1) {
                      $40 = $28;
@@ -16443,7 +16567,7 @@ function asmFunc(imports) {
                      $22 = $30;
                      $30 = $21;
                      $21 = $29;
-                     break block190;
+                     break block191;
                     }
                     $40 = $22;
                     $36 = $34;
@@ -16454,58 +16578,58 @@ function asmFunc(imports) {
                    $29 = $29 < 0.0 ? -$29 : $29;
                    $34 = $48 * $28 + ($53 * $40 + $72 * $36);
                    $34 = $34 < 0.0 ? -$34 : $34;
-                   $38 = $31 * $28 + ($52 * $40 + $55 * $36);
-                   $41 = $38 < 0.0 ? -$38 : $38;
-                   $38 = $31 * $30 + ($52 * $22 + $55 * $21);
-                   $38 = $38 < 0.0 ? -$38 : $38;
-                   if ($41 < $38) {
+                   $37 = $31 * $28 + ($52 * $40 + $55 * $36);
+                   $41 = $37 < 0.0 ? -$37 : $37;
+                   $37 = $31 * $30 + ($52 * $22 + $55 * $21);
+                   $37 = $37 < 0.0 ? -$37 : $37;
+                   if ($41 < $37) {
                     if ($34 > $41) {
-                     $62 = $31;
-                     $38 = $55;
+                     $63 = $31;
+                     $37 = $55;
                      $34 = $52;
                      if ($29 > $41) {
-                      break block186
+                      break block187
                      }
-                     break block191;
+                     break block192;
                     }
                     $1 = $29 > $34;
                     $28 = $1 ? $28 : $30;
                     $36 = $1 ? $36 : $21;
                     $22 = $1 ? $40 : $22;
-                    break block192;
+                    break block193;
                    }
-                   if ($34 > $38) {
-                    if (!($29 > $38)) {
-                     break block191
+                   if ($34 > $37) {
+                    if (!($29 > $37)) {
+                     break block192
                     }
                     $28 = $30;
                     $36 = $21;
                     $40 = $22;
-                    $62 = $31;
-                    $38 = $55;
+                    $63 = $31;
+                    $37 = $55;
                     $34 = $52;
-                    break block186;
+                    break block187;
                    }
                    $1 = $29 > $34;
                    $28 = $1 ? $28 : $30;
                    $36 = $1 ? $36 : $21;
                    $22 = $1 ? $40 : $22;
-                   break block192;
+                   break block193;
                   }
                   arImageProcFinal($4);
                   arLog(0, 3, 2604, 0);
-                  break block185;
+                  break block186;
                  }
                  $28 = $30;
                  $36 = $21;
                 }
                 $40 = $22;
-                $62 = $48;
-                $38 = $72;
+                $63 = $48;
+                $37 = $72;
                 $34 = $53;
                }
-               HEAPF64[$0 + 176 >> 3] = $62;
-               HEAPF64[$0 + 144 >> 3] = $38;
+               HEAPF64[$0 + 176 >> 3] = $63;
+               HEAPF64[$0 + 144 >> 3] = $37;
                HEAPF64[$0 + 112 >> 3] = $34;
                HEAPF64[$0 + 184 >> 3] = $28;
                HEAPF64[$0 + 152 >> 3] = $36;
@@ -16513,58 +16637,58 @@ function asmFunc(imports) {
                HEAPF64[$0 + 200 >> 3] = $155;
                HEAPF64[$0 + 168 >> 3] = $154;
                HEAPF64[$0 + 136 >> 3] = $153;
-               $30 = $34 * $36 - $38 * $40;
-               $22 = $38 * $28 - $62 * $36;
-               $28 = $62 * $40 - $34 * $28;
+               $30 = $34 * $36 - $37 * $40;
+               $22 = $37 * $28 - $63 * $36;
+               $28 = $63 * $40 - $34 * $28;
                $21 = Math_sqrt($30 * $30 + ($22 * $22 + $28 * $28));
                HEAPF64[$0 + 192 >> 3] = $30 / $21;
                HEAPF64[$0 + 160 >> 3] = $28 / $21;
                HEAPF64[$0 + 128 >> 3] = $22 / $21;
                $5 = 0;
-               break block193;
+               break block194;
               }
               $5 = -1;
              }
              if (($5 | 0) < 0) {
-              emscripten_builtin_free($13);
+              emscripten_builtin_free($12);
               emscripten_builtin_free($9);
-              break block182;
+              break block183;
              }
              $1 = icpCreateHandle($2);
              HEAP32[$0 + 220 >> 2] = $1;
              if (!$1) {
-              emscripten_builtin_free($13);
+              emscripten_builtin_free($12);
               emscripten_builtin_free($9);
-              break block182;
+              break block183;
              }
              if ((icpPoint($1, $0 + 208 | 0, $0 + 112 | 0, $0, $0 + 104 | 0) | 0) >= 0) {
               $1 = 0;
               label93 : while (1) {
                if (($1 | 0) == 3) {
-                break block194
+                break block195
                }
                $2 = $58 + ($1 << 4) | 0;
                $4 = $0 + ($1 << 5) | 0;
-               $60 = 0;
-               while (1) if (($60 | 0) == 4) {
+               $61 = 0;
+               while (1) if (($61 | 0) == 4) {
                 $1 = $1 + 1 | 0;
                 continue label93;
                } else {
-                HEAPF32[$2 + ($60 << 2) >> 2] = HEAPF64[$4 + ($60 << 3) >> 3];
-                $60 = $60 + 1 | 0;
+                HEAPF32[$2 + ($61 << 2) >> 2] = HEAPF64[$4 + ($61 << 3) >> 3];
+                $61 = $61 + 1 | 0;
                 continue;
                };
               };
              }
-             emscripten_builtin_free($13);
+             emscripten_builtin_free($12);
              emscripten_builtin_free($9);
              icpDeleteHandle($0 + 220 | 0);
-             break block182;
+             break block183;
             }
-            break block196;
+            break block197;
            }
            icpDeleteHandle($0 + 220 | 0);
-           emscripten_builtin_free($13);
+           emscripten_builtin_free($12);
            emscripten_builtin_free($9);
            $21 = HEAPF64[$0 + 104 >> 3];
            HEAPF32[$58 + 52 >> 2] = $21;
@@ -16572,12 +16696,12 @@ function asmFunc(imports) {
           }
           __stack_pointer = $0 + 224 | 0;
           if ($10) {
-           break block171
+           break block172
           }
           $0 = HEAP32[$27 + 52 >> 2] + Math_imul($17, 68) | 0;
           HEAP32[$0 + 60 >> 2] = 0;
-          $1 = HEAP32[$12 + 12 >> 2];
-          $2 = HEAP32[$12 + 16 >> 2];
+          $1 = HEAP32[$13 + 12 >> 2];
+          $2 = HEAP32[$13 + 16 >> 2];
           HEAP32[$0 + 48 >> 2] = $17;
           $1 = $2 - $1 >> 3;
           HEAP32[$0 + 56 >> 2] = $1;
@@ -16586,14 +16710,14 @@ function asmFunc(imports) {
           HEAP32[$54 + 4 >> 2] = $1;
           HEAP32[$54 >> 2] = $17;
           arLog(0, 1, 11392, $54);
-          break block171;
+          break block172;
          } else {
           HEAP32[(HEAP32[$27 + 52 >> 2] + Math_imul($1, 68) | 0) + 60 >> 2] = -1;
           $1 = $1 + 1 | 0;
           continue;
          };
         }
-        break block196;
+        break block197;
        }
        $0 = HEAP32[$27 + 56 >> 2];
        $0 = ($0 | 0) > 0 ? $0 : 0;
@@ -16623,8 +16747,8 @@ function asmFunc(imports) {
    }
    $0 = HEAP32[$64 + 224 >> 2];
    if ($0) {
-    HEAP32[$61 + 56 >> 2] = HEAP32[$0 + 52 >> 2];
-    HEAP32[$61 + 52 >> 2] = HEAP32[$0 + 56 >> 2];
+    HEAP32[$62 + 56 >> 2] = HEAP32[$0 + 52 >> 2];
+    HEAP32[$62 + 52 >> 2] = HEAP32[$0 + 56 >> 2];
    }
    if (HEAPU8[$64 + 236 | 0] == 1) {
     $21 = HEAPF64[$64 + 256 >> 3];
@@ -16660,15 +16784,15 @@ function asmFunc(imports) {
    $44 = $64 + 272 | 0;
    $0 = 0;
    while (1) {
-    $1 = HEAP32[$61 + 52 >> 2];
+    $1 = HEAP32[$62 + 52 >> 2];
     if (($1 | 0) <= ($0 | 0)) {
      break block
     }
-    $1 = HEAP32[$61 + 56 >> 2] + Math_imul($0, 68) | 0;
+    $1 = HEAP32[$62 + 56 >> 2] + Math_imul($0, 68) | 0;
     if (!HEAP32[$1 + 60 >> 2]) {
      $2 = HEAP32[$1 + 48 >> 2];
      HEAP32[$64 + 264 >> 2] = $2;
-     wasm2js_memory_copy($61, $1, 48);
+     wasm2js_memory_copy($62, $1, 48);
      $1 = 0;
      $4 = HEAP32[($2 << 2) + $44 >> 2];
      if ($4) {
@@ -16678,7 +16802,7 @@ function asmFunc(imports) {
        if (($1 | 0) != 3) {
         $2 = $1 << 4;
         $9 = $2 + $5 | 0;
-        $18 = $2 + $61 | 0;
+        $18 = $2 + $62 | 0;
         $2 = 0;
         while (1) {
          if (($2 | 0) != 4) {
@@ -16701,7 +16825,7 @@ function asmFunc(imports) {
     continue;
    };
   }
-  __stack_pointer = $61 - -64 | 0;
+  __stack_pointer = $62 - -64 | 0;
   return $1 | 0;
  }
  
@@ -16726,7 +16850,7 @@ function asmFunc(imports) {
   $2 = $6 + 12 | 0;
   $0 = -1;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $2)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $2)) {
     break block
    }
    $3 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($2);
@@ -16817,19 +16941,17 @@ function asmFunc(imports) {
     HEAP32[$0 + 4 >> 2] = 0;
     HEAP32[$0 + 16 >> 2] = 0;
     HEAP32[$0 + 20 >> 2] = 1065353216;
-    $1 = operator_20new_28unsigned_20long_29(840);
+    $1 = operator_20new_28unsigned_20long_29(824);
     $0 = $1;
+    HEAP32[$0 + 76 >> 2] = 0;
+    HEAP32[$0 + 80 >> 2] = 0;
     HEAP32[$0 + 64 >> 2] = 0;
     HEAP32[$0 + 68 >> 2] = 0;
     HEAP32[$0 + 20 >> 2] = 0;
     HEAP32[$0 + 12 >> 2] = 0;
     HEAP32[$0 + 16 >> 2] = 0;
-    HEAP32[$0 + 72 >> 2] = 0;
-    HEAP32[$0 + 76 >> 2] = 0;
-    HEAP32[$0 + 80 >> 2] = 0;
-    HEAP32[$0 + 84 >> 2] = 0;
-    HEAP32[$0 + 88 >> 2] = 1065353216;
-    $0 = $0 + 92 | 0;
+    HEAP32[$0 + 72 >> 2] = $0 + 76;
+    $0 = $0 + 84 | 0;
     HEAP32[$0 + 28 >> 2] = 0;
     HEAP32[$0 + 20 >> 2] = 0;
     HEAP32[$0 + 24 >> 2] = 0;
@@ -16839,7 +16961,7 @@ function asmFunc(imports) {
     HEAP32[$0 + 8 >> 2] = 0;
     HEAP32[$0 >> 2] = 22948;
     wasm2js_memory_fill($0 + 32 | 0, 0, 36);
-    $7 = $1 + 160 | 0;
+    $7 = $1 + 152 | 0;
     $0 = $7;
     HEAP32[$0 + 32 >> 2] = 0;
     HEAP32[$0 + 36 >> 2] = 0;
@@ -16872,7 +16994,7 @@ function asmFunc(imports) {
     HEAP32[$7 + 148 >> 2] = 0;
     vision__DoGScaleInvariantDetector__setMaxNumFeaturePoints_28unsigned_20long_29($7, 5e3);
     std____2__vector_float_2c_20std____2__allocator_float____resize_28unsigned_20long_29($7 + 144 | 0, 36);
-    $0 = $1 + 316 | 0;
+    $0 = $1 + 308 | 0;
     wasm2js_memory_copy($0, 23680, 48);
     wasm2js_memory_copy($0 + 48 | 0, 23728, 48);
     wasm2js_memory_copy($0 + 96 | 0, 23776, 48);
@@ -16887,25 +17009,27 @@ function asmFunc(imports) {
     HEAP32[$0 + 300 >> 2] = 1051092582;
     HEAP32[$0 + 288 >> 2] = 1036831949;
     HEAP32[$0 + 292 >> 2] = 1043542835;
-    HEAP32[$1 + 644 >> 2] = 0;
-    HEAP32[$1 + 648 >> 2] = 1060320051;
     HEAP32[$1 + 636 >> 2] = 0;
-    HEAP32[$1 + 640 >> 2] = 0;
-    $0 = $1 + 652 | 0;
+    HEAP32[$1 + 640 >> 2] = 1060320051;
+    HEAP32[$1 + 628 >> 2] = 0;
+    HEAP32[$1 + 632 >> 2] = 0;
+    $0 = $1 + 644 | 0;
     HEAP32[$0 + 8 >> 2] = 0;
     HEAP32[$0 + 12 >> 2] = 0;
     HEAP32[$0 >> 2] = 0;
     HEAP32[$0 + 4 >> 2] = 0;
+    HEAP32[$0 + 96 >> 2] = 0;
+    HEAP32[$0 + 100 >> 2] = 0;
     HEAP8[$0 + 16 | 0] = 1;
-    wasm2js_memory_fill($0 + 20 | 0, 0, 88);
+    wasm2js_memory_fill($0 + 20 | 0, 0, 72);
+    HEAP32[$0 + 104 >> 2] = 0;
+    HEAP32[$0 + 108 >> 2] = 0;
+    HEAP32[$0 + 92 >> 2] = $0 + 96;
     HEAP32[$0 + 112 >> 2] = 0;
     HEAP32[$0 + 116 >> 2] = 0;
-    HEAP32[$0 + 108 >> 2] = 1065353216;
     HEAP32[$0 + 120 >> 2] = 0;
     HEAP32[$0 + 124 >> 2] = 0;
-    HEAP32[$0 + 128 >> 2] = 0;
-    HEAP32[$0 + 132 >> 2] = 0;
-    $8 = $1 + 788 | 0;
+    $8 = $1 + 772 | 0;
     wasm2js_memory_fill($8, 0, 36);
     std____2__vector_float_2c_20std____2__allocator_float____resize_28unsigned_20long_29($8, 9216);
     $0 = $8 + 24 | 0;
@@ -16949,8 +17073,8 @@ function asmFunc(imports) {
     HEAP32[$8 + 44 >> 2] = 1064;
     HEAP32[$8 + 40 >> 2] = 1024;
     HEAPF32[$8 + 36 >> 2] = .009999999776482582;
-    HEAP32[$1 + 212 >> 2] = 1077936128;
-    HEAP32[$1 + 216 >> 2] = 1082130432;
+    HEAP32[$1 + 204 >> 2] = 1077936128;
+    HEAP32[$1 + 208 >> 2] = 1082130432;
     vision__DoGScaleInvariantDetector__setMaxNumFeaturePoints_28unsigned_20long_29($7, 500);
     HEAP8[$1 + 8 | 0] = 1;
     HEAP32[$1 >> 2] = 8;
@@ -17007,7 +17131,7 @@ function asmFunc(imports) {
   __stack_pointer = $3;
   HEAP32[$3 + 12 >> 2] = $1;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $3 + 12 | 0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $3 + 12 | 0)) {
     HEAP32[$0 + 8 >> 2] = 0;
     HEAP32[$0 + 12 >> 2] = 0;
     HEAP32[$0 >> 2] = 0;
@@ -17138,14 +17262,14 @@ function asmFunc(imports) {
   __stack_pointer = $6;
   HEAP32[$6 + 12 >> 2] = $0;
   $3 = $6 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $3)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $3)) {
    $0 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($3);
-   std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 196 | 0);
-   std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 204 | 0);
+   std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 196 | 0);
+   std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 204 | 0);
    HEAP32[$0 + 200 >> 2] = 0;
    deleteHandle($0);
    emscripten_builtin_free(arController___arController_28_29($0));
-   $4 = std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $3);
+   $4 = std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $3);
    if ($4) {
     $10 = __stack_pointer - 16 | 0;
     __stack_pointer = $10;
@@ -17252,16 +17376,27 @@ function asmFunc(imports) {
  }
  
  function arController___arController_28_29($0) {
-  var $1 = 0;
+  var $1 = 0, $2 = 0, $3 = 0;
   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 388 | 0);
-  std____2____hash_table_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2____unordered_map_hasher_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20true__2c_20std____2____unordered_map_equal_unsigned_20int_2c_20std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int__2c_20std____2__equal_to_unsigned_20int__2c_20std____2__hash_unsigned_20int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_unsigned_20int_2c_20unsigned_20int________hash_table_28_29($0 + 352 | 0);
-  $1 = HEAP32[$0 + 224 >> 2];
+  $3 = $0 + 352 | 0;
+  $1 = HEAP32[$3 + 8 >> 2];
+  while (1) {
+   if ($1) {
+    $2 = HEAP32[$1 >> 2];
+    emscripten_builtin_free($1);
+    $1 = $2;
+    continue;
+   }
+   break;
+  };
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($3);
+  $2 = HEAP32[$0 + 224 >> 2];
   HEAP32[$0 + 224 >> 2] = 0;
-  if ($1) {
-   FUNCTION_TABLE[HEAP32[$0 + 228 >> 2]]($1)
+  if ($2) {
+   FUNCTION_TABLE[HEAP32[$0 + 228 >> 2]]($2)
   }
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 204 | 0);
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 196 | 0);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 204 | 0);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 196 | 0);
   return $0;
  }
  
@@ -17272,7 +17407,7 @@ function asmFunc(imports) {
   __stack_pointer = $1;
   HEAP32[$1 + 12 >> 2] = $0;
   $0 = $1 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    $0 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0);
    arglCameraFrustumRH(HEAP32[$0 + 192 >> 2], HEAPF64[$0 + 400 >> 3], HEAPF64[$0 + 408 >> 3], $0 + 424 | 0);
    $0 = 0;
@@ -17493,7 +17628,7 @@ function asmFunc(imports) {
     } else {
      $3 = 0
     }
-    void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________rehash_true__28unsigned_20long_29(78048, $1 >>> 0 > $3 >>> 0 ? $1 : $3);
+    void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float__________rehash_true__28unsigned_20long_29(78048, $1 >>> 0 > $3 >>> 0 ? $1 : $3);
     $1 = HEAP32[19513];
     $3 = $1 - 1 | 0;
     if (!($1 & $3)) {
@@ -17563,7 +17698,7 @@ function asmFunc(imports) {
   __stack_pointer = $4;
   HEAP32[$4 + 12 >> 2] = $1;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $4 + 12 | 0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $4 + 12 | 0)) {
     HEAP32[$0 + 4 >> 2] = 4;
     HEAP32[$0 >> 2] = 78476;
     break block;
@@ -19519,7 +19654,7 @@ function asmFunc(imports) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   $2 = $2 | 0;
-  var $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = Math_fround(0), $22 = 0, $23 = 0, $24 = 0, $25 = 0, $26 = Math_fround(0), $27 = 0, $28 = 0, $29 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0, $34 = 0, $35 = 0, $36 = 0, $37 = 0, $38 = 0, $39 = 0, $40 = 0, $41 = 0, $42 = 0, wasm2js_i32$0 = 0, wasm2js_i32$1 = 0;
+  var $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = 0, $22 = 0, $23 = 0, $24 = Math_fround(0), $25 = 0, $26 = 0, $27 = Math_fround(0), $28 = 0, $29 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0, $34 = 0, $35 = 0, $36 = 0, $37 = 0, $38 = 0, $39 = 0, $40 = 0, $41 = 0, $42 = 0, wasm2js_i32$0 = 0, wasm2js_i32$1 = 0;
   $13 = __stack_pointer - 48 | 0;
   __stack_pointer = $13;
   HEAP32[$13 + 44 >> 2] = $1;
@@ -19527,14 +19662,14 @@ function asmFunc(imports) {
    block5 : {
     block11 : {
      block : {
-      if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $13 + 44 | 0)) {
+      if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $13 + 44 | 0)) {
        HEAP32[$0 + 8 >> 2] = 0;
        HEAP32[$0 >> 2] = 0;
        HEAP32[$0 + 4 >> 2] = 0;
        break block;
       }
-      $24 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($13 + 44 | 0);
-      $14 = HEAP32[$24 + 224 >> 2];
+      $22 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($13 + 44 | 0);
+      $23 = HEAP32[$22 + 224 >> 2];
       HEAP32[$13 + 40 >> 2] = 0;
       $1 = HEAP32[$2 + 4 >> 2];
       $3 = HEAP32[$2 >> 2];
@@ -19542,67 +19677,67 @@ function asmFunc(imports) {
        HEAP32[$13 + 36 >> 2] = 0;
        HEAP32[$13 + 28 >> 2] = 0;
        HEAP32[$13 + 32 >> 2] = 0;
-       $35 = $24 + 388 | 0;
-       $36 = $24 + 372 | 0;
-       $37 = $24 + 272 | 0;
+       $35 = $22 + 388 | 0;
+       $36 = $22 + 372 | 0;
+       $37 = $22 + 272 | 0;
        while (1) {
-        HEAP32[$13 + 24 >> 2] = $5;
+        HEAP32[$13 + 24 >> 2] = $4;
         block88 : {
          block89 : {
-          if (($1 - $3 | 0) / 12 >>> 0 > $5 >>> 0) {
-           $4 = $13 + 12 | 0;
-           $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($4, 27960);
+          if (($1 - $3 | 0) / 12 >>> 0 > $4 >>> 0) {
+           $8 = $13 + 12 | 0;
+           $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($8, 27960);
            webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($1, (HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] | 0) / 12 | 0);
            std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
-           $3 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($4, 33733);
+           $3 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($8, 33733);
            $1 = HEAP32[$2 >> 2] + Math_imul(HEAP32[$13 + 24 >> 2], 12) | 0;
            webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($3, HEAP8[$1 + 11 | 0] < 0 ? HEAP32[$1 >> 2] : $1);
            std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($3);
-           $7 = HEAP32[$13 + 24 >> 2];
-           $1 = HEAP32[$2 >> 2] + Math_imul($7, 12) | 0;
+           $14 = HEAP32[$13 + 24 >> 2];
+           $1 = HEAP32[$2 >> 2] + Math_imul($14, 12) | 0;
            $3 = HEAP8[$1 + 11 | 0];
-           $5 = HEAP32[$1 >> 2];
+           $4 = HEAP32[$1 >> 2];
            int__20std____2__vector_int_2c_20std____2__allocator_int____emplace_back_int_20const___28int_20const__29($13 + 28 | 0, $13 + 24 | 0);
-           $6 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($4, 33158);
-           $22 = ($3 | 0) < 0 ? $5 : $1;
-           webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($6, $22);
-           std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($6);
-           $6 = 0;
-           $5 = __stack_pointer - 16 | 0;
-           __stack_pointer = $5;
-           HEAP8[$5 + 14 | 0] = HEAPU8[17752];
-           HEAP16[$5 + 12 >> 1] = HEAPU8[17750] | HEAPU8[17751] << 8;
+           $5 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($8, 33158);
+           $21 = ($3 | 0) < 0 ? $4 : $1;
+           webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($5, $21);
+           std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($5);
+           $5 = 0;
+           $4 = __stack_pointer - 16 | 0;
+           __stack_pointer = $4;
+           HEAP8[$4 + 14 | 0] = HEAPU8[17752];
+           HEAP16[$4 + 12 >> 1] = HEAPU8[17750] | HEAPU8[17751] << 8;
            block9 : {
             block8 : {
              block1 : {
-              if (!($13 + 8 | 0 ? $22 : 0)) {
+              if (!($13 + 8 | 0 ? $21 : 0)) {
                arLog(0, 3, 10975, 0);
                break block1;
               }
-              $1 = $5 + 12 | 0;
+              $1 = $4 + 12 | 0;
               $3 = __stack_pointer - 16 | 0;
               __stack_pointer = $3;
               block2 : {
-               if (!$22) {
+               if (!$21) {
                 $1 = 0;
                 break block2;
                }
-               $11 = emscripten_builtin_malloc((strlen($22) + strlen(33169) | 0) + 2 | 0);
-               if (!$11) {
+               $9 = emscripten_builtin_malloc((strlen($21) + strlen(33169) | 0) + 2 | 0);
+               if (!$9) {
                 break block5
                }
                HEAP32[$3 + 4 >> 2] = 33169;
-               HEAP32[$3 >> 2] = $22;
-               siprintf($11, 1851, $3);
-               $1 = fopen($11, $1);
-               emscripten_builtin_free($11);
+               HEAP32[$3 >> 2] = $21;
+               siprintf($9, 1851, $3);
+               $1 = fopen($9, $1);
+               emscripten_builtin_free($9);
               }
               __stack_pointer = $3 + 16 | 0;
               if (!$1) {
-               HEAP32[$5 >> 2] = $22;
-               HEAP32[$5 + 8 >> 2] = 33169;
-               HEAP32[$5 + 4 >> 2] = 9089;
-               arLog(0, 3, 11451, $5);
+               HEAP32[$4 >> 2] = $21;
+               HEAP32[$4 + 8 >> 2] = 33169;
+               HEAP32[$4 + 4 >> 2] = 9089;
+               arLog(0, 3, 11451, $4);
                break block1;
               }
               $3 = emscripten_builtin_calloc(16);
@@ -19613,34 +19748,34 @@ function asmFunc(imports) {
                if ((fread($3 + 4 | 0, 4, 1, $1) | 0) != 1) {
                 break block7
                }
-               $8 = HEAP32[$3 + 4 >> 2];
-               if (($8 | 0) <= 0) {
+               $6 = HEAP32[$3 + 4 >> 2];
+               if (($6 | 0) <= 0) {
                 break block7
                }
-               $11 = emscripten_builtin_malloc(Math_imul($8, 132));
-               HEAP32[$3 >> 2] = $11;
-               if (!$11) {
+               $9 = emscripten_builtin_malloc(Math_imul($6, 132));
+               HEAP32[$3 >> 2] = $9;
+               if (!$9) {
                 break block11
                }
                while (1) {
-                if (($6 | 0) < ($8 | 0)) {
-                 $12 = Math_imul($6, 132);
-                 if ((fread($12 + $11 | 0, 8, 1, $1) | 0) != 1) {
+                if (($5 | 0) < ($6 | 0)) {
+                 $11 = Math_imul($5, 132);
+                 if ((fread($11 + $9 | 0, 8, 1, $1) | 0) != 1) {
                   break block7
                  }
-                 $11 = HEAP32[$3 >> 2];
-                 $12 = $12 + $11 | 0;
-                 if ((fread($12 + 8 | 0, 8, 1, $1) | 0) != 1) {
+                 $9 = HEAP32[$3 >> 2];
+                 $11 = $11 + $9 | 0;
+                 if ((fread($11 + 8 | 0, 8, 1, $1) | 0) != 1) {
                   break block7
                  }
-                 if ((fread($12 + 16 | 0, 108, 1, $1) | 0) != 1) {
+                 if ((fread($11 + 16 | 0, 108, 1, $1) | 0) != 1) {
                   break block7
                  }
-                 if ((fread($12 + 124 | 0, 4, 1, $1) | 0) != 1) {
+                 if ((fread($11 + 124 | 0, 4, 1, $1) | 0) != 1) {
                   break block7
                  }
-                 $6 = $6 + 1 | 0;
-                 if ((fread($12 + 128 | 0, 4, 1, $1) | 0) == 1) {
+                 $5 = $5 + 1 | 0;
+                 if ((fread($11 + 128 | 0, 4, 1, $1) | 0) == 1) {
                   continue
                  }
                  break block7;
@@ -19650,37 +19785,37 @@ function asmFunc(imports) {
                if ((fread($3 + 12 | 0, 4, 1, $1) | 0) != 1) {
                 break block7
                }
-               $6 = 0;
-               $12 = HEAP32[$3 + 12 >> 2];
-               if (($12 | 0) <= 0) {
+               $5 = 0;
+               $11 = HEAP32[$3 + 12 >> 2];
+               if (($11 | 0) <= 0) {
                 HEAP32[$3 + 8 >> 2] = 0;
                 break block7;
                }
-               $8 = emscripten_builtin_malloc(Math_imul($12, 12));
-               HEAP32[$3 + 8 >> 2] = $8;
-               if (!$8) {
+               $6 = emscripten_builtin_malloc(Math_imul($11, 12));
+               HEAP32[$3 + 8 >> 2] = $6;
+               if (!$6) {
                 break block11
                }
                while (1) {
-                if (($6 | 0) >= ($12 | 0)) {
+                if (($5 | 0) >= ($11 | 0)) {
                  break block8
                 }
-                $11 = $8 + Math_imul($6, 12) | 0;
-                if ((fread($11 + 8 | 0, 4, 1, $1) | 0) != 1) {
+                $9 = $6 + Math_imul($5, 12) | 0;
+                if ((fread($9 + 8 | 0, 4, 1, $1) | 0) != 1) {
                  break block7
                 }
-                if ((fread($11 + 4 | 0, 4, 1, $1) | 0) != 1) {
+                if ((fread($9 + 4 | 0, 4, 1, $1) | 0) != 1) {
                  break block7
                 }
-                $10 = $11;
-                $11 = HEAP32[$11 + 4 >> 2];
-                $9 = emscripten_builtin_malloc(Math_imul($11, 12));
-                HEAP32[$10 >> 2] = $9;
-                if (!$9) {
+                $10 = $9;
+                $9 = HEAP32[$9 + 4 >> 2];
+                $7 = emscripten_builtin_malloc(Math_imul($9, 12));
+                HEAP32[$10 >> 2] = $7;
+                if (!$7) {
                  break block11
                 }
-                $6 = $6 + 1 | 0;
-                if ((fread($9, 12, $11, $1) | 0) == ($11 | 0)) {
+                $5 = $5 + 1 | 0;
+                if ((fread($7, 12, $9, $1) | 0) == ($9 | 0)) {
                  continue
                 }
                 break;
@@ -19699,62 +19834,62 @@ function asmFunc(imports) {
             fclose($1);
             $1 = 0;
            }
-           __stack_pointer = $5 + 16 | 0;
+           __stack_pointer = $4 + 16 | 0;
            block12 : {
             if (($1 | 0) < 0) {
-             $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($4, 33121);
-             webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($1, $22);
+             $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($8, 33121);
+             webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($1, $21);
              break block12;
             }
-            $5 = $13 + 12 | 0;
-            $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($5, 33547);
-            webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($1, $7);
+            $4 = $13 + 12 | 0;
+            $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($4, 33547);
+            webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($1, $14);
             std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
             $3 = 0;
             $1 = HEAP32[$13 + 8 >> 2];
             block13 : {
              if ($1) {
-              $6 = HEAP32[$1 + 4 >> 2];
-              $6 = ($6 | 0) > 0 ? $6 : 0;
-              while (1) if (($3 | 0) == ($6 | 0)) {
-               $12 = 0;
+              $5 = HEAP32[$1 + 4 >> 2];
+              $5 = ($5 | 0) > 0 ? $5 : 0;
+              while (1) if (($3 | 0) == ($5 | 0)) {
+               $11 = 0;
                $3 = HEAP32[$1 + 12 >> 2];
-               $6 = ($3 | 0) > 0 ? $3 : 0;
+               $5 = ($3 | 0) > 0 ? $3 : 0;
                $3 = 0;
                while (1) {
-                if (($3 | 0) == ($6 | 0)) {
+                if (($3 | 0) == ($5 | 0)) {
                  break block13
                 }
-                $4 = HEAP32[$1 + 8 >> 2] + Math_imul($3, 12) | 0;
-                $11 = HEAP32[$4 + 8 >> 2];
-                if (!(($11 | 0) != -1 & ($11 | 0) < 0)) {
-                 HEAP32[$4 + 8 >> 2] = $7
+                $8 = HEAP32[$1 + 8 >> 2] + Math_imul($3, 12) | 0;
+                $9 = HEAP32[$8 + 8 >> 2];
+                if (!(($9 | 0) != -1 & ($9 | 0) < 0)) {
+                 HEAP32[$8 + 8 >> 2] = $14
                 }
                 $3 = $3 + 1 | 0;
                 continue;
                };
               } else {
-               $4 = HEAP32[$1 >> 2] + Math_imul($3, 132) | 0;
-               $11 = HEAP32[$4 + 124 >> 2];
-               if (!(($11 | 0) != -1 & ($11 | 0) < 0)) {
-                HEAP32[$4 + 124 >> 2] = $7
+               $8 = HEAP32[$1 >> 2] + Math_imul($3, 132) | 0;
+               $9 = HEAP32[$8 + 124 >> 2];
+               if (!(($9 | 0) != -1 & ($9 | 0) < 0)) {
+                HEAP32[$8 + 124 >> 2] = $14
                }
                $3 = $3 + 1 | 0;
                continue;
               };
              }
              arLog(0, 3, 12166, 0);
-             $12 = -1;
+             $11 = -1;
             }
-            if (($12 | 0) < 0) {
-             $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($5, 26037);
+            if (($11 | 0) < 0) {
+             $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($4, 26037);
              webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($1);
              break block12;
             }
             $1 = 0;
             block14 : {
-             $4 = $13 + 8 | 0;
-             if (!($4 ? $13 + 40 | 0 : 0)) {
+             $8 = $13 + 8 | 0;
+             if (!($8 ? $13 + 40 | 0 : 0)) {
               arLog(0, 3, 6987, 0);
               $1 = -1;
               break block14;
@@ -19773,134 +19908,134 @@ function asmFunc(imports) {
                HEAP32[$3 + 4 >> 2] = 0;
               }
               block16 : {
-               $11 = HEAP32[$4 >> 2];
-               if (!$11) {
+               $9 = HEAP32[$8 >> 2];
+               if (!$9) {
                 break block16
                }
-               $7 = HEAP32[$11 + 4 >> 2];
-               $5 = HEAP32[$3 + 4 >> 2];
-               $12 = $7 + $5 | 0;
-               $6 = emscripten_builtin_malloc(Math_imul($12, 132));
-               if ($6) {
-                $8 = ($5 | 0) > 0 ? $5 : 0;
-                while (1) if (($1 | 0) == ($8 | 0)) {
+               $14 = HEAP32[$9 + 4 >> 2];
+               $4 = HEAP32[$3 + 4 >> 2];
+               $11 = $14 + $4 | 0;
+               $5 = emscripten_builtin_malloc(Math_imul($11, 132));
+               if ($5) {
+                $6 = ($4 | 0) > 0 ? $4 : 0;
+                while (1) if (($1 | 0) == ($6 | 0)) {
                  $1 = 0;
-                 $7 = ($7 | 0) > 0 ? $7 : 0;
-                 $5 = $6 + Math_imul($5, 132) | 0;
+                 $14 = ($14 | 0) > 0 ? $14 : 0;
+                 $4 = $5 + Math_imul($4, 132) | 0;
                  while (1) {
-                  if (($1 | 0) != ($7 | 0)) {
-                   $8 = Math_imul($1, 132);
-                   wasm2js_memory_copy($8 + $5 | 0, $8 + HEAP32[$11 >> 2] | 0, 132);
+                  if (($1 | 0) != ($14 | 0)) {
+                   $6 = Math_imul($1, 132);
+                   wasm2js_memory_copy($6 + $4 | 0, $6 + HEAP32[$9 >> 2] | 0, 132);
                    $1 = $1 + 1 | 0;
                    continue;
                   }
                   break;
                  };
                  emscripten_builtin_free(HEAP32[$3 >> 2]);
-                 HEAP32[HEAP32[$13 + 40 >> 2] >> 2] = $6;
-                 $8 = HEAP32[$13 + 40 >> 2];
-                 HEAP32[$8 + 4 >> 2] = $12;
-                 $6 = 0;
-                 $7 = HEAP32[$8 + 12 >> 2];
-                 $12 = ($7 | 0) > 0 ? $7 : 0;
-                 $5 = HEAP32[$4 >> 2];
-                 $9 = HEAP32[$5 + 12 >> 2];
-                 $11 = ($9 | 0) > 0 ? $9 : 0;
+                 HEAP32[HEAP32[$13 + 40 >> 2] >> 2] = $5;
+                 $6 = HEAP32[$13 + 40 >> 2];
+                 HEAP32[$6 + 4 >> 2] = $11;
+                 $5 = 0;
+                 $14 = HEAP32[$6 + 12 >> 2];
+                 $11 = ($14 | 0) > 0 ? $14 : 0;
+                 $4 = HEAP32[$8 >> 2];
+                 $7 = HEAP32[$4 + 12 >> 2];
+                 $9 = ($7 | 0) > 0 ? $7 : 0;
                  $3 = 0;
                  while (1) {
                   $1 = 0;
-                  if (($3 | 0) != ($11 | 0)) {
+                  if (($3 | 0) != ($9 | 0)) {
                    block17 : {
                     while (1) {
-                     if (($1 | 0) == ($12 | 0)) {
+                     if (($1 | 0) == ($11 | 0)) {
                       break block17
                      }
                      $10 = Math_imul($1, 12);
                      $1 = $1 + 1 | 0;
-                     if (HEAP32[(HEAP32[$5 + 8 >> 2] + Math_imul($3, 12) | 0) + 8 >> 2] != HEAP32[($10 + HEAP32[$8 + 8 >> 2] | 0) + 8 >> 2]) {
+                     if (HEAP32[(HEAP32[$4 + 8 >> 2] + Math_imul($3, 12) | 0) + 8 >> 2] != HEAP32[($10 + HEAP32[$6 + 8 >> 2] | 0) + 8 >> 2]) {
                       continue
                      }
                      break;
                     };
-                    $6 = $6 + 1 | 0;
+                    $5 = $5 + 1 | 0;
                    }
                    $3 = $3 + 1 | 0;
                    continue;
                   }
                   break;
                  };
-                 $20 = ($7 + $9 | 0) - $6 | 0;
-                 $9 = emscripten_builtin_malloc(Math_imul($20, 12));
-                 if ($9) {
-                  $8 = 0;
+                 $20 = ($7 + $14 | 0) - $5 | 0;
+                 $7 = emscripten_builtin_malloc(Math_imul($20, 12));
+                 if ($7) {
+                  $6 = 0;
                   label14 : while (1) {
-                   if (($8 | 0) == ($12 | 0)) {
+                   if (($6 | 0) == ($11 | 0)) {
                     $3 = 0;
-                    $6 = 0;
+                    $5 = 0;
                     block22 : {
                      block18 : {
                       while (1) {
                        block19 : {
                         $1 = 0;
-                        if (($3 | 0) == ($11 | 0)) {
-                         $5 = HEAP32[$13 + 40 >> 2];
-                         if (!HEAP32[$5 + 8 >> 2]) {
+                        if (($3 | 0) == ($9 | 0)) {
+                         $4 = HEAP32[$13 + 40 >> 2];
+                         if (!HEAP32[$4 + 8 >> 2]) {
                           break block18
                          }
                          while (1) {
-                          $3 = HEAP32[$5 + 8 >> 2];
-                          if (HEAP32[$5 + 12 >> 2] <= ($1 | 0)) {
+                          $3 = HEAP32[$4 + 8 >> 2];
+                          if (HEAP32[$4 + 12 >> 2] <= ($1 | 0)) {
                            break block19
                           }
                           emscripten_builtin_free(HEAP32[$3 + Math_imul($1, 12) >> 2]);
                           $1 = $1 + 1 | 0;
-                          $5 = HEAP32[$13 + 40 >> 2];
+                          $4 = HEAP32[$13 + 40 >> 2];
                           continue;
                          };
                         }
                         block21 : {
                          block20 : {
                           while (1) {
-                           if (($1 | 0) == ($12 | 0)) {
+                           if (($1 | 0) == ($11 | 0)) {
                             break block20
                            }
-                           $8 = Math_imul($1, 12);
+                           $6 = Math_imul($1, 12);
                            $1 = $1 + 1 | 0;
-                           if (HEAP32[(HEAP32[$5 + 8 >> 2] + Math_imul($3, 12) | 0) + 8 >> 2] != HEAP32[($8 + HEAP32[HEAP32[$13 + 40 >> 2] + 8 >> 2] | 0) + 8 >> 2]) {
+                           if (HEAP32[(HEAP32[$4 + 8 >> 2] + Math_imul($3, 12) | 0) + 8 >> 2] != HEAP32[($6 + HEAP32[HEAP32[$13 + 40 >> 2] + 8 >> 2] | 0) + 8 >> 2]) {
                             continue
                            }
                            break;
                           };
-                          $6 = $6 + 1 | 0;
+                          $5 = $5 + 1 | 0;
                           break block21;
                          }
-                         $10 = $9 + Math_imul(($3 + $7 | 0) - $6 | 0, 12) | 0;
-                         $18 = Math_imul($3, 12);
-                         $1 = $18 + HEAP32[$5 + 8 >> 2] | 0;
+                         $10 = $7 + Math_imul(($3 + $14 | 0) - $5 | 0, 12) | 0;
+                         $16 = Math_imul($3, 12);
+                         $1 = $16 + HEAP32[$4 + 8 >> 2] | 0;
                          HEAP32[$10 + 8 >> 2] = HEAP32[$1 + 8 >> 2];
-                         $8 = HEAP32[$1 + 4 >> 2];
-                         $15 = emscripten_builtin_malloc(Math_imul($8, 12));
-                         HEAP32[$10 >> 2] = $15;
-                         if (!$15) {
+                         $6 = HEAP32[$1 + 4 >> 2];
+                         $12 = emscripten_builtin_malloc(Math_imul($6, 12));
+                         HEAP32[$10 >> 2] = $12;
+                         if (!$12) {
                           break block22
                          }
                          $1 = 0;
-                         $19 = ($8 | 0) > 0 ? $8 : 0;
+                         $18 = ($6 | 0) > 0 ? $6 : 0;
                          while (1) {
-                          if (($1 | 0) != ($19 | 0)) {
-                           $16 = Math_imul($1, 12);
-                           $17 = $16 + $15 | 0;
-                           $16 = $16 + HEAP32[$18 + HEAP32[$5 + 8 >> 2] >> 2] | 0;
-                           HEAP32[$17 + 8 >> 2] = HEAP32[$16 + 8 >> 2];
-                           $23 = HEAP32[$16 + 4 >> 2];
-                           HEAP32[$17 >> 2] = HEAP32[$16 >> 2];
-                           HEAP32[$17 + 4 >> 2] = $23;
+                          if (($1 | 0) != ($18 | 0)) {
+                           $15 = Math_imul($1, 12);
+                           $17 = $15 + $12 | 0;
+                           $15 = $15 + HEAP32[$16 + HEAP32[$4 + 8 >> 2] >> 2] | 0;
+                           HEAP32[$17 + 8 >> 2] = HEAP32[$15 + 8 >> 2];
+                           $19 = HEAP32[$15 + 4 >> 2];
+                           HEAP32[$17 >> 2] = HEAP32[$15 >> 2];
+                           HEAP32[$17 + 4 >> 2] = $19;
                            $1 = $1 + 1 | 0;
                            continue;
                           }
                           break;
                          };
-                         HEAP32[$10 + 4 >> 2] = $8;
+                         HEAP32[$10 + 4 >> 2] = $6;
                         }
                         $3 = $3 + 1 | 0;
                         continue;
@@ -19908,66 +20043,66 @@ function asmFunc(imports) {
                        break;
                       };
                       emscripten_builtin_free($3);
-                      $5 = HEAP32[$13 + 40 >> 2];
+                      $4 = HEAP32[$13 + 40 >> 2];
                      }
-                     HEAP32[$5 + 8 >> 2] = $9;
+                     HEAP32[$4 + 8 >> 2] = $7;
                      HEAP32[HEAP32[$13 + 40 >> 2] + 12 >> 2] = $20;
-                     kpmDeleteRefDataSet($4);
+                     kpmDeleteRefDataSet($8);
                      break block16;
                     }
                     break block15;
                    }
-                   $10 = Math_imul($8, 12);
-                   $16 = $10 + $9 | 0;
+                   $10 = Math_imul($6, 12);
+                   $15 = $10 + $7 | 0;
                    $3 = $10 + HEAP32[HEAP32[$13 + 40 >> 2] + 8 >> 2] | 0;
                    $17 = HEAP32[$3 + 8 >> 2];
-                   HEAP32[$16 + 8 >> 2] = $17;
+                   HEAP32[$15 + 8 >> 2] = $17;
                    $1 = 0;
-                   $15 = HEAP32[$3 + 4 >> 2];
-                   $6 = $15;
+                   $12 = HEAP32[$3 + 4 >> 2];
+                   $5 = $12;
                    while (1) {
-                    if (($1 | 0) != ($11 | 0)) {
-                     $3 = HEAP32[$5 + 8 >> 2] + Math_imul($1, 12) | 0;
+                    if (($1 | 0) != ($9 | 0)) {
+                     $3 = HEAP32[$4 + 8 >> 2] + Math_imul($1, 12) | 0;
                      if (($17 | 0) == HEAP32[$3 + 8 >> 2]) {
-                      $6 = HEAP32[$3 + 4 >> 2] + $6 | 0
+                      $5 = HEAP32[$3 + 4 >> 2] + $5 | 0
                      }
                      $1 = $1 + 1 | 0;
                      continue;
                     }
                     break;
                    };
-                   $17 = emscripten_builtin_malloc(Math_imul($6, 12));
-                   HEAP32[$16 >> 2] = $17;
+                   $17 = emscripten_builtin_malloc(Math_imul($5, 12));
+                   HEAP32[$15 >> 2] = $17;
                    if ($17) {
                     $1 = 0;
-                    $19 = ($15 | 0) > 0 ? $15 : 0;
-                    while (1) if (($1 | 0) == ($19 | 0)) {
+                    $18 = ($12 | 0) > 0 ? $12 : 0;
+                    while (1) if (($1 | 0) == ($18 | 0)) {
                      $1 = 0;
                      while (1) {
                       block23 : {
-                       if (($1 | 0) == ($11 | 0)) {
+                       if (($1 | 0) == ($9 | 0)) {
                         break block23
                        }
-                       $3 = HEAP32[$5 + 8 >> 2];
-                       $18 = Math_imul($1, 12);
-                       if (HEAP32[($3 + $18 | 0) + 8 >> 2] == HEAP32[($10 + HEAP32[HEAP32[$13 + 40 >> 2] + 8 >> 2] | 0) + 8 >> 2]) {
-                        $10 = $17 + Math_imul($15, 12) | 0;
+                       $3 = HEAP32[$4 + 8 >> 2];
+                       $16 = Math_imul($1, 12);
+                       if (HEAP32[($3 + $16 | 0) + 8 >> 2] == HEAP32[($10 + HEAP32[HEAP32[$13 + 40 >> 2] + 8 >> 2] | 0) + 8 >> 2]) {
+                        $10 = $17 + Math_imul($12, 12) | 0;
                         $1 = 0;
                         while (1) {
-                         $15 = $3 + $18 | 0;
-                         if (HEAP32[$15 + 4 >> 2] <= ($1 | 0)) {
+                         $12 = $3 + $16 | 0;
+                         if (HEAP32[$12 + 4 >> 2] <= ($1 | 0)) {
                           break block23
                          }
-                         $5 = Math_imul($1, 12);
-                         $3 = $5 + $10 | 0;
-                         $5 = $5 + HEAP32[$15 >> 2] | 0;
-                         HEAP32[$3 + 8 >> 2] = HEAP32[$5 + 8 >> 2];
-                         $15 = HEAP32[$5 + 4 >> 2];
-                         HEAP32[$3 >> 2] = HEAP32[$5 >> 2];
-                         HEAP32[$3 + 4 >> 2] = $15;
+                         $4 = Math_imul($1, 12);
+                         $3 = $4 + $10 | 0;
+                         $4 = $4 + HEAP32[$12 >> 2] | 0;
+                         HEAP32[$3 + 8 >> 2] = HEAP32[$4 + 8 >> 2];
+                         $12 = HEAP32[$4 + 4 >> 2];
+                         HEAP32[$3 >> 2] = HEAP32[$4 >> 2];
+                         HEAP32[$3 + 4 >> 2] = $12;
                          $1 = $1 + 1 | 0;
-                         $5 = HEAP32[$4 >> 2];
-                         $3 = HEAP32[$5 + 8 >> 2];
+                         $4 = HEAP32[$8 >> 2];
+                         $3 = HEAP32[$4 + 8 >> 2];
                          continue;
                         };
                        } else {
@@ -19977,17 +20112,17 @@ function asmFunc(imports) {
                       }
                       break;
                      };
-                     HEAP32[$16 + 4 >> 2] = $6;
-                     $8 = $8 + 1 | 0;
+                     HEAP32[$15 + 4 >> 2] = $5;
+                     $6 = $6 + 1 | 0;
                      continue label14;
                     } else {
-                     $18 = Math_imul($1, 12);
-                     $3 = $18 + $17 | 0;
-                     $18 = $18 + HEAP32[$10 + HEAP32[HEAP32[$13 + 40 >> 2] + 8 >> 2] >> 2] | 0;
-                     HEAP32[$3 + 8 >> 2] = HEAP32[$18 + 8 >> 2];
-                     $23 = HEAP32[$18 + 4 >> 2];
-                     HEAP32[$3 >> 2] = HEAP32[$18 >> 2];
-                     HEAP32[$3 + 4 >> 2] = $23;
+                     $16 = Math_imul($1, 12);
+                     $3 = $16 + $17 | 0;
+                     $16 = $16 + HEAP32[$10 + HEAP32[HEAP32[$13 + 40 >> 2] + 8 >> 2] >> 2] | 0;
+                     HEAP32[$3 + 8 >> 2] = HEAP32[$16 + 8 >> 2];
+                     $19 = HEAP32[$16 + 4 >> 2];
+                     HEAP32[$3 >> 2] = HEAP32[$16 >> 2];
+                     HEAP32[$3 + 4 >> 2] = $19;
                      $1 = $1 + 1 | 0;
                      continue;
                     };
@@ -19998,8 +20133,8 @@ function asmFunc(imports) {
                  }
                  break block15;
                 } else {
-                 $9 = Math_imul($1, 132);
-                 wasm2js_memory_copy($9 + $6 | 0, $9 + HEAP32[$3 >> 2] | 0, 132);
+                 $7 = Math_imul($1, 132);
+                 wasm2js_memory_copy($7 + $5 | 0, $7 + HEAP32[$3 >> 2] | 0, 132);
                  $1 = $1 + 1 | 0;
                  continue;
                 };
@@ -20021,13 +20156,13 @@ function asmFunc(imports) {
             webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($1);
             std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
             $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($32, 25893);
-            webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($1, $22);
+            webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($1, $21);
             std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
             $3 = 0;
-            $16 = 0;
-            $11 = 0;
-            $9 = __stack_pointer - 976 | 0;
-            __stack_pointer = $9;
+            $15 = 0;
+            $9 = 0;
+            $7 = __stack_pointer - 976 | 0;
+            __stack_pointer = $7;
             block87 : {
              block86 : {
               block78 : {
@@ -20039,83 +20174,83 @@ function asmFunc(imports) {
                     break block24
                    }
                   }
-                  (wasm2js_i32$0 = strncpy($9 + 720 | 0, $22, 255), wasm2js_i32$1 = 0), HEAP8[wasm2js_i32$0 + 255 | 0] = wasm2js_i32$1;
+                  (wasm2js_i32$0 = strncpy($7 + 720 | 0, $21, 255), wasm2js_i32$1 = 0), HEAP8[wasm2js_i32$0 + 255 | 0] = wasm2js_i32$1;
                   $28 = 1;
                   break block25;
                  }
-                 HEAP32[$9 + 176 >> 2] = $22;
-                 HEAP32[$9 + 180 >> 2] = 25904;
-                 $1 = $9 + 192 | 0;
-                 siprintf($1, 1851, $9 + 176 | 0);
-                 $16 = fopen($1, 2925);
-                 if (!$16) {
-                  HEAP32[$9 + 160 >> 2] = $22;
-                  arLog(0, 3, 3712, $9 + 160 | 0);
-                  (wasm2js_i32$0 = $9, wasm2js_i32$1 = __strerror_l(HEAP32[19563])), HEAP32[wasm2js_i32$0 + 148 >> 2] = wasm2js_i32$1;
-                  HEAP32[$9 + 144 >> 2] = 5451;
-                  arLog(0, 3, 4332, $9 + 144 | 0);
+                 HEAP32[$7 + 176 >> 2] = $21;
+                 HEAP32[$7 + 180 >> 2] = 25904;
+                 $1 = $7 + 192 | 0;
+                 siprintf($1, 1851, $7 + 176 | 0);
+                 $15 = fopen($1, 2925);
+                 if (!$15) {
+                  HEAP32[$7 + 160 >> 2] = $21;
+                  arLog(0, 3, 3712, $7 + 160 | 0);
+                  (wasm2js_i32$0 = $7, wasm2js_i32$1 = __strerror_l(HEAP32[19563])), HEAP32[wasm2js_i32$0 + 148 >> 2] = wasm2js_i32$1;
+                  HEAP32[$7 + 144 >> 2] = 5451;
+                  arLog(0, 3, 4332, $7 + 144 | 0);
                   break block26;
                  }
                  $28 = 0;
                 }
                 block67 : {
                  block28 : {
-                  $11 = emscripten_builtin_malloc(1140);
-                  if ($11) {
-                   $27 = 1;
+                  $9 = emscripten_builtin_malloc(1140);
+                  if ($9) {
+                   $25 = 1;
                    block27 : {
                     if ($28) {
                      break block27
                     }
-                    $1 = $9 + 192 | 0;
-                    if (!get_buff($1, $16)) {
+                    $1 = $7 + 192 | 0;
+                    if (!get_buff($1, $15)) {
                      break block28
                     }
-                    HEAP32[$9 + 128 >> 2] = $9 + 716;
-                    if ((sscanf($1, 6506, $9 + 128 | 0) | 0) != 1) {
+                    HEAP32[$7 + 128 >> 2] = $7 + 716;
+                    if ((sscanf($1, 6506, $7 + 128 | 0) | 0) != 1) {
                      break block28
                     }
-                    $27 = HEAP32[$9 + 716 >> 2];
-                    if (($27 | 0) > 0) {
+                    $25 = HEAP32[$7 + 716 >> 2];
+                    if (($25 | 0) > 0) {
                      break block27
                     }
                     break block28;
                    }
-                   HEAP32[$11 + 152 >> 2] = 0;
-                   HEAP32[$11 + 4 >> 2] = $27;
-                   $18 = emscripten_builtin_malloc(Math_imul($27, 112));
-                   HEAP32[$11 >> 2] = $18;
-                   if ($18) {
+                   HEAP32[$9 + 152 >> 2] = 0;
+                   HEAP32[$9 + 4 >> 2] = $25;
+                   $16 = emscripten_builtin_malloc(Math_imul($25, 112));
+                   HEAP32[$9 >> 2] = $16;
+                   if ($16) {
                     block29 : {
                      while (1) {
-                      HEAP32[$9 + 716 >> 2] = $3;
-                      if (($3 | 0) >= ($27 | 0)) {
+                      HEAP32[$7 + 716 >> 2] = $3;
+                      if (($3 | 0) >= ($25 | 0)) {
                        break block29
                       }
-                      HEAP32[$9 + 112 >> 2] = $3 + 1;
-                      arLog(0, 1, 7660, $9 + 112 | 0);
+                      HEAP32[$7 + 112 >> 2] = $3 + 1;
+                      arLog(0, 1, 7660, $7 + 112 | 0);
                       if (!$28) {
-                       $1 = $9 + 192 | 0;
-                       if (!get_buff($1, $16)) {
+                       $1 = $7 + 192 | 0;
+                       if (!get_buff($1, $15)) {
                         break block29
                        }
-                       $5 = $9 + 720 | 0;
-                       HEAP32[$9 + 96 >> 2] = $5;
-                       if ((sscanf($1, 7717, $9 + 96 | 0) | 0) != 1) {
+                       $4 = $7 + 720 | 0;
+                       HEAP32[$7 + 96 >> 2] = $4;
+                       if ((sscanf($1, 7717, $7 + 96 | 0) | 0) != 1) {
                         break block29
                        }
                        $1 = 0;
                        $3 = -1;
                        while (1) {
                         block31 : {
-                         $6 = HEAPU8[$1 + $5 | 0];
+                         $5 = HEAPU8[$1 + $4 | 0];
                          block30 : {
-                          if (($6 | 0) != 46) {
-                           if ($6) {
+                          if (($5 | 0) != 46) {
+                           if ($5) {
                             break block30
                            }
                            if (($3 | 0) != -1) {
-                            HEAP8[$3 + $5 | 0] = 0
+                            HEAP8[$3 + $4 | 0] = 0
                            }
                            break block31;
                           }
@@ -20129,49 +20264,49 @@ function asmFunc(imports) {
                       }
                       arLog(0, 1, 8663, 0);
                       $10 = 0;
-                      $15 = __stack_pointer - 96 | 0;
-                      __stack_pointer = $15;
-                      HEAP16[$15 + 88 >> 1] = HEAPU8[17748] | HEAPU8[17749] << 8;
-                      HEAP32[$15 + 84 >> 2] = HEAPU8[17744] | HEAPU8[17745] << 8 | (HEAPU8[17746] << 16 | HEAPU8[17747] << 24);
+                      $12 = __stack_pointer - 96 | 0;
+                      __stack_pointer = $12;
+                      HEAP16[$12 + 88 >> 1] = HEAPU8[17748] | HEAPU8[17749] << 8;
+                      HEAP32[$12 + 84 >> 2] = HEAPU8[17744] | HEAPU8[17745] << 8 | (HEAPU8[17746] << 16 | HEAPU8[17747] << 24);
                       block32 : {
                        block60 : {
                         block59 : {
                          block34 : {
                           block57 : {
-                           $34 = $9 + 720 | 0;
-                           $19 = $34;
-                           $1 = emscripten_builtin_malloc(strlen($19) + 6 | 0);
+                           $34 = $7 + 720 | 0;
+                           $18 = $34;
+                           $1 = emscripten_builtin_malloc(strlen($18) + 6 | 0);
                            if ($1) {
-                            HEAP32[$15 + 64 >> 2] = $19;
-                            $3 = $15 + 84 | 0;
-                            HEAP32[$15 + 68 >> 2] = $3;
-                            siprintf($1, 1846, $15 - -64 | 0);
+                            HEAP32[$12 + 64 >> 2] = $18;
+                            $3 = $12 + 84 | 0;
+                            HEAP32[$12 + 68 >> 2] = $3;
+                            siprintf($1, 1846, $12 - -64 | 0);
                             $17 = fopen($1, 3018);
                             emscripten_builtin_free($1);
                             if (!$17) {
-                             HEAP32[$15 >> 2] = $19;
-                             HEAP32[$15 + 4 >> 2] = $3;
+                             HEAP32[$12 >> 2] = $18;
+                             HEAP32[$12 + 4 >> 2] = $3;
                              $1 = 0;
-                             arLog(0, 3, 3943, $15);
+                             arLog(0, 3, 3943, $12);
                              break block32;
                             }
-                            $7 = emscripten_builtin_malloc(8);
-                            if ($7) {
+                            $14 = emscripten_builtin_malloc(8);
+                            if ($14) {
                              block33 : {
-                              if ((fread($7 + 4 | 0, 4, 1, $17) | 0) == 1) {
-                               $29 = HEAP32[$7 + 4 >> 2];
-                               if (($29 | 0) > 0) {
+                              if ((fread($14 + 4 | 0, 4, 1, $17) | 0) == 1) {
+                               $30 = HEAP32[$14 + 4 >> 2];
+                               if (($30 | 0) > 0) {
                                 break block33
                                }
                               }
                               arLog(0, 3, 4439, 0);
                               break block34;
                              }
-                             HEAP32[$15 + 48 >> 2] = $29;
-                             arLog(0, 1, 5273, $15 + 48 | 0);
-                             $23 = $29 << 2;
-                             $20 = emscripten_builtin_malloc($23);
-                             HEAP32[$7 >> 2] = $20;
+                             HEAP32[$12 + 48 >> 2] = $30;
+                             arLog(0, 1, 5273, $12 + 48 | 0);
+                             $19 = $30 << 2;
+                             $20 = emscripten_builtin_malloc($19);
+                             HEAP32[$14 >> 2] = $20;
                              if ($20) {
                               $1 = emscripten_builtin_malloc(16);
                               HEAP32[$20 >> 2] = $1;
@@ -20179,14 +20314,14 @@ function asmFunc(imports) {
                                block55 : {
                                 $1 = emscripten_builtin_malloc(20);
                                 if ($1) {
-                                 $5 = __stack_pointer - 816 | 0;
-                                 __stack_pointer = $5;
-                                 wasm2js_memory_fill($5 + 328 | 0, 0, 488);
+                                 $4 = __stack_pointer - 816 | 0;
+                                 __stack_pointer = $4;
+                                 wasm2js_memory_fill($4 + 328 | 0, 0, 488);
                                  HEAP32[20040] = 0;
-                                 $6 = jpeg_std_error($5 + 40 | 0);
+                                 $5 = jpeg_std_error($4 + 40 | 0);
                                  $3 = HEAP32[20040];
                                  HEAP32[20040] = 0;
-                                 $8 = -1;
+                                 $6 = -1;
                                  block52 : {
                                   block39 : {
                                    block36 : {
@@ -20194,278 +20329,278 @@ function asmFunc(imports) {
                                      if (!$3) {
                                       break block35
                                      }
-                                     $4 = HEAP32[20041];
-                                     if (!$4) {
+                                     $8 = HEAP32[20041];
+                                     if (!$8) {
                                       break block35
                                      }
-                                     $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                     if (!$8) {
+                                     $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                     if (!$6) {
                                       break block36
                                      }
-                                     tempRet0 = $4;
+                                     tempRet0 = $8;
                                     }
                                     $3 = tempRet0;
-                                    if (($8 | 0) != 1) {
-                                     HEAP32[$5 + 40 >> 2] = 3;
-                                     HEAP32[$5 + 328 >> 2] = $6;
-                                     HEAP32[$5 + 176 >> 2] = 1;
-                                     HEAP32[$5 + 172 >> 2] = $5 + 12;
+                                    if (($6 | 0) != 1) {
+                                     HEAP32[$4 + 40 >> 2] = 3;
+                                     HEAP32[$4 + 328 >> 2] = $5;
+                                     HEAP32[$4 + 176 >> 2] = 1;
+                                     HEAP32[$4 + 172 >> 2] = $4 + 12;
                                      $3 = 0;
                                     }
                                     label18 : while (1) {
                                      if ($3) {
                                       HEAP32[20040] = 0;
-                                      invoke_vi(4, $5 + 328 | 0);
+                                      invoke_vi(4, $4 + 328 | 0);
                                       $3 = HEAP32[20040];
                                       HEAP32[20040] = 0;
-                                      $8 = -1;
+                                      $6 = -1;
                                       block37 : {
                                        if (!$3) {
                                         break block37
                                        }
-                                       $4 = HEAP32[20041];
-                                       if (!$4) {
+                                       $8 = HEAP32[20041];
+                                       if (!$8) {
                                         break block37
                                        }
-                                       $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                       if (!$8) {
+                                       $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                       if (!$6) {
                                         break block36
                                        }
-                                       tempRet0 = $4;
+                                       tempRet0 = $8;
                                       }
                                       $3 = tempRet0;
-                                      if (($8 | 0) == 1) {
+                                      if (($6 | 0) == 1) {
                                        continue
                                       }
                                       HEAP32[20040] = 0;
                                       invoke_viiii(5, 0, 3, 6108, 0);
                                       $3 = HEAP32[20040];
                                       HEAP32[20040] = 0;
-                                      $8 = -1;
+                                      $6 = -1;
                                       block38 : {
                                        if (!$3) {
                                         break block38
                                        }
-                                       $4 = HEAP32[20041];
-                                       if (!$4) {
+                                       $8 = HEAP32[20041];
+                                       if (!$8) {
                                         break block38
                                        }
-                                       $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                       if (!$8) {
+                                       $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                       if (!$6) {
                                         break block36
                                        }
-                                       tempRet0 = $4;
+                                       tempRet0 = $8;
                                       }
                                       $3 = tempRet0;
-                                      if (($8 | 0) == 1) {
+                                      if (($6 | 0) == 1) {
                                        continue
                                       }
                                       break block39;
                                      }
                                      HEAP32[20040] = 0;
-                                     invoke_viii(6, $5 + 328 | 0, 90, 488);
+                                     invoke_viii(6, $4 + 328 | 0, 90, 488);
                                      $3 = HEAP32[20040];
                                      HEAP32[20040] = 0;
-                                     $8 = -1;
+                                     $6 = -1;
                                      block40 : {
                                       if (!$3) {
                                        break block40
                                       }
-                                      $4 = HEAP32[20041];
-                                      if (!$4) {
+                                      $8 = HEAP32[20041];
+                                      if (!$8) {
                                        break block40
                                       }
-                                      $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                      if (!$8) {
+                                      $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                      if (!$6) {
                                        break block36
                                       }
-                                      tempRet0 = $4;
+                                      tempRet0 = $8;
                                      }
                                      $3 = tempRet0;
-                                     if (($8 | 0) == 1) {
+                                     if (($6 | 0) == 1) {
                                       continue
                                      }
                                      HEAP32[20040] = 0;
-                                     invoke_vii(7, $5 + 328 | 0, $17 | 0);
+                                     invoke_vii(7, $4 + 328 | 0, $17 | 0);
                                      $3 = HEAP32[20040];
                                      HEAP32[20040] = 0;
-                                     $8 = -1;
+                                     $6 = -1;
                                      block41 : {
                                       if (!$3) {
                                        break block41
                                       }
-                                      $4 = HEAP32[20041];
-                                      if (!$4) {
+                                      $8 = HEAP32[20041];
+                                      if (!$8) {
                                        break block41
                                       }
-                                      $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                      if (!$8) {
+                                      $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                      if (!$6) {
                                        break block36
                                       }
-                                      tempRet0 = $4;
+                                      tempRet0 = $8;
                                      }
                                      $3 = tempRet0;
-                                     if (($8 | 0) == 1) {
+                                     if (($6 | 0) == 1) {
                                       continue
                                      }
                                      HEAP32[20040] = 0;
-                                     $6 = invoke_iii(8, $5 + 328 | 0, 1) | 0;
+                                     $5 = invoke_iii(8, $4 + 328 | 0, 1) | 0;
                                      $3 = HEAP32[20040];
                                      HEAP32[20040] = 0;
-                                     $8 = -1;
+                                     $6 = -1;
                                      block42 : {
                                       if (!$3) {
                                        break block42
                                       }
-                                      $4 = HEAP32[20041];
-                                      if (!$4) {
+                                      $8 = HEAP32[20041];
+                                      if (!$8) {
                                        break block42
                                       }
-                                      $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                      if (!$8) {
+                                      $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                      if (!$6) {
                                        break block36
                                       }
-                                      tempRet0 = $4;
+                                      tempRet0 = $8;
                                      }
                                      $3 = tempRet0;
-                                     if (($8 | 0) == 1) {
+                                     if (($6 | 0) == 1) {
                                       continue
                                      }
-                                     if (($6 | 0) != 1) {
+                                     if (($5 | 0) != 1) {
                                       HEAP32[20040] = 0;
                                       invoke_viiii(5, 0, 3, 6874, 0);
                                       $3 = HEAP32[20040];
                                       HEAP32[20040] = 0;
-                                      $8 = -1;
+                                      $6 = -1;
                                       block43 : {
                                        if (!$3) {
                                         break block43
                                        }
-                                       $4 = HEAP32[20041];
-                                       if (!$4) {
+                                       $8 = HEAP32[20041];
+                                       if (!$8) {
                                         break block43
                                        }
-                                       $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                       if (!$8) {
+                                       $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                       if (!$6) {
                                         break block36
                                        }
-                                       tempRet0 = $4;
+                                       tempRet0 = $8;
                                       }
                                       $3 = tempRet0;
-                                      if (($8 | 0) == 1) {
+                                      if (($6 | 0) == 1) {
                                        continue
                                       }
                                       HEAP32[20040] = 0;
-                                      invoke_vi(4, $5 + 328 | 0);
+                                      invoke_vi(4, $4 + 328 | 0);
                                       $3 = HEAP32[20040];
                                       HEAP32[20040] = 0;
-                                      $8 = -1;
+                                      $6 = -1;
                                       block44 : {
                                        if (!$3) {
                                         break block44
                                        }
-                                       $4 = HEAP32[20041];
-                                       if (!$4) {
+                                       $8 = HEAP32[20041];
+                                       if (!$8) {
                                         break block44
                                        }
-                                       $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                       if (!$8) {
+                                       $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                       if (!$6) {
                                         break block36
                                        }
-                                       tempRet0 = $4;
+                                       tempRet0 = $8;
                                       }
                                       $3 = tempRet0;
-                                      if (($8 | 0) == 1) {
+                                      if (($6 | 0) == 1) {
                                        continue
                                       }
                                       break block39;
                                      }
                                      HEAP32[20040] = 0;
-                                     invoke_ii(9, $5 + 328 | 0) | 0;
+                                     invoke_ii(9, $4 + 328 | 0) | 0;
                                      $3 = HEAP32[20040];
                                      HEAP32[20040] = 0;
-                                     $8 = -1;
+                                     $6 = -1;
                                      block45 : {
                                       if (!$3) {
                                        break block45
                                       }
-                                      $4 = HEAP32[20041];
-                                      if (!$4) {
+                                      $8 = HEAP32[20041];
+                                      if (!$8) {
                                        break block45
                                       }
-                                      $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                      if (!$8) {
+                                      $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                      if (!$6) {
                                        break block36
                                       }
-                                      tempRet0 = $4;
+                                      tempRet0 = $8;
                                      }
                                      $3 = tempRet0;
-                                     if (($8 | 0) == 1) {
+                                     if (($6 | 0) == 1) {
                                       continue
                                      }
-                                     $25 = Math_imul(HEAP32[$5 + 356 >> 2], HEAP32[$5 + 364 >> 2]);
-                                     $6 = emscripten_builtin_malloc(Math_imul($25, HEAP32[$5 + 360 >> 2]));
-                                     if ($6) {
-                                      $8 = 0;
+                                     $26 = Math_imul(HEAP32[$4 + 356 >> 2], HEAP32[$4 + 364 >> 2]);
+                                     $5 = emscripten_builtin_malloc(Math_imul($26, HEAP32[$4 + 360 >> 2]));
+                                     if ($5) {
+                                      $6 = 0;
                                       block50 : {
                                        block49 : {
                                         while (1) {
                                          block48 : {
                                           $3 = 0;
-                                          if (HEAPU32[$5 + 468 >> 2] >= HEAPU32[$5 + 444 >> 2]) {
+                                          if (HEAPU32[$4 + 468 >> 2] >= HEAPU32[$4 + 444 >> 2]) {
                                            HEAP32[20040] = 0;
-                                           invoke_ii(10, $5 + 328 | 0) | 0;
+                                           invoke_ii(10, $4 + 328 | 0) | 0;
                                            $3 = HEAP32[20040];
                                            HEAP32[20040] = 0;
-                                           $8 = -1;
+                                           $6 = -1;
                                            block46 : {
                                             if (!$3) {
                                              break block46
                                             }
-                                            $4 = HEAP32[20041];
-                                            if (!$4) {
+                                            $8 = HEAP32[20041];
+                                            if (!$8) {
                                              break block46
                                             }
-                                            $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                            if (!$8) {
+                                            $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                            if (!$6) {
                                              break block36
                                             }
-                                            tempRet0 = $4;
+                                            tempRet0 = $8;
                                            }
                                            $3 = tempRet0;
-                                           if (($8 | 0) == 1) {
+                                           if (($6 | 0) == 1) {
                                             continue label18
                                            }
                                            HEAP32[20040] = 0;
-                                           invoke_vi(4, $5 + 328 | 0);
+                                           invoke_vi(4, $4 + 328 | 0);
                                            $3 = HEAP32[20040];
                                            HEAP32[20040] = 0;
-                                           $8 = -1;
+                                           $6 = -1;
                                            block47 : {
                                             if (!$3) {
                                              break block47
                                             }
-                                            $4 = HEAP32[20041];
-                                            if (!$4) {
+                                            $8 = HEAP32[20041];
+                                            if (!$8) {
                                              break block47
                                             }
-                                            $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                            if (!$8) {
+                                            $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                            if (!$6) {
                                              break block36
                                             }
-                                            tempRet0 = $4;
+                                            tempRet0 = $8;
                                            }
                                            $3 = tempRet0;
-                                           if (($8 | 0) == 1) {
+                                           if (($6 | 0) == 1) {
                                             continue label18
                                            }
-                                           HEAP32[$1 + 8 >> 2] = HEAP32[$5 + 356 >> 2];
-                                           HEAP32[$1 + 12 >> 2] = HEAP32[$5 + 360 >> 2];
-                                           HEAP32[$1 + 4 >> 2] = HEAP32[$5 + 364 >> 2];
-                                           $4 = HEAPU16[$5 + 622 >> 1];
-                                           $3 = HEAPU16[$5 + 620 >> 1];
-                                           $12 = HEAPU8[$5 + 618 | 0];
-                                           switch ($12 - 1 | 0) {
+                                           HEAP32[$1 + 8 >> 2] = HEAP32[$4 + 356 >> 2];
+                                           HEAP32[$1 + 12 >> 2] = HEAP32[$4 + 360 >> 2];
+                                           HEAP32[$1 + 4 >> 2] = HEAP32[$4 + 364 >> 2];
+                                           $8 = HEAPU16[$4 + 622 >> 1];
+                                           $3 = HEAPU16[$4 + 620 >> 1];
+                                           $11 = HEAPU8[$4 + 618 | 0];
+                                           switch ($11 - 1 | 0) {
                                            case 0:
                                             break block48;
                                            case 1:
@@ -20476,54 +20611,54 @@ function asmFunc(imports) {
                                           }
                                           while (1) {
                                            if (($3 | 0) != 5) {
-                                            HEAP32[($5 + 16 | 0) + ($3 << 2) >> 2] = Math_imul($25, $3 + $8 | 0) + $6;
+                                            HEAP32[($4 + 16 | 0) + ($3 << 2) >> 2] = Math_imul($26, $3 + $6 | 0) + $5;
                                             $3 = $3 + 1 | 0;
                                             continue;
                                            }
                                            break;
                                           };
                                           HEAP32[20040] = 0;
-                                          $30 = invoke_iiii(11, $5 + 328 | 0, $5 + 16 | 0, 5) | 0;
+                                          $29 = invoke_iiii(11, $4 + 328 | 0, $4 + 16 | 0, 5) | 0;
                                           $3 = HEAP32[20040];
                                           HEAP32[20040] = 0;
-                                          $12 = -1;
+                                          $11 = -1;
                                           block51 : {
                                            if (!$3) {
                                             break block51
                                            }
-                                           $4 = HEAP32[20041];
-                                           if (!$4) {
+                                           $8 = HEAP32[20041];
+                                           if (!$8) {
                                             break block51
                                            }
-                                           $12 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                           if (!$12) {
+                                           $11 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                           if (!$11) {
                                             break block36
                                            }
-                                           tempRet0 = $4;
+                                           tempRet0 = $8;
                                           }
                                           $3 = tempRet0;
-                                          if (($12 | 0) == 1) {
+                                          if (($11 | 0) == 1) {
                                            continue label18
                                           }
-                                          $8 = $8 + $30 | 0;
+                                          $6 = $6 + $29 | 0;
                                           continue;
                                          }
                                          break;
                                         };
-                                        if (($3 | 0) != ($4 | 0)) {
+                                        if (($3 | 0) != ($8 | 0)) {
                                          break block50
                                         }
                                         HEAPF32[$1 + 16 >> 2] = $3 >>> 0;
                                         break block52;
                                        }
-                                       if (($3 | 0) != ($4 | 0)) {
+                                       if (($3 | 0) != ($8 | 0)) {
                                         break block50
                                        }
                                        HEAPF32[$1 + 16 >> 2] = Math_fround($3 >>> 0) * Math_fround(2.5399999618530273);
                                        break block52;
                                       }
-                                      if (!($4 | ($3 | $12 >>> 0 < 3))) {
-                                       HEAPF32[$1 + 16 >> 2] = $12 >>> 0;
+                                      if (!($8 | ($3 | $11 >>> 0 < 3))) {
+                                       HEAPF32[$1 + 16 >> 2] = $11 >>> 0;
                                        break block52;
                                       }
                                       HEAP32[$1 + 16 >> 2] = 0;
@@ -20533,60 +20668,60 @@ function asmFunc(imports) {
                                      invoke_viiii(5, 0, 3, 1733, 0);
                                      $3 = HEAP32[20040];
                                      HEAP32[20040] = 0;
-                                     $8 = -1;
+                                     $6 = -1;
                                      block53 : {
                                       if (!$3) {
                                        break block53
                                       }
-                                      $4 = HEAP32[20041];
-                                      if (!$4) {
+                                      $8 = HEAP32[20041];
+                                      if (!$8) {
                                        break block53
                                       }
-                                      $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                      if (!$8) {
+                                      $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                      if (!$6) {
                                        break block36
                                       }
-                                      tempRet0 = $4;
+                                      tempRet0 = $8;
                                      }
                                      $3 = tempRet0;
-                                     if (($8 | 0) == 1) {
+                                     if (($6 | 0) == 1) {
                                       continue
                                      }
                                      HEAP32[20040] = 0;
-                                     invoke_vi(4, $5 + 328 | 0);
+                                     invoke_vi(4, $4 + 328 | 0);
                                      $3 = HEAP32[20040];
                                      HEAP32[20040] = 0;
-                                     $8 = -1;
+                                     $6 = -1;
                                      block54 : {
                                       if (!$3) {
                                        break block54
                                       }
-                                      $4 = HEAP32[20041];
-                                      if (!$4) {
+                                      $8 = HEAP32[20041];
+                                      if (!$8) {
                                        break block54
                                       }
-                                      $8 = __wasm_setjmp_test($3, $5 + 12 | 0);
-                                      if (!$8) {
+                                      $6 = __wasm_setjmp_test($3, $4 + 12 | 0);
+                                      if (!$6) {
                                        break block36
                                       }
-                                      tempRet0 = $4;
+                                      tempRet0 = $8;
                                      }
                                      $3 = tempRet0;
-                                     if (($8 | 0) == 1) {
+                                     if (($6 | 0) == 1) {
                                       continue
                                      }
                                      break;
                                     };
                                     break block39;
                                    }
-                                   emscripten_longjmp($3, $4);
+                                   emscripten_longjmp($3, $8);
                                    wasm2js_trap();
                                   }
-                                  $6 = 0;
+                                  $5 = 0;
                                  }
-                                 __stack_pointer = $5 + 816 | 0;
-                                 HEAP32[$1 >> 2] = $6;
-                                 if (!$6) {
+                                 __stack_pointer = $4 + 816 | 0;
+                                 HEAP32[$1 >> 2] = $5;
+                                 if (!$5) {
                                   emscripten_builtin_free($1);
                                   $1 = 0;
                                  }
@@ -20599,64 +20734,64 @@ function asmFunc(imports) {
                                 if (HEAP32[$3 + 4 >> 2] == 1) {
                                  break block57
                                 }
-                                HEAP32[$15 + 32 >> 2] = $19;
-                                HEAP32[$15 + 36 >> 2] = $15 + 84;
+                                HEAP32[$12 + 32 >> 2] = $18;
+                                HEAP32[$12 + 36 >> 2] = $12 + 84;
                                 $1 = 0;
-                                arLog(0, 2, 6015, $15 + 32 | 0);
+                                arLog(0, 2, 6015, $12 + 32 | 0);
                                 emscripten_builtin_free(HEAP32[$20 >> 2]);
                                 emscripten_builtin_free($20);
-                                emscripten_builtin_free($7);
+                                emscripten_builtin_free($14);
                                 emscripten_builtin_free($3);
                                 fclose($17);
                                 break block32;
                                }
-                               HEAP32[$15 + 16 >> 2] = $19;
-                               HEAP32[$15 + 20 >> 2] = $15 + 84;
-                               arLog(0, 2, 6015, $15 + 16 | 0);
+                               HEAP32[$12 + 16 >> 2] = $18;
+                               HEAP32[$12 + 20 >> 2] = $12 + 84;
+                               arLog(0, 2, 6015, $12 + 16 | 0);
                                emscripten_builtin_free(HEAP32[$20 >> 2]);
                                emscripten_builtin_free($20);
-                               emscripten_builtin_free($7);
+                               emscripten_builtin_free($14);
                                rewind($17);
                                $1 = emscripten_builtin_malloc(8);
                                if ($1) {
                                 block58 : {
                                  if ((fread($1 + 4 | 0, 4, 1, $17) | 0) == 1) {
-                                  $6 = HEAP32[$1 + 4 >> 2];
-                                  if (($6 | 0) > 0) {
+                                  $5 = HEAP32[$1 + 4 >> 2];
+                                  if (($5 | 0) > 0) {
                                    break block58
                                   }
                                  }
                                  arLog(0, 3, 4439, 0);
                                  break block59;
                                 }
-                                $5 = emscripten_builtin_malloc($6 << 2);
-                                HEAP32[$1 >> 2] = $5;
-                                if ($5) {
-                                 $4 = 1;
+                                $4 = emscripten_builtin_malloc($5 << 2);
+                                HEAP32[$1 >> 2] = $4;
+                                if ($4) {
+                                 $8 = 1;
                                  while (1) {
-                                  if (($6 | 0) == ($10 | 0)) {
+                                  if (($5 | 0) == ($10 | 0)) {
                                    $10 = 0;
                                    while (1) {
-                                    if (($6 | 0) == ($10 | 0)) {
+                                    if (($5 | 0) == ($10 | 0)) {
                                      break block60
                                     }
                                     block62 : {
                                      block61 : {
-                                      $3 = $5 + ($10 << 2) | 0;
+                                      $3 = $4 + ($10 << 2) | 0;
                                       if ((fread(HEAP32[$3 >> 2] + 4 | 0, 4, 1, $17) | 0) != 1) {
                                        $3 = 0;
                                        while (1) if (($3 | 0) == ($10 | 0)) {
                                         $10 = 0;
                                         while (1) {
-                                         if (($6 | 0) == ($10 | 0)) {
+                                         if (($5 | 0) == ($10 | 0)) {
                                           break block61
                                          }
-                                         emscripten_builtin_free(HEAP32[$5 + ($10 << 2) >> 2]);
+                                         emscripten_builtin_free(HEAP32[$4 + ($10 << 2) >> 2]);
                                          $10 = $10 + 1 | 0;
                                          continue;
                                         };
                                        } else {
-                                        emscripten_builtin_free(HEAP32[HEAP32[$5 + ($3 << 2) >> 2] >> 2]);
+                                        emscripten_builtin_free(HEAP32[HEAP32[$4 + ($3 << 2) >> 2] >> 2]);
                                         $3 = $3 + 1 | 0;
                                         continue;
                                        };
@@ -20666,15 +20801,15 @@ function asmFunc(imports) {
                                        while (1) if (($3 | 0) == ($10 | 0)) {
                                         $10 = 0;
                                         while (1) {
-                                         if (($6 | 0) == ($10 | 0)) {
+                                         if (($5 | 0) == ($10 | 0)) {
                                           break block61
                                          }
-                                         emscripten_builtin_free(HEAP32[$5 + ($10 << 2) >> 2]);
+                                         emscripten_builtin_free(HEAP32[$4 + ($10 << 2) >> 2]);
                                          $10 = $10 + 1 | 0;
                                          continue;
                                         };
                                        } else {
-                                        emscripten_builtin_free(HEAP32[HEAP32[$5 + ($3 << 2) >> 2] >> 2]);
+                                        emscripten_builtin_free(HEAP32[HEAP32[$4 + ($3 << 2) >> 2] >> 2]);
                                         $3 = $3 + 1 | 0;
                                         continue;
                                        };
@@ -20684,58 +20819,58 @@ function asmFunc(imports) {
                                        while (1) if (($3 | 0) == ($10 | 0)) {
                                         $10 = 0;
                                         while (1) {
-                                         if (($6 | 0) == ($10 | 0)) {
+                                         if (($5 | 0) == ($10 | 0)) {
                                           break block61
                                          }
-                                         emscripten_builtin_free(HEAP32[$5 + ($10 << 2) >> 2]);
+                                         emscripten_builtin_free(HEAP32[$4 + ($10 << 2) >> 2]);
                                          $10 = $10 + 1 | 0;
                                          continue;
                                         };
                                        } else {
-                                        emscripten_builtin_free(HEAP32[HEAP32[$5 + ($3 << 2) >> 2] >> 2]);
+                                        emscripten_builtin_free(HEAP32[HEAP32[$4 + ($3 << 2) >> 2] >> 2]);
                                         $3 = $3 + 1 | 0;
                                         continue;
                                        };
                                       }
-                                      $7 = HEAP32[$3 >> 2];
-                                      $12 = emscripten_builtin_malloc(Math_imul(HEAP32[$7 + 8 >> 2], HEAP32[$7 + 4 >> 2]));
-                                      HEAP32[$7 >> 2] = $12;
-                                      if ($12) {
-                                       $7 = HEAP32[$3 >> 2];
-                                       $7 = fread(HEAP32[$7 >> 2], 1, Math_imul(HEAP32[$7 + 8 >> 2], HEAP32[$7 + 4 >> 2]), $17);
+                                      $14 = HEAP32[$3 >> 2];
+                                      $11 = emscripten_builtin_malloc(Math_imul(HEAP32[$14 + 8 >> 2], HEAP32[$14 + 4 >> 2]));
+                                      HEAP32[$14 >> 2] = $11;
+                                      if ($11) {
+                                       $14 = HEAP32[$3 >> 2];
+                                       $18 = fread(HEAP32[$14 >> 2], 1, Math_imul(HEAP32[$14 + 8 >> 2], HEAP32[$14 + 4 >> 2]), $17);
                                        $3 = HEAP32[$3 >> 2];
-                                       if (($7 | 0) == (Math_imul(HEAP32[$3 + 8 >> 2], HEAP32[$3 + 4 >> 2]) | 0)) {
+                                       if (($18 | 0) == (Math_imul(HEAP32[$3 + 8 >> 2], HEAP32[$3 + 4 >> 2]) | 0)) {
                                         break block62
                                        }
                                        $10 = 0;
-                                       while (1) if (($4 | 0) == ($10 | 0)) {
+                                       while (1) if (($10 | 0) == ($8 | 0)) {
                                         $10 = 0;
                                         while (1) {
-                                         if (($6 | 0) == ($10 | 0)) {
+                                         if (($5 | 0) == ($10 | 0)) {
                                           break block61
                                          }
-                                         emscripten_builtin_free(HEAP32[$5 + ($10 << 2) >> 2]);
+                                         emscripten_builtin_free(HEAP32[$4 + ($10 << 2) >> 2]);
                                          $10 = $10 + 1 | 0;
                                          continue;
                                         };
                                        } else {
-                                        emscripten_builtin_free(HEAP32[HEAP32[$5 + ($10 << 2) >> 2] >> 2]);
+                                        emscripten_builtin_free(HEAP32[HEAP32[$4 + ($10 << 2) >> 2] >> 2]);
                                         $10 = $10 + 1 | 0;
                                         continue;
                                        };
                                       }
                                       break block5;
                                      }
-                                     emscripten_builtin_free($5);
+                                     emscripten_builtin_free($4);
                                      break block59;
                                     }
-                                    $4 = $4 + 1 | 0;
+                                    $8 = $8 + 1 | 0;
                                     $10 = $10 + 1 | 0;
                                     continue;
                                    };
                                   }
                                   $3 = emscripten_builtin_malloc(16);
-                                  HEAP32[$5 + ($10 << 2) >> 2] = $3;
+                                  HEAP32[$4 + ($10 << 2) >> 2] = $3;
                                   $10 = $10 + 1 | 0;
                                   if ($3) {
                                    continue
@@ -20762,12 +20897,12 @@ function asmFunc(imports) {
                           HEAPF32[$1 + 12 >> 2] = HEAPF32[$3 + 16 >> 2];
                           HEAP32[$1 >> 2] = HEAP32[$3 >> 2];
                           emscripten_builtin_free($3);
-                          fseek($17, 4 - $23 | 0, 2);
+                          fseek($17, 4 - $19 | 0, 2);
                           $10 = 1;
                           block63 : {
                            while (1) {
-                            if (($10 | 0) != ($29 | 0)) {
-                             if ((fread($15 + 92 | 0, 4, 1, $17) | 0) != 1) {
+                            if (($10 | 0) != ($30 | 0)) {
+                             if ((fread($12 + 92 | 0, 4, 1, $17) | 0) != 1) {
                               $1 = 0;
                               while (1) {
                                if (($1 | 0) == ($10 | 0)) {
@@ -20781,74 +20916,74 @@ function asmFunc(imports) {
                               };
                              } else {
                               $38 = ($10 << 2) + $20 | 0;
-                              $21 = HEAPF32[$15 + 92 >> 2];
-                              $19 = HEAP32[$20 >> 2];
-                              $1 = HEAP32[$19 + 4 >> 2];
-                              $26 = HEAPF32[$19 + 12 >> 2];
-                              $3 = HEAP32[$19 + 8 >> 2];
-                              $23 = emscripten_builtin_malloc(16);
-                              $3 = lroundf(Math_fround(Math_fround($21 * Math_fround($3 | 0)) / $26));
-                              $5 = lroundf(Math_fround(Math_fround($21 * Math_fround($1 | 0)) / $26));
+                              $24 = HEAPF32[$12 + 92 >> 2];
+                              $18 = HEAP32[$20 >> 2];
+                              $1 = HEAP32[$18 + 4 >> 2];
+                              $27 = HEAPF32[$18 + 12 >> 2];
+                              $3 = HEAP32[$18 + 8 >> 2];
+                              $19 = emscripten_builtin_malloc(16);
+                              $3 = lroundf(Math_fround(Math_fround($24 * Math_fround($3 | 0)) / $27));
+                              $4 = lroundf(Math_fround(Math_fround($24 * Math_fround($1 | 0)) / $27));
                               block65 : {
-                               if ($23) {
+                               if ($19) {
                                 block64 : {
-                                 HEAPF32[$23 + 12 >> 2] = $21;
-                                 HEAP32[$23 + 8 >> 2] = $3;
-                                 HEAP32[$23 + 4 >> 2] = $5;
-                                 $25 = emscripten_builtin_malloc(Math_imul($3, $5));
-                                 HEAP32[$23 >> 2] = $25;
-                                 if (!$25) {
+                                 HEAPF32[$19 + 12 >> 2] = $24;
+                                 HEAP32[$19 + 8 >> 2] = $3;
+                                 HEAP32[$19 + 4 >> 2] = $4;
+                                 $26 = emscripten_builtin_malloc(Math_imul($3, $4));
+                                 HEAP32[$19 >> 2] = $26;
+                                 if (!$26) {
                                   break block64
                                  }
                                  $1 = 0;
                                  $39 = ($3 | 0) > 0 ? $3 : 0;
-                                 $40 = ($5 | 0) > 0 ? $5 : 0;
+                                 $40 = ($4 | 0) > 0 ? $4 : 0;
                                  label32 : while (1) {
                                   if (($1 | 0) != ($39 | 0)) {
-                                   $3 = HEAP32[$19 + 8 >> 2];
-                                   $26 = HEAPF32[$19 + 12 >> 2];
-                                   $5 = $1 + 1 | 0;
-                                   $6 = lroundf(Math_fround(Math_fround($26 * Math_fround($5 >>> 0)) / $21));
-                                   $12 = lroundf(Math_fround(Math_fround($26 * Math_fround($1 >>> 0)) / $21));
-                                   $1 = ($3 | 0) > ($6 | 0) ? $6 : $3;
-                                   $41 = ($1 | 0) < ($12 | 0) ? $12 : $1;
+                                   $3 = HEAP32[$18 + 8 >> 2];
+                                   $27 = HEAPF32[$18 + 12 >> 2];
+                                   $4 = $1 + 1 | 0;
+                                   $5 = lroundf(Math_fround(Math_fround($27 * Math_fround($4 >>> 0)) / $24));
+                                   $11 = lroundf(Math_fround(Math_fround($27 * Math_fround($1 >>> 0)) / $24));
+                                   $1 = ($3 | 0) > ($5 | 0) ? $5 : $3;
+                                   $41 = ($1 | 0) < ($11 | 0) ? $11 : $1;
                                    $1 = 0;
                                    while (1) if (($1 | 0) == ($40 | 0)) {
-                                    $1 = $5;
+                                    $1 = $4;
                                     continue label32;
                                    } else {
-                                    $30 = HEAP32[$19 + 4 >> 2];
-                                    $26 = HEAPF32[$19 + 12 >> 2];
-                                    $6 = $1 + 1 | 0;
-                                    $3 = lroundf(Math_fround(Math_fround($26 * Math_fround($6 >>> 0)) / $21));
-                                    $31 = lroundf(Math_fround(Math_fround($26 * Math_fround($1 >>> 0)) / $21));
-                                    $1 = ($3 | 0) < ($30 | 0) ? $3 : $30;
+                                    $29 = HEAP32[$18 + 4 >> 2];
+                                    $27 = HEAPF32[$18 + 12 >> 2];
+                                    $5 = $1 + 1 | 0;
+                                    $3 = lroundf(Math_fround(Math_fround($27 * Math_fround($5 >>> 0)) / $24));
+                                    $31 = lroundf(Math_fround(Math_fround($27 * Math_fround($1 >>> 0)) / $24));
+                                    $1 = ($3 | 0) < ($29 | 0) ? $3 : $29;
                                     $42 = (($1 | 0) < ($31 | 0) ? $31 : $1) - $31 | 0;
                                     $1 = 0;
-                                    $4 = $12;
+                                    $8 = $11;
                                     $33 = 0;
                                     while (1) {
-                                     if (($4 | 0) != ($41 | 0)) {
+                                     if (($8 | 0) != ($41 | 0)) {
                                       $3 = $1 + $42 | 0;
-                                      $8 = $31 + (HEAP32[$19 >> 2] + Math_imul($4, $30) | 0) | 0;
+                                      $6 = $31 + (HEAP32[$18 >> 2] + Math_imul($8, $29) | 0) | 0;
                                       while (1) {
                                        if (($1 | 0) != ($3 | 0)) {
                                         $1 = $1 + 1 | 0;
-                                        $33 = HEAPU8[$8 | 0] + $33 | 0;
-                                        $8 = $8 + 1 | 0;
+                                        $33 = HEAPU8[$6 | 0] + $33 | 0;
+                                        $6 = $6 + 1 | 0;
                                         continue;
                                        }
                                        break;
                                       };
-                                      $4 = $4 + 1 | 0;
+                                      $8 = $8 + 1 | 0;
                                       $1 = $3;
                                       continue;
                                      }
                                      break;
                                     };
-                                    HEAP8[$25 | 0] = ($33 | 0) / ($1 | 0);
-                                    $25 = $25 + 1 | 0;
-                                    $1 = $6;
+                                    HEAP8[$26 | 0] = ($33 | 0) / ($1 | 0);
+                                    $26 = $26 + 1 | 0;
+                                    $1 = $5;
                                     continue;
                                    };
                                   }
@@ -20859,7 +20994,7 @@ function asmFunc(imports) {
                                }
                                break block5;
                               }
-                              HEAP32[$38 >> 2] = $23;
+                              HEAP32[$38 >> 2] = $19;
                               $10 = $10 + 1 | 0;
                               continue;
                              }
@@ -20867,12 +21002,12 @@ function asmFunc(imports) {
                             break;
                            };
                            fclose($17);
-                           $1 = $7;
+                           $1 = $14;
                            break block32;
                           }
                           emscripten_builtin_free($20);
                          }
-                         emscripten_builtin_free($7);
+                         emscripten_builtin_free($14);
                          fclose($17);
                          $1 = 0;
                          break block32;
@@ -20882,59 +21017,59 @@ function asmFunc(imports) {
                        }
                        fclose($17);
                       }
-                      __stack_pointer = $15 + 96 | 0;
-                      HEAP32[Math_imul(HEAP32[$9 + 716 >> 2], 112) + $18 >> 2] = $1;
+                      __stack_pointer = $12 + 96 | 0;
+                      HEAP32[Math_imul(HEAP32[$7 + 716 >> 2], 112) + $16 >> 2] = $1;
                       if (!$1) {
-                       HEAP32[$9 >> 2] = $34;
-                       arLog(0, 3, 9519, $9);
-                       emscripten_builtin_free($18);
-                       emscripten_builtin_free($11);
-                       if (!$16) {
+                       HEAP32[$7 >> 2] = $34;
+                       arLog(0, 3, 9519, $7);
+                       emscripten_builtin_free($16);
+                       emscripten_builtin_free($9);
+                       if (!$15) {
                         break block67
                        }
-                       fclose($16);
+                       fclose($15);
                        break block67;
                       }
                       arLog(0, 1, 10150, 0);
                       arLog(0, 1, 10444, 0);
+                      $6 = 0;
                       $8 = 0;
-                      $4 = 0;
-                      $5 = __stack_pointer - 544 | 0;
-                      __stack_pointer = $5;
-                      $10 = $9 + 720 | 0;
+                      $4 = __stack_pointer - 544 | 0;
+                      __stack_pointer = $4;
+                      $10 = $7 + 720 | 0;
                       $3 = $10;
-                      HEAP32[$5 + 16 >> 2] = $3;
-                      HEAP32[$5 + 20 >> 2] = 1024;
-                      $1 = $5 + 32 | 0;
-                      siprintf($1, 1035, $5 + 16 | 0);
+                      HEAP32[$4 + 16 >> 2] = $3;
+                      HEAP32[$4 + 20 >> 2] = 1024;
+                      $1 = $4 + 32 | 0;
+                      siprintf($1, 1035, $4 + 16 | 0);
                       block74 : {
                        block72 : {
                         $1 = fopen($1, 2486);
                         block68 : {
                          if (!$1) {
-                          HEAP32[$5 >> 2] = $3;
-                          arLog(0, 3, 3177, $5);
+                          HEAP32[$4 >> 2] = $3;
+                          arLog(0, 3, 3177, $4);
                           break block68;
                          }
                          block70 : {
                           block69 : {
-                           $8 = emscripten_builtin_malloc(8);
-                           if ($8) {
-                            if ((fread($8 + 4 | 0, 4, 1, $1) | 0) != 1) {
+                           $6 = emscripten_builtin_malloc(8);
+                           if ($6) {
+                            if ((fread($6 + 4 | 0, 4, 1, $1) | 0) != 1) {
                              arLog(0, 3, 4623, 0);
                              break block69;
                             }
-                            $3 = HEAP32[$8 + 4 >> 2];
-                            $6 = emscripten_builtin_malloc(Math_imul($3, 20));
-                            HEAP32[$8 >> 2] = $6;
-                            if ($6) {
-                             $15 = ($3 | 0) > 0 ? $3 : 0;
+                            $3 = HEAP32[$6 + 4 >> 2];
+                            $5 = emscripten_builtin_malloc(Math_imul($3, 20));
+                            HEAP32[$6 >> 2] = $5;
+                            if ($5) {
+                             $12 = ($3 | 0) > 0 ? $3 : 0;
                              while (1) {
-                              if (($4 | 0) == ($15 | 0)) {
+                              if (($8 | 0) == ($12 | 0)) {
                                break block70
                               }
                               block73 : {
-                               $3 = $6 + Math_imul($4, 20) | 0;
+                               $3 = $5 + Math_imul($8, 20) | 0;
                                block71 : {
                                 if ((fread($3 + 8 | 0, 4, 1, $1) | 0) != 1) {
                                  break block71
@@ -20948,31 +21083,31 @@ function asmFunc(imports) {
                                 if ((fread($3 + 4 | 0, 4, 1, $1) | 0) != 1) {
                                  break block71
                                 }
-                                $12 = emscripten_builtin_malloc(Math_imul(HEAP32[$3 + 4 >> 2], 20));
-                                HEAP32[$3 >> 2] = $12;
-                                $7 = 0;
-                                if (!$12) {
+                                $11 = emscripten_builtin_malloc(Math_imul(HEAP32[$3 + 4 >> 2], 20));
+                                HEAP32[$3 >> 2] = $11;
+                                $14 = 0;
+                                if (!$11) {
                                  break block72
                                 }
                                 while (1) {
-                                 if (HEAP32[$3 + 4 >> 2] <= ($7 | 0)) {
+                                 if (HEAP32[$3 + 4 >> 2] <= ($14 | 0)) {
                                   break block73
                                  }
-                                 $12 = Math_imul($7, 20);
-                                 if ((fread($12 + HEAP32[$3 >> 2] | 0, 4, 1, $1) | 0) != 1) {
+                                 $11 = Math_imul($14, 20);
+                                 if ((fread($11 + HEAP32[$3 >> 2] | 0, 4, 1, $1) | 0) != 1) {
                                   break block71
                                  }
-                                 if ((fread(($12 + HEAP32[$3 >> 2] | 0) + 4 | 0, 4, 1, $1) | 0) != 1) {
+                                 if ((fread(($11 + HEAP32[$3 >> 2] | 0) + 4 | 0, 4, 1, $1) | 0) != 1) {
                                   break block71
                                  }
-                                 if ((fread(($12 + HEAP32[$3 >> 2] | 0) + 8 | 0, 4, 1, $1) | 0) != 1) {
+                                 if ((fread(($11 + HEAP32[$3 >> 2] | 0) + 8 | 0, 4, 1, $1) | 0) != 1) {
                                   break block71
                                  }
-                                 if ((fread(($12 + HEAP32[$3 >> 2] | 0) + 12 | 0, 4, 1, $1) | 0) != 1) {
+                                 if ((fread(($11 + HEAP32[$3 >> 2] | 0) + 12 | 0, 4, 1, $1) | 0) != 1) {
                                   break block71
                                  }
-                                 $7 = $7 + 1 | 0;
-                                 if ((fread(($12 + HEAP32[$3 >> 2] | 0) + 16 | 0, 4, 1, $1) | 0) == 1) {
+                                 $14 = $14 + 1 | 0;
+                                 if ((fread(($11 + HEAP32[$3 >> 2] | 0) + 16 | 0, 4, 1, $1) | 0) == 1) {
                                   continue
                                  }
                                  break;
@@ -20981,17 +21116,17 @@ function asmFunc(imports) {
                                $3 = 0;
                                arLog(0, 3, 4623, 0);
                                while (1) {
-                                if (($3 | 0) != ($4 | 0)) {
-                                 emscripten_builtin_free(HEAP32[$6 + Math_imul($3, 20) >> 2]);
+                                if (($3 | 0) != ($8 | 0)) {
+                                 emscripten_builtin_free(HEAP32[$5 + Math_imul($3, 20) >> 2]);
                                  $3 = $3 + 1 | 0;
                                  continue;
                                 }
                                 break;
                                };
-                               emscripten_builtin_free($6);
+                               emscripten_builtin_free($5);
                                break block69;
                               }
-                              $4 = $4 + 1 | 0;
+                              $8 = $8 + 1 | 0;
                               continue;
                              };
                             }
@@ -20999,72 +21134,72 @@ function asmFunc(imports) {
                            }
                            break block72;
                           }
-                          emscripten_builtin_free($8);
-                          $8 = 0;
+                          emscripten_builtin_free($6);
+                          $6 = 0;
                          }
                          fclose($1);
                         }
-                        __stack_pointer = $5 + 544 | 0;
+                        __stack_pointer = $4 + 544 | 0;
                         break block74;
                        }
                        arLog(0, 3, 3991, 0);
                        break block75;
                       }
-                      HEAP32[(Math_imul(HEAP32[$9 + 716 >> 2], 112) + $18 | 0) + 4 >> 2] = $8;
-                      if (!$8) {
-                       HEAP32[$9 + 16 >> 2] = $10;
-                       arLog(0, 3, 11070, $9 + 16 | 0);
+                      HEAP32[(Math_imul(HEAP32[$7 + 716 >> 2], 112) + $16 | 0) + 4 >> 2] = $6;
+                      if (!$6) {
+                       HEAP32[$7 + 16 >> 2] = $10;
+                       arLog(0, 3, 11070, $7 + 16 | 0);
                        $3 = 0;
-                       $1 = Math_imul(HEAP32[$9 + 716 >> 2], 112) + $18 | 0;
+                       $1 = Math_imul(HEAP32[$7 + 716 >> 2], 112) + $16 | 0;
                        block76 : {
                         if (!$1) {
                          break block76
                         }
-                        $8 = HEAP32[$1 >> 2];
-                        if (!$8) {
+                        $6 = HEAP32[$1 >> 2];
+                        if (!$6) {
                          break block76
                         }
                         while (1) {
-                         $5 = HEAP32[$8 >> 2];
-                         if (HEAP32[$8 + 4 >> 2] > ($3 | 0)) {
-                          $6 = $3 << 2;
-                          emscripten_builtin_free(HEAP32[HEAP32[$5 + $6 >> 2] >> 2]);
-                          emscripten_builtin_free(HEAP32[$6 + HEAP32[HEAP32[$1 >> 2] >> 2] >> 2]);
+                         $4 = HEAP32[$6 >> 2];
+                         if (HEAP32[$6 + 4 >> 2] > ($3 | 0)) {
+                          $5 = $3 << 2;
+                          emscripten_builtin_free(HEAP32[HEAP32[$4 + $5 >> 2] >> 2]);
+                          emscripten_builtin_free(HEAP32[$5 + HEAP32[HEAP32[$1 >> 2] >> 2] >> 2]);
                           $3 = $3 + 1 | 0;
-                          $8 = HEAP32[$1 >> 2];
+                          $6 = HEAP32[$1 >> 2];
                           continue;
                          }
                          break;
                         };
-                        emscripten_builtin_free($5);
+                        emscripten_builtin_free($4);
                         emscripten_builtin_free(HEAP32[$1 >> 2]);
                         HEAP32[$1 >> 2] = 0;
                        }
-                       emscripten_builtin_free($18);
-                       emscripten_builtin_free($11);
-                       if (!$16) {
+                       emscripten_builtin_free($16);
+                       emscripten_builtin_free($9);
+                       if (!$15) {
                         break block67
                        }
-                       fclose($16);
+                       fclose($15);
                        break block67;
                       }
                       arLog(0, 1, 10150, 0);
-                      HEAP32[(Math_imul(HEAP32[$9 + 716 >> 2], 112) + $18 | 0) + 8 >> 2] = 0;
+                      HEAP32[(Math_imul(HEAP32[$7 + 716 >> 2], 112) + $16 | 0) + 8 >> 2] = 0;
                       block79 : {
                        block77 : {
                         if ($28) {
-                         $8 = HEAP32[$9 + 716 >> 2];
-                         $5 = (Math_imul($8, 112) + $18 | 0) + 12 | 0;
+                         $6 = HEAP32[$7 + 716 >> 2];
+                         $4 = (Math_imul($6, 112) + $16 | 0) + 12 | 0;
                          $1 = 0;
                          while (1) {
                           if (($1 | 0) == 3) {
                            break block77
                           }
-                          $6 = $5 + ($1 << 4) | 0;
+                          $5 = $4 + ($1 << 4) | 0;
                           $3 = 0;
                           while (1) {
                            if (($3 | 0) != 4) {
-                            HEAPF32[$6 + ($3 << 2) >> 2] = ($1 | 0) == ($3 | 0) ? Math_fround(1.0) : Math_fround(0.0);
+                            HEAPF32[$5 + ($3 << 2) >> 2] = ($1 | 0) == ($3 | 0) ? Math_fround(1.0) : Math_fround(0.0);
                             $3 = $3 + 1 | 0;
                             continue;
                            }
@@ -21074,56 +21209,56 @@ function asmFunc(imports) {
                           continue;
                          };
                         }
-                        $1 = $9 + 192 | 0;
-                        if (!get_buff($1, $16)) {
+                        $1 = $7 + 192 | 0;
+                        if (!get_buff($1, $15)) {
                          break block29
                         }
-                        $3 = Math_imul(HEAP32[$9 + 716 >> 2], 112) + $18 | 0;
-                        HEAP32[$9 + 64 >> 2] = $3 + 12;
-                        HEAP32[$9 + 68 >> 2] = $3 + 16;
-                        HEAP32[$9 + 72 >> 2] = $3 + 20;
-                        HEAP32[$9 + 76 >> 2] = $3 + 24;
-                        if ((sscanf($1, 12364, $9 - -64 | 0) | 0) != 4) {
+                        $3 = Math_imul(HEAP32[$7 + 716 >> 2], 112) + $16 | 0;
+                        HEAP32[$7 + 64 >> 2] = $3 + 12;
+                        HEAP32[$7 + 68 >> 2] = $3 + 16;
+                        HEAP32[$7 + 72 >> 2] = $3 + 20;
+                        HEAP32[$7 + 76 >> 2] = $3 + 24;
+                        if ((sscanf($1, 12364, $7 - -64 | 0) | 0) != 4) {
                          break block78
                         }
-                        if (!get_buff($1, $16)) {
+                        if (!get_buff($1, $15)) {
                          break block29
                         }
-                        $3 = Math_imul(HEAP32[$9 + 716 >> 2], 112) + $18 | 0;
-                        HEAP32[$9 + 48 >> 2] = $3 + 28;
-                        HEAP32[$9 + 52 >> 2] = $3 + 32;
-                        HEAP32[$9 + 56 >> 2] = $3 + 36;
-                        HEAP32[$9 + 60 >> 2] = $3 + 40;
-                        if ((sscanf($1, 12364, $9 + 48 | 0) | 0) != 4) {
+                        $3 = Math_imul(HEAP32[$7 + 716 >> 2], 112) + $16 | 0;
+                        HEAP32[$7 + 48 >> 2] = $3 + 28;
+                        HEAP32[$7 + 52 >> 2] = $3 + 32;
+                        HEAP32[$7 + 56 >> 2] = $3 + 36;
+                        HEAP32[$7 + 60 >> 2] = $3 + 40;
+                        if ((sscanf($1, 12364, $7 + 48 | 0) | 0) != 4) {
                          break block78
                         }
-                        if (!get_buff($1, $16)) {
+                        if (!get_buff($1, $15)) {
                          break block29
                         }
-                        $3 = Math_imul(HEAP32[$9 + 716 >> 2], 112) + $18 | 0;
-                        HEAP32[$9 + 32 >> 2] = $3 + 44;
-                        HEAP32[$9 + 36 >> 2] = $3 + 48;
-                        HEAP32[$9 + 40 >> 2] = $3 + 52;
-                        HEAP32[$9 + 44 >> 2] = $3 + 56;
-                        if ((sscanf($1, 12364, $9 + 32 | 0) | 0) != 4) {
+                        $3 = Math_imul(HEAP32[$7 + 716 >> 2], 112) + $16 | 0;
+                        HEAP32[$7 + 32 >> 2] = $3 + 44;
+                        HEAP32[$7 + 36 >> 2] = $3 + 48;
+                        HEAP32[$7 + 40 >> 2] = $3 + 52;
+                        HEAP32[$7 + 44 >> 2] = $3 + 56;
+                        if ((sscanf($1, 12364, $7 + 32 | 0) | 0) != 4) {
                          break block79
                         }
-                        $8 = HEAP32[$9 + 716 >> 2];
+                        $6 = HEAP32[$7 + 716 >> 2];
                        }
-                       $1 = Math_imul($8, 112) + $18 | 0;
-                       $4 = $1 + 12 | 0;
-                       $7 = $1 + 60 | 0;
+                       $1 = Math_imul($6, 112) + $16 | 0;
+                       $8 = $1 + 12 | 0;
+                       $14 = $1 + 60 | 0;
                        $1 = 0;
-                       $6 = arMatrixAlloc(4, 4);
-                       $5 = HEAP32[$6 >> 2];
+                       $5 = arMatrixAlloc(4, 4);
+                       $4 = HEAP32[$5 >> 2];
                        while (1) {
                         if (($1 | 0) != 3) {
-                         $12 = $5 + ($1 << 5) | 0;
-                         $8 = $4 + ($1 << 4) | 0;
+                         $11 = $4 + ($1 << 5) | 0;
+                         $6 = $8 + ($1 << 4) | 0;
                          $3 = 0;
                          while (1) {
                           if (($3 | 0) != 4) {
-                           HEAPF64[$12 + ($3 << 3) >> 3] = HEAPF32[$8 + ($3 << 2) >> 2];
+                           HEAPF64[$11 + ($3 << 3) >> 3] = HEAPF32[$6 + ($3 << 2) >> 2];
                            $3 = $3 + 1 | 0;
                            continue;
                           }
@@ -21134,25 +21269,25 @@ function asmFunc(imports) {
                         }
                         break;
                        };
-                       HEAP32[$5 + 112 >> 2] = 0;
-                       HEAP32[$5 + 116 >> 2] = 0;
-                       HEAP32[$5 + 104 >> 2] = 0;
-                       HEAP32[$5 + 108 >> 2] = 0;
-                       HEAP32[$5 + 96 >> 2] = 0;
-                       HEAP32[$5 + 100 >> 2] = 0;
-                       HEAP32[$5 + 120 >> 2] = 0;
-                       HEAP32[$5 + 124 >> 2] = 1072693248;
-                       arMatrixSelfInv($6);
-                       $5 = HEAP32[$6 >> 2];
+                       HEAP32[$4 + 112 >> 2] = 0;
+                       HEAP32[$4 + 116 >> 2] = 0;
+                       HEAP32[$4 + 104 >> 2] = 0;
+                       HEAP32[$4 + 108 >> 2] = 0;
+                       HEAP32[$4 + 96 >> 2] = 0;
+                       HEAP32[$4 + 100 >> 2] = 0;
+                       HEAP32[$4 + 120 >> 2] = 0;
+                       HEAP32[$4 + 124 >> 2] = 1072693248;
+                       arMatrixSelfInv($5);
+                       $4 = HEAP32[$5 >> 2];
                        $1 = 0;
                        while (1) {
                         if (($1 | 0) != 3) {
-                         $4 = $7 + ($1 << 4) | 0;
-                         $12 = $5 + ($1 << 5) | 0;
+                         $8 = $14 + ($1 << 4) | 0;
+                         $11 = $4 + ($1 << 5) | 0;
                          $3 = 0;
                          while (1) {
                           if (($3 | 0) != 4) {
-                           HEAPF32[$4 + ($3 << 2) >> 2] = HEAPF64[$12 + ($3 << 3) >> 3];
+                           HEAPF32[$8 + ($3 << 2) >> 2] = HEAPF64[$11 + ($3 << 3) >> 3];
                            $3 = $3 + 1 | 0;
                            continue;
                           }
@@ -21163,8 +21298,8 @@ function asmFunc(imports) {
                         }
                         break;
                        };
-                       arImageProcFinal($6);
-                       $5 = $9 + 720 | 0;
+                       arImageProcFinal($5);
+                       $4 = $7 + 720 | 0;
                        $1 = 0;
                        $3 = 0;
                        block83 : {
@@ -21172,18 +21307,18 @@ function asmFunc(imports) {
                          block82 : {
                           while (1) {
                            block81 : {
-                            $4 = $1 + $5 | 0;
-                            $6 = HEAPU8[$4 | 0];
+                            $8 = $1 + $4 | 0;
+                            $5 = HEAPU8[$8 | 0];
                             block80 : {
-                             if (($6 | 0) != 46) {
-                              if ($6) {
+                             if (($5 | 0) != 46) {
+                              if ($5) {
                                break block80
                               }
-                              $6 = strlen(12948);
+                              $5 = strlen(12948);
                               if ($3) {
                                break block81
                               }
-                              if ((($1 + $6 | 0) + 2 | 0) <= 256) {
+                              if ((($1 + $5 | 0) + 2 | 0) <= 256) {
                                break block82
                               }
                               break block83;
@@ -21195,45 +21330,45 @@ function asmFunc(imports) {
                            }
                            break;
                           };
-                          if ((($3 + $6 | 0) + 2 | 0) > 256) {
+                          if ((($3 + $5 | 0) + 2 | 0) > 256) {
                            break block83
                           }
                           break block84;
                          }
-                         HEAP8[$4 | 0] = 46;
+                         HEAP8[$8 | 0] = 46;
                          $3 = $1;
                         }
-                        HEAP8[($3 + $5 | 0) + 1 | 0] = 0;
+                        HEAP8[($3 + $4 | 0) + 1 | 0] = 0;
                         $3 = 12948;
-                        $1 = strlen($5) + $5 | 0;
+                        $1 = strlen($4) + $4 | 0;
                         block85 : {
                          if (($1 ^ 12948) & 3) {
-                          $8 = HEAPU8[12948];
+                          $6 = HEAPU8[12948];
                           break block85;
                          }
-                         $8 = HEAP32[3237];
-                         if ((($8 | 16843008 - $8) & -2139062144) != -2139062144) {
+                         $6 = HEAP32[3237];
+                         if ((($6 | 16843008 - $6) & -2139062144) != -2139062144) {
                           break block85
                          }
                          while (1) {
-                          HEAP32[$1 >> 2] = $8;
+                          HEAP32[$1 >> 2] = $6;
                           $1 = $1 + 4 | 0;
-                          $8 = HEAP32[$3 + 4 >> 2];
+                          $6 = HEAP32[$3 + 4 >> 2];
                           $3 = $3 + 4 | 0;
-                          if (((16843008 - $8 | $8) & -2139062144) == -2139062144) {
+                          if (((16843008 - $6 | $6) & -2139062144) == -2139062144) {
                            continue
                           }
                           break;
                          };
                         }
-                        HEAP8[$1 | 0] = $8;
-                        if ($8 & 255) {
+                        HEAP8[$1 | 0] = $6;
+                        if ($6 & 255) {
                          while (1) {
-                          $6 = HEAPU8[$3 + 1 | 0];
-                          HEAP8[$1 + 1 | 0] = $6;
+                          $5 = HEAPU8[$3 + 1 | 0];
+                          HEAP8[$1 + 1 | 0] = $5;
                           $1 = $1 + 1 | 0;
                           $3 = $3 + 1 | 0;
-                          if ($6) {
+                          if ($5) {
                            continue
                           }
                           break;
@@ -21241,12 +21376,12 @@ function asmFunc(imports) {
                         }
                        }
                        $1 = emscripten_builtin_malloc(256);
-                       $3 = HEAP32[$9 + 716 >> 2];
-                       HEAP32[(Math_imul($3, 112) + $18 | 0) + 108 >> 2] = $1;
+                       $3 = HEAP32[$7 + 716 >> 2];
+                       HEAP32[(Math_imul($3, 112) + $16 | 0) + 108 >> 2] = $1;
                        if (!$1) {
                         break block86
                        }
-                       strncpy($1, $5, 256);
+                       strncpy($1, $4, 256);
                        $3 = $3 + 1 | 0;
                        continue;
                       }
@@ -21254,10 +21389,10 @@ function asmFunc(imports) {
                      };
                      break block78;
                     }
-                    if ($16) {
-                     fclose($16)
+                    if ($15) {
+                     fclose($15)
                     }
-                    if (HEAP32[$9 + 716 >> 2] >= ($27 | 0)) {
+                    if (HEAP32[$7 + 716 >> 2] >= ($25 | 0)) {
                      break block26
                     }
                     exit(0);
@@ -21267,28 +21402,28 @@ function asmFunc(imports) {
                   }
                   break block86;
                  }
-                 fclose($16);
-                 emscripten_builtin_free($11);
+                 fclose($15);
+                 emscripten_builtin_free($9);
                 }
-                $11 = 0;
+                $9 = 0;
                }
-               __stack_pointer = $9 + 976 | 0;
+               __stack_pointer = $7 + 976 | 0;
                break block87;
               }
               arLog(0, 3, 12838, 0);
-              fclose($16);
+              fclose($15);
               exit(0);
               wasm2js_trap();
              }
              arLog(0, 3, 6250, 0);
              break block75;
             }
-            HEAP32[(HEAP32[$13 + 24 >> 2] << 2) + $37 >> 2] = $11;
-            if ($11) {
+            HEAP32[(HEAP32[$13 + 24 >> 2] << 2) + $37 >> 2] = $9;
+            if ($9) {
              break block88
             }
             $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($32, 25861);
-            webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($1, $22);
+            webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($1, $21);
            }
            std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
            HEAP32[$0 + 8 >> 2] = 0;
@@ -21298,700 +21433,601 @@ function asmFunc(imports) {
           }
           __inlined_func$kpmSetRefDataSet$7 : {
            $3 = 0;
-           $8 = 0;
-           $22 = 0;
-           $5 = __stack_pointer - 80 | 0;
-           __stack_pointer = $5;
+           $14 = 0;
+           $17 = 0;
+           $2 = __stack_pointer - 80 | 0;
+           __stack_pointer = $2;
            block210 : {
             block111 : {
              block56 : {
-              $1 = $14;
-              $4 = HEAP32[$13 + 40 >> 2];
-              if (!$1 | !$4) {
+              $1 = $23;
+              $9 = HEAP32[$13 + 40 >> 2];
+              if (!$1 | !$9) {
                $1 = 7449
               } else {
-               if (HEAP32[$4 + 4 >> 2]) {
+               if (HEAP32[$9 + 4 >> 2]) {
                 break block56
                }
                $1 = 8091;
               }
               arLog(0, 3, $1, 0);
-              $22 = -1;
+              $17 = -1;
               break block111;
              }
              emscripten_builtin_free(HEAP32[$1 + 28 >> 2]);
-             $11 = HEAP32[$4 + 4 >> 2];
+             $8 = HEAP32[$9 + 4 >> 2];
              block3 : {
-              if ($11) {
-               $2 = emscripten_builtin_malloc(Math_imul($11, 132));
-               HEAP32[$1 + 28 >> 2] = $2;
-               if (!$2) {
+              if ($8) {
+               $4 = emscripten_builtin_malloc(Math_imul($8, 132));
+               HEAP32[$1 + 28 >> 2] = $4;
+               if (!$4) {
                 break block210
                }
                while (1) {
-                if (($3 | 0) >= ($11 | 0)) {
+                if (($3 | 0) >= ($8 | 0)) {
                  break block3
                 }
-                $2 = Math_imul($3, 132);
-                wasm2js_memory_copy($2 + HEAP32[$1 + 28 >> 2] | 0, $2 + HEAP32[$4 >> 2] | 0, 132);
+                $4 = Math_imul($3, 132);
+                wasm2js_memory_copy($4 + HEAP32[$1 + 28 >> 2] | 0, $4 + HEAP32[$9 >> 2] | 0, 132);
                 $3 = $3 + 1 | 0;
-                $11 = HEAP32[$4 + 4 >> 2];
+                $8 = HEAP32[$9 + 4 >> 2];
                 continue;
                };
               }
-              $11 = 0;
+              $8 = 0;
               HEAP32[$1 + 28 >> 2] = 0;
              }
-             HEAP32[$1 + 32 >> 2] = $11;
+             HEAP32[$1 + 32 >> 2] = $8;
              if (HEAP32[$1 + 36 >> 2]) {
               $3 = 0;
               while (1) {
-               $2 = HEAP32[$1 + 36 >> 2];
+               $4 = HEAP32[$1 + 36 >> 2];
                if (HEAP32[$1 + 40 >> 2] > ($3 | 0)) {
-                emscripten_builtin_free(HEAP32[$2 + Math_imul($3, 12) >> 2]);
+                emscripten_builtin_free(HEAP32[$4 + Math_imul($3, 12) >> 2]);
                 $3 = $3 + 1 | 0;
                 continue;
                }
                break;
               };
-              emscripten_builtin_free($2);
+              emscripten_builtin_free($4);
              }
-             $11 = HEAP32[$4 + 12 >> 2];
+             $8 = HEAP32[$9 + 12 >> 2];
              block459 : {
-              if ($11) {
-               $2 = emscripten_builtin_malloc(Math_imul($11, 12));
-               HEAP32[$1 + 36 >> 2] = $2;
-               if (!$2) {
+              if ($8) {
+               $3 = emscripten_builtin_malloc(Math_imul($8, 12));
+               HEAP32[$1 + 36 >> 2] = $3;
+               if (!$3) {
                 break block210
                }
                while (1) {
-                if (($8 | 0) >= ($11 | 0)) {
+                if (($8 | 0) <= ($14 | 0)) {
                  break block459
                 }
-                $7 = Math_imul($8, 12);
-                $3 = $7 + HEAP32[$1 + 36 >> 2] | 0;
-                $2 = HEAP32[$4 + 8 >> 2];
-                $12 = $7 + $2 | 0;
-                HEAP32[$3 + 8 >> 2] = HEAP32[$12 + 8 >> 2];
-                $6 = HEAP32[$12 + 4 >> 2];
-                HEAP32[$3 + 4 >> 2] = $6;
+                $11 = Math_imul($14, 12);
+                $3 = $11 + HEAP32[$1 + 36 >> 2] | 0;
+                $5 = HEAP32[$9 + 8 >> 2];
+                $23 = $11 + $5 | 0;
+                HEAP32[$3 + 8 >> 2] = HEAP32[$23 + 8 >> 2];
+                $4 = HEAP32[$23 + 4 >> 2];
+                HEAP32[$3 + 4 >> 2] = $4;
                 block6 : {
                  block561 : {
-                  if ($6) {
-                   $11 = emscripten_builtin_malloc(Math_imul($6, 12));
-                   HEAP32[$3 >> 2] = $11;
+                  if ($4) {
+                   $8 = emscripten_builtin_malloc(Math_imul($4, 12));
+                   HEAP32[$3 >> 2] = $8;
                    $3 = 0;
-                   if (!$11) {
+                   if (!$8) {
                     break block210
                    }
                    while (1) {
-                    if (($3 | 0) >= ($6 | 0)) {
+                    if (($3 | 0) >= ($4 | 0)) {
                      break block561
                     }
-                    $11 = Math_imul($3, 12);
-                    $6 = $11 + HEAP32[$7 + HEAP32[$1 + 36 >> 2] >> 2] | 0;
-                    $2 = $11 + HEAP32[$2 + $7 >> 2] | 0;
-                    HEAP32[$6 + 8 >> 2] = HEAP32[$2 + 8 >> 2];
-                    $11 = HEAP32[$2 + 4 >> 2];
-                    HEAP32[$6 >> 2] = HEAP32[$2 >> 2];
-                    HEAP32[$6 + 4 >> 2] = $11;
+                    $8 = Math_imul($3, 12);
+                    $4 = $8 + HEAP32[$11 + HEAP32[$1 + 36 >> 2] >> 2] | 0;
+                    $5 = $8 + HEAP32[$5 + $11 >> 2] | 0;
+                    HEAP32[$4 + 8 >> 2] = HEAP32[$5 + 8 >> 2];
+                    $8 = HEAP32[$5 + 4 >> 2];
+                    HEAP32[$4 >> 2] = HEAP32[$5 >> 2];
+                    HEAP32[$4 + 4 >> 2] = $8;
                     $3 = $3 + 1 | 0;
-                    $2 = HEAP32[$4 + 8 >> 2];
-                    $6 = HEAP32[($7 + $2 | 0) + 4 >> 2];
+                    $5 = HEAP32[$9 + 8 >> 2];
+                    $4 = HEAP32[($11 + $5 | 0) + 4 >> 2];
                     continue;
                    };
                   }
-                  HEAP32[$12 >> 2] = 0;
+                  HEAP32[$23 >> 2] = 0;
                   break block6;
                  }
-                 $11 = HEAP32[$4 + 12 >> 2];
+                 $8 = HEAP32[$9 + 12 >> 2];
                 }
-                $8 = $8 + 1 | 0;
+                $14 = $14 + 1 | 0;
                 continue;
                };
               }
-              $11 = 0;
+              $8 = 0;
               HEAP32[$1 + 36 >> 2] = 0;
              }
-             HEAP32[$1 + 40 >> 2] = $11;
-             $2 = HEAP32[$1 + 52 >> 2];
-             if ($2) {
-              emscripten_builtin_free($2);
+             HEAP32[$1 + 40 >> 2] = $8;
+             $3 = HEAP32[$1 + 52 >> 2];
+             if ($3) {
+              emscripten_builtin_free($3);
               HEAP32[$1 + 52 >> 2] = 0;
               HEAP32[$1 + 56 >> 2] = 0;
              }
              block863 : {
               block764 : {
-               $2 = HEAP32[$4 + 12 >> 2];
-               if (($2 | 0) <= 0) {
+               $4 = HEAP32[$9 + 12 >> 2];
+               if (($4 | 0) <= 0) {
                 break block764
                }
-               HEAP32[$1 + 56 >> 2] = $2;
-               $6 = emscripten_builtin_malloc(Math_imul($2, 68));
-               HEAP32[$1 + 52 >> 2] = $6;
-               if (!$6) {
+               HEAP32[$1 + 56 >> 2] = $4;
+               $5 = emscripten_builtin_malloc(Math_imul($4, 68));
+               HEAP32[$1 + 52 >> 2] = $5;
+               if (!$5) {
                 break block863
                }
                $3 = 0;
                while (1) {
-                if (($2 | 0) == ($3 | 0)) {
+                if (($3 | 0) == ($4 | 0)) {
                  break block764
                 }
-                HEAP32[($6 + Math_imul($3, 68) | 0) + 64 >> 2] = 0;
+                HEAP32[($5 + Math_imul($3, 68) | 0) + 64 >> 2] = 0;
                 $3 = $3 + 1 | 0;
                 continue;
                };
               }
-              $2 = HEAP32[$1 + 32 >> 2];
-              if (!$2) {
+              $3 = HEAP32[$1 + 32 >> 2];
+              if (!$3) {
                break block111
               }
-              $19 = ($2 | 0) > 0 ? $2 : 0;
-              $23 = $1 + 60 | 0;
-              $11 = 0;
+              $21 = ($3 | 0) > 0 ? $3 : 0;
+              $20 = $1 + 60 | 0;
               $8 = 0;
+              $14 = 0;
               label566 : while (1) {
-               $15 = 0;
-               if (HEAP32[$1 + 40 >> 2] <= ($8 | 0)) {
+               $23 = 0;
+               if (HEAP32[$1 + 40 >> 2] <= ($14 | 0)) {
                 break block111
                }
                label867 : while (1) {
-                $12 = Math_imul($8, 12);
-                if (HEAP32[($12 + HEAP32[$1 + 36 >> 2] | 0) + 4 >> 2] <= ($15 | 0)) {
-                 $8 = $8 + 1 | 0;
+                $6 = Math_imul($14, 12);
+                if (HEAP32[($6 + HEAP32[$1 + 36 >> 2] | 0) + 4 >> 2] <= ($23 | 0)) {
+                 $14 = $14 + 1 | 0;
                  continue label566;
                 }
-                $6 = 0;
-                HEAP32[$5 + 76 >> 2] = 0;
-                HEAP32[$5 + 68 >> 2] = 0;
-                HEAP32[$5 + 72 >> 2] = 0;
-                HEAP32[$5 + 64 >> 2] = 0;
-                HEAP32[$5 + 56 >> 2] = 0;
-                HEAP32[$5 + 60 >> 2] = 0;
-                HEAP32[$5 + 52 >> 2] = 0;
-                HEAP32[$5 + 44 >> 2] = 0;
-                HEAP32[$5 + 48 >> 2] = 0;
-                while (1) if (($6 | 0) == ($19 | 0)) {
-                 HEAP32[$5 + 8 >> 2] = (HEAP32[$5 + 72 >> 2] - HEAP32[$5 + 68 >> 2] | 0) / 20;
-                 HEAP32[$5 + 4 >> 2] = $15;
-                 HEAP32[$5 >> 2] = $8;
-                 arLog(0, 1, 9360, $5);
-                 $2 = $12 + HEAP32[$1 + 36 >> 2] | 0;
-                 HEAP32[($11 << 2) + $23 >> 2] = HEAP32[$2 + 8 >> 2];
-                 $20 = HEAP32[$1 >> 2];
-                 $2 = HEAP32[$2 >> 2] + Math_imul($15, 12) | 0;
-                 $3 = HEAP32[$2 >> 2];
-                 $6 = HEAP32[$2 + 4 >> 2];
-                 $12 = __stack_pointer - 32 | 0;
-                 __stack_pointer = $12;
-                 HEAP32[$12 + 28 >> 2] = $11;
-                 $10 = std____2__shared_ptr_vision__Keyframe_96____shared_ptr_5babi_ne200100_5d_vision__Keyframe_96__2c_200__28vision__Keyframe_96___29($12 + 20 | 0, vision__Keyframe_96___Keyframe_28_29(operator_20new_28unsigned_20long_29(148)));
-                 $2 = HEAP32[$10 >> 2];
-                 HEAP32[$2 + 8 >> 2] = 96;
-                 HEAP32[$2 + 4 >> 2] = $6;
-                 HEAP32[$2 >> 2] = $3;
-                 $27 = $5 + 68 | 0;
-                 $3 = $27;
-                 std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint____resize_28unsigned_20long_29($2 + 24 | 0, (HEAP32[$3 + 4 >> 2] - HEAP32[$3 >> 2] | 0) / 20 | 0);
-                 $2 = HEAP32[$10 >> 2] + 24 | 0;
-                 if (($2 | 0) != ($3 | 0)) {
-                  $6 = __stack_pointer - 16 | 0;
-                  __stack_pointer = $6;
-                  $4 = HEAP32[$3 + 4 >> 2];
-                  $3 = HEAP32[$3 >> 2];
-                  $14 = ($4 - $3 | 0) / 20 | 0;
-                  $7 = HEAP32[$2 >> 2];
+                $4 = 0;
+                HEAP32[$2 + 76 >> 2] = 0;
+                HEAP32[$2 + 68 >> 2] = 0;
+                HEAP32[$2 + 72 >> 2] = 0;
+                HEAP32[$2 + 64 >> 2] = 0;
+                HEAP32[$2 + 56 >> 2] = 0;
+                HEAP32[$2 + 60 >> 2] = 0;
+                HEAP32[$2 + 52 >> 2] = 0;
+                HEAP32[$2 + 44 >> 2] = 0;
+                HEAP32[$2 + 48 >> 2] = 0;
+                while (1) if (($4 | 0) == ($21 | 0)) {
+                 HEAP32[$2 + 8 >> 2] = (HEAP32[$2 + 72 >> 2] - HEAP32[$2 + 68 >> 2] | 0) / 20;
+                 HEAP32[$2 + 4 >> 2] = $23;
+                 HEAP32[$2 >> 2] = $14;
+                 arLog(0, 1, 9360, $2);
+                 $3 = $6 + HEAP32[$1 + 36 >> 2] | 0;
+                 HEAP32[($8 << 2) + $20 >> 2] = HEAP32[$3 + 8 >> 2];
+                 $12 = HEAP32[$1 >> 2];
+                 $3 = HEAP32[$3 >> 2] + Math_imul($23, 12) | 0;
+                 $4 = HEAP32[$3 >> 2];
+                 $5 = HEAP32[$3 + 4 >> 2];
+                 $9 = __stack_pointer - 32 | 0;
+                 __stack_pointer = $9;
+                 HEAP32[$9 + 28 >> 2] = $8;
+                 $11 = std____2__shared_ptr_vision__Keyframe_96____shared_ptr_5babi_ne200100_5d_vision__Keyframe_96__2c_200__28vision__Keyframe_96___29($9 + 20 | 0, vision__Keyframe_96___Keyframe_28_29(operator_20new_28unsigned_20long_29(148)));
+                 $3 = HEAP32[$11 >> 2];
+                 HEAP32[$3 + 8 >> 2] = 96;
+                 HEAP32[$3 + 4 >> 2] = $5;
+                 HEAP32[$3 >> 2] = $4;
+                 $18 = $2 + 68 | 0;
+                 $4 = $18;
+                 std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint____resize_28unsigned_20long_29($3 + 24 | 0, (HEAP32[$4 + 4 >> 2] - HEAP32[$4 >> 2] | 0) / 20 | 0);
+                 $3 = HEAP32[$11 >> 2] + 24 | 0;
+                 if (($3 | 0) != ($4 | 0)) {
+                  $5 = __stack_pointer - 16 | 0;
+                  __stack_pointer = $5;
+                  $6 = HEAP32[$4 + 4 >> 2];
+                  $4 = HEAP32[$4 >> 2];
+                  $10 = ($6 - $4 | 0) / 20 | 0;
+                  $7 = HEAP32[$3 >> 2];
                   block969 : {
-                   if ($14 >>> 0 <= (HEAP32[$2 + 8 >> 2] - $7 | 0) / 20 >>> 0) {
-                    $9 = HEAP32[$2 + 4 >> 2] - $7 | 0;
-                    if ($14 >>> 0 > ($9 | 0) / 20 >>> 0) {
-                     $14 = __stack_pointer - 16 | 0;
-                     __stack_pointer = $14;
-                     $16 = $3;
-                     $3 = $3 + $9 | 0;
-                     std____2__pair_vision__FeaturePoint__2c_20vision__FeaturePoint___20std____2____copy_move_unwrap_iters_5babi_ne200100_5d_std____2____copy_impl_2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_200__28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__29($14 + 8 | 0, $16, $3, $7);
-                     __stack_pointer = $14 + 16 | 0;
-                     void_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______construct_at_end_vision__FeaturePoint__2c_20vision__FeaturePoint___28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20unsigned_20long_29($2, $3, $4);
+                   if ($10 >>> 0 <= (HEAP32[$3 + 8 >> 2] - $7 | 0) / 20 >>> 0) {
+                    $15 = HEAP32[$3 + 4 >> 2] - $7 | 0;
+                    if ($10 >>> 0 > ($15 | 0) / 20 >>> 0) {
+                     $10 = __stack_pointer - 16 | 0;
+                     __stack_pointer = $10;
+                     $19 = $4;
+                     $4 = $4 + $15 | 0;
+                     std____2__pair_vision__FeaturePoint__2c_20vision__FeaturePoint___20std____2____copy_move_unwrap_iters_5babi_ne200100_5d_std____2____copy_impl_2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_200__28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__29($10 + 8 | 0, $19, $4, $7);
+                     __stack_pointer = $10 + 16 | 0;
+                     void_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______construct_at_end_vision__FeaturePoint__2c_20vision__FeaturePoint___28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20unsigned_20long_29($3, $4, $6);
                      break block969;
                     }
-                    std____2__pair_vision__FeaturePoint__2c_20vision__FeaturePoint___20std____2____copy_move_unwrap_iters_5babi_ne200100_5d_std____2____copy_impl_2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_200__28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__29($6 + 8 | 0, $3, $4, $7);
-                    HEAP32[$2 + 4 >> 2] = HEAP32[$6 + 12 >> 2];
+                    std____2__pair_vision__FeaturePoint__2c_20vision__FeaturePoint___20std____2____copy_move_unwrap_iters_5babi_ne200100_5d_std____2____copy_impl_2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__2c_200__28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20vision__FeaturePoint__29($5 + 8 | 0, $4, $6, $7);
+                    HEAP32[$3 + 4 >> 2] = HEAP32[$5 + 12 >> 2];
                     break block969;
                    }
-                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______vdeallocate_28_29($2);
-                   std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______vallocate_5babi_ne200100_5d_28unsigned_20long_29($2, std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($2, $14));
-                   void_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______construct_at_end_vision__FeaturePoint__2c_20vision__FeaturePoint___28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20unsigned_20long_29($2, $3, $4);
+                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______vdeallocate_28_29($3);
+                   std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______vallocate_5babi_ne200100_5d_28unsigned_20long_29($3, std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($3, $10));
+                   void_20std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______construct_at_end_vision__FeaturePoint__2c_20vision__FeaturePoint___28vision__FeaturePoint__2c_20vision__FeaturePoint__2c_20unsigned_20long_29($3, $4, $6);
                   }
-                  __stack_pointer = $6 + 16 | 0;
+                  __stack_pointer = $5 + 16 | 0;
                  }
-                 $25 = $5 + 44 | 0;
-                 $3 = $25;
-                 std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char____resize_28unsigned_20long_29(HEAP32[$10 >> 2] + 12 | 0, HEAP32[$3 + 4 >> 2] - HEAP32[$3 >> 2] | 0);
-                 $2 = HEAP32[$10 >> 2] + 12 | 0;
-                 if (($2 | 0) != ($3 | 0)) {
+                 $19 = $2 + 44 | 0;
+                 $4 = $19;
+                 std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char____resize_28unsigned_20long_29(HEAP32[$11 >> 2] + 12 | 0, HEAP32[$4 + 4 >> 2] - HEAP32[$4 >> 2] | 0);
+                 $3 = HEAP32[$11 >> 2] + 12 | 0;
+                 if (($3 | 0) != ($4 | 0)) {
                   block1070 : {
-                   $6 = HEAP32[$3 + 4 >> 2];
-                   $3 = HEAP32[$3 >> 2];
-                   $9 = $6 - $3 | 0;
-                   $7 = HEAP32[$2 >> 2];
-                   if ($9 >>> 0 <= HEAP32[$2 + 8 >> 2] - $7 >>> 0) {
-                    $4 = HEAP32[$2 + 4 >> 2];
-                    $14 = $4 - $7 | 0;
-                    if ($9 >>> 0 > $14 >>> 0) {
+                   $6 = HEAP32[$4 + 4 >> 2];
+                   $5 = HEAP32[$4 >> 2];
+                   $15 = $6 - $5 | 0;
+                   $7 = HEAP32[$3 >> 2];
+                   if ($15 >>> 0 <= HEAP32[$3 + 8 >> 2] - $7 >>> 0) {
+                    $4 = HEAP32[$3 + 4 >> 2];
+                    $10 = $4 - $7 | 0;
+                    if ($15 >>> 0 > $10 >>> 0) {
                      if (($4 | 0) != ($7 | 0)) {
-                      if ($14) {
-                       wasm2js_memory_copy($7, $3, $14)
+                      if ($10) {
+                       wasm2js_memory_copy($7, $5, $10)
                       }
-                      $4 = HEAP32[$2 + 4 >> 2];
+                      $4 = HEAP32[$3 + 4 >> 2];
                      }
-                     $3 = $3 + $14 | 0;
-                     $7 = $6 - $3 | 0;
-                     if (!(!$7 | ($3 | 0) == ($6 | 0))) {
-                      wasm2js_memory_copy($4, $3, $7)
+                     $5 = $5 + $10 | 0;
+                     $7 = $6 - $5 | 0;
+                     if (!(!$7 | ($5 | 0) == ($6 | 0))) {
+                      wasm2js_memory_copy($4, $5, $7)
                      }
-                     HEAP32[$2 + 4 >> 2] = $4 + $7;
+                     HEAP32[$3 + 4 >> 2] = $4 + $7;
                      break block1070;
                     }
-                    $4 = $6 - $3 | 0;
-                    if (!(!$4 | ($3 | 0) == ($6 | 0))) {
-                     wasm2js_memory_copy($7, $3, $4)
+                    $4 = $6 - $5 | 0;
+                    if (!(!$4 | ($5 | 0) == ($6 | 0))) {
+                     wasm2js_memory_copy($7, $5, $4)
                     }
-                    HEAP32[$2 + 4 >> 2] = $4 + $7;
+                    HEAP32[$3 + 4 >> 2] = $4 + $7;
                     break block1070;
                    }
-                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______vdeallocate_28_29($2);
-                   $4 = std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($2, $9);
+                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______vdeallocate_28_29($3);
+                   $4 = std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($3, $15);
                    if (($4 | 0) < 0) {
                     std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______throw_length_error_5babi_ne200100_5d_28_29();
                     wasm2js_trap();
                    }
                    $7 = operator_20new_28unsigned_20long_29($4);
-                   HEAP32[$2 + 4 >> 2] = $7;
-                   HEAP32[$2 >> 2] = $7;
-                   HEAP32[$2 + 8 >> 2] = $4 + $7;
-                   $4 = HEAP32[$2 + 4 >> 2];
-                   $7 = $6 - $3 | 0;
-                   if (!(!$7 | ($3 | 0) == ($6 | 0))) {
-                    wasm2js_memory_copy($4, $3, $7)
+                   HEAP32[$3 + 4 >> 2] = $7;
+                   HEAP32[$3 >> 2] = $7;
+                   HEAP32[$3 + 8 >> 2] = $4 + $7;
+                   $4 = HEAP32[$3 + 4 >> 2];
+                   $7 = $6 - $5 | 0;
+                   if (!(!$7 | ($5 | 0) == ($6 | 0))) {
+                    wasm2js_memory_copy($4, $5, $7)
                    }
-                   HEAP32[$2 + 4 >> 2] = $4 + $7;
+                   HEAP32[$3 + 4 >> 2] = $4 + $7;
                   }
                  }
-                 $6 = HEAP32[$10 >> 2];
-                 HEAP32[$6 + 56 >> 2] = 128;
-                 vision__BinarykMedoids_96___setk_28int_29($6 + 48 | 0);
-                 HEAP32[$6 + 140 >> 2] = 8;
-                 HEAP32[$6 + 144 >> 2] = 16;
-                 $17 = HEAP32[$6 + 12 >> 2];
-                 $4 = (HEAP32[$6 + 28 >> 2] - HEAP32[$6 + 24 >> 2] | 0) / 20 | 0;
-                 $2 = 0;
-                 $14 = __stack_pointer - 16 | 0;
-                 __stack_pointer = $14;
-                 $7 = __stack_pointer - 16 | 0;
-                 __stack_pointer = $7;
-                 $3 = $14 + 4 | 0;
-                 HEAP32[$3 + 8 >> 2] = 0;
-                 HEAP32[$3 >> 2] = 0;
-                 HEAP32[$3 + 4 >> 2] = 0;
-                 HEAP32[$7 + 8 >> 2] = $3;
-                 if ($4) {
-                  std____2__vector_int_2c_20std____2__allocator_int______vallocate_5babi_ne200100_5d_28unsigned_20long_29($3, $4);
-                  std____2__vector_float_2c_20std____2__allocator_float______construct_at_end_28unsigned_20long_29($3, $4);
+                 $3 = HEAP32[$11 >> 2];
+                 HEAP32[$3 + 56 >> 2] = 128;
+                 vision__BinarykMedoids_96___setk_28int_29($3 + 48 | 0);
+                 HEAP32[$3 + 140 >> 2] = 8;
+                 HEAP32[$3 + 144 >> 2] = 16;
+                 $25 = HEAP32[$3 + 12 >> 2];
+                 $7 = (HEAP32[$3 + 28 >> 2] - HEAP32[$3 + 24 >> 2] | 0) / 20 | 0;
+                 $5 = 0;
+                 $15 = __stack_pointer - 16 | 0;
+                 __stack_pointer = $15;
+                 $10 = __stack_pointer - 16 | 0;
+                 __stack_pointer = $10;
+                 $4 = $15 + 4 | 0;
+                 HEAP32[$4 + 8 >> 2] = 0;
+                 HEAP32[$4 >> 2] = 0;
+                 HEAP32[$4 + 4 >> 2] = 0;
+                 HEAP32[$10 + 8 >> 2] = $4;
+                 if ($7) {
+                  std____2__vector_int_2c_20std____2__allocator_int______vallocate_5babi_ne200100_5d_28unsigned_20long_29($4, $7);
+                  std____2__vector_float_2c_20std____2__allocator_float______construct_at_end_28unsigned_20long_29($4, $7);
                  }
-                 $6 = $6 + 36 | 0;
-                 HEAP8[$7 + 12 | 0] = 1;
-                 std____2____exception_guard_exceptions_std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______destroy_vector______exception_guard_exceptions_5babi_ne200100_5d_28_29($7 + 8 | 0);
-                 __stack_pointer = $7 + 16 | 0;
-                 $7 = HEAP32[$3 >> 2];
-                 $9 = HEAP32[$3 + 4 >> 2] - $7 >> 2;
+                 $6 = $3 + 36 | 0;
+                 HEAP8[$10 + 12 | 0] = 1;
+                 std____2____exception_guard_exceptions_std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______destroy_vector______exception_guard_exceptions_5babi_ne200100_5d_28_29($10 + 8 | 0);
+                 __stack_pointer = $10 + 16 | 0;
+                 $10 = HEAP32[$4 >> 2];
+                 $16 = HEAP32[$4 + 4 >> 2] - $10 >> 2;
                  while (1) {
-                  if (($2 | 0) == ($9 | 0)) {
-                   $2 = operator_20new_28unsigned_20long_29(128);
-                   $16 = HEAP32[$6 + 4 >> 2];
-                   HEAP32[$6 + 4 >> 2] = $16 + 1;
-                   HEAP8[$2 + 100 | 0] = 1;
-                   HEAP32[$2 >> 2] = $16;
-                   wasm2js_memory_fill($2 + 4 | 0, 0, 96);
-                   HEAP32[$2 + 120 >> 2] = 0;
-                   HEAP32[$2 + 124 >> 2] = 0;
-                   HEAP32[$2 + 112 >> 2] = 0;
-                   HEAP32[$2 + 116 >> 2] = 0;
-                   HEAP32[$2 + 104 >> 2] = 0;
-                   HEAP32[$2 + 108 >> 2] = 0;
-                   std____2__unique_ptr_vision__Node_96__2c_20std____2__default_delete_vision__Node_96_____reset_5babi_ne200100_5d_28vision__Node_96___29($6 + 8 | 0, $2);
-                   $2 = HEAP32[$6 + 8 >> 2];
-                   HEAP8[$2 + 100 | 0] = 0;
-                   vision__BinaryHierarchicalClustering_96___build_28vision__Node_96___2c_20unsigned_20char_20const__2c_20int_2c_20int_20const__2c_20int_29($6, $2, $17, $4, $7, $9);
-                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($3);
-                   __stack_pointer = $14 + 16 | 0;
+                  if (($5 | 0) == ($16 | 0)) {
+                   $3 = operator_20new_28unsigned_20long_29(128);
+                   $5 = HEAP32[$6 + 4 >> 2];
+                   HEAP32[$6 + 4 >> 2] = $5 + 1;
+                   HEAP8[$3 + 100 | 0] = 1;
+                   HEAP32[$3 >> 2] = $5;
+                   wasm2js_memory_fill($3 + 4 | 0, 0, 96);
+                   HEAP32[$3 + 120 >> 2] = 0;
+                   HEAP32[$3 + 124 >> 2] = 0;
+                   HEAP32[$3 + 112 >> 2] = 0;
+                   HEAP32[$3 + 116 >> 2] = 0;
+                   HEAP32[$3 + 104 >> 2] = 0;
+                   HEAP32[$3 + 108 >> 2] = 0;
+                   std____2__unique_ptr_vision__Node_96__2c_20std____2__default_delete_vision__Node_96_____reset_5babi_ne200100_5d_28vision__Node_96___29($6 + 8 | 0, $3);
+                   $3 = HEAP32[$6 + 8 >> 2];
+                   HEAP8[$3 + 100 | 0] = 0;
+                   vision__BinaryHierarchicalClustering_96___build_28vision__Node_96___2c_20unsigned_20char_20const__2c_20int_2c_20int_20const__2c_20int_29($6, $3, $25, $7, $10, $16);
+                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($4);
+                   __stack_pointer = $15 + 16 | 0;
                   } else {
-                   HEAP32[$7 + ($2 << 2) >> 2] = $2;
-                   $2 = $2 + 1 | 0;
+                   HEAP32[$10 + ($5 << 2) >> 2] = $5;
+                   $5 = $5 + 1 | 0;
                    continue;
                   }
                   break;
                  };
-                 $3 = HEAP32[HEAP32[$20 >> 2] >> 2];
-                 HEAP32[$12 + 12 >> 2] = HEAP32[$10 >> 2];
-                 $2 = HEAP32[$10 + 4 >> 2];
-                 HEAP32[$12 + 16 >> 2] = $2;
-                 if ($2) {
-                  HEAP32[$2 + 4 >> 2] = HEAP32[$2 + 4 >> 2] + 1
+                 $7 = HEAP32[HEAP32[$12 >> 2] >> 2];
+                 HEAP32[$9 + 12 >> 2] = HEAP32[$11 >> 2];
+                 $3 = HEAP32[$11 + 4 >> 2];
+                 HEAP32[$9 + 16 >> 2] = $3;
+                 if ($3) {
+                  HEAP32[$3 + 4 >> 2] = HEAP32[$3 + 4 >> 2] + 1
                  }
-                 $2 = HEAP32[$12 + 16 >> 2];
-                 HEAP32[$12 >> 2] = HEAP32[$12 + 12 >> 2];
-                 HEAP32[$12 + 4 >> 2] = $2;
-                 $17 = __stack_pointer - 16 | 0;
-                 __stack_pointer = $17;
-                 HEAP32[$17 + 12 >> 2] = $11;
-                 $7 = $3 + 72 | 0;
-                 if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29($7, $17 + 12 | 0)) {
-                  __cxa_throw(vision__Exception__Exception_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29(__cxa_allocate_exception(16), std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($17, 3579)) | 0, 22956, 14);
+                 $3 = HEAP32[$9 + 16 >> 2];
+                 HEAP32[$9 >> 2] = HEAP32[$9 + 12 >> 2];
+                 HEAP32[$9 + 4 >> 2] = $3;
+                 $4 = __stack_pointer - 16 | 0;
+                 __stack_pointer = $4;
+                 HEAP32[$4 + 12 >> 2] = $8;
+                 $6 = $7 + 72 | 0;
+                 $3 = HEAP32[$6 + 4 >> 2];
+                 $10 = $6 + 4 | 0;
+                 $5 = $10;
+                 $15 = HEAP32[$4 + 12 >> 2];
+                 while (1) {
+                  if ($3) {
+                   $16 = ($15 | 0) > HEAP32[$3 + 16 >> 2];
+                   $5 = $16 ? $5 : $3;
+                   $3 = HEAP32[($16 ? 4 : 0) + $3 >> 2];
+                   continue;
+                  }
+                  break;
+                 };
+                 if (($7 + 76 | 0) != ((($5 | 0) != ($10 | 0) & HEAP32[$4 + 12 >> 2] >= HEAP32[$5 + 16 >> 2] ? $5 : $10) | 0)) {
+                  __cxa_throw(vision__Exception__Exception_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29(__cxa_allocate_exception(16), std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($4, 3579)) | 0, 22956, 14);
                   wasm2js_trap();
                  }
-                 $18 = $5 + 56 | 0;
-                 $16 = __stack_pointer - 16 | 0;
-                 __stack_pointer = $16;
-                 HEAP32[$16 + 4 >> 2] = $17 + 12;
-                 $2 = 0;
-                 $9 = __stack_pointer - 16 | 0;
-                 __stack_pointer = $9;
-                 $3 = HEAP32[$17 + 12 >> 2];
-                 block1472 : {
-                  block1173 : {
-                   $6 = HEAP32[$7 + 4 >> 2];
-                   if (!$6) {
-                    break block1173
-                   }
-                   $14 = HEAP32[$7 >> 2];
-                   $4 = __wasm_popcnt_i32($6);
-                   $2 = $3 & $6 - 1;
-                   block1274 : {
-                    if ($4 >>> 0 <= 1) {
-                     break block1274
-                    }
-                    $2 = $3;
-                    if ($3 >>> 0 < $6 >>> 0) {
-                     break block1274
-                    }
-                    $2 = ($3 >>> 0) % ($6 >>> 0) | 0;
-                   }
-                   $14 = HEAP32[$14 + ($2 << 2) >> 2];
-                   if (!$14) {
-                    break block1173
-                   }
-                   $28 = $6 - 1 | 0;
-                   $29 = $4 >>> 0 > 1;
-                   while (1) {
-                    $14 = HEAP32[$14 >> 2];
-                    if (!$14) {
-                     break block1173
-                    }
-                    $4 = HEAP32[$14 + 4 >> 2];
-                    if (($3 | 0) != ($4 | 0)) {
-                     block1376 : {
-                      if (!$29) {
-                       $4 = $4 & $28;
-                       break block1376;
-                      }
-                      if ($4 >>> 0 < $6 >>> 0) {
-                       break block1376
-                      }
-                      $4 = ($4 >>> 0) % ($6 >>> 0) | 0;
+                 $10 = $2 + 56 | 0;
+                 $5 = __stack_pointer - 16 | 0;
+                 __stack_pointer = $5;
+                 $7 = $4 + 12 | 0;
+                 HEAP32[$5 + 4 >> 2] = $7;
+                 $3 = __stack_pointer - 16 | 0;
+                 __stack_pointer = $3;
+                 $15 = std____2____tree_node_base_void_____20std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________find_equal_int__28std____2____tree_end_node_std____2____tree_node_base_void_______2c_20int_20const__29($6, $3 + 12 | 0, $7);
+                 $7 = HEAP32[$15 >> 2];
+                 if ($7) {
+                  $28 = 0
+                 } else {
+                  $7 = operator_20new_28unsigned_20long_29(28);
+                  HEAP32[$3 + 4 >> 2] = $6;
+                  HEAP32[$3 >> 2] = $7;
+                  $16 = HEAP32[HEAP32[$5 + 4 >> 2] >> 2];
+                  HEAP32[$7 + 20 >> 2] = 0;
+                  HEAP32[$7 + 24 >> 2] = 0;
+                  HEAP32[$7 + 16 >> 2] = $16;
+                  HEAP8[$3 + 8 | 0] = 1;
+                  std____2____tree_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____map_value_compare_int_2c_20std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__less_int__2c_20true__2c_20std____2__allocator_std____2____value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________insert_node_at_28std____2____tree_end_node_std____2____tree_node_base_void______2c_20std____2____tree_node_base_void_____2c_20std____2____tree_node_base_void____29($6, HEAP32[$3 + 12 >> 2], $15, HEAP32[$3 >> 2]);
+                  $7 = HEAP32[$3 >> 2];
+                  HEAP32[$3 >> 2] = 0;
+                  $6 = HEAP32[$3 >> 2];
+                  HEAP32[$3 >> 2] = 0;
+                  if ($6) {
+                   block1373 : {
+                    block1274 : {
+                     if (HEAPU8[$3 + 8 | 0] == 1) {
+                      std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($6 + 20 | 0);
+                      break block1274;
                      }
-                     if (($2 | 0) != ($4 | 0)) {
-                      break block1173
-                     }
-                     continue;
-                    }
-                    if (($3 | 0) != HEAP32[$14 + 8 >> 2]) {
-                     continue
-                    }
-                    break;
-                   };
-                   $2 = 0;
-                   break block1472;
-                  }
-                  $4 = operator_20new_28unsigned_20long_29(20);
-                  HEAP32[$9 + 8 >> 2] = $7;
-                  HEAP32[$9 + 4 >> 2] = $4;
-                  HEAP32[$4 + 4 >> 2] = $3;
-                  HEAP32[$4 >> 2] = 0;
-                  $14 = HEAP32[HEAP32[$16 + 4 >> 2] >> 2];
-                  HEAP32[$4 + 12 >> 2] = 0;
-                  HEAP32[$4 + 16 >> 2] = 0;
-                  HEAP32[$4 + 8 >> 2] = $14;
-                  HEAP8[$9 + 12 | 0] = 1;
-                  $21 = Math_fround(HEAP32[$7 + 12 >> 2] + 1 >>> 0);
-                  $26 = HEAPF32[$7 + 16 >> 2];
-                  block1577 : {
-                   if ($21 > Math_fround($26 * Math_fround($6 >>> 0)) ? 0 : $6) {
-                    break block1577
-                   }
-                   $2 = ($6 - 1 & $6) != 0 | $6 >>> 0 < 3 | $6 << 1;
-                   $21 = Math_fround(Math_ceil(Math_fround($21 / $26)));
-                   if ($21 < Math_fround(4294967296.0) & $21 >= Math_fround(0.0)) {
-                    $6 = ~~$21 >>> 0
-                   } else {
-                    $6 = 0
-                   }
-                   void_20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_________rehash_true__28unsigned_20long_29($7, $2 >>> 0 > $6 >>> 0 ? $2 : $6);
-                   $6 = HEAP32[$7 + 4 >> 2];
-                   $2 = $6 - 1 | 0;
-                   if (!($2 & $6)) {
-                    $2 = $2 & $3;
-                    break block1577;
-                   }
-                   if ($3 >>> 0 < $6 >>> 0) {
-                    $2 = $3;
-                    break block1577;
-                   }
-                   $2 = ($3 >>> 0) % ($6 >>> 0) | 0;
-                  }
-                  $3 = HEAP32[$7 >> 2];
-                  $4 = $3 + ($2 << 2) | 0;
-                  $2 = HEAP32[$4 >> 2];
-                  block1678 : {
-                   if (!$2) {
-                    $14 = HEAP32[$9 + 4 >> 2];
-                    HEAP32[$14 >> 2] = HEAP32[$7 + 8 >> 2];
-                    HEAP32[$7 + 8 >> 2] = $14;
-                    HEAP32[$4 >> 2] = $7 + 8;
-                    $2 = HEAP32[$14 >> 2];
-                    if (!$2) {
-                     break block1678
-                    }
-                    $4 = HEAP32[$2 + 4 >> 2];
-                    $2 = $6 - 1 | 0;
-                    block1779 : {
-                     if (!($2 & $6)) {
-                      $4 = $2 & $4;
-                      break block1779;
-                     }
-                     if ($4 >>> 0 < $6 >>> 0) {
-                      break block1779
-                     }
-                     $4 = ($4 >>> 0) % ($6 >>> 0) | 0;
-                    }
-                    HEAP32[$3 + ($4 << 2) >> 2] = $14;
-                    break block1678;
-                   }
-                   $14 = HEAP32[$9 + 4 >> 2];
-                   HEAP32[$14 >> 2] = HEAP32[$2 >> 2];
-                   HEAP32[$2 >> 2] = $14;
-                  }
-                  HEAP32[$9 + 4 >> 2] = 0;
-                  HEAP32[$7 + 12 >> 2] = HEAP32[$7 + 12 >> 2] + 1;
-                  $2 = HEAP32[$9 + 4 >> 2];
-                  HEAP32[$9 + 4 >> 2] = 0;
-                  if ($2) {
-                   block1980 : {
-                    block1881 : {
-                     if (HEAPU8[$9 + 12 | 0] == 1) {
-                      std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($2 + 12 | 0);
-                      break block1881;
-                     }
-                     if (!$2) {
-                      break block1980
+                     if (!$6) {
+                      break block1373
                      }
                     }
-                    emscripten_builtin_free($2);
+                    emscripten_builtin_free($6);
                    }
                   }
-                  $2 = 1;
+                  $28 = 1;
                  }
-                 HEAP8[$16 + 12 | 0] = $2;
-                 HEAP32[$16 + 8 >> 2] = $14;
-                 __stack_pointer = $9 + 16 | 0;
-                 __stack_pointer = $16 + 16 | 0;
-                 std____2__shared_ptr_vision__Keyframe_96____operator__5babi_ne200100_5d_28std____2__shared_ptr_vision__Keyframe_96___20const__29(HEAP32[$16 + 8 >> 2] + 12 | 0, $12);
-                 std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($12);
-                 __stack_pointer = $17 + 16 | 0;
-                 $2 = std____2__unordered_map_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float________operator_5b_5d_28int_20const__29(HEAP32[$20 >> 2] + 4 | 0, $12 + 28 | 0);
-                 if (($2 | 0) != ($18 | 0)) {
-                  block2082 : {
-                   $6 = HEAP32[$18 + 4 >> 2];
-                   $3 = HEAP32[$18 >> 2];
-                   $9 = ($6 - $3 | 0) / 12 | 0;
-                   $7 = HEAP32[$2 >> 2];
-                   if ($9 >>> 0 <= (HEAP32[$2 + 8 >> 2] - $7 | 0) / 12 >>> 0) {
-                    $4 = HEAP32[$2 + 4 >> 2];
-                    $14 = $4 - $7 | 0;
-                    if ($9 >>> 0 > ($14 | 0) / 12 >>> 0) {
+                 HEAP8[$5 + 12 | 0] = $28;
+                 HEAP32[$5 + 8 >> 2] = $7;
+                 __stack_pointer = $3 + 16 | 0;
+                 __stack_pointer = $5 + 16 | 0;
+                 std____2__shared_ptr_vision__Keyframe_96____operator__5babi_ne200100_5d_28std____2__shared_ptr_vision__Keyframe_96___20const__29(HEAP32[$5 + 8 >> 2] + 20 | 0, $9);
+                 std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($9);
+                 __stack_pointer = $4 + 16 | 0;
+                 $3 = std____2__unordered_map_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float________operator_5b_5d_28int_20const__29(HEAP32[$12 >> 2] + 4 | 0, $9 + 28 | 0);
+                 if (($3 | 0) != ($10 | 0)) {
+                  block1475 : {
+                   $6 = HEAP32[$10 + 4 >> 2];
+                   $5 = HEAP32[$10 >> 2];
+                   $15 = ($6 - $5 | 0) / 12 | 0;
+                   $7 = HEAP32[$3 >> 2];
+                   if ($15 >>> 0 <= (HEAP32[$3 + 8 >> 2] - $7 | 0) / 12 >>> 0) {
+                    $4 = HEAP32[$3 + 4 >> 2];
+                    $12 = $4 - $7 | 0;
+                    if ($15 >>> 0 > ($12 | 0) / 12 >>> 0) {
                      if (($4 | 0) != ($7 | 0)) {
-                      if ($14) {
-                       wasm2js_memory_copy($7, $3, $14)
+                      if ($12) {
+                       wasm2js_memory_copy($7, $5, $12)
                       }
-                      $4 = HEAP32[$2 + 4 >> 2];
+                      $4 = HEAP32[$3 + 4 >> 2];
                      }
-                     $3 = $3 + $14 | 0;
-                     $7 = $6 - $3 | 0;
-                     if (!(!$7 | ($3 | 0) == ($6 | 0))) {
-                      wasm2js_memory_copy($4, $3, $7)
+                     $5 = $5 + $12 | 0;
+                     $7 = $6 - $5 | 0;
+                     if (!(!$7 | ($5 | 0) == ($6 | 0))) {
+                      wasm2js_memory_copy($4, $5, $7)
                      }
-                     HEAP32[$2 + 4 >> 2] = $4 + $7;
-                     break block2082;
+                     HEAP32[$3 + 4 >> 2] = $4 + $7;
+                     break block1475;
                     }
-                    $4 = $6 - $3 | 0;
-                    if (!(!$4 | ($3 | 0) == ($6 | 0))) {
-                     wasm2js_memory_copy($7, $3, $4)
+                    $4 = $6 - $5 | 0;
+                    if (!(!$4 | ($5 | 0) == ($6 | 0))) {
+                     wasm2js_memory_copy($7, $5, $4)
                     }
-                    HEAP32[$2 + 4 >> 2] = $4 + $7;
-                    break block2082;
+                    HEAP32[$3 + 4 >> 2] = $4 + $7;
+                    break block1475;
                    }
-                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______vdeallocate_28_29($2);
-                   $4 = std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($2, $9);
+                   std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______vdeallocate_28_29($3);
+                   $4 = std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($3, $15);
                    if ($4 >>> 0 >= 357913942) {
                     std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______throw_length_error_5babi_ne200100_5d_28_29();
                     wasm2js_trap();
                    }
                    $7 = std____2__allocator_vision__Point3d_float____allocate_5babi_ne200100_5d_28unsigned_20long_29($4);
-                   HEAP32[$2 + 4 >> 2] = $7;
-                   HEAP32[$2 >> 2] = $7;
-                   HEAP32[$2 + 8 >> 2] = $7 + Math_imul($4, 12);
-                   $4 = HEAP32[$2 + 4 >> 2];
-                   $7 = $6 - $3 | 0;
-                   if (!(!$7 | ($3 | 0) == ($6 | 0))) {
-                    wasm2js_memory_copy($4, $3, $7)
+                   HEAP32[$3 + 4 >> 2] = $7;
+                   HEAP32[$3 >> 2] = $7;
+                   HEAP32[$3 + 8 >> 2] = $7 + Math_imul($4, 12);
+                   $4 = HEAP32[$3 + 4 >> 2];
+                   $7 = $6 - $5 | 0;
+                   if (!(!$7 | ($5 | 0) == ($6 | 0))) {
+                    wasm2js_memory_copy($4, $5, $7)
                    }
-                   HEAP32[$2 + 4 >> 2] = $4 + $7;
+                   HEAP32[$3 + 4 >> 2] = $4 + $7;
                   }
                  }
-                 std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($10);
-                 __stack_pointer = $12 + 32 | 0;
-                 $11 = $11 + 1 | 0;
-                 $15 = $15 + 1 | 0;
-                 std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($25);
+                 std____2__shared_ptr_vision__Keyframe_96_____shared_ptr_5babi_ne200100_5d_28_29($11);
+                 __stack_pointer = $9 + 32 | 0;
+                 $8 = $8 + 1 | 0;
+                 $23 = $23 + 1 | 0;
+                 std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($19);
+                 std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($10);
                  std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($18);
-                 std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($27);
                  continue label867;
                 } else {
-                 block2183 : {
-                  $14 = Math_imul($6, 132);
-                  $2 = $14 + HEAP32[$1 + 28 >> 2] | 0;
-                  $3 = $12 + HEAP32[$1 + 36 >> 2] | 0;
-                  if (HEAP32[$2 + 128 >> 2] != HEAP32[(HEAP32[$3 >> 2] + Math_imul($15, 12) | 0) + 8 >> 2] | HEAP32[$2 + 124 >> 2] != HEAP32[$3 + 8 >> 2]) {
-                   break block2183
+                 block1576 : {
+                  $7 = Math_imul($4, 132);
+                  $3 = $7 + HEAP32[$1 + 28 >> 2] | 0;
+                  $5 = $6 + HEAP32[$1 + 36 >> 2] | 0;
+                  if (HEAP32[$3 + 128 >> 2] != HEAP32[(HEAP32[$5 >> 2] + Math_imul($23, 12) | 0) + 8 >> 2] | HEAP32[$3 + 124 >> 2] != HEAP32[$5 + 8 >> 2]) {
+                   break block1576
                   }
-                  $4 = HEAP32[$2 + 120 >> 2];
-                  $3 = HEAP32[$2 >> 2];
-                  $7 = HEAP32[$2 + 4 >> 2];
-                  $9 = HEAP32[$2 + 116 >> 2];
-                  HEAP32[$5 + 32 >> 2] = HEAP32[$2 + 112 >> 2];
-                  HEAP32[$5 + 36 >> 2] = $9;
-                  HEAP32[$5 + 24 >> 2] = $3;
-                  HEAP32[$5 + 28 >> 2] = $7;
+                  $5 = HEAP32[$3 + 120 >> 2];
+                  $9 = HEAP32[$3 >> 2];
+                  $11 = HEAP32[$3 + 4 >> 2];
+                  $10 = HEAP32[$3 + 116 >> 2];
+                  HEAP32[$2 + 32 >> 2] = HEAP32[$3 + 112 >> 2];
+                  HEAP32[$2 + 36 >> 2] = $10;
+                  HEAP32[$2 + 24 >> 2] = $9;
+                  HEAP32[$2 + 28 >> 2] = $11;
                   $3 = 0;
-                  HEAP8[$5 + 40 | 0] = ($4 | 0) != 0;
-                  $2 = $5 + 68 | 0;
-                  $10 = $2;
-                  $4 = HEAP32[$2 + 4 >> 2];
-                  block2284 : {
-                   if ($4 >>> 0 < HEAPU32[$2 + 8 >> 2]) {
-                    HEAP32[$4 + 16 >> 2] = HEAP32[$5 + 40 >> 2];
-                    $2 = HEAP32[$5 + 36 >> 2];
-                    HEAP32[$4 + 8 >> 2] = HEAP32[$5 + 32 >> 2];
-                    HEAP32[$4 + 12 >> 2] = $2;
-                    $2 = HEAP32[$5 + 28 >> 2];
-                    HEAP32[$4 >> 2] = HEAP32[$5 + 24 >> 2];
-                    HEAP32[$4 + 4 >> 2] = $2;
-                    $2 = $4 + 20 | 0;
-                    break block2284;
+                  HEAP8[$2 + 40 | 0] = ($5 | 0) != 0;
+                  $5 = $2 + 68 | 0;
+                  $9 = HEAP32[$5 + 4 >> 2];
+                  block1677 : {
+                   if (HEAPU32[$5 + 8 >> 2] > $9 >>> 0) {
+                    HEAP32[$9 + 16 >> 2] = HEAP32[$2 + 40 >> 2];
+                    $11 = HEAP32[$2 + 36 >> 2];
+                    HEAP32[$9 + 8 >> 2] = HEAP32[$2 + 32 >> 2];
+                    HEAP32[$9 + 12 >> 2] = $11;
+                    $11 = HEAP32[$2 + 28 >> 2];
+                    HEAP32[$9 >> 2] = HEAP32[$2 + 24 >> 2];
+                    HEAP32[$9 + 4 >> 2] = $11;
+                    $9 = $9 + 20 | 0;
+                    break block1677;
                    }
-                   $9 = __stack_pointer - 32 | 0;
-                   __stack_pointer = $9;
-                   $4 = std____2____split_buffer_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint_______split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_vision__FeaturePoint___29($9 + 12 | 0, std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($2, ((HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] | 0) / 20 | 0) + 1 | 0), (HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] | 0) / 20 | 0, $2);
-                   $7 = HEAP32[$4 + 8 >> 2];
-                   HEAP32[$7 + 16 >> 2] = HEAP32[$5 + 40 >> 2];
-                   $17 = HEAP32[$5 + 36 >> 2];
-                   HEAP32[$7 + 8 >> 2] = HEAP32[$5 + 32 >> 2];
-                   HEAP32[$7 + 12 >> 2] = $17;
-                   $17 = HEAP32[$5 + 28 >> 2];
-                   HEAP32[$7 >> 2] = HEAP32[$5 + 24 >> 2];
-                   HEAP32[$7 + 4 >> 2] = $17;
-                   HEAP32[$4 + 8 >> 2] = HEAP32[$4 + 8 >> 2] + 20;
-                   std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______swap_out_circular_buffer_28std____2____split_buffer_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint_____29($2, $4);
-                   $2 = HEAP32[$2 + 4 >> 2];
-                   std____2____split_buffer_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint________split_buffer_28_29($4);
-                   __stack_pointer = $9 + 32 | 0;
+                   $10 = __stack_pointer - 32 | 0;
+                   __stack_pointer = $10;
+                   $11 = std____2____split_buffer_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint_______split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_vision__FeaturePoint___29($10 + 12 | 0, std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($5, ((HEAP32[$5 + 4 >> 2] - HEAP32[$5 >> 2] | 0) / 20 | 0) + 1 | 0), (HEAP32[$5 + 4 >> 2] - HEAP32[$5 >> 2] | 0) / 20 | 0, $5);
+                   $9 = HEAP32[$11 + 8 >> 2];
+                   HEAP32[$9 + 16 >> 2] = HEAP32[$2 + 40 >> 2];
+                   $12 = HEAP32[$2 + 36 >> 2];
+                   HEAP32[$9 + 8 >> 2] = HEAP32[$2 + 32 >> 2];
+                   HEAP32[$9 + 12 >> 2] = $12;
+                   $12 = HEAP32[$2 + 28 >> 2];
+                   HEAP32[$9 >> 2] = HEAP32[$2 + 24 >> 2];
+                   HEAP32[$9 + 4 >> 2] = $12;
+                   HEAP32[$11 + 8 >> 2] = HEAP32[$11 + 8 >> 2] + 20;
+                   std____2__vector_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint______swap_out_circular_buffer_28std____2____split_buffer_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint_____29($5, $11);
+                   $9 = HEAP32[$5 + 4 >> 2];
+                   std____2____split_buffer_vision__FeaturePoint_2c_20std____2__allocator_vision__FeaturePoint________split_buffer_28_29($11);
+                   __stack_pointer = $10 + 32 | 0;
                   }
-                  HEAP32[$10 + 4 >> 2] = $2;
-                  $2 = $14 + HEAP32[$1 + 28 >> 2] | 0;
-                  $4 = HEAP32[$2 + 8 >> 2];
-                  $2 = HEAP32[$2 + 12 >> 2];
-                  HEAP32[$5 + 32 >> 2] = 0;
-                  HEAP32[$5 + 24 >> 2] = $4;
-                  HEAP32[$5 + 28 >> 2] = $2;
-                  $2 = $5 + 56 | 0;
-                  $16 = $2;
-                  $4 = HEAP32[$2 + 4 >> 2];
-                  block2385 : {
-                   if ($4 >>> 0 < HEAPU32[$2 + 8 >> 2]) {
-                    HEAP32[$4 + 8 >> 2] = HEAP32[$5 + 32 >> 2];
-                    $2 = HEAP32[$5 + 28 >> 2];
-                    HEAP32[$4 >> 2] = HEAP32[$5 + 24 >> 2];
-                    HEAP32[$4 + 4 >> 2] = $2;
-                    $9 = $4 + 12 | 0;
-                    break block2385;
+                  HEAP32[$5 + 4 >> 2] = $9;
+                  $5 = $7 + HEAP32[$1 + 28 >> 2] | 0;
+                  $9 = HEAP32[$5 + 8 >> 2];
+                  $5 = HEAP32[$5 + 12 >> 2];
+                  HEAP32[$2 + 32 >> 2] = 0;
+                  HEAP32[$2 + 24 >> 2] = $9;
+                  HEAP32[$2 + 28 >> 2] = $5;
+                  $5 = $2 + 56 | 0;
+                  $12 = $5;
+                  $9 = HEAP32[$5 + 4 >> 2];
+                  block1778 : {
+                   if ($9 >>> 0 < HEAPU32[$5 + 8 >> 2]) {
+                    HEAP32[$9 + 8 >> 2] = HEAP32[$2 + 32 >> 2];
+                    $5 = HEAP32[$2 + 28 >> 2];
+                    HEAP32[$9 >> 2] = HEAP32[$2 + 24 >> 2];
+                    HEAP32[$9 + 4 >> 2] = $5;
+                    $9 = $9 + 12 | 0;
+                    break block1778;
                    }
-                   $7 = __stack_pointer - 32 | 0;
-                   __stack_pointer = $7;
-                   $4 = std____2____split_buffer_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float________split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_vision__Point3d_float____29($7 + 12 | 0, std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($2, ((HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] | 0) / 12 | 0) + 1 | 0), (HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] | 0) / 12 | 0, $2);
-                   $9 = HEAP32[$4 + 8 >> 2];
-                   HEAP32[$9 + 8 >> 2] = HEAP32[$5 + 32 >> 2];
-                   $10 = HEAP32[$5 + 28 >> 2];
-                   HEAP32[$9 >> 2] = HEAP32[$5 + 24 >> 2];
-                   HEAP32[$9 + 4 >> 2] = $10;
-                   HEAP32[$4 + 8 >> 2] = HEAP32[$4 + 8 >> 2] + 12;
-                   std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_______swap_out_circular_buffer_28std____2____split_buffer_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float______29($2, $4);
-                   $9 = HEAP32[$2 + 4 >> 2];
-                   $10 = HEAP32[$4 + 4 >> 2];
-                   $2 = HEAP32[$4 + 8 >> 2];
+                   $10 = __stack_pointer - 32 | 0;
+                   __stack_pointer = $10;
+                   $11 = std____2____split_buffer_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float________split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_vision__Point3d_float____29($10 + 12 | 0, std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($5, ((HEAP32[$5 + 4 >> 2] - HEAP32[$5 >> 2] | 0) / 12 | 0) + 1 | 0), (HEAP32[$5 + 4 >> 2] - HEAP32[$5 >> 2] | 0) / 12 | 0, $5);
+                   $9 = HEAP32[$11 + 8 >> 2];
+                   HEAP32[$9 + 8 >> 2] = HEAP32[$2 + 32 >> 2];
+                   $15 = HEAP32[$2 + 28 >> 2];
+                   HEAP32[$9 >> 2] = HEAP32[$2 + 24 >> 2];
+                   HEAP32[$9 + 4 >> 2] = $15;
+                   HEAP32[$11 + 8 >> 2] = HEAP32[$11 + 8 >> 2] + 12;
+                   std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_______swap_out_circular_buffer_28std____2____split_buffer_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float______29($5, $11);
+                   $9 = HEAP32[$5 + 4 >> 2];
+                   $15 = HEAP32[$11 + 4 >> 2];
+                   $5 = HEAP32[$11 + 8 >> 2];
                    while (1) {
-                    if (($2 | 0) != ($10 | 0)) {
-                     $2 = $2 - 12 | 0;
-                     HEAP32[$4 + 8 >> 2] = $2;
+                    if (($5 | 0) != ($15 | 0)) {
+                     $5 = $5 - 12 | 0;
+                     HEAP32[$11 + 8 >> 2] = $5;
                      continue;
                     }
                     break;
                    };
-                   $2 = HEAP32[$4 >> 2];
-                   if ($2) {
-                    emscripten_builtin_free($2)
+                   $5 = HEAP32[$11 >> 2];
+                   if ($5) {
+                    emscripten_builtin_free($5)
                    }
-                   __stack_pointer = $7 + 32 | 0;
+                   __stack_pointer = $10 + 32 | 0;
                   }
-                  HEAP32[$16 + 4 >> 2] = $9;
+                  HEAP32[$12 + 4 >> 2] = $9;
                   while (1) {
                    if (($3 | 0) == 96) {
-                    break block2183
+                    break block1576
                    }
-                   $7 = ($14 + HEAP32[$1 + 28 >> 2] | 0) + $3 | 0;
-                   $2 = $5 + 44 | 0;
-                   $10 = $2;
-                   $4 = HEAP32[$2 + 4 >> 2];
-                   block2488 : {
-                    if ($4 >>> 0 < HEAPU32[$2 + 8 >> 2]) {
-                     HEAP8[$4 | 0] = HEAPU8[$7 + 16 | 0];
-                     $2 = $4 + 1 | 0;
-                     break block2488;
+                   $9 = ($7 + HEAP32[$1 + 28 >> 2] | 0) + $3 | 0;
+                   $5 = $2 + 44 | 0;
+                   $11 = HEAP32[$5 + 4 >> 2];
+                   block1881 : {
+                    if (HEAPU32[$5 + 8 >> 2] > $11 >>> 0) {
+                     HEAP8[$11 | 0] = HEAPU8[$9 + 16 | 0];
+                     $9 = $11 + 1 | 0;
+                     break block1881;
                     }
-                    $9 = __stack_pointer - 32 | 0;
-                    __stack_pointer = $9;
-                    $4 = std____2____split_buffer_unsigned_20char_2c_20std____2__allocator_unsigned_20char_______split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_unsigned_20char___29($9 + 12 | 0, std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($2, (HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] | 0) + 1 | 0), HEAP32[$2 + 4 >> 2] - HEAP32[$2 >> 2] | 0, $2);
-                    HEAP8[HEAP32[$4 + 8 >> 2]] = HEAPU8[$7 + 16 | 0];
-                    HEAP32[$4 + 8 >> 2] = HEAP32[$4 + 8 >> 2] + 1;
-                    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______swap_out_circular_buffer_28std____2____split_buffer_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____29($2, $4);
-                    $2 = HEAP32[$2 + 4 >> 2];
-                    std____2____split_buffer_unsigned_20char_2c_20std____2__allocator_unsigned_20char________split_buffer_28_29($4);
-                    __stack_pointer = $9 + 32 | 0;
+                    $10 = __stack_pointer - 32 | 0;
+                    __stack_pointer = $10;
+                    $11 = std____2____split_buffer_unsigned_20char_2c_20std____2__allocator_unsigned_20char_______split_buffer_28unsigned_20long_2c_20unsigned_20long_2c_20std____2__allocator_unsigned_20char___29($10 + 12 | 0, std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______recommend_5babi_ne200100_5d_28unsigned_20long_29_20const($5, (HEAP32[$5 + 4 >> 2] - HEAP32[$5 >> 2] | 0) + 1 | 0), HEAP32[$5 + 4 >> 2] - HEAP32[$5 >> 2] | 0, $5);
+                    HEAP8[HEAP32[$11 + 8 >> 2]] = HEAPU8[$9 + 16 | 0];
+                    HEAP32[$11 + 8 >> 2] = HEAP32[$11 + 8 >> 2] + 1;
+                    std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char______swap_out_circular_buffer_28std____2____split_buffer_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____29($5, $11);
+                    $9 = HEAP32[$5 + 4 >> 2];
+                    std____2____split_buffer_unsigned_20char_2c_20std____2__allocator_unsigned_20char________split_buffer_28_29($11);
+                    __stack_pointer = $10 + 32 | 0;
                    }
-                   HEAP32[$10 + 4 >> 2] = $2;
+                   HEAP32[$5 + 4 >> 2] = $9;
                    $3 = $3 + 1 | 0;
                    continue;
                   };
                  }
-                 $6 = $6 + 1 | 0;
+                 $4 = $4 + 1 | 0;
                  continue;
                 };
                };
@@ -21999,14 +22035,14 @@ function asmFunc(imports) {
              }
              break block210;
             }
-            __stack_pointer = $5 + 80 | 0;
+            __stack_pointer = $2 + 80 | 0;
             break __inlined_func$kpmSetRefDataSet$7;
            }
            arLog(0, 3, 8931, 0);
            exit(1);
            wasm2js_trap();
           }
-          if (($22 | 0) < 0) {
+          if (($17 | 0) < 0) {
            $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($13 + 12 | 0, 26013);
            webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($1);
            std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
@@ -22021,7 +22057,7 @@ function asmFunc(imports) {
           std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
           $1 = HEAP32[$13 + 32 >> 2];
           $2 = HEAP32[$13 + 28 >> 2];
-          HEAP32[$24 + 268 >> 2] = HEAP32[$24 + 268 >> 2] + ($1 - $2 >> 2);
+          HEAP32[$22 + 268 >> 2] = HEAP32[$22 + 268 >> 2] + ($1 - $2 >> 2);
           HEAP32[$0 + 4 >> 2] = $1;
           HEAP32[$0 >> 2] = $2;
           HEAP32[$0 + 8 >> 2] = HEAP32[$13 + 36 >> 2];
@@ -22032,37 +22068,37 @@ function asmFunc(imports) {
          std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($13 + 28 | 0);
          break block;
         }
-        $1 = HEAP32[HEAP32[$11 >> 2] >> 2];
+        $1 = HEAP32[HEAP32[$9 >> 2] >> 2];
         $3 = HEAP32[$1 + 4 >> 2];
         $1 = HEAP32[HEAP32[$1 >> 2] >> 2];
-        HEAP32[$24 + 376 >> 2] = HEAP32[$1 + 4 >> 2];
-        HEAP32[$24 + 380 >> 2] = HEAP32[$1 + 8 >> 2];
-        $21 = HEAPF32[$1 + 12 >> 2];
-        if (Math_fround(Math_abs($21)) < Math_fround(2147483648.0)) {
-         $1 = ~~$21
+        HEAP32[$22 + 376 >> 2] = HEAP32[$1 + 4 >> 2];
+        HEAP32[$22 + 380 >> 2] = HEAP32[$1 + 8 >> 2];
+        $24 = HEAPF32[$1 + 12 >> 2];
+        if (Math_fround(Math_abs($24)) < Math_fround(2147483648.0)) {
+         $1 = ~~$24
         } else {
          $1 = -2147483648
         }
-        HEAP32[$24 + 384 >> 2] = $1;
+        HEAP32[$22 + 384 >> 2] = $1;
         $1 = $13 + 12 | 0;
-        $5 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($1, 27895);
-        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($5, $3);
-        std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($5);
+        $4 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($1, 27895);
+        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($4, $3);
+        std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($4);
         $3 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($1, 27939);
-        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($3, HEAP32[$24 + 376 >> 2]);
+        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($3, HEAP32[$22 + 376 >> 2]);
         std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($3);
         $3 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($1, 27873);
-        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($3, HEAP32[$24 + 380 >> 2]);
+        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($3, HEAP32[$22 + 380 >> 2]);
         std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($3);
         $3 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($1, 27920);
-        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($3, HEAP32[$24 + 384 >> 2]);
+        webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($3, HEAP32[$22 + 384 >> 2]);
         std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($3);
-        HEAP32[$24 + 372 >> 2] = HEAP32[$13 + 24 >> 2];
+        HEAP32[$22 + 372 >> 2] = HEAP32[$13 + 24 >> 2];
         nftMarker__20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____emplace_back_nftMarker_20const___28nftMarker_20const__29($35, $36);
         $1 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($1, 33375);
         webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($1);
         std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($1);
-        $5 = HEAP32[$13 + 24 >> 2] + 1 | 0;
+        $4 = HEAP32[$13 + 24 >> 2] + 1 | 0;
         $3 = HEAP32[$2 >> 2];
         $1 = HEAP32[$2 + 4 >> 2];
         continue;
@@ -22128,7 +22164,7 @@ function asmFunc(imports) {
   __stack_pointer = $2;
   HEAP32[$2 + 12 >> 2] = $0;
   $0 = $2 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    (wasm2js_i32$0 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0), wasm2js_f64$0 = $1), HEAPF64[wasm2js_i32$0 + 400 >> 3] = wasm2js_f64$0
   }
   __stack_pointer = $2 + 16 | 0;
@@ -22141,7 +22177,7 @@ function asmFunc(imports) {
   __stack_pointer = $1;
   HEAP32[$1 + 12 >> 2] = $0;
   $0 = $1 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    $2 = HEAPF64[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 400 >> 3]
   } else {
    $2 = -1.0
@@ -22158,7 +22194,7 @@ function asmFunc(imports) {
   __stack_pointer = $2;
   HEAP32[$2 + 12 >> 2] = $0;
   $0 = $2 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    (wasm2js_i32$0 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0), wasm2js_f64$0 = $1), HEAPF64[wasm2js_i32$0 + 408 >> 3] = wasm2js_f64$0
   }
   __stack_pointer = $2 + 16 | 0;
@@ -22171,7 +22207,7 @@ function asmFunc(imports) {
   __stack_pointer = $1;
   HEAP32[$1 + 12 >> 2] = $0;
   $0 = $1 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    $2 = HEAPF64[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 408 >> 3]
   } else {
    $2 = -1.0
@@ -22189,7 +22225,7 @@ function asmFunc(imports) {
   HEAP32[$2 + 12 >> 2] = $0;
   $0 = $2 + 12 | 0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
     break block
    }
    $0 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0);
@@ -22221,7 +22257,7 @@ function asmFunc(imports) {
   __stack_pointer = $1;
   HEAP32[$1 + 12 >> 2] = $0;
   $0 = $1 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    $0 = HEAP32[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 216 >> 2];
    $2 = $1 + 8 | 0;
    if (!$0 | !$2) {
@@ -22247,7 +22283,7 @@ function asmFunc(imports) {
   HEAP32[$2 + 12 >> 2] = $0;
   $0 = $2 + 12 | 0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
     break block
    }
    if (arSetLabelingThreshMode(HEAP32[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 216 >> 2], $1)) {
@@ -22267,7 +22303,7 @@ function asmFunc(imports) {
   __stack_pointer = $1;
   HEAP32[$1 + 12 >> 2] = $0;
   $0 = $1 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    $0 = HEAP32[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 216 >> 2];
    $2 = $1 + 8 | 0;
    if (!$0 | !$2) {
@@ -22292,7 +22328,7 @@ function asmFunc(imports) {
   __stack_pointer = $2;
   HEAP32[$2 + 12 >> 2] = $0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $2 + 12 | 0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $2 + 12 | 0)) {
     $1 = -1;
     break block;
    }
@@ -22314,7 +22350,7 @@ function asmFunc(imports) {
   $0 = -1;
   $1 = $2 + 12 | 0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $1)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $1)) {
     break block
    }
    $1 = HEAP32[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($1) + 216 >> 2];
@@ -22334,7 +22370,7 @@ function asmFunc(imports) {
   __stack_pointer = $1;
   HEAP32[$1 + 12 >> 2] = $0;
   $0 = $1 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    $0 = HEAP32[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 216 >> 2];
    $2 = $1 + 8 | 0;
    if (!(!$0 | !$2)) {
@@ -22357,7 +22393,7 @@ function asmFunc(imports) {
   HEAP32[$2 + 12 >> 2] = $0;
   $0 = $2 + 12 | 0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
     break block
    }
    $0 = HEAP32[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 216 >> 2];
@@ -22384,7 +22420,7 @@ function asmFunc(imports) {
   __stack_pointer = $1;
   HEAP32[$1 + 12 >> 2] = $0;
   $0 = $1 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    $0 = HEAP32[std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0) + 216 >> 2];
    if ($0) {
     HEAP32[$1 + 8 >> 2] = HEAP32[$0 + 20 >> 2];
@@ -22420,12 +22456,12 @@ function asmFunc(imports) {
   HEAP32[$16 + 200 >> 2] = $0;
   $0 = operator_20new_28unsigned_20long_29($0);
   HEAP32[$14 >> 2] = 0;
-  void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______29($16 + 196 | 0, $0);
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($14);
+  void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______29($16 + 196 | 0, $0);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($14);
   $0 = operator_20new_28unsigned_20long_29(HEAP32[$16 + 200 >> 2] / 4 | 0);
   HEAP32[$14 >> 2] = 0;
-  void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_______29($16 + 204 | 0, $0);
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($14);
+  void_20std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void__________reset_5babi_ne200100_5d_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______2c_200__28std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void_______29($16 + 204 | 0, $0);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($14);
   $0 = HEAP32[$14 + 12 >> 2];
   $11 = __stack_pointer - 48 | 0;
   __stack_pointer = $11;
@@ -22435,12 +22471,12 @@ function asmFunc(imports) {
    block27 : {
     $0 = $11 + 44 | 0;
     block : {
-     if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+     if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
       break block
      }
      $0 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0);
      $1 = $11 + 40 | 0;
-     if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78048, $1)) {
+     if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78048, $1)) {
       break block
      }
      $4 = $0 + 8 | 0;
@@ -22971,7 +23007,7 @@ function asmFunc(imports) {
   __stack_pointer = $2;
   HEAP32[$2 + 12 >> 2] = $0;
   $0 = $2 + 12 | 0;
-  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96____2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20std____2__shared_ptr_vision__Keyframe_96_______find_int__28int_20const__29(78028, $0)) {
+  if (std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(78028, $0)) {
    (wasm2js_i32$0 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($0), wasm2js_i32$1 = $1), HEAP8[wasm2js_i32$0 + 236 | 0] = wasm2js_i32$1;
    $0 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($2, 26957);
    webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($0, $1 ? 28276 : 28290);
@@ -24100,7 +24136,7 @@ function asmFunc(imports) {
  }
  
  function std____2____split_buffer_nftMarker_2c_20std____2__allocator_nftMarker________split_buffer_28_29($0) {
-  $1188($0, 16);
+  $1193($0, 16);
  }
  
  function emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20void_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const____invoke_28void_20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker__29($0, $1, $2, $3) {
@@ -25182,7 +25218,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function compE_1129($0, $1) {
+ function compE_1121($0, $1) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   var $2 = Math_fround(0);
@@ -31821,7 +31857,7 @@ function asmFunc(imports) {
   }
  }
  
- function start_pass_1211($0) {
+ function start_pass_1203($0) {
   $0 = $0 | 0;
   var $1 = 0, $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0;
   $1 = HEAP32[$0 + 412 >> 2];
@@ -33371,7 +33407,7 @@ function asmFunc(imports) {
   HEAP32[$4 + 44 >> 2] = HEAP32[$0 + 280 >> 2];
  }
  
- function decode_mcu_AC_refine_1222($0, $1) {
+ function decode_mcu_AC_refine_1214($0, $1) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = 0;
@@ -33669,7 +33705,7 @@ function asmFunc(imports) {
   return $3 | 0;
  }
  
- function decode_mcu_DC_refine_1223($0, $1) {
+ function decode_mcu_DC_refine_1215($0, $1) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0;
@@ -33762,7 +33798,7 @@ function asmFunc(imports) {
   return $10 | 0;
  }
  
- function decode_mcu_AC_first_1224($0, $1) {
+ function decode_mcu_AC_first_1216($0, $1) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0;
@@ -33936,7 +33972,7 @@ function asmFunc(imports) {
   return $3 | 0;
  }
  
- function decode_mcu_DC_first_1225($0, $1) {
+ function decode_mcu_DC_first_1217($0, $1) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0;
@@ -34337,7 +34373,7 @@ function asmFunc(imports) {
   __stack_pointer = $9 + 1312 | 0;
  }
  
- function decode_mcu_1227($0, $1) {
+ function decode_mcu_1219($0, $1) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   var $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $20 = 0;
@@ -35584,7 +35620,7 @@ function asmFunc(imports) {
   HEAP32[$0 + 156 >> 2] = 0;
  }
  
- function start_input_pass_1237($0) {
+ function start_input_pass_1229($0) {
   $0 = $0 | 0;
   var $1 = 0, $2 = 0;
   HEAP32[$0 + 148 >> 2] = 0;
@@ -44815,7 +44851,7 @@ function asmFunc(imports) {
   return $5 | 0;
  }
  
- function dummy_1399($0) {
+ function dummy_1391($0) {
   $0 = $0 | 0;
   return $0 | 0;
  }
@@ -56707,7 +56743,7 @@ function asmFunc(imports) {
   return std____2__ios_base___ios_base_28_29($0) | 0;
  }
  
- function std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29_1636($0) {
+ function std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29_1628($0) {
   $0 = $0 | 0;
   std____2__ios_base___ios_base_28_29($0);
   emscripten_builtin_free($0);
@@ -56720,14 +56756,14 @@ function asmFunc(imports) {
   return $0 | 0;
  }
  
- function std____2__basic_streambuf_char_2c_20std____2__char_traits_char_____basic_streambuf_28_29_1638($0) {
+ function std____2__basic_streambuf_char_2c_20std____2__char_traits_char_____basic_streambuf_28_29_1630($0) {
   $0 = $0 | 0;
   std____2__basic_streambuf_char_2c_20std____2__char_traits_char_____basic_streambuf_28_29($0);
   emscripten_builtin_free($0);
  }
  
  function std____2__basic_streambuf_char_2c_20std____2__char_traits_char____basic_streambuf_28_29($0) {
-  return $1189($0, 61656);
+  return $1194($0, 61656);
  }
  
  function std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29($0, $1) {
@@ -56887,7 +56923,7 @@ function asmFunc(imports) {
   return $5 | 0;
  }
  
- function std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1662($0) {
+ function std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1654($0) {
   $0 = $0 | 0;
   std____2__ios_base___ios_base_28_29($0 + 8 | 0);
   return $0 | 0;
@@ -56895,17 +56931,17 @@ function asmFunc(imports) {
  
  function virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29($0) {
   $0 = $0 | 0;
-  return std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1662(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0) | 0;
+  return std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1654(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0) | 0;
  }
  
- function std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1664($0) {
+ function std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1656($0) {
   $0 = $0 | 0;
-  emscripten_builtin_free(std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1662($0));
+  emscripten_builtin_free(std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1654($0));
  }
  
- function virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1665($0) {
+ function virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1657($0) {
   $0 = $0 | 0;
-  std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1664(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0);
+  std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1656(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0);
  }
  
  function std____2__basic_ios_char_2c_20std____2__char_traits_char____good_5babi_nn200100_5d_28_29_20const($0) {
@@ -56981,7 +57017,7 @@ function asmFunc(imports) {
   return std____2__char_traits_char___to_int_type_5babi_nn200100_5d_28char_29(HEAP8[$1 | 0]);
  }
  
- function std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1691($0) {
+ function std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1683($0) {
   $0 = $0 | 0;
   std____2__ios_base___ios_base_28_29($0 + 4 | 0);
   return $0 | 0;
@@ -56989,17 +57025,17 @@ function asmFunc(imports) {
  
  function virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29($0) {
   $0 = $0 | 0;
-  return std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1691(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0) | 0;
+  return std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1683(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0) | 0;
  }
  
- function std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1693($0) {
+ function std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1685($0) {
   $0 = $0 | 0;
-  emscripten_builtin_free(std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1691($0));
+  emscripten_builtin_free(std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1683($0));
  }
  
- function virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1694($0) {
+ function virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1686($0) {
   $0 = $0 | 0;
-  std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1693(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0);
+  std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1685(HEAP32[HEAP32[$0 >> 2] - 12 >> 2] + $0 | 0);
  }
  
  function std____2__basic_ostream_char_2c_20std____2__char_traits_char____sentry__sentry_28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29($0, $1) {
@@ -57123,14 +57159,14 @@ function asmFunc(imports) {
   return $0 | 0;
  }
  
- function std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t_____basic_streambuf_28_29_1713($0) {
+ function std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t_____basic_streambuf_28_29_1705($0) {
   $0 = $0 | 0;
   std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t_____basic_streambuf_28_29($0);
   emscripten_builtin_free($0);
  }
  
  function std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____basic_streambuf_28_29($0) {
-  return $1189($0, 61816);
+  return $1194($0, 61816);
  }
  
  function std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____xsgetn_28wchar_t__2c_20long_29($0, $1, $2) {
@@ -57657,7 +57693,7 @@ function asmFunc(imports) {
   return $0 | 0;
  }
  
- function std____2__ios_base___ios_base_28_29_1862($0) {
+ function std____2__ios_base___ios_base_28_29_1854($0) {
   $0 = $0 | 0;
   emscripten_builtin_free(std____2__ios_base___ios_base_28_29($0));
  }
@@ -59185,7 +59221,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function strtox_1976($0, $1, $2, $3) {
+ function strtox_1968($0, $1, $2, $3) {
   var $4 = 0, $5 = 0, $6 = 0, $7 = 0;
   $4 = __stack_pointer - 160 | 0;
   __stack_pointer = $4;
@@ -60628,7 +60664,7 @@ function asmFunc(imports) {
       std____2____cloc_28_29();
       $3 = __stack_pointer - 16 | 0;
       __stack_pointer = $3;
-      strtox_1976($3, $0, $4 + 12 | 0, 0);
+      strtox_1968($3, $0, $4 + 12 | 0, 0);
       $5 = __trunctfsf2(HEAP32[$3 >> 2], HEAP32[$3 + 4 >> 2], HEAP32[$3 + 8 >> 2], HEAP32[$3 + 12 >> 2]);
       __stack_pointer = $3 + 16 | 0;
       block : {
@@ -60796,7 +60832,7 @@ function asmFunc(imports) {
       std____2____cloc_28_29();
       $3 = __stack_pointer - 16 | 0;
       __stack_pointer = $3;
-      strtox_1976($3, $0, $4 + 12 | 0, 1);
+      strtox_1968($3, $0, $4 + 12 | 0, 1);
       $5 = __trunctfdf2(HEAP32[$3 >> 2], HEAP32[$3 + 4 >> 2], HEAP32[$3 + 8 >> 2], HEAP32[$3 + 12 >> 2]);
       __stack_pointer = $3 + 16 | 0;
       block : {
@@ -60977,7 +61013,7 @@ function asmFunc(imports) {
       __stack_pointer = $4;
       $6 = __stack_pointer - 16 | 0;
       __stack_pointer = $6;
-      strtox_1976($6, $1, $8 + 28 | 0, 2);
+      strtox_1968($6, $1, $8 + 28 | 0, 2);
       $11 = HEAP32[$6 >> 2];
       $9 = HEAP32[$6 + 4 >> 2];
       $1 = HEAP32[$6 + 12 >> 2];
@@ -62536,7 +62572,7 @@ function asmFunc(imports) {
   $2 = $2 | 0;
   $3 = $3 | 0;
   $4 = $4 | 0;
-  return $1193($1, $2, $3, $4, 1) | 0;
+  return $1198($1, $2, $3, $4, 1) | 0;
  }
  
  function std____2____num_put_base____format_int_28char__2c_20char_20const__2c_20bool_2c_20unsigned_20int_29($0, $1, $2, $3) {
@@ -62751,7 +62787,7 @@ function asmFunc(imports) {
   $3 = $3 | 0;
   $4 = $4 | 0;
   $5 = $5 | 0;
-  return $1192($1, $2, $3, $4, $5, 1) | 0;
+  return $1197($1, $2, $3, $4, $5, 1) | 0;
  }
  
  function int_20std____2____locale____snprintf_5babi_nn200100_5d_long_20long___28char__2c_20unsigned_20long_2c_20__locale_struct__2c_20char_20const__2c_20long_20long__29($0, $1, $2, $3) {
@@ -62772,7 +62808,7 @@ function asmFunc(imports) {
   $2 = $2 | 0;
   $3 = $3 | 0;
   $4 = $4 | 0;
-  return $1193($1, $2, $3, $4, 0) | 0;
+  return $1198($1, $2, $3, $4, 0) | 0;
  }
  
  function std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20unsigned_20long_20long_29_20const($0, $1, $2, $3, $4, $5) {
@@ -62782,7 +62818,7 @@ function asmFunc(imports) {
   $3 = $3 | 0;
   $4 = $4 | 0;
   $5 = $5 | 0;
-  return $1192($1, $2, $3, $4, $5, 0) | 0;
+  return $1197($1, $2, $3, $4, $5, 0) | 0;
  }
  
  function std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20double_29_20const($0, $1, $2, $3, $4) {
@@ -63369,7 +63405,7 @@ function asmFunc(imports) {
   $2 = $2 | 0;
   $3 = $3 | 0;
   $4 = $4 | 0;
-  return $1195($1, $2, $3, $4, 1) | 0;
+  return $1200($1, $2, $3, $4, 1) | 0;
  }
  
  function std____2____num_put_wchar_t_____widen_and_group_int_28char__2c_20char__2c_20char__2c_20wchar_t__2c_20wchar_t___2c_20wchar_t___2c_20std____2__locale_20const__29($0, $1, $2, $3, $4, $5, $6) {
@@ -63502,7 +63538,7 @@ function asmFunc(imports) {
   $3 = $3 | 0;
   $4 = $4 | 0;
   $5 = $5 | 0;
-  return $1194($1, $2, $3, $4, $5, 1) | 0;
+  return $1199($1, $2, $3, $4, $5, 1) | 0;
  }
  
  function std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20unsigned_20long_29_20const($0, $1, $2, $3, $4) {
@@ -63511,7 +63547,7 @@ function asmFunc(imports) {
   $2 = $2 | 0;
   $3 = $3 | 0;
   $4 = $4 | 0;
-  return $1195($1, $2, $3, $4, 0) | 0;
+  return $1200($1, $2, $3, $4, 0) | 0;
  }
  
  function std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20unsigned_20long_20long_29_20const($0, $1, $2, $3, $4, $5) {
@@ -63521,7 +63557,7 @@ function asmFunc(imports) {
   $3 = $3 | 0;
   $4 = $4 | 0;
   $5 = $5 | 0;
-  return $1194($1, $2, $3, $4, $5, 0) | 0;
+  return $1199($1, $2, $3, $4, $5, 0) | 0;
  }
  
  function std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20double_29_20const($0, $1, $2, $3, $4) {
@@ -67857,7 +67893,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function std____2__locale____imp_____imp_28_29_2591($0) {
+ function std____2__locale____imp_____imp_28_29_2583($0) {
   $0 = $0 | 0;
   emscripten_builtin_free(std____2__locale____imp_____imp_28_29($0));
  }
@@ -68115,7 +68151,7 @@ function asmFunc(imports) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   $2 = $2 | 0;
-  return $1191($1, $2, 63160) | 0;
+  return $1196($1, $2, 63160) | 0;
  }
  
  function std____2__ctype_wchar_t___do_tolower_28wchar_t_29_20const($0, $1) {
@@ -68131,7 +68167,7 @@ function asmFunc(imports) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   $2 = $2 | 0;
-  return $1191($1, $2, 64704) | 0;
+  return $1196($1, $2, 64704) | 0;
  }
  
  function std____2__ctype_wchar_t___do_widen_28char_20const__2c_20char_20const__2c_20wchar_t__29_20const($0, $1, $2, $3) {
@@ -68191,7 +68227,7 @@ function asmFunc(imports) {
   return $0 | 0;
  }
  
- function std____2__ctype_char____ctype_28_29_2631($0) {
+ function std____2__ctype_char____ctype_28_29_2623($0) {
   $0 = $0 | 0;
   emscripten_builtin_free(std____2__ctype_char____ctype_28_29($0));
  }
@@ -68209,7 +68245,7 @@ function asmFunc(imports) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   $2 = $2 | 0;
-  return $1190($1, $2, 63160) | 0;
+  return $1195($1, $2, 63160) | 0;
  }
  
  function std____2__ctype_char___do_tolower_28char_29_20const($0, $1) {
@@ -68225,7 +68261,7 @@ function asmFunc(imports) {
   $0 = $0 | 0;
   $1 = $1 | 0;
   $2 = $2 | 0;
-  return $1190($1, $2, 64704) | 0;
+  return $1195($1, $2, 64704) | 0;
  }
  
  function std____2__ctype_char___do_widen_28char_20const__2c_20char_20const__2c_20char__29_20const($0, $1, $2, $3) {
@@ -68313,7 +68349,7 @@ function asmFunc(imports) {
   return HEAP32[$1 >> 2];
  }
  
- function std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t____codecvt_28_29_2649($0) {
+ function std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t____codecvt_28_29_2641($0) {
   $0 = $0 | 0;
   emscripten_builtin_free(std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t____codecvt_28_29($0));
  }
@@ -69626,7 +69662,7 @@ function asmFunc(imports) {
   return $0 | 0;
  }
  
- function std____2__numpunct_char____numpunct_28_29_2710($0) {
+ function std____2__numpunct_char____numpunct_28_29_2702($0) {
   $0 = $0 | 0;
   emscripten_builtin_free(std____2__numpunct_char____numpunct_28_29($0));
  }
@@ -69638,7 +69674,7 @@ function asmFunc(imports) {
   return $0 | 0;
  }
  
- function std____2__numpunct_wchar_t____numpunct_28_29_2712($0) {
+ function std____2__numpunct_wchar_t____numpunct_28_29_2704($0) {
   $0 = $0 | 0;
   emscripten_builtin_free(std____2__numpunct_wchar_t____numpunct_28_29($0));
  }
@@ -69973,7 +70009,7 @@ function asmFunc(imports) {
   return 74936;
  }
  
- function __cxx_global_array_dtor_2748($0) {
+ function __cxx_global_array_dtor_2740($0) {
   $0 = $0 | 0;
   std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29(74936);
  }
@@ -70077,10 +70113,10 @@ function asmFunc(imports) {
  
  function std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29($0) {
   $0 = $0 | 0;
-  emscripten_builtin_free(std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2777($0));
+  emscripten_builtin_free(std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2769($0));
  }
  
- function std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2777($0) {
+ function std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2769($0) {
   $0 = $0 | 0;
   if (HEAP32[$0 + 8 >> 2] != (std____2____cloc_28_29() | 0)) {
    freelocale(HEAP32[$0 + 8 >> 2])
@@ -70308,7 +70344,7 @@ function asmFunc(imports) {
   return ($1 - $0 | 0) / 12 | 0;
  }
  
- function std____2____shared_count_____shared_count_28_29_3039($0) {
+ function std____2____shared_count_____shared_count_28_29_3031($0) {
   $0 = $0 | 0;
   wasm2js_trap();
  }
@@ -71671,7 +71707,7 @@ function asmFunc(imports) {
   return $0 | 0;
  }
  
- function std__logic_error___logic_error_28_29_3151($0) {
+ function std__logic_error___logic_error_28_29_3143($0) {
   $0 = $0 | 0;
   std__logic_error___logic_error_28_29($0);
   emscripten_builtin_free($0);
@@ -71768,7 +71804,7 @@ function asmFunc(imports) {
   legalimport$_embind_register_bigint($0 | 0, $1 | 0, 8, 0, $2 | 0, -1, $3 | 0);
  }
  
- function $1187($0, $1, $2) {
+ function $1192($0, $1, $2) {
   var $3 = 0;
   $3 = emscripten_builtin_malloc(12);
   if ($3) {
@@ -71786,7 +71822,7 @@ function asmFunc(imports) {
   return $3;
  }
  
- function $1188($0, $1) {
+ function $1193($0, $1) {
   var $2 = 0, $3 = 0;
   $3 = HEAP32[$0 + 4 >> 2];
   $2 = HEAP32[$0 + 8 >> 2];
@@ -71804,7 +71840,7 @@ function asmFunc(imports) {
   }
  }
  
- function $1189($0, $1) {
+ function $1194($0, $1) {
   HEAP32[$0 >> 2] = $1;
   std____2__locale__locale_28_29($0 + 4 | 0);
   HEAP32[$0 + 24 >> 2] = 0;
@@ -71816,7 +71852,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function $1190($0, $1, $2) {
+ function $1195($0, $1, $2) {
   var $3 = 0;
   while (1) {
    if (($0 | 0) != ($1 | 0)) {
@@ -71836,7 +71872,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function $1191($0, $1, $2) {
+ function $1196($0, $1, $2) {
   var $3 = 0;
   while (1) {
    if (($0 | 0) != ($1 | 0)) {
@@ -71854,7 +71890,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function $1192($0, $1, $2, $3, $4, $5) {
+ function $1197($0, $1, $2, $3, $4, $5) {
   var $6 = 0, $7 = 0, $8 = 0;
   $6 = __stack_pointer - 112 | 0;
   __stack_pointer = $6;
@@ -71878,7 +71914,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function $1193($0, $1, $2, $3, $4) {
+ function $1198($0, $1, $2, $3, $4) {
   var $5 = 0, $6 = 0, $7 = 0, $8 = 0;
   $5 = __stack_pointer - 80 | 0;
   __stack_pointer = $5;
@@ -71901,7 +71937,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function $1194($0, $1, $2, $3, $4, $5) {
+ function $1199($0, $1, $2, $3, $4, $5) {
   var $6 = 0, $7 = 0, $8 = 0;
   $6 = __stack_pointer - 256 | 0;
   __stack_pointer = $6;
@@ -71925,7 +71961,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function $1195($0, $1, $2, $3, $4) {
+ function $1200($0, $1, $2, $3, $4) {
   var $5 = 0, $6 = 0, $7 = 0, $8 = 0;
   $5 = __stack_pointer - 144 | 0;
   __stack_pointer = $5;
@@ -71948,7 +71984,7 @@ function asmFunc(imports) {
   return $0;
  }
  
- function $1196($0, $1, $2, $3) {
+ function $1201($0, $1, $2, $3) {
   var $4 = 0, $5 = 0;
   $5 = $2;
   $4 = HEAP32[$0 >> 2];
@@ -71971,7 +72007,7 @@ function asmFunc(imports) {
   HEAP32[$1 >> 2] = HEAP32[$1 + 4 >> 2];
  }
  
- function $1197($0, $1, $2, $3) {
+ function $1202($0, $1, $2, $3) {
   var $4 = 0, $5 = 0, $6 = 0;
   $4 = __stack_pointer - 16 | 0;
   __stack_pointer = $4;
@@ -71984,7 +72020,7 @@ function asmFunc(imports) {
   __stack_pointer = $4 + 16 | 0;
  }
  
- function $1198($0, $1, $2, $3, $4, $5) {
+ function $1203($0, $1, $2, $3, $4, $5) {
   var $6 = 0, $7 = 0, $8 = 0;
   $6 = __stack_pointer - 16 | 0;
   __stack_pointer = $6;
@@ -72186,7 +72222,7 @@ function asmFunc(imports) {
 ;
  bufferView = HEAPU8;
  initActiveSegments(imports);
- var FUNCTION_TABLE = Table([null, compE, jpeg_std_error, my_error_exit, jpeg_destroy_decompress, arLog, jpeg_CreateDecompress, jpeg_stdio_src, jpeg_read_header, jpeg_start_decompress, jpeg_finish_decompress, jpeg_read_scanlines, std__logic_error___logic_error_28_29, dummy_1399, vision__Exception___Exception_28_29, __cxx_global_array_dtor, vision__GaussianScaleSpacePyramid___GaussianScaleSpacePyramid_28_29, vision__GaussianScaleSpacePyramid___GaussianScaleSpacePyramid_28_29_384, vision__BinomialPyramid32f___BinomialPyramid32f_28_29, vision__BinomialPyramid32f___BinomialPyramid32f_28_29_373, vision__Exception___Exception_28_29_385, vision__Exception__what_28_29_20const, dummy_1399, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96_______on_zero_shared_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96_______get_deleter_28std__type_info_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______get_deleter_28std__type_info_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20std____2__shared_ptr_unsigned_20char_____shared_ptr_default_delete_unsigned_20char_2c_20unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20std____2__shared_ptr_unsigned_20char_____shared_ptr_default_delete_unsigned_20char_2c_20unsigned_20char__2c_20std____2__allocator_unsigned_20char______get_deleter_28std__type_info_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, createKpmHandleHelper__$_1____invoke_28_KpmHandle__29, createKpmHandleHelper__$_1____invoke_28_KpmHandle__29, embind_init_constant_bindings_28_29, setup, setFiltering, teardown, setupAR2, addNFTMarkers, decompressZFT, recalculateCameraLens, loadCamera, detectNFTMarker, getNFTMarkerInfo, getNFTData, setDebugMode, getDebugMode, getProcessingImage, setLogLevel, getLogLevel, setProjectionNearPlane, getProjectionNearPlane, setProjectionFarPlane, getProjectionFarPlane, setThresholdMode, getThresholdMode, setThreshold, getThreshold, setImageProcMode, getImageProcMode, getCameraLens, passVideoData, void_20const__20emscripten__internal__getActualType_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, void_20emscripten__internal__raw_destructor_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______20emscripten__internal__operator_new_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28_29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______push_back_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______resize_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______size_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______get_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int_29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______set_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29, void_20const__20emscripten__internal__getActualType_std____2__vector_int_2c_20std____2__allocator_int____28std____2__vector_int_2c_20std____2__allocator_int____29, void_20emscripten__internal__raw_destructor_std____2__vector_int_2c_20std____2__allocator_int____28std____2__vector_int_2c_20std____2__allocator_int____29, std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______20emscripten__internal__operator_new_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28_29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____push_back_28std____2__vector_int_2c_20std____2__allocator_int____2c_20int___29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____resize_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____size_28std____2__vector_int_2c_20std____2__allocator_int___20const__29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____get_28std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int_29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____set_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29, void_20const__20emscripten__internal__getActualType_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____29, void_20emscripten__internal__raw_destructor_std____2__vector_int_2c_20std____2__allocator_int____28std____2__vector_int_2c_20std____2__allocator_int____29, std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______20emscripten__internal__operator_new_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28_29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____push_back_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker___29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____resize_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____size_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____get_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int_29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____set_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int_2c_20int_2c_20int_2c_20bool___invoke_28int_20_28__29_28int_2c_20int_2c_20int_2c_20bool_29_2c_20int_2c_20int_2c_20int_2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int_2c_20bool___invoke_28void_20_28__29_28int_2c_20bool_29_2c_20int_2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int___invoke_28int_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20std____2__vector_int_2c_20std____2__allocator_int___2c_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char________invoke_28std____2__vector_int_2c_20std____2__allocator_int___20_28__29_28int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29_2c_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____invoke_28int_20_28__29_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___29_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____invoke_28int_20_28__29_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___29_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20emscripten__val_2c_20int_2c_20int___invoke_28emscripten__val_20_28__29_28int_2c_20int_29_2c_20int_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20nftMarker_2c_20int_2c_20int___invoke_28nftMarker_20_28__29_28int_2c_20int_29_2c_20int_2c_20int_29, nftMarker__20emscripten__internal__raw_constructor_nftMarker__28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, int_20emscripten__internal__MemberAccess_nftMarker_2c_20int___getWire_nftMarker_2c_20emscripten__internal__rvp__default_tag__28int_20nftMarker____20const__2c_20nftMarker__29, void_20emscripten__internal__MemberAccess_nftMarker_2c_20int___setWire_nftMarker__28int_20nftMarker____20const__2c_20nftMarker__2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int_2c_20int___invoke_28int_20_28__29_28int_2c_20int_29_2c_20int_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int___invoke_28void_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int_2c_20double___invoke_28void_20_28__29_28int_2c_20double_29_2c_20int_2c_20double_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20double_2c_20int___invoke_28double_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int_2c_20bool___invoke_28void_20_28__29_28int_2c_20bool_29_2c_20int_2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20emscripten__val_2c_20int___invoke_28emscripten__val_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int_2c_20emscripten__val_2c_20emscripten__val_2c_20bool___invoke_28int_20_28__29_28int_2c_20emscripten__val_2c_20emscripten__val_2c_20bool_29_2c_20int_2c_20emscripten___EM_VAL__2c_20emscripten___EM_VAL__2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____29_2c_20void_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______invoke_28void_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20void_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const____invoke_28void_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20unsigned_20int_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20unsigned_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const____invoke_28unsigned_20int_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20std____2__optional_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int_29_2c_20std____2__optional_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int___invoke_28std____2__optional_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int_29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20bool_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20bool_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const____invoke_28bool_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20int___29_2c_20void_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20int_____invoke_28void_20_28___29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20int___29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20void_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const____invoke_28void_20_28___29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20unsigned_20int_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20unsigned_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const____invoke_28unsigned_20int_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20std____2__optional_int__20_28__29_28std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int_29_2c_20std____2__optional_int__2c_20std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int___invoke_28std____2__optional_int__20_28___29_28std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int_29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20bool_20_28__29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20bool_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const____invoke_28bool_20_28___29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker___29_2c_20void_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker_____invoke_28void_20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker___29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker__29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20void_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const____invoke_28void_20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker__29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20unsigned_20int_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20unsigned_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const____invoke_28unsigned_20int_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20std____2__optional_nftMarker__20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int_29_2c_20std____2__optional_nftMarker__2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int___invoke_28std____2__optional_nftMarker__20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int_29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20bool_20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20bool_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const____invoke_28bool_20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker__29, arController__kpmHandle___lambda__28_KpmHandle__29____invoke_28_KpmHandle__29, __cxx_global_array_dtor_821, __cxx_global_array_dtor_2, compE_1129, zcalloc, zcfree, embind_init_builtin_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, jpeg_resync_to_restart, skip_input_data, fill_input_buffer, init_source, finish_input_pass, start_input_pass, reset_input_controller, consume_markers, skip_variable, read_restart_marker, read_markers, reset_marker_reader, get_interesting_appn, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, grayscale_convert, rgb_gray_convert, rgb1_gray_convert, gray_rgb_convert, ycc_rgb_convert, rgb_convert, rgb1_rgb_convert, ycck_cmyk_convert, cmyk_yk_convert, null_convert, start_pass, jpeg_idct_1x1, jpeg_idct_2x2, jpeg_idct_3x3, jpeg_idct_4x4, jpeg_idct_5x5, jpeg_idct_6x6, jpeg_idct_7x7, jpeg_idct_10x10, jpeg_idct_11x11, jpeg_idct_12x12, jpeg_idct_13x13, jpeg_idct_14x14, jpeg_idct_15x15, jpeg_idct_16x16, jpeg_idct_16x8, jpeg_idct_14x7, jpeg_idct_12x6, jpeg_idct_10x5, jpeg_idct_8x4, jpeg_idct_6x3, jpeg_idct_4x2, jpeg_idct_2x1, jpeg_idct_8x16, jpeg_idct_7x14, jpeg_idct_6x12, jpeg_idct_5x10, jpeg_idct_4x8, jpeg_idct_3x6, jpeg_idct_2x4, jpeg_idct_1x2, jpeg_idct_9x9, jpeg_idct_islow, jpeg_idct_ifast, jpeg_idct_float, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, start_pass_1211, decode_mcu_DC_first, decode_mcu_AC_first, decode_mcu_DC_refine, decode_mcu_AC_refine, decode_mcu, finish_pass_huff, start_pass_huff_decoder, decode_mcu_AC_refine_1222, decode_mcu_DC_refine_1223, decode_mcu_AC_first_1224, decode_mcu_DC_first_1225, decode_mcu_1227, decode_mcu_sub, decompress_data, consume_data, decompress_onepass, dummy_consume_data, start_output_pass, start_input_pass_1237, decompress_smooth_data, start_pass_main, process_data_context_main, process_data_simple_main, process_data_crank_post, finish_output_pass, prepare_for_output_pass, start_pass_merged_upsample, h2v2_merged_upsample, merged_2v_upsample, h2v1_merged_upsample, merged_1v_upsample, start_pass_dpost, post_process_1pass, post_process_prepass, post_process_2pass, sep_upsample, start_pass_upsample, fullsize_upsample, h2v1_upsample, h2v2_upsample, int_upsample, reset_error_mgr, format_message, output_message, emit_message, error_exit, self_destruct, free_pool, access_virt_barray, access_virt_sarray, realize_virt_arrays, request_virt_barray, request_virt_sarray, alloc_barray, alloc_sarray, alloc_large, alloc_small, new_color_map_1_quant, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, start_pass_1_quant, color_quantize3, color_quantize, quantize3_ord_dither, quantize_ord_dither, quantize_fs_dither, new_color_map_2_quant, start_pass_2_quant, pass2_no_dither, pass2_fs_dither, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, finish_pass1, prescan_quantize, __stdio_seek, __stdio_write, __stdio_read, __stdio_close, wrapper_cmp, dummy_consume_data, __emscripten_stdout_seek, fmt_fp, pop_arg_long_double, sn_write, string_read, std____2__basic_streambuf_char_2c_20std____2__char_traits_char_____basic_streambuf_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char_____basic_streambuf_28_29_1638, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____setbuf_28char__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekoff_28long_20long_2c_20std____2__ios_base__seekdir_2c_20unsigned_20int_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekpos_28std____2__fpos___mbstate_t__2c_20unsigned_20int_29, dummy_consume_data, dummy_consume_data, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____xsgetn_28char__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____underflow_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____uflow_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____xsputn_28char_20const__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1662, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1664, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1665, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1691, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1693, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1694, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t_____basic_streambuf_28_29, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t_____basic_streambuf_28_29_1713, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____setbuf_28char__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekoff_28long_20long_2c_20std____2__ios_base__seekdir_2c_20unsigned_20int_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekpos_28std____2__fpos___mbstate_t__2c_20unsigned_20int_29, dummy_consume_data, dummy_consume_data, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____xsgetn_28wchar_t__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____underflow_28_29, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____uflow_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____xsputn_28wchar_t_20const__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1662, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1664, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1665, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1691, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1693, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1694, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29_1636, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29_1636, std____2__ios_base___ios_base_28_29, std____2__ios_base___ios_base_28_29_1862, __cxx_global_array_dtor_1, std____2____stdinbuf_char______stdinbuf_28_29, std____2____stdinbuf_char___imbue_28std____2__locale_20const__29, std____2____stdinbuf_char___underflow_28_29, std____2____stdinbuf_char___uflow_28_29, std____2____stdinbuf_char___pbackfail_28int_29, std____2____stdinbuf_char______stdinbuf_28_29, std____2____stdoutbuf_char___imbue_28std____2__locale_20const__29, std____2____stdoutbuf_char___sync_28_29, std____2____stdoutbuf_char___xsputn_28char_20const__2c_20long_29, std____2____stdoutbuf_char___overflow_28int_29, std____2____stdinbuf_wchar_t______stdinbuf_28_29, std____2____stdinbuf_wchar_t___imbue_28std____2__locale_20const__29, std____2____stdinbuf_wchar_t___underflow_28_29, std____2____stdinbuf_wchar_t___uflow_28_29, std____2____stdinbuf_wchar_t___pbackfail_28int_29, std____2____stdinbuf_wchar_t______stdinbuf_28_29, std____2____stdoutbuf_wchar_t___imbue_28std____2__locale_20const__29, std____2____stdoutbuf_char___sync_28_29, std____2____stdoutbuf_wchar_t___xsputn_28wchar_t_20const__2c_20long_29, std____2____stdoutbuf_wchar_t___overflow_28int_29, emscripten_builtin_free, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, void_20std____2____call_once_proxy_5babi_nn200100_5d_std____2__tuple_std____2__locale__id____get_28_29__$_0_____28void__29, __cxx_global_array_dtor_59, __cxx_global_array_dtor_74, __cxx_global_array_dtor_89, __cxx_global_array_dtor_113, __cxx_global_array_dtor_137, __cxx_global_array_dtor_140, __cxx_global_array_dtor_2748, __cxx_global_array_dtor_31, __cxx_global_array_dtor_32, __cxx_global_array_dtor_34, __cxx_global_array_dtor_36, __cxx_global_array_dtor_38, __cxx_global_array_dtor_40, __cxx_global_array_dtor_42, std____2__locale____imp_____imp_28_29, std____2__locale____imp_____imp_28_29_2591, std____2__locale__facet____on_zero_shared_28_29, std____2__ctype_char____ctype_28_29, std____2__ctype_char____ctype_28_29_2631, std____2__ctype_char___do_toupper_28char_29_20const, std____2__ctype_char___do_toupper_28char__2c_20char_20const__29_20const, std____2__ctype_char___do_tolower_28char_29_20const, std____2__ctype_char___do_tolower_28char__2c_20char_20const__29_20const, unsigned_20int_20const__20std____2____identity__operator_28_29_5babi_nn200100_5d_unsigned_20int_20const___28unsigned_20int_20const__29_20const, std____2__ctype_char___do_widen_28char_20const__2c_20char_20const__2c_20char__29_20const, std____2__ctype_char___do_narrow_28char_2c_20char_29_20const, std____2__ctype_char___do_narrow_28char_20const__2c_20char_20const__2c_20char_2c_20char__29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t____codecvt_28_29, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t____codecvt_28_29_2649, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20wchar_t_20const__2c_20wchar_t_20const__2c_20wchar_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20wchar_t__2c_20wchar_t__2c_20wchar_t___29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_encoding_28_29_20const, dummy_consume_data, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2__numpunct_char____numpunct_28_29, std____2__numpunct_char____numpunct_28_29_2710, std____2__numpunct_char___do_decimal_point_28_29_20const, std____2__numpunct_char___do_thousands_sep_28_29_20const, std____2__numpunct_char___do_grouping_28_29_20const, std____2__numpunct_char___do_truename_28_29_20const, std____2__numpunct_char___do_falsename_28_29_20const, std____2__numpunct_wchar_t____numpunct_28_29, std____2__numpunct_wchar_t____numpunct_28_29_2712, std____2__ios_base__precision_5babi_nn200100_5d_28_29_20const, std____2__ios_base__width_5babi_nn200100_5d_28_29_20const, std____2__numpunct_wchar_t___do_grouping_28_29_20const, std____2__numpunct_wchar_t___do_truename_28_29_20const, std____2__numpunct_wchar_t___do_falsename_28_29_20const, dummy_1399, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__ctype_wchar_t___do_is_28unsigned_20long_2c_20wchar_t_29_20const, std____2__ctype_wchar_t___do_is_28wchar_t_20const__2c_20wchar_t_20const__2c_20unsigned_20long__29_20const, std____2__ctype_wchar_t___do_scan_is_28unsigned_20long_2c_20wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__ctype_wchar_t___do_scan_not_28unsigned_20long_2c_20wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__ctype_wchar_t___do_toupper_28wchar_t_29_20const, std____2__ctype_wchar_t___do_toupper_28wchar_t__2c_20wchar_t_20const__29_20const, std____2__ctype_wchar_t___do_tolower_28wchar_t_29_20const, std____2__ctype_wchar_t___do_tolower_28wchar_t__2c_20wchar_t_20const__29_20const, unsigned_20int_20const__20std____2____identity__operator_28_29_5babi_nn200100_5d_unsigned_20int_20const___28unsigned_20int_20const__29_20const, std____2__ctype_wchar_t___do_widen_28char_20const__2c_20char_20const__2c_20wchar_t__29_20const, std____2__ctype_wchar_t___do_narrow_28wchar_t_2c_20char_29_20const, std____2__ctype_wchar_t___do_narrow_28wchar_t_20const__2c_20wchar_t_20const__2c_20char_2c_20char__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, __lockfile, __lockfile, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, __lockfile, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char16_t_20const__2c_20char16_t_20const__2c_20char16_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char16_t__2c_20char16_t__2c_20char16_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char16_t_20const__2c_20char16_t_20const__2c_20char16_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char16_t__2c_20char16_t__2c_20char16_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char32_t_20const__2c_20char32_t_20const__2c_20char32_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char32_t__2c_20char32_t__2c_20char32_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char32_t_20const__2c_20char32_t_20const__2c_20char32_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char32_t__2c_20char32_t__2c_20char32_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, dummy_1399, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__collate_char___do_compare_28char_20const__2c_20char_20const__2c_20char_20const__2c_20char_20const__29_20const, std____2__collate_char___do_transform_28char_20const__2c_20char_20const__29_20const, std____2__collate_char___do_hash_28char_20const__2c_20char_20const__29_20const, dummy_1399, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__collate_wchar_t___do_compare_28wchar_t_20const__2c_20wchar_t_20const__2c_20wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__collate_wchar_t___do_transform_28wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__collate_wchar_t___do_hash_28wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20bool__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20long__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20short__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20long_20long__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20float__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20double__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20bool__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20long__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20short__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20long_20long__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20float__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20double__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20bool_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20long_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20unsigned_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20unsigned_20long_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20double_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20long_20double_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20void_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20bool_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20long_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20unsigned_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20unsigned_20long_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20double_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20long_20double_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20void_20const__29_20const, dummy_1399, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_date_order_28_29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_time_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_date_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_weekday_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_monthname_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_year_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__2c_20char_2c_20char_29_20const, std____2____time_get_c_storage_char_____weeks_28_29_20const, std____2____time_get_c_storage_char_____months_28_29_20const, std____2____time_get_c_storage_char_____am_pm_28_29_20const, std____2____time_get_c_storage_char_____c_28_29_20const, std____2____time_get_c_storage_char_____r_28_29_20const, std____2____time_get_c_storage_char_____x_28_29_20const, std____2____time_get_c_storage_char_____X_28_29_20const, dummy_1399, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_date_order_28_29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_time_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_date_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_weekday_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_monthname_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_year_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__2c_20char_2c_20char_29_20const, std____2____time_get_c_storage_wchar_t_____weeks_28_29_20const, std____2____time_get_c_storage_wchar_t_____months_28_29_20const, std____2____time_get_c_storage_wchar_t_____am_pm_28_29_20const, std____2____time_get_c_storage_wchar_t_____c_28_29_20const, std____2____time_get_c_storage_wchar_t_____r_28_29_20const, std____2____time_get_c_storage_wchar_t_____x_28_29_20const, std____2____time_get_c_storage_wchar_t_____X_28_29_20const, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2777, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20tm_20const__2c_20char_2c_20char_29_20const, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2777, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29, std____2__time_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20tm_20const__2c_20char_2c_20char_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__money_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__money_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20std____2__basic_string_wchar_t_2c_20std____2__char_traits_wchar_t__2c_20std____2__allocator_wchar_t____29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20char_2c_20long_20double_29_20const, std____2__money_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20char_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20wchar_t_2c_20long_20double_29_20const, std____2__money_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20wchar_t_2c_20std____2__basic_string_wchar_t_2c_20std____2__char_traits_wchar_t__2c_20std____2__allocator_wchar_t___20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__messages_char___do_open_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20std____2__locale_20const__29_20const, std____2__messages_char___do_get_28long_2c_20int_2c_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_20const, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__messages_char___do_open_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20std____2__locale_20const__29_20const, std____2__messages_wchar_t___do_get_28long_2c_20int_2c_20int_2c_20std____2__basic_string_wchar_t_2c_20std____2__char_traits_wchar_t__2c_20std____2__allocator_wchar_t___20const__29_20const, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2____shared_count_____shared_count_28_29_3039, __cxa_pure_virtual, dummy_1399, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, __cxxabiv1____fundamental_type_info__can_catch_28__cxxabiv1____shim_type_info_20const__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____class_type_info__can_catch_28__cxxabiv1____shim_type_info_20const__2c_20void___29_20const, __cxxabiv1____class_type_info__search_above_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____class_type_info__search_below_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____class_type_info__has_unambiguous_public_base_28__cxxabiv1____dynamic_cast_info__2c_20void__2c_20int_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____si_class_type_info__search_above_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____si_class_type_info__search_below_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____si_class_type_info__has_unambiguous_public_base_28__cxxabiv1____dynamic_cast_info__2c_20void__2c_20int_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____vmi_class_type_info__search_above_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____vmi_class_type_info__search_below_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____vmi_class_type_info__has_unambiguous_public_base_28__cxxabiv1____dynamic_cast_info__2c_20void__2c_20int_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____pointer_type_info__can_catch_28__cxxabiv1____shim_type_info_20const__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std__bad_alloc__what_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std__bad_array_new_length__what_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std__exception__what_28_29_20const, std__logic_error___logic_error_28_29_3151, std__logic_error__what_28_29_20const, std__logic_error___logic_error_28_29_3151, std__logic_error___logic_error_28_29_3151]);
+ var FUNCTION_TABLE = Table([null, compE, jpeg_std_error, my_error_exit, jpeg_destroy_decompress, arLog, jpeg_CreateDecompress, jpeg_stdio_src, jpeg_read_header, jpeg_start_decompress, jpeg_finish_decompress, jpeg_read_scanlines, std__logic_error___logic_error_28_29, dummy_1391, vision__Exception___Exception_28_29, __cxx_global_array_dtor, vision__GaussianScaleSpacePyramid___GaussianScaleSpacePyramid_28_29, vision__GaussianScaleSpacePyramid___GaussianScaleSpacePyramid_28_29_384, vision__BinomialPyramid32f___BinomialPyramid32f_28_29, vision__BinomialPyramid32f___BinomialPyramid32f_28_29_373, vision__Exception___Exception_28_29_385, vision__Exception__what_28_29_20const, dummy_1391, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96_______on_zero_shared_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96_______get_deleter_28std__type_info_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______get_deleter_28std__type_info_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20std____2__shared_ptr_unsigned_20char_____shared_ptr_default_delete_unsigned_20char_2c_20unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20std____2__shared_ptr_unsigned_20char_____shared_ptr_default_delete_unsigned_20char_2c_20unsigned_20char__2c_20std____2__allocator_unsigned_20char______get_deleter_28std__type_info_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, createKpmHandleHelper__$_1____invoke_28_KpmHandle__29, createKpmHandleHelper__$_1____invoke_28_KpmHandle__29, embind_init_constant_bindings_28_29, setup, setFiltering, teardown, setupAR2, addNFTMarkers, decompressZFT, recalculateCameraLens, loadCamera, detectNFTMarker, getNFTMarkerInfo, getNFTData, setDebugMode, getDebugMode, getProcessingImage, setLogLevel, getLogLevel, setProjectionNearPlane, getProjectionNearPlane, setProjectionFarPlane, getProjectionFarPlane, setThresholdMode, getThresholdMode, setThreshold, getThreshold, setImageProcMode, getImageProcMode, getCameraLens, passVideoData, void_20const__20emscripten__internal__getActualType_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, void_20emscripten__internal__raw_destructor_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______20emscripten__internal__operator_new_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28_29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______push_back_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______resize_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______size_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______get_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int_29, emscripten__internal__VectorAccess_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______set_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29, void_20const__20emscripten__internal__getActualType_std____2__vector_int_2c_20std____2__allocator_int____28std____2__vector_int_2c_20std____2__allocator_int____29, void_20emscripten__internal__raw_destructor_std____2__vector_int_2c_20std____2__allocator_int____28std____2__vector_int_2c_20std____2__allocator_int____29, std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______20emscripten__internal__operator_new_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28_29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____push_back_28std____2__vector_int_2c_20std____2__allocator_int____2c_20int___29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____resize_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____size_28std____2__vector_int_2c_20std____2__allocator_int___20const__29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____get_28std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int_29, emscripten__internal__VectorAccess_std____2__vector_int_2c_20std____2__allocator_int_____set_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29, void_20const__20emscripten__internal__getActualType_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____29, void_20emscripten__internal__raw_destructor_std____2__vector_int_2c_20std____2__allocator_int____28std____2__vector_int_2c_20std____2__allocator_int____29, std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______20emscripten__internal__operator_new_std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______28_29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____push_back_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker___29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____resize_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____size_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____get_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int_29, emscripten__internal__VectorAccess_std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker_____set_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int_2c_20int_2c_20int_2c_20bool___invoke_28int_20_28__29_28int_2c_20int_2c_20int_2c_20bool_29_2c_20int_2c_20int_2c_20int_2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int_2c_20bool___invoke_28void_20_28__29_28int_2c_20bool_29_2c_20int_2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int___invoke_28int_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20std____2__vector_int_2c_20std____2__allocator_int___2c_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char________invoke_28std____2__vector_int_2c_20std____2__allocator_int___20_28__29_28int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29_2c_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____invoke_28int_20_28__29_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___29_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____invoke_28int_20_28__29_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___29_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20emscripten__val_2c_20int_2c_20int___invoke_28emscripten__val_20_28__29_28int_2c_20int_29_2c_20int_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20nftMarker_2c_20int_2c_20int___invoke_28nftMarker_20_28__29_28int_2c_20int_29_2c_20int_2c_20int_29, nftMarker__20emscripten__internal__raw_constructor_nftMarker__28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, int_20emscripten__internal__MemberAccess_nftMarker_2c_20int___getWire_nftMarker_2c_20emscripten__internal__rvp__default_tag__28int_20nftMarker____20const__2c_20nftMarker__29, void_20emscripten__internal__MemberAccess_nftMarker_2c_20int___setWire_nftMarker__28int_20nftMarker____20const__2c_20nftMarker__2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int_2c_20int___invoke_28int_20_28__29_28int_2c_20int_29_2c_20int_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int___invoke_28void_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int_2c_20double___invoke_28void_20_28__29_28int_2c_20double_29_2c_20int_2c_20double_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20double_2c_20int___invoke_28double_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20void_2c_20int_2c_20bool___invoke_28void_20_28__29_28int_2c_20bool_29_2c_20int_2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20emscripten__val_2c_20int___invoke_28emscripten__val_20_28__29_28int_29_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int_2c_20int_2c_20emscripten__val_2c_20emscripten__val_2c_20bool___invoke_28int_20_28__29_28int_2c_20emscripten__val_2c_20emscripten__val_2c_20bool_29_2c_20int_2c_20emscripten___EM_VAL__2c_20emscripten___EM_VAL__2c_20bool_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____29_2c_20void_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_______invoke_28void_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20void_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const____invoke_28void_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20unsigned_20int_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20unsigned_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const____invoke_28unsigned_20int_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20std____2__optional_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int_29_2c_20std____2__optional_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int___invoke_28std____2__optional_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__2c_20unsigned_20int_29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20bool_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20bool_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const____invoke_28bool_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______2c_20unsigned_20int_2c_20emscripten__internal__BindingType_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20void____unnamed___29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20int___29_2c_20void_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20int_____invoke_28void_20_28___29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20int___29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20void_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const____invoke_28void_20_28___29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20unsigned_20int_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20unsigned_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const____invoke_28unsigned_20int_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20std____2__optional_int__20_28__29_28std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int_29_2c_20std____2__optional_int__2c_20std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int___invoke_28std____2__optional_int__20_28___29_28std____2__vector_int_2c_20std____2__allocator_int___20const__2c_20unsigned_20int_29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20bool_20_28__29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20bool_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const____invoke_28bool_20_28___29_28std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_20const__29_2c_20std____2__vector_int_2c_20std____2__allocator_int____2c_20unsigned_20int_2c_20int_29, emscripten__internal__Invoker_emscripten__internal__rvp__default_tag_2c_20int___invoke_28int_20_28__29_28_29_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker___29_2c_20void_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker_____invoke_28void_20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker___29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20nftMarker__29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20void_20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20void_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const____invoke_28void_20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker__29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20unsigned_20int_20_28__29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20unsigned_20int_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const____invoke_28unsigned_20int_20_28___29_28std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____20const__29_2c_20std____2__vector_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___2c_20std____2__allocator_std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char______29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20std____2__optional_nftMarker__20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int_29_2c_20std____2__optional_nftMarker__2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int___invoke_28std____2__optional_nftMarker__20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker___20const__2c_20unsigned_20int_29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_29, emscripten__internal__FunctionInvoker_emscripten__internal__rvp__default_tag_2c_20bool_20_28__29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20bool_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const____invoke_28bool_20_28___29_28std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker_20const__29_2c_20std____2__vector_nftMarker_2c_20std____2__allocator_nftMarker____2c_20unsigned_20int_2c_20nftMarker__29, arController__kpmHandle___lambda__28_KpmHandle__29____invoke_28_KpmHandle__29, __cxx_global_array_dtor_813, __cxx_global_array_dtor_2, compE_1121, zcalloc, zcfree, embind_init_builtin_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, jpeg_resync_to_restart, skip_input_data, fill_input_buffer, init_source, finish_input_pass, start_input_pass, reset_input_controller, consume_markers, skip_variable, read_restart_marker, read_markers, reset_marker_reader, get_interesting_appn, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, grayscale_convert, rgb_gray_convert, rgb1_gray_convert, gray_rgb_convert, ycc_rgb_convert, rgb_convert, rgb1_rgb_convert, ycck_cmyk_convert, cmyk_yk_convert, null_convert, start_pass, jpeg_idct_1x1, jpeg_idct_2x2, jpeg_idct_3x3, jpeg_idct_4x4, jpeg_idct_5x5, jpeg_idct_6x6, jpeg_idct_7x7, jpeg_idct_10x10, jpeg_idct_11x11, jpeg_idct_12x12, jpeg_idct_13x13, jpeg_idct_14x14, jpeg_idct_15x15, jpeg_idct_16x16, jpeg_idct_16x8, jpeg_idct_14x7, jpeg_idct_12x6, jpeg_idct_10x5, jpeg_idct_8x4, jpeg_idct_6x3, jpeg_idct_4x2, jpeg_idct_2x1, jpeg_idct_8x16, jpeg_idct_7x14, jpeg_idct_6x12, jpeg_idct_5x10, jpeg_idct_4x8, jpeg_idct_3x6, jpeg_idct_2x4, jpeg_idct_1x2, jpeg_idct_9x9, jpeg_idct_islow, jpeg_idct_ifast, jpeg_idct_float, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, start_pass_1203, decode_mcu_DC_first, decode_mcu_AC_first, decode_mcu_DC_refine, decode_mcu_AC_refine, decode_mcu, finish_pass_huff, start_pass_huff_decoder, decode_mcu_AC_refine_1214, decode_mcu_DC_refine_1215, decode_mcu_AC_first_1216, decode_mcu_DC_first_1217, decode_mcu_1219, decode_mcu_sub, decompress_data, consume_data, decompress_onepass, dummy_consume_data, start_output_pass, start_input_pass_1229, decompress_smooth_data, start_pass_main, process_data_context_main, process_data_simple_main, process_data_crank_post, finish_output_pass, prepare_for_output_pass, start_pass_merged_upsample, h2v2_merged_upsample, merged_2v_upsample, h2v1_merged_upsample, merged_1v_upsample, start_pass_dpost, post_process_1pass, post_process_prepass, post_process_2pass, sep_upsample, start_pass_upsample, fullsize_upsample, h2v1_upsample, h2v2_upsample, int_upsample, reset_error_mgr, format_message, output_message, emit_message, error_exit, self_destruct, free_pool, access_virt_barray, access_virt_sarray, realize_virt_arrays, request_virt_barray, request_virt_sarray, alloc_barray, alloc_sarray, alloc_large, alloc_small, new_color_map_1_quant, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, start_pass_1_quant, color_quantize3, color_quantize, quantize3_ord_dither, quantize_ord_dither, quantize_fs_dither, new_color_map_2_quant, start_pass_2_quant, pass2_no_dither, pass2_fs_dither, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, finish_pass1, prescan_quantize, __stdio_seek, __stdio_write, __stdio_read, __stdio_close, wrapper_cmp, dummy_consume_data, __emscripten_stdout_seek, fmt_fp, pop_arg_long_double, sn_write, string_read, std____2__basic_streambuf_char_2c_20std____2__char_traits_char_____basic_streambuf_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char_____basic_streambuf_28_29_1630, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____setbuf_28char__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekoff_28long_20long_2c_20std____2__ios_base__seekdir_2c_20unsigned_20int_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekpos_28std____2__fpos___mbstate_t__2c_20unsigned_20int_29, dummy_consume_data, dummy_consume_data, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____xsgetn_28char__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____underflow_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____uflow_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____xsputn_28char_20const__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1654, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1656, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1657, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1683, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1685, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1686, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t_____basic_streambuf_28_29, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t_____basic_streambuf_28_29_1705, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____setbuf_28char__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekoff_28long_20long_2c_20std____2__ios_base__seekdir_2c_20unsigned_20int_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____seekpos_28std____2__fpos___mbstate_t__2c_20unsigned_20int_29, dummy_consume_data, dummy_consume_data, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____xsgetn_28wchar_t__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____underflow_28_29, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____uflow_28_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_streambuf_wchar_t_2c_20std____2__char_traits_wchar_t____xsputn_28wchar_t_20const__2c_20long_29, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____pbackfail_28int_29, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1654, std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1656, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29, virtual_20thunk_20to_20std____2__basic_istream_char_2c_20std____2__char_traits_char_____basic_istream_28_29_1657, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1683, std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1685, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29, virtual_20thunk_20to_20std____2__basic_ostream_char_2c_20std____2__char_traits_char_____basic_ostream_28_29_1686, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29_1628, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29, std____2__basic_ios_char_2c_20std____2__char_traits_char_____basic_ios_28_29_1628, std____2__ios_base___ios_base_28_29, std____2__ios_base___ios_base_28_29_1854, __cxx_global_array_dtor_1, std____2____stdinbuf_char______stdinbuf_28_29, std____2____stdinbuf_char___imbue_28std____2__locale_20const__29, std____2____stdinbuf_char___underflow_28_29, std____2____stdinbuf_char___uflow_28_29, std____2____stdinbuf_char___pbackfail_28int_29, std____2____stdinbuf_char______stdinbuf_28_29, std____2____stdoutbuf_char___imbue_28std____2__locale_20const__29, std____2____stdoutbuf_char___sync_28_29, std____2____stdoutbuf_char___xsputn_28char_20const__2c_20long_29, std____2____stdoutbuf_char___overflow_28int_29, std____2____stdinbuf_wchar_t______stdinbuf_28_29, std____2____stdinbuf_wchar_t___imbue_28std____2__locale_20const__29, std____2____stdinbuf_wchar_t___underflow_28_29, std____2____stdinbuf_wchar_t___uflow_28_29, std____2____stdinbuf_wchar_t___pbackfail_28int_29, std____2____stdinbuf_wchar_t______stdinbuf_28_29, std____2____stdoutbuf_wchar_t___imbue_28std____2__locale_20const__29, std____2____stdoutbuf_char___sync_28_29, std____2____stdoutbuf_wchar_t___xsputn_28wchar_t_20const__2c_20long_29, std____2____stdoutbuf_wchar_t___overflow_28int_29, emscripten_builtin_free, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, void_20std____2____call_once_proxy_5babi_nn200100_5d_std____2__tuple_std____2__locale__id____get_28_29__$_0_____28void__29, __cxx_global_array_dtor_59, __cxx_global_array_dtor_74, __cxx_global_array_dtor_89, __cxx_global_array_dtor_113, __cxx_global_array_dtor_137, __cxx_global_array_dtor_140, __cxx_global_array_dtor_2740, __cxx_global_array_dtor_31, __cxx_global_array_dtor_32, __cxx_global_array_dtor_34, __cxx_global_array_dtor_36, __cxx_global_array_dtor_38, __cxx_global_array_dtor_40, __cxx_global_array_dtor_42, std____2__locale____imp_____imp_28_29, std____2__locale____imp_____imp_28_29_2583, std____2__locale__facet____on_zero_shared_28_29, std____2__ctype_char____ctype_28_29, std____2__ctype_char____ctype_28_29_2623, std____2__ctype_char___do_toupper_28char_29_20const, std____2__ctype_char___do_toupper_28char__2c_20char_20const__29_20const, std____2__ctype_char___do_tolower_28char_29_20const, std____2__ctype_char___do_tolower_28char__2c_20char_20const__29_20const, unsigned_20int_20const__20std____2____identity__operator_28_29_5babi_nn200100_5d_unsigned_20int_20const___28unsigned_20int_20const__29_20const, std____2__ctype_char___do_widen_28char_20const__2c_20char_20const__2c_20char__29_20const, std____2__ctype_char___do_narrow_28char_2c_20char_29_20const, std____2__ctype_char___do_narrow_28char_20const__2c_20char_20const__2c_20char_2c_20char__29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t____codecvt_28_29, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t____codecvt_28_29_2641, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20wchar_t_20const__2c_20wchar_t_20const__2c_20wchar_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20wchar_t__2c_20wchar_t__2c_20wchar_t___29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_encoding_28_29_20const, dummy_consume_data, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_wchar_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2__numpunct_char____numpunct_28_29, std____2__numpunct_char____numpunct_28_29_2702, std____2__numpunct_char___do_decimal_point_28_29_20const, std____2__numpunct_char___do_thousands_sep_28_29_20const, std____2__numpunct_char___do_grouping_28_29_20const, std____2__numpunct_char___do_truename_28_29_20const, std____2__numpunct_char___do_falsename_28_29_20const, std____2__numpunct_wchar_t____numpunct_28_29, std____2__numpunct_wchar_t____numpunct_28_29_2704, std____2__ios_base__precision_5babi_nn200100_5d_28_29_20const, std____2__ios_base__width_5babi_nn200100_5d_28_29_20const, std____2__numpunct_wchar_t___do_grouping_28_29_20const, std____2__numpunct_wchar_t___do_truename_28_29_20const, std____2__numpunct_wchar_t___do_falsename_28_29_20const, dummy_1391, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__ctype_wchar_t___do_is_28unsigned_20long_2c_20wchar_t_29_20const, std____2__ctype_wchar_t___do_is_28wchar_t_20const__2c_20wchar_t_20const__2c_20unsigned_20long__29_20const, std____2__ctype_wchar_t___do_scan_is_28unsigned_20long_2c_20wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__ctype_wchar_t___do_scan_not_28unsigned_20long_2c_20wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__ctype_wchar_t___do_toupper_28wchar_t_29_20const, std____2__ctype_wchar_t___do_toupper_28wchar_t__2c_20wchar_t_20const__29_20const, std____2__ctype_wchar_t___do_tolower_28wchar_t_29_20const, std____2__ctype_wchar_t___do_tolower_28wchar_t__2c_20wchar_t_20const__29_20const, unsigned_20int_20const__20std____2____identity__operator_28_29_5babi_nn200100_5d_unsigned_20int_20const___28unsigned_20int_20const__29_20const, std____2__ctype_wchar_t___do_widen_28char_20const__2c_20char_20const__2c_20wchar_t__29_20const, std____2__ctype_wchar_t___do_narrow_28wchar_t_2c_20char_29_20const, std____2__ctype_wchar_t___do_narrow_28wchar_t_20const__2c_20wchar_t_20const__2c_20char_2c_20char__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, __lockfile, __lockfile, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, __lockfile, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char16_t_20const__2c_20char16_t_20const__2c_20char16_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char16_t__2c_20char16_t__2c_20char16_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char16_t_20const__2c_20char16_t_20const__2c_20char16_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char16_t__2c_20char16_t__2c_20char16_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char32_t_20const__2c_20char32_t_20const__2c_20char32_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char32_t__2c_20char32_t__2c_20char32_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_out_28__mbstate_t__2c_20char32_t_20const__2c_20char32_t_20const__2c_20char32_t_20const___2c_20char__2c_20char__2c_20char___29_20const, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_in_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20char_20const___2c_20char32_t__2c_20char32_t__2c_20char32_t___29_20const, std____2__codecvt_char_2c_20char_2c_20__mbstate_t___do_unshift_28__mbstate_t__2c_20char__2c_20char__2c_20char___29_20const, dummy_consume_data, dummy_consume_data, std____2__codecvt_char32_t_2c_20char_2c_20__mbstate_t___do_length_28__mbstate_t__2c_20char_20const__2c_20char_20const__2c_20unsigned_20long_29_20const, std____2__codecvt_char16_t_2c_20char_2c_20__mbstate_t___do_max_length_28_29_20const, dummy_1391, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__collate_char___do_compare_28char_20const__2c_20char_20const__2c_20char_20const__2c_20char_20const__29_20const, std____2__collate_char___do_transform_28char_20const__2c_20char_20const__29_20const, std____2__collate_char___do_hash_28char_20const__2c_20char_20const__29_20const, dummy_1391, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__collate_wchar_t___do_compare_28wchar_t_20const__2c_20wchar_t_20const__2c_20wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__collate_wchar_t___do_transform_28wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2__collate_wchar_t___do_hash_28wchar_t_20const__2c_20wchar_t_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20bool__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20long__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20short__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20long_20long__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20float__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20double__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__num_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20bool__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20long__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20short__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20int__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20unsigned_20long_20long__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20float__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20double__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__num_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20bool_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20long_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20unsigned_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20unsigned_20long_20long_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20double_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20long_20double_29_20const, std____2__num_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20void_20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20bool_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20long_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20unsigned_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20unsigned_20long_20long_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20double_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20long_20double_29_20const, std____2__num_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20void_20const__29_20const, dummy_1391, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_date_order_28_29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_time_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_date_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_weekday_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_monthname_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_year_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__2c_20char_2c_20char_29_20const, std____2____time_get_c_storage_char_____weeks_28_29_20const, std____2____time_get_c_storage_char_____months_28_29_20const, std____2____time_get_c_storage_char_____am_pm_28_29_20const, std____2____time_get_c_storage_char_____c_28_29_20const, std____2____time_get_c_storage_char_____r_28_29_20const, std____2____time_get_c_storage_char_____x_28_29_20const, std____2____time_get_c_storage_char_____X_28_29_20const, dummy_1391, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__time_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_date_order_28_29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_time_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_date_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_weekday_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_monthname_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_year_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__29_20const, std____2__time_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20unsigned_20int__2c_20tm__2c_20char_2c_20char_29_20const, std____2____time_get_c_storage_wchar_t_____weeks_28_29_20const, std____2____time_get_c_storage_wchar_t_____months_28_29_20const, std____2____time_get_c_storage_wchar_t_____am_pm_28_29_20const, std____2____time_get_c_storage_wchar_t_____c_28_29_20const, std____2____time_get_c_storage_wchar_t_____r_28_29_20const, std____2____time_get_c_storage_wchar_t_____x_28_29_20const, std____2____time_get_c_storage_wchar_t_____X_28_29_20const, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2769, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__ios_base__2c_20char_2c_20tm_20const__2c_20char_2c_20char_29_20const, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29_2769, std____2__time_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char______time_put_28_29, std____2__time_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__ios_base__2c_20wchar_t_2c_20tm_20const__2c_20char_2c_20char_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_decimal_point_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_char_2c_20false___do_grouping_28_29_20const, std____2__moneypunct_wchar_t_2c_20false___do_negative_sign_28_29_20const, dummy_consume_data, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2__moneypunct_char_2c_20false___do_pos_format_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__money_get_char_2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char_____do_get_28std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20std____2__istreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20long_20double__29_20const, std____2__money_get_wchar_t_2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_get_28std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20std____2__istreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20unsigned_20int__2c_20std____2__basic_string_wchar_t_2c_20std____2__char_traits_wchar_t__2c_20std____2__allocator_wchar_t____29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20char_2c_20long_20double_29_20const, std____2__money_put_char_2c_20std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char_____do_put_28std____2__ostreambuf_iterator_char_2c_20std____2__char_traits_char___2c_20bool_2c_20std____2__ios_base__2c_20char_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__money_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20wchar_t_2c_20long_20double_29_20const, std____2__money_put_wchar_t_2c_20std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t_____do_put_28std____2__ostreambuf_iterator_wchar_t_2c_20std____2__char_traits_wchar_t___2c_20bool_2c_20std____2__ios_base__2c_20wchar_t_2c_20std____2__basic_string_wchar_t_2c_20std____2__char_traits_wchar_t__2c_20std____2__allocator_wchar_t___20const__29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__messages_char___do_open_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20std____2__locale_20const__29_20const, std____2__messages_char___do_get_28long_2c_20int_2c_20int_2c_20std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29_20const, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2__messages_char___do_open_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20std____2__locale_20const__29_20const, std____2__messages_wchar_t___do_get_28long_2c_20int_2c_20int_2c_20std____2__basic_string_wchar_t_2c_20std____2__char_traits_wchar_t__2c_20std____2__allocator_wchar_t___20const__29_20const, std____2__basic_streambuf_char_2c_20std____2__char_traits_char____imbue_28std____2__locale_20const__29, std____2____shared_count_____shared_count_28_29_3031, __cxa_pure_virtual, dummy_1391, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, std____2____shared_ptr_pointer_unsigned_20char__2c_20NullArrayDeleter_unsigned_20char__2c_20std____2__allocator_unsigned_20char______on_zero_shared_28_29, __cxxabiv1____fundamental_type_info__can_catch_28__cxxabiv1____shim_type_info_20const__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____class_type_info__can_catch_28__cxxabiv1____shim_type_info_20const__2c_20void___29_20const, __cxxabiv1____class_type_info__search_above_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____class_type_info__search_below_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____class_type_info__has_unambiguous_public_base_28__cxxabiv1____dynamic_cast_info__2c_20void__2c_20int_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____si_class_type_info__search_above_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____si_class_type_info__search_below_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____si_class_type_info__has_unambiguous_public_base_28__cxxabiv1____dynamic_cast_info__2c_20void__2c_20int_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____vmi_class_type_info__search_above_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____vmi_class_type_info__search_below_dst_28__cxxabiv1____dynamic_cast_info__2c_20void_20const__2c_20int_2c_20bool_29_20const, __cxxabiv1____vmi_class_type_info__has_unambiguous_public_base_28__cxxabiv1____dynamic_cast_info__2c_20void__2c_20int_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, __cxxabiv1____pointer_type_info__can_catch_28__cxxabiv1____shim_type_info_20const__2c_20void___29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std__bad_alloc__what_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std__bad_array_new_length__what_28_29_20const, std____2____shared_ptr_pointer_vision__Keyframe_96___2c_20std____2__shared_ptr_vision__Keyframe_96______shared_ptr_default_delete_vision__Keyframe_96__2c_20vision__Keyframe_96___2c_20std____2__allocator_vision__Keyframe_96________shared_ptr_pointer_28_29, std__exception__what_28_29_20const, std__logic_error___logic_error_28_29_3143, std__logic_error__what_28_29_20const, std__logic_error___logic_error_28_29_3143, std__logic_error___logic_error_28_29_3143]);
  function __wasm_memory_size() {
   return buffer.byteLength / 65536 | 0;
  }
