@@ -404,6 +404,7 @@ const zlib_sources = [
 const compile_zlib = [
   EMCC.trim(),
   "-O2",
+  "-DHAVE_UNISTD_H",
   "-I" + path.resolve(__dirname, "../emscripten/build"),
   "-I" + path.resolve(__dirname, "../emscripten/zlib"),
   ...zlib_sources,
