@@ -5,7 +5,7 @@ const markerResult = null;
 // initialize the OneEuroFilter
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
-const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
+const filter = new OneEuroFilter(filterMinCF, filterBeta);
 function load_thread(msg) {
   console.debug("Loading marker at: ", msg.marker);
 

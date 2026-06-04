@@ -30,7 +30,7 @@ if (browser == "Apple Safari") {
   importScripts("../dist/ARToolkitNFT_simd.js");
 }
 // Import OneEuroFilter class into the worker.
-importScripts("./one-euro-filter.js");
+importScripts("./OneEuroFilter.js");
 
 let next = null;
 self.onmessage = function (e) {
@@ -57,7 +57,21 @@ let tickCount = 0;
 // initialize the OneEuroFilter
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
-const filter = new OneEuroFilter({ minCutOff: filterMinCF, beta: filterBeta });
+const OneEuroFilterCtor =
+  typeof OneEuroFilter === "function"
+    ? OneEuroFilter
+    : OneEuroFilter && typeof OneEuroFilter.OneEuroFilter === "function"
+      ? OneEuroFilter.OneEuroFilter
+      : null;
+
+if (!OneEuroFilterCtor) {
+  throw new Error("OneEuroFilter constructor not found in worker context");
+}
+
+const filter =
+  OneEuroFilterCtor.length >= 2
+    ? new OneEuroFilterCtor(filterMinCF, filterBeta)
+    : new OneEuroFilterCtor({ minCutOff: filterMinCF, beta: filterBeta });
 
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
@@ -73,7 +87,7 @@ function load(msg) {
         markerResult = {
           type: "found",
           index: JSON.stringify(ev.data.index),
-          matrixGL_RH: JSON.stringify(mat),
+          matrixGL_RH: mat,
         };
       }
     });
