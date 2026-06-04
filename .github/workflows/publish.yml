@@ -36,9 +36,6 @@ jobs:
         env:
           CI: true
 
-      - name: Build
-        run: npm run build --if-present
-
       - name: Verify npm auth
         run: npm whoami
         env:
