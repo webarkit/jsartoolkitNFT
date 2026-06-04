@@ -305,6 +305,16 @@ function clean_builds() {
   } catch (e) {
     return console.log("error cleaning the build libs:", e);
   }
+
+  // Clean CMake build directory to prevent path mismatch errors in Docker/Host environment transitions
+  const cmakeBuildPath = path.resolve(__dirname, "../emscripten/build");
+  try {
+    if (fs.existsSync(cmakeBuildPath)) {
+      fs.rmSync(cmakeBuildPath, { recursive: true, force: true });
+    }
+  } catch (e) {
+    console.log("error cleaning cmake build directory:", e);
+  }
 }
 
 const compile_arlib = [
@@ -345,14 +355,62 @@ const compile_simd_arlib = [
 const ALL_BC = `${path.resolve(OUTPUT_PATH, "libar.o")}`;
 const THREAD_BC = `${path.resolve(OUTPUT_PATH, "libar_td.o")}`;
 const SIMD_BC = `${path.resolve(OUTPUT_PATH, "libar_simd.o")}`;
-const LIBZ_A = `${path.resolve(OUTPUT_PATH, "libz.a")}`;
+const LIBZ_A = `${path.resolve(OUTPUT_PATH, "libz.o")}`;
 
-const configure_zlib = format(
-  "emcmake cmake -B emscripten/build -S emscripten/zlib ..",
-);
+function prepare_zlib() {
+  console.log("\nPreparing zlib build environment...");
+  const buildDir = path.resolve(__dirname, "../emscripten/build");
+  if (!fs.existsSync(buildDir)) {
+    fs.mkdirSync(buildDir, { recursive: true });
+  }
+  const zconfinPath = path.resolve(
+    __dirname,
+    "../emscripten/zlib/zconf.h.cmakein",
+  );
+  const zconfPath = path.resolve(buildDir, "zconf.h");
+  try {
+    let content = fs.readFileSync(zconfinPath, "utf8");
+    content = content.replace(
+      "#cmakedefine Z_HAVE_UNISTD_H",
+      "#define Z_HAVE_UNISTD_H 1",
+    );
+    content = content.replace("#cmakedefine Z_PREFIX", "/* #undef Z_PREFIX */");
+    fs.writeFileSync(zconfPath, content, "utf8");
+    console.log("Generated zconf.h successfully.");
+  } catch (e) {
+    console.error("Error preparing zlib:", e);
+    process.exit(1);
+  }
+}
 
-const build_zlib = "cd emscripten/build && emmake make";
-const copy_zlib = `cp emscripten/build/libz.a ${OUTPUT_PATH}libz.a`;
+const zlib_sources = [
+  "adler32.c",
+  "compress.c",
+  "crc32.c",
+  "deflate.c",
+  "gzclose.c",
+  "gzlib.c",
+  "gzread.c",
+  "gzwrite.c",
+  "inflate.c",
+  "infback.c",
+  "inftrees.c",
+  "inffast.c",
+  "trees.c",
+  "uncompr.c",
+  "zutil.c",
+].map((src) => path.resolve(__dirname, "../emscripten/zlib", src));
+
+const compile_zlib = [
+  EMCC.trim(),
+  "-O2",
+  "-I" + path.resolve(__dirname, "../emscripten/build"),
+  "-I" + path.resolve(__dirname, "../emscripten/zlib"),
+  ...zlib_sources,
+  "-r",
+  "-o",
+  path.resolve(OUTPUT_PATH, "libz.o"),
+];
 
 const compile_combine = [
   EMCC.trim(),
@@ -507,11 +565,32 @@ const compile_simd_wasm_es6 = [
  */
 
 function onExec(error, stdout, stderr) {
+  const argsFile = path.resolve(__dirname, "emcc_args.txt");
+  if (fs.existsSync(argsFile)) {
+    try {
+      fs.unlinkSync(argsFile);
+    } catch (e) {}
+  }
+
   if (stdout) console.log("stdout: " + stdout);
   if (stderr) console.log("stderr: " + stderr);
   if (error !== null) {
     console.log("exec error: " + error.code);
-    process.exit(error.code);
+    if (
+      platform === "win32" &&
+      ((typeof stderr === "string" &&
+        stderr.includes("no compatible cmake generator found")) ||
+        (typeof stdout === "string" &&
+          stdout.includes("no compatible cmake generator found")))
+    ) {
+      console.log(
+        "\n[Tip] It seems CMake could not find a compatible generator (like Ninja or MinGW) on your Windows host.",
+      );
+      console.log(
+        "Please install Ninja using: winget install MSBuild.Ninja or choco install ninja, then restart your terminal and try again.\n",
+      );
+    }
+    process.exit(typeof error.code === "number" ? error.code : 1);
   } else {
     runJob();
   }
@@ -533,8 +612,22 @@ function runJob() {
   }
 
   if (Array.isArray(cmd)) {
-    console.log("\nRunning command (execFile): " + cmd.join(" ") + "\n");
-    execFile(cmd[0], cmd.slice(1), onExec);
+    if (platform === "win32") {
+      const argsFile = path.resolve(__dirname, "emcc_args.txt");
+      const normalizedArgs = cmd.slice(1).map((arg) => arg.replace(/\\/g, "/"));
+      fs.writeFileSync(argsFile, normalizedArgs.join("\n"), "utf8");
+      console.log(
+        "\nRunning command (execFile with response file): " +
+          cmd[0] +
+          " @" +
+          argsFile +
+          "\n",
+      );
+      execFile(cmd[0], ["@" + argsFile], { shell: true }, onExec);
+    } else {
+      console.log("\nRunning command (execFile): " + cmd.join(" ") + "\n");
+      execFile(cmd[0], cmd.slice(1), onExec);
+    }
   } else if (typeof cmd === "string") {
     console.log("\nRunning command (exec): " + cmd + "\n");
     exec(cmd, onExec);
@@ -552,9 +645,8 @@ addJob(clean_builds);
 addJob(compile_arlib);
 addJob(compile_thread_arlib);
 addJob(compile_simd_arlib);
-addJob(configure_zlib);
-addJob(build_zlib);
-addJob(copy_zlib);
+addJob(prepare_zlib);
+addJob(compile_zlib);
 addJob(compile_combine);
 addJob(compile_wasm);
 addJob(compile_wasm_thread);
@@ -567,7 +659,7 @@ addJob(compile_wasm_node);
 addJob(compile_combine_min);
 
 if (NO_LIBAR === true) {
-  jobs.splice(1, 6);
+  jobs.splice(1, 5);
 }
 
 runJob();

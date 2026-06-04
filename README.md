@@ -290,7 +290,51 @@ See the examples folder for details.
 
 ## Build the project 🔨
 
-Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more infos. Note that you need to build the library only if you make changes to the source code.
+Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more information. Note that you only need to build the library if you make changes to the C++ core or TypeScript source code. There are three ways to build the project:
+
+
+### 1. Natively on Host (Windows, macOS, Linux)
+To build natively, you must have the following tools installed and available in your environment's PATH:
+* **Node.js** (v18+)
+* **Emscripten SDK** (v4.0.17+)
+
+Once set up, run:
+```bash
+npm install
+npm run build
+```
+
+---
+
+### 2. Using Dev Containers (Recommended)
+If you use **Visual Studio Code**, you can build and develop inside a pre-configured Docker container using the **Dev Containers** extension:
+
+1. Install the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
+2. Open this repository in Visual Studio Code.
+3. Click the green button in the bottom-left corner of the window (or press `Ctrl+Shift+P` / `Cmd+Shift+P` and search for `Dev Containers: Reopen in Container`).
+4. VS Code will build the Docker container and configure your environment with EMSDK, CMake, Ninja, Node.js, and all native compilation dependencies.
+5. In the container terminal, run:
+   ```bash
+   npm run build
+   ```
+
+---
+
+### 3. Using Manual Docker Scripts
+If you prefer running Docker manually from the command line, you can use the built-in npm scripts:
+
+1. **Start the background Docker container**:
+   ```bash
+   npm run setup-docker
+   ```
+   This resolves host workspace paths automatically (cross-platform on Windows, macOS, and Linux) and starts a persistent Emscripten container.
+
+2. **Build the library inside the container**:
+   ```bash
+   npm run build-docker
+   ```
+   *(Or run `npm run build-docker-no-libar` if you want to skip building `libar.o`)*
 
 ### Notes
 The jsartoolkitNFT npm package is served until version **0.9.4** from `@kalwalt/jsartoolkit-nft`. By 0.9.5 version from `@webarkit/jsartoolkit-nft`.
+
