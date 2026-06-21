@@ -2,11 +2,29 @@ const WARM_UP_TOLERANCE = 5;
 let tickCount = 0;
 const markerResult = null;
 let ar;
-
-// initialize the OneEuroFilter
 let filterMinCF = 0.0001;
 let filterBeta = 0.01;
-const filter = new OneEuroFilter(filterMinCF, filterBeta);
+
+// initialize the OneEuroFilter
+const OneEuroFilterCtor =
+    typeof OneEuroFilter === "function"
+        ? OneEuroFilter
+        : OneEuroFilter && typeof OneEuroFilter.OneEuroFilter === "function"
+            ? OneEuroFilter.OneEuroFilter
+            : null;
+
+if (!OneEuroFilterCtor) {
+    throw new Error("OneEuroFilter constructor not found in worker context");
+}
+
+const filter =
+    OneEuroFilterCtor.length >= 2
+        ? new OneEuroFilterCtor(filterMinCF, filterBeta)
+        : new OneEuroFilterCtor({
+            minCutOff: filterMinCF,
+            beta: filterBeta,
+        });
+
 function load_thread(msg) {
   console.debug("Loading marker at: ", msg.marker);
 
