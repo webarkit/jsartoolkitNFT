@@ -73,24 +73,30 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          build/artoolkitNFT_embed_ES6_wasm.js
-          build/artoolkitNFT_ES6_wasm.js
-          build/artoolkitNFT_ES6_wasm_td.js
-          build/artoolkitNFT_ES6_wasm.simd.js
-          build/artoolkitNFT_thread.js
-          build/artoolkitNFT_wasm.js
-          build/artoolkitNFT_wasm.simd.js
           build/artoolkitNFT.debug.js
           build/artoolkitNFT.min.js
-          js/artoolkitNFT_ES6_custom.worker.js
-          js/artoolkitNFT_ES6_gray.worker.js
-          js/artoolkitNFT_ES6.worker.js
-          js/artoolkitNFT_multi_ES6.worker.js
-          js/artoolkitNFT.api.js
-          js/artoolkitNFT_ES6.api.js
-          js/artoolkitNFT.worker.js
-          js/artoolkitNFT.embed_ES6_worker.js
-          js/artoolkitNFT.multi_worker.js
+          build/artoolkitNFT_embed_ES6_wasm.js
+          build/artoolkitNFT_ES6_wasm.js
+          build/artoolkitNFT_ES6_wasm.simd.js
+          build/artoolkitNFT_ES6_wasm_td.js
+          build/artoolkitNFT_ES6_wasm_td.worker.mjs
+          build/artoolkitNFT_node_wasm.js
+          build/artoolkitNFT_thread.js
+          build/artoolkitNFT_thread.worker.js
+          build/artoolkitNFT_wasm.js
+          build/artoolkitNFT_wasm.simd.js
+          dist/510.ARToolkitNFT_td.js
+          dist/602.ARToolkitNFT_td.js
           dist/ARToolkitNFT.js
+          dist/ARToolkitNFT_node.js
           dist/ARToolkitNFT_simd.js
           dist/ARToolkitNFT_td.js
+          js/artoolkitNFT.api.js
+          js/artoolkitNFT.embed_ES6_worker.js
+          js/artoolkitNFT.multi_worker.js
+          js/artoolkitNFT.worker.js
+          js/artoolkitNFT_ES6.api.js
+          js/artoolkitNFT_ES6.worker.js
+          js/artoolkitNFT_ES6_custom.worker.js
+          js/artoolkitNFT_ES6_gray.worker.js
+          js/artoolkitNFT_multi_ES6.worker.js
