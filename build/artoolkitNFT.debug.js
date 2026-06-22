@@ -568,7 +568,7 @@ if (ENVIRONMENT_IS_NODE) {}
       Don't call directly this but instead instantiate a new ARControllerNFT.
       @return {number} 0 (void)
     */ ARControllerNFT.prototype._initialize = function() {
-    this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id);
+    this.id = artoolkitNFT.setup(this.width, this.height, this.cameraParam.id, false);
     this._initNFT();
     this.framesize = this.width * this.height;
     this.videoLuma = new Uint8Array(this.framesize);

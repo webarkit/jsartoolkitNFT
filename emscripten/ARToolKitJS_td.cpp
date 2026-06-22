@@ -775,7 +775,7 @@ int detectMarker(int id) {
  * Setup *
  ********/
 
-int setup(int width, int height, int cameraID) {
+int setup(int width, int height, int cameraID, bool enableFiltering) {
   int id = gARControllerID++;
   arController *arc = &(arControllers[id]);
   arc->id = id;
@@ -790,7 +790,11 @@ int setup(int width, int height, int cameraID) {
 
   setCamera(id, cameraID);
 
+  // Set the withFiltering property (fake)
+  // arc->withFiltering = enableFiltering;
+
   webarkitLOGi("Allocated videoFrameSize %d", arc->videoFrameSize);
+  webarkitLOGi("Filtering enabled: %s", enableFiltering ? "true" : "false");
 
   return arc->id;
 }
