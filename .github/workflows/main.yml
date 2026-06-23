@@ -5,6 +5,9 @@ name: Build jsartoolkitNFT CI
 on:
   push
 
+permissions:
+  contents: write
+
 jobs:
   build:
 
@@ -67,6 +70,7 @@ jobs:
         default_author: github_actions
         message: new build files from action
         add: '["build", "dist"]'
+        fetch: false
 
     - name: Release
       uses: softprops/action-gh-release@v3
