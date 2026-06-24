@@ -31,9 +31,9 @@ ARToolKitNFT::~ARToolKitNFT() {
   teardown();
 }
 
-int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
-  auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
-  auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+int ARToolKitNFT::passVideoData(uintptr_t videoFramePtr, uintptr_t videoLumaPtr, bool internalLuma) {
+  uint8_t* vf = reinterpret_cast<uint8_t*>(videoFramePtr);
+  uint8_t* vl = reinterpret_cast<uint8_t*>(videoLumaPtr);
 
   if (internalLuma) {
     auto vli = webarkit::webarkitVideoLumaInit(this->width, this->height, true);
@@ -42,7 +42,7 @@ int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val vide
       return -1;
     }
 
-    auto out = webarkit::webarkitVideoLuma(vli, vf.data());
+    auto out = webarkit::webarkitVideoLuma(vli, vf);
     if (!out) {
       webarkitLOGe("Failed to process video luma.");
       webarkit::webarkitVideoLumaFinal(&vli);
@@ -56,14 +56,14 @@ int ARToolKitNFT::passVideoData(emscripten::val videoFrame, emscripten::val vide
   }
 
   // Copy data instead of just assigning pointers
-  if (this->videoFrame) {
-    std::copy(vf.begin(), vf.end(), this->videoFrame.get());
+  if (this->videoFrame && vf) {
+    std::copy(vf, vf + this->videoFrameSize, this->videoFrame.get());
   }
 
-  if (this->videoLuma) {
+  if (this->videoLuma && vl) {
     if (!internalLuma) {
       webarkitLOGd("Inside videoLuma no simd !");
-      std::copy(vl.begin(), vl.end(), this->videoLuma.get());
+      std::copy(vl, vl + (this->width * this->height), this->videoLuma.get());
     }
   }
   return 0;
@@ -129,9 +129,10 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
     NFTMarkerInfo.set("error", err);
     NFTMarkerInfo.set("found", 1);
 
+    int idx = 0;
     for (auto x = 0; x < 3; x++) {
       for (auto y = 0; y < 4; y++) {
-        pose.call<void>("push", trans[x][y]);
+        pose.set(idx++, trans[x][y]);
       }
     }
     NFTMarkerInfo.set("pose", pose);
@@ -354,8 +355,9 @@ int ARToolKitNFT::loadCamera(std::string cparam_name) {
 
 emscripten::val ARToolKitNFT::getCameraLens() {
   emscripten::val lens = emscripten::val::array();
+  int idx = 0;
   for (const auto& value : this->cameraLens) {
-    lens.call<void>("push", value);
+    lens.set(idx++, value);
   }
   return lens;
 }

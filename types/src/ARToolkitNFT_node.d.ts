@@ -43,6 +43,11 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
         pose: Float64Array;
     };
     FS: any;
+    malloc: any;
+    free: any;
+    HEAPU8: any;
+    videoFramePtr: number;
+    videoLumaPtr: number;
     StringList: any;
     nftMarkers: any;
     constructor();

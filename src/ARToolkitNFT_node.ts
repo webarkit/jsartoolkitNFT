@@ -112,6 +112,11 @@ export class ARToolkitNFT implements IARToolkitNFT {
   };
 
   public FS: any;
+  public malloc: any;
+  public free: any;
+  public HEAPU8: any;
+  public videoFramePtr: number;
+  public videoLumaPtr: number;
   public StringList: any;
   public nftMarkers: any;
 
@@ -152,6 +157,9 @@ export class ARToolkitNFT implements IARToolkitNFT {
     this.instance = instance;
 
     this.FS = instance.FS;
+    this.malloc = instance._malloc;
+    this.free = instance._free;
+    this.HEAPU8 = instance.HEAPU8;
     this.StringList = instance.StringList;
     this.nftMarkers = instance.nftMarkers;
 
@@ -216,10 +224,20 @@ export class ARToolkitNFT implements IARToolkitNFT {
   }
 
   public setup(width: number, height: number, cameraId: number): number {
+    this.videoFramePtr = this.malloc(width * height * 4);
+    this.videoLumaPtr = this.malloc(width * height);
     return this.instance.setup(width, height, cameraId);
   }
 
   public teardown(id: number): void {
+    if (this.videoFramePtr) {
+      this.free(this.videoFramePtr);
+      this.videoFramePtr = 0;
+    }
+    if (this.videoLumaPtr) {
+      this.free(this.videoLumaPtr);
+      this.videoLumaPtr = 0;
+    }
     this.instance.teardown(id);
   }
 
@@ -307,7 +325,13 @@ export class ARToolkitNFT implements IARToolkitNFT {
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
   ): void {
-    this.instance.passVideoData(id, videoFrame, videoLuma);
+    if (this.videoFramePtr) {
+      this.HEAPU8.set(videoFrame, this.videoFramePtr);
+    }
+    if (this.videoLumaPtr) {
+      this.HEAPU8.set(videoLuma, this.videoLumaPtr);
+    }
+    this.instance.passVideoData(id, this.videoFramePtr, this.videoLumaPtr);
   }
 
   // ---------------------------------------------------------------------------

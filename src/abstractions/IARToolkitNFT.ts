@@ -71,6 +71,11 @@ export interface IARToolkitNFT {
   setImageProcMode(mode: number): number;
   getImageProcMode(): number;
   FS: any;
+  malloc: any;
+  free: any;
+  HEAPU8: any;
+  videoFramePtr?: number;
+  videoLumaPtr?: number;
   StringList: any;
   nftMarkers: any;
 }

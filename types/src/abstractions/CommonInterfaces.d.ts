@@ -50,7 +50,7 @@ export interface IARToolKitNFTInstance {
     setup(width: number, height: number, cameraId: number): number;
     teardown(): void;
     setupAR2(): void;
-    passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
+    passVideoData(videoFramePtr: number, videoLumaPtr: number, lumaInternal: boolean): void;
     detectNFTMarker(): number;
     getNFTMarker(markerIndex: number): any;
     getNFTData(index: number): object;
@@ -84,6 +84,9 @@ export interface IARToolKitNFTInstanceConstructor {
 export interface ARToolkitNFTModule {
     ARToolKitNFT: IARToolKitNFTInstanceConstructor;
     FS: EmscriptenFS;
+    _malloc: any;
+    _free: any;
+    HEAPU8: Uint8Array;
     StringList: EmscriptenStringListConstructor;
     nftMarkers: NftMarkers;
     ERROR_MARKER_INDEX_OUT_OF_BOUNDS: number;

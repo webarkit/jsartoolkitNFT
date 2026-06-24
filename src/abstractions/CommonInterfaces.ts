@@ -95,7 +95,7 @@ export interface EmscriptenStringList {
 
 // StringList constructor type
 export interface EmscriptenStringListConstructor {
-  new (): EmscriptenStringList;
+  new(): EmscriptenStringList;
 }
 
 // ARToolKitNFT WASM instance interface (the raw Emscripten class instance)
@@ -109,8 +109,8 @@ export interface IARToolKitNFTInstance {
 
   // Video data processing
   passVideoData(
-    videoFrame: Uint8ClampedArray,
-    videoLuma: Uint8Array,
+    videoFramePtr: number,
+    videoLumaPtr: number,
     lumaInternal: boolean,
   ): void;
 
@@ -159,14 +159,17 @@ export interface IARToolKitNFTInstance {
 
 // ARToolKitNFT WASM constructor interface
 export interface IARToolKitNFTInstanceConstructor {
-  new (): IARToolKitNFTInstance;
-  new (withFiltering: boolean): IARToolKitNFTInstance;
+  new(): IARToolKitNFTInstance;
+  new(withFiltering: boolean): IARToolKitNFTInstance;
 }
 
 // Type definition for the Emscripten Module returned by ARToolkitNFT factory
 export interface ARToolkitNFTModule {
   ARToolKitNFT: IARToolKitNFTInstanceConstructor;
   FS: EmscriptenFS;
+  _malloc: any;
+  _free: any;
+  HEAPU8: Uint8Array;
   StringList: EmscriptenStringListConstructor;
   nftMarkers: NftMarkers;
   ERROR_MARKER_INDEX_OUT_OF_BOUNDS: number;

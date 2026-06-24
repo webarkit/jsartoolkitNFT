@@ -88,6 +88,16 @@ class ARControllerNFT {
             artoolkitNFT.teardown(this.id);
         }
 
+        if (this.videoFramePtr) {
+            Module._free(this.videoFramePtr);
+            this.videoFramePtr = null;
+        }
+
+        if (this.videoLumaPtr) {
+            Module._free(this.videoLumaPtr);
+            this.videoLumaPtr = null;
+        }
+
         for (var t in this) {
             this[t] = null;
         }
@@ -674,6 +684,8 @@ class ARControllerNFT {
 
         this.framesize = this.width * this.height;
 
+        this.videoFramePtr = Module._malloc(this.framesize * 4);
+        this.videoLumaPtr = Module._malloc(this.framesize);
         this.videoLuma = new Uint8Array(this.framesize);
 
         this.camera_mat = artoolkitNFT.getCameraLens(this.id);
@@ -716,6 +728,11 @@ class ARControllerNFT {
         }
         var data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
+        // Copy video frame to WASM heap
+        if (this.videoFramePtr) {
+            Module.HEAPU8.set(data, this.videoFramePtr);
+        }
+
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
         if (this.videoLuma && !this.videoLumaInternal) {
             let q = 0;
@@ -727,10 +744,14 @@ class ARControllerNFT {
                 this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
                 q += 4;
             }
+
+            if (this.videoLumaPtr) {
+                Module.HEAPU8.set(this.videoLuma, this.videoLumaPtr);
+            }
         }
 
-        if (this.videoLuma) {
-            artoolkitNFT.passVideoData(this.id, data, this.videoLuma, this.videoLumaInternal);
+        if (this.videoLuma && this.videoFramePtr && this.videoLumaPtr) {
+            artoolkitNFT.passVideoData(this.id, this.videoFramePtr, this.videoLumaPtr, this.videoLumaInternal);
             return true;
         }
 

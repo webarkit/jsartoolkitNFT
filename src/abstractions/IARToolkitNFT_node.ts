@@ -67,6 +67,11 @@ export interface IARToolkitNFT_node {
   setImageProcMode(id: number, mode: number): number;
   getImageProcMode(id: number): number;
   FS: any;
+  malloc: any;
+  free: any;
+  HEAPU8: any;
+  videoFramePtr?: number;
+  videoLumaPtr?: number;
   StringList: any;
   nftMarkers: any;
 }

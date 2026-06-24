@@ -92,6 +92,16 @@
             artoolkitNFT.teardown(this.id);
         }
 
+        if (this.videoFramePtr) {
+            Module._free(this.videoFramePtr);
+            this.videoFramePtr = null;
+        }
+
+        if (this.videoLumaPtr) {
+            Module._free(this.videoLumaPtr);
+            this.videoLumaPtr = null;
+        }
+
         for (const t in this) {
             this[t] = null;
         }
@@ -651,7 +661,7 @@
      * @returns {void} void
      * @description Enable or disable filtering for the detected markers.
      */
-    ARControllerNFT.prototype.setFiltering = function(enableFiltering) {
+    ARControllerNFT.prototype.setFiltering = function (enableFiltering) {
         artoolkitNFT.setFiltering(this.id, enableFiltering);
     }
 
@@ -668,7 +678,10 @@
         this._initNFT();
 
         this.framesize = this.width * this.height;
+        console.log(Module)
 
+        this.videoFramePtr = _malloc(this.framesize * 4);
+        this.videoLumaPtr = _malloc(this.framesize);
         this.videoLuma = new Uint8Array(this.framesize);
 
         this.camera_mat = artoolkitNFT.getCameraLens(this.id);
@@ -711,6 +724,11 @@
         }
         const data = imageData.data;  // this is of type Uint8ClampedArray: The Uint8ClampedArray typed array represents an array of 8-bit unsigned integers clamped to 0-255 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray)
 
+        // Copy video frame to WASM heap
+        if (this.videoFramePtr) {
+            Module.HEAPU8.set(data, this.videoFramePtr);
+        }
+
         //Here we have access to the unmodified video image. We now need to add the videoLuma chanel to be able to serve the underlying ARTK API
         if (this.videoLuma && !this.videoLumaInternal) {
             let q = 0;
@@ -722,10 +740,14 @@
                 this.videoLuma[p] = (r + r + r + b + g + g + g + g) >> 3;
                 q += 4;
             }
+
+            if (this.videoLumaPtr) {
+                Module.HEAPU8.set(this.videoLuma, this.videoLumaPtr);
+            }
         }
 
-        if (this.videoLuma) {
-            artoolkitNFT.passVideoData(this.id, data, this.videoLuma, this.videoLumaInternal);
+        if (this.videoLuma && this.videoFramePtr && this.videoLumaPtr) {
+            artoolkitNFT.passVideoData(this.id, this.videoFramePtr, this.videoLumaPtr, this.videoLumaInternal);
             return true;
         }
 
@@ -953,13 +975,13 @@
             let contentFset = new Uint8Array(hexStrFset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
             let contentFset3 = new Uint8Array(hexStrFset3.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
-            writeByteArrayToFS(prefix + '.fset', contentFset, function(){});
-            writeByteArrayToFS(prefix + '.iset', contentIset, function(){});
-            writeByteArrayToFS(prefix + '.fset3', contentFset3, function(){});
+            writeByteArrayToFS(prefix + '.fset', contentFset, function () { });
+            writeByteArrayToFS(prefix + '.iset', contentIset, function () { });
+            writeByteArrayToFS(prefix + '.fset3', contentFset3, function () { });
 
         }
 
-        const onSuccessZFT = function(){
+        const onSuccessZFT = function () {
             loadZFT(arguments[1]);
             onSuccess();
         }
@@ -974,10 +996,10 @@
             const filename4 = prefix + '.zft';
 
             let type = checkZFT(url + '.zft');
-            if(type){
+            if (type) {
                 pending -= 2;
                 ajax(url + '.zft', filename4, onSuccessZFT, onError.bind(filename4), prefix);
-            }else {
+            } else {
                 ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1), prefix);
                 ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2), prefix);
                 ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3), prefix);
@@ -986,7 +1008,7 @@
         }
     }
 
-    function checkZFT(url){
+    function checkZFT(url) {
         let isZFT = null;
 
         let request = new XMLHttpRequest();
@@ -995,7 +1017,7 @@
 
         if (request.status === 200) {
             isZFT = true;
-        }else if(request.status === 404){
+        } else if (request.status === 404) {
             isZFT = false;
         }
 
@@ -1009,19 +1031,18 @@
         out = "";
         len = array.length;
         i = 0;
-        while(i < len) {
+        while (i < len) {
             c = array[i++];
-            switch(c >> 4)
-            {
+            switch (c >> 4) {
                 case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                // 0xxxxxxx
-                out += String.fromCharCode(c);
-                break;
+                    // 0xxxxxxx
+                    out += String.fromCharCode(c);
+                    break;
                 case 12: case 13:
-                // 110x xxxx   10xx xxxx
-                char2 = array[i++];
-                out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
-                break;
+                    // 110x xxxx   10xx xxxx
+                    char2 = array[i++];
+                    out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+                    break;
                 case 14:
                     // 1110 xxxx  10xx xxxx  10xx xxxx
                     char2 = array[i++];
