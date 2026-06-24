@@ -113,15 +113,15 @@ extern "C"
   /**
           NFT API bindings
   */
-  int passVideoData(int id, emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma) {
+  int passVideoData(int id, uintptr_t videoFramePtr, uintptr_t videoLumaPtr, bool internalLuma) {
     if (arControllers.find(id) == arControllers.end()) {
       return -1;
     }
   
     arController *arc = &(arControllers[id]);
   
-    auto vf = emscripten::convertJSArrayToNumberVector<uint8_t>(videoFrame);
-    auto vl = emscripten::convertJSArrayToNumberVector<uint8_t>(videoLuma);
+    uint8_t* vf = reinterpret_cast<uint8_t*>(videoFramePtr);
+    uint8_t* vl = reinterpret_cast<uint8_t*>(videoLumaPtr);
   
     if (internalLuma) {
       auto vli = webarkit::webarkitVideoLumaInit(arc->width, arc->height, true);
@@ -130,7 +130,7 @@ extern "C"
         return -1;
       }
   
-      auto out = webarkit::webarkitVideoLuma(vli, vf.data());
+      auto out = webarkit::webarkitVideoLuma(vli, vf);
       if (!out) {
         webarkitLOGe("Failed to process video luma.");
         webarkit::webarkitVideoLumaFinal(&vli);
@@ -144,14 +144,14 @@ extern "C"
     }
   
     // Copy data instead of just assigning pointers
-    if (arc->videoFrame) {
-      std::copy(vf.begin(), vf.end(), arc->videoFrame.get());
+    if (arc->videoFrame && vf) {
+      std::copy(vf, vf + arc->videoFrameSize, arc->videoFrame.get());
     }
   
-    if (arc->videoLuma) {
+    if (arc->videoLuma && vl) {
       if (!internalLuma) {
         webarkitLOGd("Inside videoLuma no simd !");
-        std::copy(vl.begin(), vl.end(), arc->videoLuma.get());
+        std::copy(vl, vl + (arc->width * arc->height), arc->videoLuma.get());
       }
     }
     return 0;
@@ -186,15 +186,17 @@ extern "C"
                 webarkitLOGe("arFilterTransMat error with marker %d.", markerIndex);
             }
 
+            int idx = 0;
             for (auto x = 0; x < 3; x++) {
                 for (auto y = 0; y < 4; y++) {
-                    pose.call<void>("push", transF[x][y]);
+                    pose.set(idx++, transF[x][y]);
                 }
             }
         } else {
+            int idx = 0;
             for (auto x = 0; x < 3; x++) {
                 for (auto y = 0; y < 4; y++) {
-                    pose.call<void>("push", trans[x][y]);
+                    pose.set(idx++, trans[x][y]);
                 }
             }
         }
@@ -492,8 +494,9 @@ extern "C"
     arController *arc = &(arControllers[id]);
 
     emscripten::val lens = emscripten::val::array();
+    int idx = 0;
     for (const auto& value : arc->cameraLens) {
-      lens.call<void>("push", value);
+      lens.set(idx++, value);
     }
 
     return lens;

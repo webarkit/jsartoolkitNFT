@@ -42,7 +42,7 @@ public:
     ARToolKitNFT();
     ARToolKitNFT(bool withFiltering);
     ~ARToolKitNFT(); 
-    int passVideoData(emscripten::val videoFrame, emscripten::val videoLuma, bool internalLuma);
+    int passVideoData(uintptr_t videoFrame, uintptr_t videoLuma, bool internalLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
     int detectNFTMarker();
     int getKpmImageWidth(KpmHandle *kpmHandle);
