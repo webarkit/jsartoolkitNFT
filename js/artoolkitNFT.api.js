@@ -678,10 +678,9 @@
         this._initNFT();
 
         this.framesize = this.width * this.height;
-        console.log(Module)
 
-        this.videoFramePtr = _malloc(this.framesize * 4);
-        this.videoLumaPtr = _malloc(this.framesize);
+        this.videoFramePtr = Module._malloc(this.framesize * 4);
+        this.videoLumaPtr = Module._malloc(this.framesize);
         this.videoLuma = new Uint8Array(this.framesize);
 
         this.camera_mat = artoolkitNFT.getCameraLens(this.id);
