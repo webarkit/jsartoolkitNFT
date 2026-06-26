@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "exports": {
@@ -79,7 +79,7 @@
     "karma-jasmine": "^5.1.0",
     "karma-webpack": "^5.0.1",
     "prettier": "^3.8.3",
-    "ts-loader": "^9.6.1",
+    "ts-loader": "^9.6.2",
     "typedoc": "0.28.19",
     "typescript": "6.0.3",
     "webpack": "5.107.2",
