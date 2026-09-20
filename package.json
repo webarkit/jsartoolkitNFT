@@ -100,7 +100,7 @@
     "build-no-libar": "node tools/makem.js --no-libar && node -e \"console.log('Built at', new Date())\"",
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
-    "test": "npm run test:all",
+    "test": "npm run test:vitest && npm run test:all",
     "test:vitest": "vitest run",
     "test:vitest:watch": "vitest",
     "test:coverage": "vitest run --coverage",

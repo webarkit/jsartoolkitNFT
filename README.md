@@ -276,9 +276,41 @@ cd examples/node && node example_dist.js
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
 - `python-bindings/` (experimental Python bindings — see section above)
 - `src/` (source code of ARToolKitNFT with Typescript)
-- `tests/` (tests - WIP)
+- `tests/` (Karma/Jasmine specs, plus the Vitest browser suite in `tests/vitest/` — see [Running the tests](#running-the-tests-))
 - `tools/` (build scripts for building JSARToolKitNFT with Emscripten)
 - `types/` (type definitions of ARToolKitNFT)
+
+## Running the tests 🧪
+
+Install dependencies, then fetch the browser the test suite drives:
+
+```bash
+npm ci
+npx playwright install chromium
+```
+
+That second step is required. The Vitest suite runs in a real Chromium supplied by Playwright,
+and without it you get a missing-executable error before any spec starts.
+
+```bash
+npm test              # the full suite: Vitest first, then the seven Karma targets
+npm run test:vitest   # just the Vitest browser suite (a couple of seconds)
+npm run test:coverage # the same, with an lcov report scoped to src/
+```
+
+`npm run test:vitest:watch` re-runs on change while you work.
+
+The two suites cover different things. `tests/vitest/` drives `ARControllerNFT` through
+`src/` — the code published as `dist/` — and loads a real NFT marker and pushes frames through
+`process()`. The Karma specs under `tests/*.test.js` cover the legacy global API and the raw
+Emscripten bindings across the seven build targets, and are being migrated (#579).
+
+Note that the Karma targets need a system Chromium, which the CI workflows install separately;
+Playwright's browser is not currently usable for them.
+
+Tests run against the **committed** `build/` artifacts. If you change anything under
+`emscripten/` or `tools/makem.js`, rebuild before testing or you will be testing stale
+WebAssembly — see [AGENTS.md](AGENTS.md).
 
 ## WebAssembly 👋
 
