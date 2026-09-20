@@ -100,6 +100,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
   static AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
 
   private instance: any;
+  private module: any;
   private markerNFTCount: number;
   private cameraCount: number;
   private version: string;
@@ -114,11 +115,19 @@ export class ARToolkitNFT implements IARToolkitNFT {
   public FS: any;
   public malloc: any;
   public free: any;
-  public HEAPU8: any;
   public videoFramePtr: number;
   public videoLumaPtr: number;
   public StringList: any;
   public nftMarkers: any;
+
+  /** The WASM heap view.
+   * Read from the module on every access rather than cached: the build enables
+   * ALLOW_MEMORY_GROWTH, and Emscripten replaces this typed array when the heap
+   * grows, detaching any previously captured reference.
+   */
+  public get HEAPU8(): any {
+    return this.module.HEAPU8;
+  }
 
   // construction
   /**
@@ -156,10 +165,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
     //this.instance = new instance.Module();
     this.instance = instance;
 
+    this.module = instance;
     this.FS = instance.FS;
     this.malloc = instance._malloc;
     this.free = instance._free;
-    this.HEAPU8 = instance.HEAPU8;
     this.StringList = instance.StringList;
     this.nftMarkers = instance.nftMarkers;
 
