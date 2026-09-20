@@ -29,9 +29,25 @@ jobs:
           cache: npm
 
       - name: Install ChromiumHeadless
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
+          # Bounded retry: the snap-backed apt package has failed on transient
+          # Snapcraft assertion-fetch timeouts (see #602). A tag-triggered
+          # release cannot simply be re-run, so absorb short-lived failures.
+          set +e
+          for attempt in 1 2 3; do
+            sudo apt-get update && sudo apt-get install -y chromium-browser
+            if [ $? -eq 0 ]; then
+              echo "Chromium installed on attempt $attempt"
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "::warning::Chromium install attempt $attempt failed; retrying in $((attempt * 15))s"
+              sleep $((attempt * 15))
+            fi
+          done
+          echo "::error::Chromium install failed after 3 attempts"
+          exit 1
 
       - name: Install
         run: npm ci
