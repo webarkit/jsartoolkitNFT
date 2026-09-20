@@ -218,7 +218,7 @@ FLAGS += " -Wno-return-type-c-linkage"; // Add this line to disable the warning
 FLAGS += " -s TOTAL_MEMORY=" + MEM + " ";
 FLAGS += " -s USE_LIBJPEG=1";
 FLAGS += " -s USE_ZLIB=1";
-FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS"]';
+FLAGS += ' -s EXPORTED_RUNTIME_METHODS=["FS","HEAPU8"]';
 FLAGS += ' -s EXPORTED_FUNCTIONS=["_malloc","_free"]';
 FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 FLAGS += " --bind "; // Ensure --bind is included
@@ -229,7 +229,7 @@ const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
 const WASM_FLAGS = " -s SINGLE_FILE=1";
 const NODE_FLAGS =
-  ' -s ENVIRONMENT=node -s FORCE_FILESYSTEM -s EXPORTED_RUNTIME_METHODS=["NODEFS","FS"] -lnodefs.js';
+  ' -s ENVIRONMENT=node -s FORCE_FILESYSTEM -s EXPORTED_RUNTIME_METHODS=["NODEFS","FS","HEAPU8"] -lnodefs.js';
 const SIMD128_FLAGS = " -msimd128";
 const ES6_FLAGS = " -s EXPORT_ES6=1 -s MODULARIZE=1 -sENVIRONMENT=web ";
 

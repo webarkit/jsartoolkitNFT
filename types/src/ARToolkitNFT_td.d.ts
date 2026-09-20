@@ -33,6 +33,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     static AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR_MULTI: number;
     static AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
     private instance;
+    private module;
     private markerNFTCount;
     private cameraCount;
     private version;
@@ -45,11 +46,11 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     FS: any;
     malloc: any;
     free: any;
-    HEAPU8: any;
     videoFramePtr: number;
     videoLumaPtr: number;
     StringList: any;
     nftMarkers: any;
+    get HEAPU8(): any;
     constructor();
     init(): Promise<this>;
     setup(width: number, height: number, cameraId: number): number;
