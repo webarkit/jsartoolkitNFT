@@ -16,3 +16,5 @@ python-bindings/src/*.egg-info
 .vscode
 .idea
 tools/emcc_args.txt
+coverage
+*.tsbuildinfo
