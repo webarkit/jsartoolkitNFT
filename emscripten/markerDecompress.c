@@ -14,7 +14,7 @@
 #include <AR/ar.h>
 #include <zlib/zlib.h>
 
-const int mem_size_4mb = 4*1024*1024;
+const size_t mem_size_4mb = 4194304; /* 4 * 1024 * 1024, precomputed to avoid a multiplication feeding malloc */
 
 int decompressMarkers(const char* src, const char* outTemp){
     // markerContentStruct *markerData;
@@ -131,7 +131,7 @@ void extractDataAndSave(const char* str, const char* name){
         exit(EXIT_FAILURE);
     }
     char *iset_contentHex = malloc(iset_content_size);
-    strncpy(iset_contentHex, str + iset_final_index, iset_content_size);
+    memcpy(iset_contentHex, str + iset_final_index, iset_content_size);
 
     // tempMarkerData->iset_content = iset_contentHex;
     char *isetName = nameConcat(name, ".iset");
@@ -144,7 +144,7 @@ void extractDataAndSave(const char* str, const char* name){
 
     // ---FSET---
     char *fset_contentHex = malloc(fset_content_size);
-    strncpy(fset_contentHex, str + fset_final_index, fset_content_size);
+    memcpy(fset_contentHex, str + fset_final_index, fset_content_size);
 
     // tempMarkerData->fset_content = fset_contentHex;
     char *fsetName = nameConcat(name, ".fset");
@@ -156,7 +156,7 @@ void extractDataAndSave(const char* str, const char* name){
 
     // ---FSET3---
     char *fset3_contentHex = malloc(fset3_content_size);
-    strncpy(fset3_contentHex, str + fset3_final_index, fset3_content_size);
+    memcpy(fset3_contentHex, str + fset3_final_index, fset3_content_size);
 
     // tempMarkerData->fset3_content = fset3_contentHex;
     char *fset3Name = nameConcat(name, ".fset3");
@@ -179,7 +179,7 @@ FILE *openZFT( const char *filename, const char *ext)
     if (ext) {
         len = strlen(filename) + strlen(ext) + 2; // space for '.' and '\0'.
         arMalloc(buf, char, len);
-        sprintf(buf, "%s.%s", filename, ext);
+        snprintf(buf, len, "%s.%s", filename, ext);
         fp = fopen(buf,"rb");
         free(buf);
     } else {
@@ -191,10 +191,15 @@ FILE *openZFT( const char *filename, const char *ext)
 
 char* nameConcat(const char *s1, const char *s2)
 {
+    if (s1 == NULL || s2 == NULL) {
+        return NULL;
+    }
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
     char *result = malloc(len1 + len2 + 1); // +1 for the null-terminator
-    // in real code you would check for errors in malloc here
+    if (result == NULL) {
+        return NULL;
+    }
     memcpy(result, s1, len1);
     memcpy(result + len1, s2, len2 + 1); // +1 to copy the null-terminator
     return result;
