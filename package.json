@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.10.2",
+  "version": "1.11.0",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "exports": {
