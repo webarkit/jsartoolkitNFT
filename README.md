@@ -212,6 +212,17 @@ const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft');
 const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft/node');
 ```
 
+`process()` takes raw **RGBA** pixel data, so decoding the image is up to you. No decoder is
+bundled with the package — install the one the example you follow uses:
+
+```bash
+# for the sharp example below
+npm install @webarkit/jsartoolkit-nft sharp
+
+# or, for the canvas example
+npm install @webarkit/jsartoolkit-nft canvas
+```
+
 A minimal example decoding an image with [sharp](https://github.com/lovell/sharp) and feeding the RGBA pixels to the controller:
 
 ```javascript
@@ -243,7 +254,7 @@ init();
 - Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`)
 - KPM-based marker detection and AR2 tracking with pose matrix output
 - Event listener for `getNFTMarker`
-- Decoding image input via [sharp](https://github.com/lovell/sharp) or the [canvas](https://github.com/Automattic/node-canvas) package (`process()` expects **RGBA** pixel data)
+- Decoding image input via [sharp](https://github.com/lovell/sharp) or the [canvas](https://github.com/Automattic/node-canvas) package (`process()` expects **RGBA** pixel data). Neither is a dependency of this package — install whichever you prefer.
 
 ### Not yet implemented
 
