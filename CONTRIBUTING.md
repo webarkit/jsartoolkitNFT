@@ -18,7 +18,7 @@ To contribute to the project, please follow these steps:
 3. **Develop and Test**: Make your changes and ensure they pass all tests (see the [Testing](#testing) section).
 4. **Submit the Pull Request**: Open a PR against the `dev` branch of the main repository.
 
-> **Important**: All PRs must be made against the `dev` branch. The `main` branch is reserved exclusively for stable releases.
+> **Important**: All PRs must be made against the `dev` branch. The `master` branch is reserved exclusively for stable releases.
 
 ## Testing
 
