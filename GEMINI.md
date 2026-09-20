@@ -1,4 +1,4 @@
-# Claude Code instructions
+# Gemini instructions
 
 The full guidance for AI agents in this repository lives in **[AGENTS.md](AGENTS.md)**.
 Read it before making changes — it is the canonical source and this file is only a pointer.

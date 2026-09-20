@@ -1,12 +1,12 @@
-# Claude Code instructions
+# GitHub Copilot instructions
 
-The full guidance for AI agents in this repository lives in **[AGENTS.md](AGENTS.md)**.
+The full guidance for AI agents in this repository lives in **[AGENTS.md](../AGENTS.md)**.
 Read it before making changes — it is the canonical source and this file is only a pointer.
 
 ## The rules most often got wrong
 
 - **Open pull requests against `dev`**, never `master`. `master` is reserved for stable
-  releases. See [CONTRIBUTING.md](CONTRIBUTING.md).
+  releases. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 - **Conventional Commits**, with types limited to
   `feat`, `fix`, `perf`, `doc`, `refactor`, `test`, `style`, `chore`.
   There is no `ci` type, and documentation is `doc`, not `docs`. PRs are squashed, so the PR
