@@ -36,4 +36,15 @@
 import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { ARControllerNFT } from "./ARControllerNFT_node";
 
-export { ARToolkitNFT, ARControllerNFT };
+// ARLogLevel is a runtime value, so it must be exported here to be reachable:
+// setLogLevel() advertises it in its signature, but there is no ./abstractions
+// subpath in package.json's exports map for consumers to reach it through.
+import { ARLogLevel } from "./abstractions/CommonInterfaces";
+import type {
+  INFTMarker,
+  INFTMarkerInfo,
+  IImageObj,
+} from "./abstractions/CommonInterfaces";
+
+export { ARToolkitNFT, ARControllerNFT, ARLogLevel };
+export type { INFTMarker, INFTMarkerInfo, IImageObj };
