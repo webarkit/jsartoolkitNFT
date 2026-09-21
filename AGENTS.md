@@ -77,6 +77,13 @@ something in `js/*.api.js` (which is injected via `--pre-js`).
 **TypeScript** — `npm run build-ts`, run on the host. It bundles `src/**` with webpack into
 `dist/` and emits declarations into `types/`.
 
+**Debug tracing** — `node tools/makem.js --debug-logs` defines `DEBUG`, which switches on the
+`ARLOGd()` calls in WebARKitLib. Opt-in only: `ARLOGd` is `#ifdef DEBUG` in `ARUtil/log.h`, so
+released artifacts — including `artoolkitNFT.debug.js`, which *is* a release asset — carry no
+tracing by default. Note the traced code lives in `libar.o`, so this needs a full build; with
+`--no-libar` the instrumented sources are never recompiled. `ARLOGd` also passes a runtime
+level check, so `arLogLevel` has to be `AR_LOG_LEVEL_DEBUG` (`0`) for anything to print.
+
 ### `build/` and `dist/` are committed
 
 This is the single most important thing to understand about this repository.
