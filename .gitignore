@@ -18,3 +18,4 @@ python-bindings/src/*.egg-info
 tools/emcc_args.txt
 coverage
 *.tsbuildinfo
+python-bindings/vcpkg
