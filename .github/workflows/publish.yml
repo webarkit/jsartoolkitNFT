@@ -20,6 +20,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          # On a tag push github.ref is already the tag. On workflow_dispatch it
+          # is the default branch, so the `tag` input has to be applied here or a
+          # manual run publishes master rather than the tag it names (#619).
+          # That matters most when re-running after a failed tagged release.
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v6
@@ -60,16 +66,26 @@ jobs:
         env:
           CI: true
 
-      - name: Verify npm auth
-        run: npm whoami
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # This replaces the old `npm whoami` canary, which cannot work under trusted
+      # publishing: OIDC is not a logged-in session, so there is no user to report.
+      #
+      # Be clear about what this does and does not cover. It exercises packing and
+      # the manifest, so a bad `files`/`exports` entry or a broken package.json
+      # still fails before anything reaches the registry. It does NOT verify
+      # credentials -- npm mints the OIDC token during publish itself, so there is
+      # no pre-flight auth check to make. Authentication problems now surface at
+      # the publish step rather than before it (#620).
+      - name: Verify the package builds (dry run)
+        run: npm publish --provenance --access public --dry-run
 
       - name: Publish
-        run: |
-          # For public scoped packages add --access public
-          # For private packages omit --access or use --access restricted
-          npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # Authenticates via npm Trusted Publishing (OIDC) using the id-token
+        # permission granted above -- no NODE_AUTH_TOKEN, nothing to rotate, and
+        # nothing that expires. Requires the trusted publisher to be configured on
+        # npmjs.com for this repository and this workflow filename, and npm >=
+        # 11.5.1, which Node 24 provides via .nvmrc (it bundles npm 11.16+).
+        #
+        # For public scoped packages add --access public
+        # For private packages omit --access or use --access restricted
+        run: npm publish --provenance --access public
 
