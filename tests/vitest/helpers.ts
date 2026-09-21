@@ -67,3 +67,34 @@ export function loadMarker(
     );
   });
 }
+
+/**
+ * Promise wrapper around the batch `loadNFTMarkers`.
+ *
+ * Note this is the *working* path: loading several markers in one call is fine.
+ * It is loading them across separate calls that is broken — see #612 and
+ * `incremental-markers.test.ts`.
+ */
+export function loadMarkers(
+  controller: any,
+  urls: string[],
+  timeoutMs = 60_000,
+): Promise<number[]> {
+  return new Promise<number[]>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`loadNFTMarkers([${urls}]) timed out — the callback never fired`)),
+      timeoutMs,
+    );
+    controller.loadNFTMarkers(
+      urls,
+      (ids: number[]) => {
+        clearTimeout(timer);
+        resolve(ids);
+      },
+      (err: number) => {
+        clearTimeout(timer);
+        reject(new Error(`loadNFTMarkers([${urls}]) failed: ${err}`));
+      },
+    );
+  });
+}
