@@ -19,3 +19,4 @@ tools/emcc_args.txt
 coverage
 *.tsbuildinfo
 python-bindings/vcpkg
+.libar-build-mode
