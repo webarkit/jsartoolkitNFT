@@ -18,11 +18,19 @@ let NO_LIBAR = false;
 
 const arguments = process.argv;
 
+let DEBUG_LOGS = false;
+
 for (let j = 2; j < arguments.length; j++) {
   if (arguments[j] == "--no-libar") {
     NO_LIBAR = true;
     console.log(
       "Building jsartoolkitNFT with --no-libar option, libar will be preserved.",
+    );
+  }
+  if (arguments[j] == "--debug-logs") {
+    DEBUG_LOGS = true;
+    console.log(
+      "Building jsartoolkitNFT with --debug-logs option, ARLOGd output will be compiled in.",
     );
   }
 }
@@ -224,6 +232,14 @@ FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 FLAGS += " --bind "; // Ensure --bind is included
 // Uncomment this flag for debugging logs
 //FLAGS += " -D WEBARKIT_DEBUG=1 "
+
+// Opt-in only, via `node tools/makem.js --debug-logs`.
+// ARLOGd() is #ifdef DEBUG in ARUtil/log.h, so it compiles to nothing unless
+// this is set - released artifacts, including artoolkitNFT.debug.js, carry no
+// ARLOGd output by default.
+if (DEBUG_LOGS) {
+  FLAGS += " -D DEBUG=1 ";
+}
 
 const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
