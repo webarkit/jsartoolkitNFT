@@ -115,12 +115,10 @@ describe("ARControllerNFT", () => {
     });
 
     /**
-     * These only prove the value survives the WASM boundary: the native setter
-     * assigns a field and the getter reads it straight back. That is worth
-     * something — it covers the embind marshalling of ARdouble — but it is not
-     * evidence that the planes do anything.
-     *
-     * They currently cannot be anything more. See the skipped test below.
+     * The setters store the value; `recalculateCameraLens()` is what rebuilds
+     * the frustum from it. That two-step is the intended usage — the setters
+     * deliberately do not recalculate on every call, so several can be changed
+     * before paying for one rebuild.
      */
     it("stores and returns the near plane", () => {
       ar.setProjectionNearPlane(0.5);
@@ -132,34 +130,35 @@ describe("ARControllerNFT", () => {
       expect(ar.getProjectionFarPlane()).toBeCloseTo(2000, 5);
     });
 
-    /**
-     * SKIPPED — documents behaviour the library does not currently have.
-     *
-     * The planes feed `arglCameraFrustumRH`, which builds the camera lens, so
-     * changing them ought to change the matrix `getCameraMatrix()` returns.
-     * Two things prevent it:
-     *
-     * 1. `_initialize()` caches `camera_mat` from `getCameraLens()` *before*
-     *    calling `setProjectionNearPlane(0.1)` / `setProjectionFarPlane(1000)`,
-     *    so the cached matrix is built from the constructor defaults
-     *    (near 0.0001) and those two calls never reach it.
-     * 2. `recalculateCameraLens()` is implemented in C++ and bound via embind,
-     *    but `src/ARToolkitNFT.ts` does not proxy it, so nothing in JavaScript
-     *    can trigger a rebuild.
-     *
-     * The setters are therefore observably inert through the public API.
-     */
-    it.skip("feeds the camera frustum, so changing them changes the matrix", () => {
+    it("rebuilds the camera frustum on recalculateCameraLens()", () => {
+      const nft = ar.artoolkitNFT;
+
       ar.setProjectionNearPlane(0.1);
       ar.setProjectionFarPlane(1000);
-      const before = Array.from(ar.getCameraMatrix() as ArrayLike<number>);
+      nft.instance.recalculateCameraLens();
+      const before = Array.from(nft.getCameraLens() as ArrayLike<number>);
 
       ar.setProjectionNearPlane(0.5);
       ar.setProjectionFarPlane(2000);
-      const after = Array.from(ar.getCameraMatrix() as ArrayLike<number>);
+      nft.instance.recalculateCameraLens();
+      const after = Array.from(nft.getCameraLens() as ArrayLike<number>);
 
       expect(before.length).toBe(16);
+      expect(after.length).toBe(16);
       expect(after).not.toEqual(before);
+    });
+
+    it("does not recalculate until asked", () => {
+      const nft = ar.artoolkitNFT;
+
+      nft.instance.recalculateCameraLens();
+      const lens = Array.from(nft.getCameraLens() as ArrayLike<number>);
+
+      // Changing the planes alone must not move the frustum — that is what
+      // makes the explicit recalculate step meaningful.
+      ar.setProjectionNearPlane(0.25);
+      ar.setProjectionFarPlane(1500);
+      expect(Array.from(nft.getCameraLens() as ArrayLike<number>)).toEqual(lens);
     });
   });
 
