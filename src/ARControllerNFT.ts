@@ -36,8 +36,7 @@
 import {
   INFTMarkerInfo,
   IImageObj,
-  INFTMarker,
-} from "./abstractions/CommonInterfaces";
+  INFTMarker, ARLogLevel } from "./abstractions/CommonInterfaces";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { ARToolkitNFT } from "./ARToolkitNFT";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
@@ -645,8 +644,18 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * Sets the logging level to use by ARToolKit.
    * @param {number} mode type for the log level.
    */
-  setLogLevel(mode: boolean): number {
-    return this.artoolkitNFT.setLogLevel(mode);
+  /**
+   * Set the logging verbosity.
+   *
+   * Lower is more verbose: `ARLogLevel.Debug` (0) shows everything,
+   * `ARLogLevel.RelInfo` (4) the least. The library starts at
+   * `ARLogLevel.Info`.
+   *
+   * @param {ARLogLevel|number} level one of the ARLogLevel values.
+   * @return {number} the level that was set.
+   */
+  setLogLevel(level: ARLogLevel | number): number {
+    return this.artoolkitNFT.setLogLevel(level);
   }
 
   /**
