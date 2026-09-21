@@ -16867,7 +16867,7 @@ function asmFunc(imports) {
          while (1) if (($0 | 0) == ($1 | 0)) {
           $13 = HEAP32[HEAP32[HEAP32[$27 >> 2] >> 2] >> 2];
           $1 = HEAP32[$13 + 24 >> 2];
-          if (!$1) {
+          if (($1 | 0) < 0) {
            break block172
           }
           $17 = HEAP32[(($1 << 2) + $27 | 0) + 60 >> 2];
