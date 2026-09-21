@@ -100,17 +100,70 @@ describe("ARControllerNFT", () => {
     });
   });
 
+  describe("projection planes", () => {
+    let originalNear: number;
+    let originalFar: number;
+
+    beforeAll(() => {
+      originalNear = ar.getProjectionNearPlane();
+      originalFar = ar.getProjectionFarPlane();
+    });
+
+    afterAll(() => {
+      ar.setProjectionNearPlane(originalNear);
+      ar.setProjectionFarPlane(originalFar);
+    });
+
+    /**
+     * These only prove the value survives the WASM boundary: the native setter
+     * assigns a field and the getter reads it straight back. That is worth
+     * something — it covers the embind marshalling of ARdouble — but it is not
+     * evidence that the planes do anything.
+     *
+     * They currently cannot be anything more. See the skipped test below.
+     */
+    it("stores and returns the near plane", () => {
+      ar.setProjectionNearPlane(0.5);
+      expect(ar.getProjectionNearPlane()).toBeCloseTo(0.5, 5);
+    });
+
+    it("stores and returns the far plane", () => {
+      ar.setProjectionFarPlane(2000);
+      expect(ar.getProjectionFarPlane()).toBeCloseTo(2000, 5);
+    });
+
+    /**
+     * SKIPPED — documents behaviour the library does not currently have.
+     *
+     * The planes feed `arglCameraFrustumRH`, which builds the camera lens, so
+     * changing them ought to change the matrix `getCameraMatrix()` returns.
+     * Two things prevent it:
+     *
+     * 1. `_initialize()` caches `camera_mat` from `getCameraLens()` *before*
+     *    calling `setProjectionNearPlane(0.1)` / `setProjectionFarPlane(1000)`,
+     *    so the cached matrix is built from the constructor defaults
+     *    (near 0.0001) and those two calls never reach it.
+     * 2. `recalculateCameraLens()` is implemented in C++ and bound via embind,
+     *    but `src/ARToolkitNFT.ts` does not proxy it, so nothing in JavaScript
+     *    can trigger a rebuild.
+     *
+     * The setters are therefore observably inert through the public API.
+     */
+    it.skip("feeds the camera frustum, so changing them changes the matrix", () => {
+      ar.setProjectionNearPlane(0.1);
+      ar.setProjectionFarPlane(1000);
+      const before = Array.from(ar.getCameraMatrix() as ArrayLike<number>);
+
+      ar.setProjectionNearPlane(0.5);
+      ar.setProjectionFarPlane(2000);
+      const after = Array.from(ar.getCameraMatrix() as ArrayLike<number>);
+
+      expect(before.length).toBe(16);
+      expect(after).not.toEqual(before);
+    });
+  });
+
   describe("settings", () => {
-    it("round-trips the projection near plane", () => {
-      ar.setProjectionNearPlane(123.45);
-      expect(ar.getProjectionNearPlane()).toBeCloseTo(123.45, 2);
-    });
-
-    it("round-trips the projection far plane", () => {
-      ar.setProjectionFarPlane(543.21);
-      expect(ar.getProjectionFarPlane()).toBeCloseTo(543.21, 2);
-    });
-
     it("toggles debug mode", () => {
       ar.setDebugMode(true);
       expect(ar.getDebugMode()).toBeTruthy();
