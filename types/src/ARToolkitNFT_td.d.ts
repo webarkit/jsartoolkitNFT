@@ -1,5 +1,5 @@
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
-import { INFTMarkerInfo } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel } from "./abstractions/CommonInterfaces";
 export declare class ARToolkitNFT implements IARToolkitNFT {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
@@ -62,7 +62,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     detectNFTMarker(): number;
     getNFTMarker(markerIndex: number): INFTMarkerInfo;
     getNFTData(index: number): object;
-    setLogLevel(mode: boolean): number;
+    setLogLevel(level: ARLogLevel | number): number;
     getLogLevel(): number;
     setProjectionNearPlane(value: number): void;
     getProjectionNearPlane(): number;

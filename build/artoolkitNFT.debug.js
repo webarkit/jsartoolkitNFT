@@ -482,11 +482,16 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     return artoolkitNFT.getProcessingImage(this.id);
   };
   /**
-        Sets the logging level to use by ARToolKit.
+        Sets the logging verbosity used by ARToolKit.
 
-        @param {number} mode type for the log level.
-    */ ARControllerNFT.prototype.setLogLevel = function(mode) {
-    return artoolkitNFT.setLogLevel(mode);
+        Lower is more verbose: 0 (AR_LOG_LEVEL_DEBUG) shows everything,
+        4 (AR_LOG_LEVEL_REL_INFO) the least. The library starts at
+        1 (AR_LOG_LEVEL_INFO).
+
+        @param {number} level one of the AR_LOG_LEVEL_* values.
+        @return {number} the level that was set.
+    */ ARControllerNFT.prototype.setLogLevel = function(level) {
+    return artoolkitNFT.setLogLevel(level);
   };
   /**
           Gets the logging level used by ARToolKit.
@@ -16862,7 +16867,7 @@ function asmFunc(imports) {
          while (1) if (($0 | 0) == ($1 | 0)) {
           $13 = HEAP32[HEAP32[HEAP32[$27 >> 2] >> 2] >> 2];
           $1 = HEAP32[$13 + 24 >> 2];
-          if (!$1) {
+          if (($1 | 0) < 0) {
            break block172
           }
           $17 = HEAP32[(($1 << 2) + $27 | 0) + 60 >> 2];

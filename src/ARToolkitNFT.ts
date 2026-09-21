@@ -35,7 +35,7 @@
  */
 import { initARToolkitNFT } from "./factoryFunctions/initARToolkitNFT";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
-import { INFTMarkerInfo } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel } from "./abstractions/CommonInterfaces";
 import Utils from "./Utils";
 import packageJson from "../package.json";
 const { version } = packageJson;
@@ -276,8 +276,18 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getNFTData(index);
   }
 
-  public setLogLevel(mode: boolean): number {
-    return this.instance.setLogLevel(mode);
+  /**
+   * Set the logging verbosity.
+   *
+   * Lower is more verbose: `ARLogLevel.Debug` (0) shows everything,
+   * `ARLogLevel.RelInfo` (4) the least. The library starts at
+   * `ARLogLevel.Info`.
+   *
+   * @param {ARLogLevel|number} level one of the ARLogLevel values.
+   * @return {number} the level that was set.
+   */
+  public setLogLevel(level: ARLogLevel | number): number {
+    return this.instance.setLogLevel(level);
   }
   public getLogLevel(): number {
     return this.instance.getLogLevel();
