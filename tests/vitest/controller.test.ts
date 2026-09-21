@@ -162,6 +162,39 @@ describe("ARControllerNFT", () => {
     });
   });
 
+  describe("log level", () => {
+    let original: number;
+
+    beforeAll(() => {
+      original = ar.getLogLevel();
+    });
+
+    afterAll(() => {
+      ar.setLogLevel(original);
+    });
+
+    /**
+     * `setLogLevel` takes a *level*, not a boolean — lower is more verbose.
+     * It was typed as `boolean` until recently, which made `false` (0) the most
+     * verbose setting and left Warn and Error unreachable.
+     */
+    it("round-trips each level", () => {
+      for (const level of [0, 1, 2, 3, 4]) {
+        ar.setLogLevel(level);
+        expect(ar.getLogLevel()).toBe(level);
+      }
+    });
+
+    it("ignores a negative level", () => {
+      // Matches ARToolKit5's arwSetLogLevel guard. Without it a negative value
+      // makes arLog's `logLevel < arLogLevel` test pass for every message, so
+      // an apparent "off" would be maximum verbosity.
+      ar.setLogLevel(2);
+      ar.setLogLevel(-1);
+      expect(ar.getLogLevel()).toBe(2);
+    });
+  });
+
   describe("settings", () => {
     it("toggles debug mode", () => {
       ar.setDebugMode(true);
