@@ -350,7 +350,14 @@ nftMarker getNFTData(int id, int index) {
 /***************
  * Set Log Level
  ****************/
-void setLogLevel(int level) { arLogLevel = level; }
+void setLogLevel(int level) {
+  // Guard as ARToolKit5's arwSetLogLevel does: a negative level would make
+  // arLog's `logLevel < arLogLevel` test pass for every message, turning an
+  // apparent "off" into maximum verbosity.
+  if (level >= 0) {
+    arLogLevel = level;
+  }
+}
 
 int getLogLevel() { return arLogLevel; }
 

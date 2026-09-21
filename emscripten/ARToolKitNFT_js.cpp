@@ -436,7 +436,14 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
 /***************
  * Set Log Level
  ****************/
-void ARToolKitNFT::setLogLevel(int level) { arLogLevel = level; }
+void ARToolKitNFT::setLogLevel(int level) {
+  // Guard as ARToolKit5's arwSetLogLevel does: a negative level would make
+  // arLog's `logLevel < arLogLevel` test pass for every message, turning an
+  // apparent "off" into maximum verbosity.
+  if (level >= 0) {
+    arLogLevel = level;
+  }
+}
 
 int ARToolKitNFT::getLogLevel() { return arLogLevel; }
 
