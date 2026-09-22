@@ -7,7 +7,10 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing tag to publish (e.g. 1.2.3)
+        description: >-
+          Existing tag to publish, e.g. 1.2.3. THIS PERFORMS A REAL RELEASE to
+          the npm registry -- it is not a rehearsal. Must be an existing tag;
+          a branch name or commit SHA is rejected.
         required: true
 
 permissions:
@@ -25,7 +28,13 @@ jobs:
           # is the default branch, so the `tag` input has to be applied here or a
           # manual run publishes master rather than the tag it names (#619).
           # That matters most when re-running after a failed tagged release.
-          ref: ${{ inputs.tag || github.ref }}
+          #
+          # The input is resolved under refs/tags/ rather than passed through
+          # bare. `tag` is a free-form string, so a bare value would let a branch
+          # name or a commit SHA resolve and be published as a release. Prefixing
+          # makes checkout fail loudly on anything that is not an existing tag.
+          ref: >-
+            ${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || github.ref }}
 
       - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v6
