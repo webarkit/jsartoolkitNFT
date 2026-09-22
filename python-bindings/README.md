@@ -12,7 +12,10 @@ Windows. There is deliberately no source distribution: the build compiles source
 outside the package directory and needs the WebARKitLib git submodule, neither of which
 survives an sdist. On a platform without a wheel, pip reports no matching distribution.
 
-Pre-release builds go to TestPyPI:
+Rehearsal builds are published to TestPyPI by running the `Publish Python package`
+workflow manually with the `testpypi` target. Note that **any** `python/*` tag publishes to
+PyPI, including a pre-release version such as `0.0.14rc1` -- routing is chosen by how the
+workflow is triggered, not by the version number. To install a rehearsal build:
 
 ```bash
 pip install -i https://test.pypi.org/simple/ artoolkitnft
