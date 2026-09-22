@@ -82,6 +82,21 @@ function writeLibarMode(mode) {
   }
 }
 
+// Drop the marker before a full build starts replacing the objects it
+// describes. Without this, a mode-changing rebuild that compiles the library
+// objects and then fails at a later link job would leave the *previous* mode
+// recorded next to objects built in the new one -- and a matching --no-libar
+// run would accept them, producing exactly the mismatched tracing the marker
+// exists to prevent. Having no marker is the honest state while a build is in
+// flight: readLibarMode() returns null and the guard refuses.
+function clearLibarMode() {
+  try {
+    fs.rmSync(LIBAR_MODE_FILE, { force: true });
+  } catch (e) {
+    console.warn("Could not clear the libar build mode:", e.message);
+  }
+}
+
 const BUILD_BASE_FILENAME = "artoolkitNFT";
 
 const BUILD_DEBUG_FILE = BUILD_BASE_FILENAME + ".debug.js";
@@ -751,6 +766,12 @@ if (NO_LIBAR === true) {
 }
 
 if (NO_LIBAR !== true) {
+  // Invalidate first, record last. Between these two points the objects in
+  // build/ are being replaced, and no claim about them is true -- so the marker
+  // is deliberately absent for the whole of the build rather than holding
+  // either the old mode or a premature new one.
+  clearLibarMode();
+
   // Record the mode only once every job has succeeded. Writing it before the
   // build meant a failure or interruption still left a marker claiming the
   // preserved objects were built in this mode -- so a later matching
