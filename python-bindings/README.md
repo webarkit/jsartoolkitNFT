@@ -1,7 +1,22 @@
 # ARToolKitNFT for python
 
 This is a python binding for WebARKitLib library. It is based on the WebARKitLib library and provides a python interface to the library.
-For now you can install the package only with testPyPi: pip install -i https://test.pypi.org/simple/ artoolkitnft
+Install from PyPI:
+
+```bash
+pip install artoolkitnft
+```
+
+Wheels are published for CPython 3.9-3.13 on Linux, macOS (Intel and Apple silicon) and
+Windows. There is deliberately no source distribution: the build compiles sources from
+outside the package directory and needs the WebARKitLib git submodule, neither of which
+survives an sdist. On a platform without a wheel, pip reports no matching distribution.
+
+Pre-release builds go to TestPyPI:
+
+```bash
+pip install -i https://test.pypi.org/simple/ artoolkitnft
+```
 
 ## Local development (build and install from source)
 
@@ -9,7 +24,7 @@ To build the bindings locally and test them without publishing to TestPyPI:
 
 ### Prerequisites
 
-- Python 3.8+ with `pip`
+- Python 3.9+ with `pip`
 - A C/C++ toolchain (MSVC Build Tools on Windows, `build-essential` on Linux)
 - `cmake` available on `PATH` (used by `setup.py` to build the bundled zlib)
 - The git submodules initialised:
