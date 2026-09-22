@@ -89,44 +89,38 @@ python example.py
 - Working inside a virtualenv (`python -m venv .venv`) is recommended so
   you do not pollute the system / Anaconda site-packages.
 
-## Publishing the Package to TestPyPI (Linux)
+## Publishing
 
-To publish the package to TestPyPI on a Linux system, follow these steps:
+Releases are built and published by the
+[Publish Python package](../.github/workflows/publish-python.yml) workflow, through PyPI
+trusted publishing (OIDC). There is no token, and nothing is uploaded by hand.
 
-1. **Install the required tools**:
-   Ensure you have `setuptools`, `wheel`, and `twine` installed. You can install them using pip:
-   ```bash
-   pip install --upgrade setuptools wheel twine
-   ```
+1. Bump the version in **both** `pyproject.toml` and `setup.py` — the workflow refuses to
+   publish if the tag and the two files disagree.
+2. Rehearse: run the workflow manually with the `testpypi` target and confirm the wheels build
+   on all three platforms.
+3. Release: tag `python/<version>` (for example `python/0.0.13`) and push it.
 
-2. **Build the wheel**:
-   Navigate to the directory containing your `setup.py` file and run the following command to build the wheel:
-   ```bash
-   python setup.py sdist bdist_wheel --plat-name manylinux2014_x86_64
-   ```
+### Do not publish by hand
 
-3. **Check the wheel file**:
-   Verify that the wheel file has the correct platform tag. You can use the `wheel` tool to inspect the wheel file:
-   ```bash
-   pip install wheel
-   wheel unpack dist/artoolkitnft-0.0.12-cp38-cp38-manylinux2014_x86_64.whl
-   ```
-
-4. **Upload the wheel to TestPyPI**:
-   Use `twine` to upload the wheel to TestPyPI. You will need your TestPyPI credentials for this step.
-   ```bash
-   twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-   ```
-
-Here is a summary of the commands you need to run:
+This section previously documented a manual `twine` upload. It has been removed because it
+produced a broken artifact that is still on TestPyPI. The instruction was:
 
 ```bash
-pip install --upgrade setuptools wheel twine
+# DO NOT DO THIS
 python setup.py sdist bdist_wheel --plat-name manylinux2014_x86_64
-pip install wheel
-wheel unpack dist/artoolkitnft-0.0.12-cp38-cp38-manylinux2014_x86_64.whl
 twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
 
-Make sure you replace `dist/artoolkitnft-0.0.12-cp38-cp38-manylinux2014_x86_64.whl` with the actual path to your wheel file if it's different.
-```
+`--plat-name` **forcibly stamps** a platform tag onto whatever was just built, without checking
+it. Run on Windows, or with a stale build tree, it labels a Windows `.pyd` as Linux. That is
+exactly what `artoolkitnft-0.0.12-cp311-cp311-manylinux2014_x86_64.whl` on TestPyPI contains:
+`artoolkitnft_core.cp311-win_amd64.pyd`, which installs on Linux and then fails to load.
+
+It also uploads `dist/*`, which includes an **sdist** — and a source build cannot work here,
+because it needs sources from outside the package directory and the WebARKitLib submodule.
+
+The workflow avoids all of this: it builds natively per platform, repairs wheels with
+`auditwheel` / `delocate`, rejects any wheel whose contents disagree with its tag
+(`.github/scripts/check_wheel.py`), installs and imports each one in a clean virtualenv, and
+publishes nothing unless every wheel in the matrix succeeded.

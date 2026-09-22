@@ -332,8 +332,29 @@ The two suites cover different things. `tests/vitest/` drives `ARControllerNFT` 
 `process()`. The Karma specs under `tests/*.test.js` cover the legacy global API and the raw
 Emscripten bindings across the seven build targets, and are being migrated (#579).
 
-Note that the Karma targets need a system Chromium, which the CI workflows install separately;
-Playwright's browser is not currently usable for them.
+### The browser Karma needs
+
+The Karma targets need a **system Chrome or Chromium**, separate from the one Playwright
+installs for Vitest. Playwright's browser cannot be reused: it launches but never captures
+under Karma, timing out after 60s per attempt.
+
+`karma-chrome-launcher` finds it through `CHROME_BIN`, so if `npm test` reports
+`No binary for ChromeHeadless browser on your platform`, point it at your install:
+
+```bash
+# Linux — matches what CI installs
+export CHROME_BIN=$(command -v google-chrome-stable || command -v chromium)
+
+# macOS
+export CHROME_BIN="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+# Windows (PowerShell)
+$env:CHROME_BIN = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+```
+
+CI installs Google's `.deb` directly from `dl.google.com` rather than the snap-backed
+`chromium-browser` apt package, whose CDN has failed often enough to redden unrelated PRs
+(#602).
 
 Tests run against the **committed** `build/` artifacts. If you change anything under
 `emscripten/` or `tools/makem.js`, rebuild before testing or you will be testing stale

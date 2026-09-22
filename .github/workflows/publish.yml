@@ -72,8 +72,20 @@ jobs:
             echo "::warning::Chrome download attempt $attempt failed; retrying in $((attempt * 10))s"
             sleep $((attempt * 10))
           done
-          sudo apt-get update
-          sudo apt-get install -y "$tmp/chrome.deb"
+          # apt itself needs the same treatment: a mirror hiccup during
+          # `update` or dependency resolution fails the job just as hard as a
+          # failed download, and that is the whole point of #602.
+          for attempt in 1 2 3; do
+            if sudo apt-get update && sudo apt-get install -y "$tmp/chrome.deb"; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Could not install Chrome after 3 attempts"
+              exit 1
+            fi
+            echo "::warning::Chrome install attempt $attempt failed; retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
           echo "CHROME_BIN=$(command -v google-chrome-stable)" >> "$GITHUB_ENV"
           google-chrome-stable --version
 
