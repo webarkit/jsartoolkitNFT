@@ -259,7 +259,7 @@ ext_modules = [
 
 setup(
     name='artoolkitnft',
-    version='0.0.12',
+    version='0.0.13',
     author='Walter Perdan',
     author_email='github@kalwaltart.it',
     description='This is a Python binding project for jsartoolkitNFT, which integrates WebARKitLib with Python using pybind11. It allows for augmented reality applications to be developed in Python by providing bindings to the underlying C/C++ WebARKitLib library.',
@@ -276,5 +276,6 @@ setup(
     ext_modules=ext_modules,
     cmdclass={'build_ext': build_ext},
     zip_safe=False,
-    python_requires='>=3.8',
+    install_requires=['numpy'],
+    python_requires='>=3.9',
 )
