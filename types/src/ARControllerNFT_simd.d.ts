@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, IImageObj, INFTMarker } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 export declare class ARControllerNFT implements AbstractARControllerNFT {
     private id;
@@ -59,7 +59,7 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     setDebugMode(mode: boolean): number;
     getDebugMode(): boolean;
     getProcessingImage(): number;
-    setLogLevel(mode: boolean): number;
+    setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
     setProjectionNearPlane(value: number): void;
     getProjectionNearPlane(): number;

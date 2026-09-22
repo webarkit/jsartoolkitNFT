@@ -34,6 +34,26 @@
  *
  */
 
+/**
+ * Verbosity levels accepted by `setLogLevel()`.
+ *
+ * These mirror the `AR_LOG_LEVEL_*` enum in WebARKitLib's `ARUtil/log.h`, and a
+ * message is emitted when its own level is >= the configured one — so `Debug`
+ * is the most verbose setting and `RelInfo` the quietest. The library starts at
+ * `Info`.
+ *
+ * The same values are also published as statics on `ARToolkitNFT`
+ * (`AR_LOG_LEVEL_DEBUG` and friends), read from the WASM module at init. This
+ * enum exists so the level can be named without an initialised instance.
+ */
+export enum ARLogLevel {
+  Debug = 0,
+  Info = 1,
+  Warn = 2,
+  Error = 3,
+  RelInfo = 4,
+}
+
 export interface IImageObj extends HTMLCanvasElement {
   videoWidth: number;
   width: number;
@@ -145,7 +165,7 @@ export interface IARToolKitNFTInstance {
   // Debug and logging
   setDebugMode(mode: boolean): number;
   getDebugMode(): boolean;
-  setLogLevel(mode: boolean): number;
+  setLogLevel(level: ARLogLevel | number): void;
   getLogLevel(): number;
 
   // Filtering

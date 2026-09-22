@@ -106,7 +106,6 @@ private:
     ARdouble filterSampleRate;
 #endif
 
-    int arLogLevel = AR_LOG_LEVEL_INFO;
     int detectedPage;
 
     int surfaceSetCount;

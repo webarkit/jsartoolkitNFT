@@ -7,7 +7,10 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing tag to publish (e.g. 1.2.3)
+        description: >-
+          Existing tag to publish, e.g. 1.2.3. THIS PERFORMS A REAL RELEASE to
+          the npm registry -- it is not a rehearsal. Must be an existing tag;
+          a branch name or commit SHA is rejected.
         required: true
 
 permissions:
@@ -20,11 +23,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          # On a tag push github.ref is already the tag. On workflow_dispatch it
+          # is the default branch, so the `tag` input has to be applied here or a
+          # manual run publishes master rather than the tag it names (#619).
+          # That matters most when re-running after a failed tagged release.
+          #
+          # The input is resolved under refs/tags/ rather than passed through
+          # bare. `tag` is a free-form string, so a bare value would let a branch
+          # name or a commit SHA resolve and be published as a release. Prefixing
+          # makes checkout fail loudly on anything that is not an existing tag.
+          ref: >-
+            ${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || github.ref }}
 
-      - name: Setup Node
+      - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v6
         with:
-          node-version: 22.15.1
+          node-version-file: ".nvmrc"
           registry-url: https://registry.npmjs.org
           cache: npm
 
@@ -52,21 +67,34 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Test
         run: npm test
         env:
           CI: true
 
-      - name: Verify npm auth
-        run: npm whoami
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # This replaces the old `npm whoami` canary, which cannot work under trusted
+      # publishing: OIDC is not a logged-in session, so there is no user to report.
+      #
+      # Be clear about what this does and does not cover. It exercises packing and
+      # the manifest, so a bad `files`/`exports` entry or a broken package.json
+      # still fails before anything reaches the registry. It does NOT verify
+      # credentials -- npm mints the OIDC token during publish itself, so there is
+      # no pre-flight auth check to make. Authentication problems now surface at
+      # the publish step rather than before it (#620).
+      - name: Verify the package builds (dry run)
+        run: npm publish --provenance --access public --dry-run
 
       - name: Publish
-        run: |
-          # For public scoped packages add --access public
-          # For private packages omit --access or use --access restricted
-          npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # Authenticates via npm Trusted Publishing (OIDC) using the id-token
+        # permission granted above -- no NODE_AUTH_TOKEN, nothing to rotate, and
+        # nothing that expires. Requires the trusted publisher to be configured on
+        # npmjs.com for this repository and this workflow filename, and npm >=
+        # 11.5.1, which Node 24 provides via .nvmrc (it bundles npm 11.16+).
+        #
+        # For public scoped packages add --access public
+        # For private packages omit --access or use --access restricted
+        run: npm publish --provenance --access public
 

@@ -63,7 +63,7 @@
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.11.0';
+        this.version = '1.12.0';
         console.info('JsartoolkitNFT ', this.version);
         console.warn("This library is deprecated, use the ES6 version instead!! It will be removed in a future release.")
 
@@ -488,12 +488,17 @@
     };
 
     /**
-        Sets the logging level to use by ARToolKit.
+        Sets the logging verbosity used by ARToolKit.
 
-        @param {number} mode type for the log level.
+        Lower is more verbose: 0 (AR_LOG_LEVEL_DEBUG) shows everything,
+        4 (AR_LOG_LEVEL_REL_INFO) the least. The library starts at
+        1 (AR_LOG_LEVEL_INFO).
+
+        @param {number} level one of the AR_LOG_LEVEL_* values.
+        @return {number} the level that was set.
     */
-    ARControllerNFT.prototype.setLogLevel = function (mode) {
-        return artoolkitNFT.setLogLevel(mode);
+    ARControllerNFT.prototype.setLogLevel = function (level) {
+        return artoolkitNFT.setLogLevel(level);
     };
 
     /**

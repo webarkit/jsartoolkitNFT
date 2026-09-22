@@ -33,7 +33,7 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import { IImageObj } from "./CommonInterfaces";
+import { IImageObj, ARLogLevel } from "./CommonInterfaces";
 export abstract class AbstractARControllerNFT {
   static initWithDimensions: (
     width: number,
@@ -68,7 +68,7 @@ export abstract class AbstractARControllerNFT {
   setDebugMode: (mode: boolean) => number;
   getDebugMode: () => boolean;
   getProcessingImage: () => number;
-  setLogLevel: (mode: boolean) => number;
+  setLogLevel: (level: ARLogLevel | number) => void;
   getLogLevel: () => number;
   setProjectionNearPlane: (value: number) => void;
   getProjectionNearPlane: () => number;

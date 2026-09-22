@@ -1,3 +1,10 @@
+export declare enum ARLogLevel {
+    Debug = 0,
+    Info = 1,
+    Warn = 2,
+    Error = 3,
+    RelInfo = 4
+}
 export interface IImageObj extends HTMLCanvasElement {
     videoWidth: number;
     width: number;
@@ -71,7 +78,7 @@ export interface IARToolKitNFTInstance {
     getProcessingImage(): number;
     setDebugMode(mode: boolean): number;
     getDebugMode(): boolean;
-    setLogLevel(mode: boolean): number;
+    setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
     setFiltering(enableFiltering: boolean): void;
     _decompressZFT(prefix: string, prefixTemp: string): number;
