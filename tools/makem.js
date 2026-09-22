@@ -687,6 +687,26 @@ function addJob(job) {
 const REQUESTED_LIBAR_MODE = DEBUG_LOGS ? "debug-logs" : "default";
 
 if (NO_LIBAR === true) {
+  // The marker records which mode the objects were built in, not whether they
+  // are still there. clean_builds() empties build/, so an interrupted or failed
+  // build can leave the marker behind with no objects beside it -- and the link
+  // jobs would then run against nothing. Check for them directly.
+  const PRESERVED_OBJECTS = ["libar.o", "libar_td.o", "libar_simd.o", "libz.o"];
+  const missing = PRESERVED_OBJECTS.filter(
+    (name) => !fs.existsSync(path.resolve(OUTPUT_PATH, name)),
+  );
+  if (missing.length) {
+    console.error(
+      "\n--no-libar cannot be used here: preserved objects are missing from build/:",
+    );
+    console.error("  " + missing.join(", "));
+    console.error("\n  Run a full build instead:");
+    console.error(
+      "    node tools/makem.js" + (DEBUG_LOGS ? " --debug-logs" : "") + "\n",
+    );
+    process.exit(1);
+  }
+
   const preserved = readLibarMode();
   if (preserved !== REQUESTED_LIBAR_MODE) {
     console.error(
@@ -731,7 +751,14 @@ if (NO_LIBAR === true) {
 }
 
 if (NO_LIBAR !== true) {
-  writeLibarMode(REQUESTED_LIBAR_MODE);
+  // Record the mode only once every job has succeeded. Writing it before the
+  // build meant a failure or interruption still left a marker claiming the
+  // preserved objects were built in this mode -- so a later matching
+  // --no-libar run would trust it, skip the library jobs, and link against
+  // objects that had been deleted or only partly rebuilt. A failing job calls
+  // process.exit(), so queueing this last makes the marker conditional on
+  // success.
+  addJob(() => writeLibarMode(REQUESTED_LIBAR_MODE));
 }
 
 runJob();
