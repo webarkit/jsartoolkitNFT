@@ -43,7 +43,7 @@ export interface IARToolkitNFT_node {
   setDebugMode(id: number, mode: boolean): number;
   getDebugMode(id: number): boolean;
   getProcessingImage(id: number): number;
-  setLogLevel(level: ARLogLevel | number): number;
+  setLogLevel(level: ARLogLevel | number): void;
   getLogLevel(): number;
   NFTMarkerInfo: INFTMarkerInfo;
   loadCamera(cameraParam: string): Promise<number>;

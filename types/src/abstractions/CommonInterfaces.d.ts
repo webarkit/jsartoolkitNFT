@@ -78,7 +78,7 @@ export interface IARToolKitNFTInstance {
     getProcessingImage(): number;
     setDebugMode(mode: boolean): number;
     getDebugMode(): boolean;
-    setLogLevel(level: ARLogLevel | number): number;
+    setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
     setFiltering(enableFiltering: boolean): void;
     _decompressZFT(prefix: string, prefixTemp: string): number;

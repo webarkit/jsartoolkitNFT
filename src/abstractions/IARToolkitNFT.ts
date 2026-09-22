@@ -48,7 +48,7 @@ export interface IARToolkitNFT {
   getDebugMode(): boolean;
   setFiltering(enableFiltering: boolean): void;
   getProcessingImage(): number;
-  setLogLevel(level: ARLogLevel | number): number;
+  setLogLevel(level: ARLogLevel | number): void;
   getLogLevel(): number;
   NFTMarkerInfo: INFTMarkerInfo;
   loadCamera(cameraParam: string): Promise<number>;

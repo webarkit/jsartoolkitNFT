@@ -165,7 +165,7 @@ export interface IARToolKitNFTInstance {
   // Debug and logging
   setDebugMode(mode: boolean): number;
   getDebugMode(): boolean;
-  setLogLevel(level: ARLogLevel | number): number;
+  setLogLevel(level: ARLogLevel | number): void;
   getLogLevel(): number;
 
   // Filtering

@@ -624,10 +624,12 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * `ARLogLevel.Info`.
    *
    * @param {ARLogLevel|number} level one of the ARLogLevel values.
-   * @return {number} the level that was set.
+   * Returns nothing: the native setter is `void`. Use `getLogLevel()` to read
+   * back the effective level, which also reveals when a negative value was
+   * rejected by the guard.
    */
-  setLogLevel(level: ARLogLevel | number): number {
-    return this.artoolkitNFT.setLogLevel(level);
+  setLogLevel(level: ARLogLevel | number): void {
+    this.artoolkitNFT.setLogLevel(level);
   }
 
   /**

@@ -68,7 +68,7 @@ export abstract class AbstractARControllerNFT {
   setDebugMode: (mode: boolean) => number;
   getDebugMode: () => boolean;
   getProcessingImage: () => number;
-  setLogLevel: (level: ARLogLevel | number) => number;
+  setLogLevel: (level: ARLogLevel | number) => void;
   getLogLevel: () => number;
   setProjectionNearPlane: (value: number) => void;
   getProjectionNearPlane: () => number;
