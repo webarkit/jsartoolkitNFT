@@ -75,6 +75,25 @@ def build_zlib():
         f'-DCMAKE_INSTALL_PREFIX={install_dir}'
     ]
     cmake_command += ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5"]
+
+    # zlib 1.2.11's zutil.h contains:
+    #
+    #     #if defined(MACOS) || defined(TARGET_OS_MAC)
+    #       ifndef fdopen
+    #         define fdopen(fd,mode) NULL /* No fdopen() */
+    #
+    # That test was written for *classic* Mac OS, but TARGET_OS_MAC is 1 on
+    # every modern Apple platform, so fdopen is defined to NULL. <stdio.h> then
+    # declares `FILE *fdopen(int, const char *)`, which expands to
+    # `FILE *NULL(int, const char *)` and fails with a confusing
+    # `expected identifier or '('` reported inside _stdio.h rather than in zlib.
+    # Xcode 16 on macos-15 hits it; the older SDK on macos-14 did not.
+    #
+    # The guard is `#ifndef fdopen`, so pre-defining it to itself makes zlib
+    # skip the broken definition while leaving every use of fdopen working.
+    # Fixed upstream after 1.2.11 -- drop this when the submodule is bumped.
+    if sys.platform == 'darwin':
+        cmake_command += ["-DCMAKE_C_FLAGS=-Dfdopen=fdopen"]
     build_command = ['cmake', '--build', build_dir, '--config', 'Release']
     install_command = ['cmake', '--install', build_dir]
 
