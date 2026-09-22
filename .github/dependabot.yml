@@ -1,4 +1,7 @@
-# Basic dependabot.yml file with
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Note: GitHub reads this file from the default branch (master) only. Changes
+# here take effect once they reach master, not when they land on dev.
 
 version: 2
 updates:
@@ -9,3 +12,6 @@ updates:
     # Check the npm registry for updates every day (weekdays)
     schedule:
       interval: "daily"
+    # Open pull requests against `dev`. `master` is reserved for stable
+    # releases, so dependency updates must not target it — see CONTRIBUTING.md.
+    target-branch: "dev"

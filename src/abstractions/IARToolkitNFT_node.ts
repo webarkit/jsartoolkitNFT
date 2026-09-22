@@ -34,7 +34,7 @@
  *
  */
 
-import { INFTMarkerInfo } from "./CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel } from "./CommonInterfaces";
 export interface IARToolkitNFT_node {
   getCameraLens(id: number): any;
   passVideoData(id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array): void;
@@ -43,7 +43,7 @@ export interface IARToolkitNFT_node {
   setDebugMode(id: number, mode: boolean): number;
   getDebugMode(id: number): boolean;
   getProcessingImage(id: number): number;
-  setLogLevel(mode: boolean): number;
+  setLogLevel(level: ARLogLevel | number): number;
   getLogLevel(): number;
   NFTMarkerInfo: INFTMarkerInfo;
   loadCamera(cameraParam: string): Promise<number>;

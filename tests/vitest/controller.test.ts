@@ -1,0 +1,223 @@
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { ARControllerNFT } from "../../src/index";
+import {
+  CAMERA_PARAM,
+  MARKER_PINBALL,
+  VIDEO_WIDTH,
+  VIDEO_HEIGHT,
+  blankFrame,
+  loadMarker,
+} from "./helpers";
+
+/**
+ * ARControllerNFT, driven through `src/` — the code that ships as `dist/` and
+ * that consumers import.
+ *
+ * The Karma specs this sits alongside exercise either the deprecated
+ * `js/artoolkitNFT.api.js` or the raw Emscripten binding, and never load a
+ * marker or push a frame. That gap is why #614 shipped: `process()` was broken
+ * on every path and the suite stayed green. See #579.
+ */
+describe("ARControllerNFT", () => {
+  let ar: any;
+
+  beforeAll(async () => {
+    ar = await ARControllerNFT.initWithDimensions(
+      VIDEO_WIDTH,
+      VIDEO_HEIGHT,
+      CAMERA_PARAM,
+      true,
+    );
+  });
+
+  afterAll(() => {
+    ar?.dispose?.();
+  });
+
+  describe("initialisation", () => {
+    it("initialises with an id", () => {
+      expect(ar).toBeDefined();
+      expect(ar.id).toBeGreaterThanOrEqual(0);
+    });
+
+    it("builds a camera matrix from the loaded parameters", () => {
+      const m = ar.getCameraMatrix();
+      expect(Array.isArray(m)).toBe(true);
+      expect(m.length).toBe(16);
+      // A real projection matrix, not a zeroed buffer.
+      expect(m.some((v: number) => v !== 0)).toBe(true);
+    });
+
+    it("exposes a live view of the WASM heap (regression guard for #614)", () => {
+      // Read twice: a cached view would survive heap growth as a detached
+      // array, which is the second half of the #614 defect.
+      expect(typeof ar.artoolkitNFT.HEAPU8).toBe("object");
+      expect(ar.artoolkitNFT.HEAPU8.byteLength).toBeGreaterThan(0);
+    });
+  });
+
+  describe("NFT markers", () => {
+    it("loads a marker and reports id 0 for the first one", async () => {
+      const id = await loadMarker(ar, MARKER_PINBALL);
+      expect(id).toBe(0);
+      expect(ar.nftMarkerCount).toBe(1);
+    });
+
+    it("reports the marker's dimensions", () => {
+      const data = ar.getNFTData(ar.id, 0);
+      expect(data).toBeTruthy();
+      expect(data.width).toBeGreaterThan(0);
+      expect(data.height).toBeGreaterThan(0);
+      expect(data.dpi).toBeGreaterThan(0);
+    });
+
+    it("accepts a tracking request for a loaded marker", () => {
+      expect(() => ar.trackNFTMarkerId(0)).not.toThrow();
+    });
+  });
+
+  describe("process()", () => {
+    /**
+     * The test that #614 needed. Before the fix this threw
+     * "Cannot read properties of undefined (reading 'set')" on the first call,
+     * on every build target.
+     */
+    it("pushes a frame through without throwing", () => {
+      expect(() => ar.process(blankFrame())).not.toThrow();
+    });
+
+    it("survives repeated frames", () => {
+      for (let i = 0; i < 5; i++) {
+        expect(() => ar.process(blankFrame())).not.toThrow();
+      }
+    });
+
+    it("reports no marker found in a blank frame", () => {
+      ar.process(blankFrame());
+      const info = ar.getNFTMarker(0);
+      // A blank grey frame has no features, so detection must not claim a hit.
+      expect(Boolean(info && info.found)).toBe(false);
+    });
+  });
+
+  describe("projection planes", () => {
+    let originalNear: number;
+    let originalFar: number;
+
+    beforeAll(() => {
+      originalNear = ar.getProjectionNearPlane();
+      originalFar = ar.getProjectionFarPlane();
+    });
+
+    afterAll(() => {
+      ar.setProjectionNearPlane(originalNear);
+      ar.setProjectionFarPlane(originalFar);
+    });
+
+    /**
+     * The setters store the value; `recalculateCameraLens()` is what rebuilds
+     * the frustum from it. That two-step is the intended usage — the setters
+     * deliberately do not recalculate on every call, so several can be changed
+     * before paying for one rebuild.
+     */
+    it("stores and returns the near plane", () => {
+      ar.setProjectionNearPlane(0.5);
+      expect(ar.getProjectionNearPlane()).toBeCloseTo(0.5, 5);
+    });
+
+    it("stores and returns the far plane", () => {
+      ar.setProjectionFarPlane(2000);
+      expect(ar.getProjectionFarPlane()).toBeCloseTo(2000, 5);
+    });
+
+    it("rebuilds the camera frustum on recalculateCameraLens()", () => {
+      const nft = ar.artoolkitNFT;
+
+      ar.setProjectionNearPlane(0.1);
+      ar.setProjectionFarPlane(1000);
+      nft.instance.recalculateCameraLens();
+      const before = Array.from(nft.getCameraLens() as ArrayLike<number>);
+
+      ar.setProjectionNearPlane(0.5);
+      ar.setProjectionFarPlane(2000);
+      nft.instance.recalculateCameraLens();
+      const after = Array.from(nft.getCameraLens() as ArrayLike<number>);
+
+      expect(before.length).toBe(16);
+      expect(after.length).toBe(16);
+      expect(after).not.toEqual(before);
+    });
+
+    it("does not recalculate until asked", () => {
+      const nft = ar.artoolkitNFT;
+
+      nft.instance.recalculateCameraLens();
+      const lens = Array.from(nft.getCameraLens() as ArrayLike<number>);
+
+      // Changing the planes alone must not move the frustum — that is what
+      // makes the explicit recalculate step meaningful.
+      ar.setProjectionNearPlane(0.25);
+      ar.setProjectionFarPlane(1500);
+      expect(Array.from(nft.getCameraLens() as ArrayLike<number>)).toEqual(lens);
+    });
+  });
+
+  describe("log level", () => {
+    let original: number;
+
+    beforeAll(() => {
+      original = ar.getLogLevel();
+    });
+
+    afterAll(() => {
+      ar.setLogLevel(original);
+    });
+
+    /**
+     * `setLogLevel` takes a *level*, not a boolean — lower is more verbose.
+     * It was typed as `boolean` until recently, which made `false` (0) the most
+     * verbose setting and left Warn and Error unreachable.
+     */
+    it("round-trips each level", () => {
+      for (const level of [0, 1, 2, 3, 4]) {
+        ar.setLogLevel(level);
+        expect(ar.getLogLevel()).toBe(level);
+      }
+    });
+
+    it("ignores a negative level", () => {
+      // Matches ARToolKit5's arwSetLogLevel guard. Without it a negative value
+      // makes arLog's `logLevel < arLogLevel` test pass for every message, so
+      // an apparent "off" would be maximum verbosity.
+      ar.setLogLevel(2);
+      ar.setLogLevel(-1);
+      expect(ar.getLogLevel()).toBe(2);
+    });
+  });
+
+  describe("settings", () => {
+    it("toggles debug mode", () => {
+      ar.setDebugMode(true);
+      expect(ar.getDebugMode()).toBeTruthy();
+      ar.setDebugMode(false);
+      expect(ar.getDebugMode()).toBeFalsy();
+    });
+  });
+
+  describe("events", () => {
+    it("dispatches to registered listeners and stops after removal", () => {
+      let fired = 0;
+      const listener = () => {
+        fired += 1;
+      };
+
+      ar.addEventListener("testEvent", listener);
+      ar.dispatchEvent({ name: "testEvent", target: ar });
+      expect(fired).toBe(1);
+
+      ar.removeEventListener("testEvent", listener);
+      ar.dispatchEvent({ name: "testEvent", target: ar });
+      expect(fired).toBe(1);
+    });
+  });
+});

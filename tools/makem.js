@@ -18,11 +18,19 @@ let NO_LIBAR = false;
 
 const arguments = process.argv;
 
+let DEBUG_LOGS = false;
+
 for (let j = 2; j < arguments.length; j++) {
   if (arguments[j] == "--no-libar") {
     NO_LIBAR = true;
     console.log(
       "Building jsartoolkitNFT with --no-libar option, libar will be preserved.",
+    );
+  }
+  if (arguments[j] == "--debug-logs") {
+    DEBUG_LOGS = true;
+    console.log(
+      "Building jsartoolkitNFT with --debug-logs option, ARLOGd output will be compiled in.",
     );
   }
 }
@@ -48,6 +56,31 @@ const MEM = 128 * 1024 * 1024; // 64MB
 
 const SOURCE_PATH = path.resolve(__dirname, "../emscripten/") + "/";
 const OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
+
+// Records whether the preserved library objects were compiled with --debug-logs.
+//
+// The .o files carry no record of their own build flags, so `--no-libar` could
+// otherwise reuse objects built for the opposite logging mode: a normal
+// incremental build after a debug build would keep tracing nobody asked for, and
+// `--debug-logs --no-libar` would silently produce no tracing at all. Kept
+// outside OUTPUT_PATH because clean_builds() empties that directory.
+const LIBAR_MODE_FILE = path.resolve(__dirname, "../.libar-build-mode");
+
+function readLibarMode() {
+  try {
+    return fs.readFileSync(LIBAR_MODE_FILE, "utf8").trim();
+  } catch (e) {
+    return null;
+  }
+}
+
+function writeLibarMode(mode) {
+  try {
+    fs.writeFileSync(LIBAR_MODE_FILE, mode + "\n");
+  } catch (e) {
+    console.warn("Could not record the libar build mode:", e.message);
+  }
+}
 
 const BUILD_BASE_FILENAME = "artoolkitNFT";
 
@@ -224,6 +257,14 @@ FLAGS += " -s ALLOW_MEMORY_GROWTH=1";
 FLAGS += " --bind "; // Ensure --bind is included
 // Uncomment this flag for debugging logs
 //FLAGS += " -D WEBARKIT_DEBUG=1 "
+
+// Opt-in only, via `node tools/makem.js --debug-logs`.
+// ARLOGd() is #ifdef DEBUG in ARUtil/log.h, so it compiles to nothing unless
+// this is set - released artifacts, including artoolkitNFT.debug.js, carry no
+// ARLOGd output by default.
+if (DEBUG_LOGS) {
+  FLAGS += " -D DEBUG=1 ";
+}
 
 const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
@@ -643,6 +684,31 @@ function addJob(job) {
   jobs.push(job);
 }
 
+const REQUESTED_LIBAR_MODE = DEBUG_LOGS ? "debug-logs" : "default";
+
+if (NO_LIBAR === true) {
+  const preserved = readLibarMode();
+  if (preserved !== REQUESTED_LIBAR_MODE) {
+    console.error(
+      "\n--no-libar cannot be used here: the preserved library objects were built",
+    );
+    console.error(
+      "  in '" + (preserved || "unknown") + "' mode, but '" + REQUESTED_LIBAR_MODE + "' was requested.",
+    );
+    console.error(
+      "\n  The debug tracing lives in libar.o, so reusing objects from the other",
+    );
+    console.error(
+      "  mode would either keep tracing you did not ask for, or silently drop it.",
+    );
+    console.error("\n  Run a full build instead:");
+    console.error(
+      "    node tools/makem.js" + (DEBUG_LOGS ? " --debug-logs" : "") + "\n",
+    );
+    process.exit(1);
+  }
+}
+
 addJob(clean_builds);
 addJob(compile_arlib);
 addJob(compile_thread_arlib);
@@ -662,6 +728,10 @@ addJob(compile_combine_min);
 
 if (NO_LIBAR === true) {
   jobs.splice(1, 5);
+}
+
+if (NO_LIBAR !== true) {
+  writeLibarMode(REQUESTED_LIBAR_MODE);
 }
 
 runJob();

@@ -1,4 +1,4 @@
-import { IImageObj } from "./CommonInterfaces";
+import { IImageObj, ARLogLevel } from "./CommonInterfaces";
 export declare abstract class AbstractARControllerNFT {
     static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<AbstractARControllerNFT>;
     static initWithImage: (image: IImageObj, cameraParam: string) => Promise<AbstractARControllerNFT>;
@@ -22,7 +22,7 @@ export declare abstract class AbstractARControllerNFT {
     setDebugMode: (mode: boolean) => number;
     getDebugMode: () => boolean;
     getProcessingImage: () => number;
-    setLogLevel: (mode: boolean) => number;
+    setLogLevel: (level: ARLogLevel | number) => number;
     getLogLevel: () => number;
     setProjectionNearPlane: (value: number) => void;
     getProjectionNearPlane: () => number;
