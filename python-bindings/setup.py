@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 
 
 class build_ext(_pybind11_build_ext):
@@ -176,7 +177,24 @@ if sys.platform == 'win32':
     winget = shutil.which('winget')
 
     if choco:
-        subprocess.run(['choco', 'install', 'cmake', 'ninja', 'visualstudio2019buildtools', 'visualstudio2019-workload-vctools', '-y'], check=True)
+        # Bounded retry. The Chocolatey community feed returns 503 often enough
+        # to fail an otherwise healthy build -- the same class of problem as the
+        # snap-backed Chromium package in CI (#602), and just as unrelated to
+        # anything in this repository. A release build should not die because a
+        # third-party package index had a bad minute.
+        choco_cmd = ['choco', 'install', 'cmake', 'ninja',
+                     'visualstudio2019buildtools', 'visualstudio2019-workload-vctools',
+                     '-y', '--no-progress']
+        for attempt in range(1, 4):
+            result = subprocess.run(choco_cmd)
+            if result.returncode == 0:
+                break
+            if attempt == 3:
+                print("Error: choco install failed after 3 attempts")
+                sys.exit(1)
+            delay = attempt * 15
+            print(f"choco install attempt {attempt} failed; retrying in {delay}s")
+            time.sleep(delay)
     elif winget:
         # Install common tools with winget where possible
         subprocess.run(['winget', 'install', '--exact', 'Kitware.CMake', '-e'], check=True)
