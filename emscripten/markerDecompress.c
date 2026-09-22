@@ -46,6 +46,10 @@ int decompressMarkers(const char* src, const char* outTemp){
     ret = fread (in, 1, filesize, fp);
     fclose (fp);
     char *tempName = nameConcat(src, ext);
+    if (tempName == NULL) {
+        ARLOGe("Error: nameConcat failed for temp name.\n");
+        exit(EXIT_FAILURE);
+    }
     remove(tempName);
     free(tempName);
 
@@ -131,10 +135,14 @@ void extractDataAndSave(const char* str, const char* name){
         exit(EXIT_FAILURE);
     }
     char *iset_contentHex = malloc(iset_content_size);
-    memcpy(iset_contentHex, str + iset_final_index, iset_content_size);
+    strncpy(iset_contentHex, str + iset_final_index, iset_content_size);
 
     // tempMarkerData->iset_content = iset_contentHex;
     char *isetName = nameConcat(name, ".iset");
+    if (isetName == NULL) {
+        ARLOGe("Error: nameConcat failed for iset name.\n");
+        exit(EXIT_FAILURE);
+    }
     tempIset = fopen(isetName, "w");
     fwrite(iset_contentHex, iset_content_size, 1, tempIset);
     // printf(iset_contentHex);
@@ -143,11 +151,19 @@ void extractDataAndSave(const char* str, const char* name){
     free(iset_contentHex);
 
     // ---FSET---
+    if (fset_content_size <= 0) {
+        ARLOGe("Error: Invalid fset_content_size: %d\n", fset_content_size);
+        exit(EXIT_FAILURE);
+    }
     char *fset_contentHex = malloc(fset_content_size);
-    memcpy(fset_contentHex, str + fset_final_index, fset_content_size);
+    strncpy(fset_contentHex, str + fset_final_index, fset_content_size);
 
     // tempMarkerData->fset_content = fset_contentHex;
     char *fsetName = nameConcat(name, ".fset");
+    if (fsetName == NULL) {
+        ARLOGe("Error: nameConcat failed for fset name.\n");
+        exit(EXIT_FAILURE);
+    }
     tempFset = fopen(fsetName, "w");
     fwrite(fset_contentHex, fset_content_size, 1, tempFset);
     fclose(tempFset);
@@ -155,11 +171,19 @@ void extractDataAndSave(const char* str, const char* name){
     free(fset_contentHex);
 
     // ---FSET3---
+    if (fset3_content_size <= 0) {
+        ARLOGe("Error: Invalid fset3_content_size: %d\n", fset3_content_size);
+        exit(EXIT_FAILURE);
+    }
     char *fset3_contentHex = malloc(fset3_content_size);
-    memcpy(fset3_contentHex, str + fset3_final_index, fset3_content_size);
+    strncpy(fset3_contentHex, str + fset3_final_index, fset3_content_size);
 
     // tempMarkerData->fset3_content = fset3_contentHex;
     char *fset3Name = nameConcat(name, ".fset3");
+    if (fset3Name == NULL) {
+        ARLOGe("Error: nameConcat failed for fset3 name.\n");
+        exit(EXIT_FAILURE);
+    }
     tempFset3 = fopen(fset3Name, "w");
     fwrite(fset3_contentHex, fset3_content_size, 1, tempFset3);
     fclose(tempFset3);
