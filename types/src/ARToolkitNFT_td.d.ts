@@ -62,7 +62,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     detectNFTMarker(): number;
     getNFTMarker(markerIndex: number): INFTMarkerInfo;
     getNFTData(index: number): object;
-    setLogLevel(level: ARLogLevel | number): number;
+    setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
     setProjectionNearPlane(value: number): void;
     getProjectionNearPlane(): number;

@@ -185,6 +185,19 @@ describe("ARControllerNFT", () => {
       }
     });
 
+    /**
+     * The native setter is `void`, so there is nothing to return. It was typed
+     * as `number` and forwarded the binding call, which handed callers
+     * `undefined` while the types promised a level. Asserting the absence keeps
+     * anyone from restoring the `number` annotation without also making the C++
+     * side return a value.
+     */
+    it("returns nothing — read the level back with getLogLevel()", () => {
+      ar.setLogLevel(3);
+      expect(ar.setLogLevel(2)).toBeUndefined();
+      expect(ar.getLogLevel()).toBe(2);
+    });
+
     it("ignores a negative level", () => {
       // Matches ARToolKit5's arwSetLogLevel guard. Without it a negative value
       // makes arLog's `logLevel < arLogLevel` test pass for every message, so
