@@ -196,17 +196,36 @@ jobs:
         # Install the wheel and import it. A wheel that builds but cannot be
         # imported is worse than a failed build, because it publishes cleanly.
         run: |
-          # Deliberately NOT pre-installing numpy. It is a real runtime
-          # dependency -- arcontrollerNFT.py imports it at module load -- so it
-          # has to arrive through the package metadata. Installing it here first
-          # would hide a missing `install_requires`, which is exactly how the
-          # omission survived until now.
-          python -m pip install --find-links dist artoolkitnft
+          set -euo pipefail
+          whl=$(ls dist/*.whl)
+          echo "testing $whl"
+
+          # A fresh virtualenv, deliberately. The build step installs numpy as a
+          # build dependency, so testing in that same environment would let an
+          # undeclared *runtime* dependency pass unnoticed -- which is precisely
+          # what this test exists to catch.
+          python -m venv .smoke
+          if [ -d .smoke/Scripts ]; then PY=.smoke/Scripts/python; else PY=.smoke/bin/python; fi
+          "$PY" -m pip install --upgrade pip
+
+          # Install the explicit artifact, not the package name. Resolving by
+          # name would let pip prefer an equal-or-newer release from PyPI once
+          # this package is published, so the test would validate the registry's
+          # wheel rather than the one this job just built and is about to upload.
+          "$PY" -m pip install "$whl"
+
           # Both halves: the compiled extension, and the pure-Python layer that
-          # imports it. The second also proves the package layout resolves and
-          # that numpy was pulled in as a declared dependency.
-          python -c "import artoolkitnft_core; print('extension OK:', artoolkitnft_core.__file__)"
-          python -c "from artoolkitnft import arcontrollerNFT; print('package OK')"
+          # imports it. The second also proves the package layout resolves.
+          "$PY" -c "import artoolkitnft_core; print('extension OK:', artoolkitnft_core.__file__)"
+          "$PY" -c "from artoolkitnft import arcontrollerNFT; print('package OK')"
+
+          # numpy must have arrived through the wheel's own metadata, since the
+          # venv started empty.
+          "$PY" -c "import numpy; print('numpy resolved as a declared dependency:', numpy.__version__)"
+
+          # And confirm what was imported really came from the isolated venv
+          # rather than anything left on the runner.
+          "$PY" -c "import artoolkitnft_core, os, sys; p = os.path.abspath(artoolkitnft_core.__file__); assert '.smoke' in p, p; print('provenance OK:', p)"
 
       - name: Upload the wheel
         uses: actions/upload-artifact@v4
