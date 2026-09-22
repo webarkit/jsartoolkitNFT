@@ -75,6 +75,24 @@ def build_zlib():
         f'-DCMAKE_INSTALL_PREFIX={install_dir}'
     ]
     cmake_command += ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5"]
+
+    # The bundled zlib is 1.2.11 (2017) and still uses K&R-style function
+    # definitions:
+    #
+    #     const char * ZEXPORT zError(err)
+    #         int err;
+    #
+    # C23 removed those, and compilers have started defaulting to it. Xcode 16's
+    # clang on macos-15 rejects them outright -- confusingly reporting the error
+    # inside <stdio.h> rather than in zlib -- which broke the macOS build the
+    # moment the runner moved off macos-14. gcc will reach the same default in
+    # time, so pin the standard for both rather than waiting for Linux to break
+    # the same way.
+    #
+    # Not applied on Windows: MSVC does not understand -std, and its own C
+    # frontend still accepts this code.
+    if sys.platform != 'win32':
+        cmake_command += ["-DCMAKE_C_FLAGS=-std=gnu89"]
     build_command = ['cmake', '--build', build_dir, '--config', 'Release']
     install_command = ['cmake', '--install', build_dir]
 
