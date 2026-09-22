@@ -3,7 +3,11 @@ name: Publish to npm
 on:
   push:
     tags:
-      - '*.*.*'    # e.g. 1.2.3
+      # Digit-anchored so this only fires for npm releases. A bare '*.*.*'
+      # also matched tags like 'python-0.0.13', because '*' matches '-' --
+      # so a Python release would have triggered an npm publish too.
+      # Python releases are tagged 'python/<version>' (see publish-python.yml).
+      - '[0-9]*.[0-9]*.[0-9]*'    # e.g. 1.2.3
   workflow_dispatch:
     inputs:
       tag:

@@ -1,0 +1,253 @@
+name: Publish Python package
+
+# Publishes `artoolkitnft` to PyPI (see #634).
+#
+# Tags are `python/<version>`, e.g. `python/0.0.13`, deliberately NOT
+# `python-0.0.13`: publish.yml triggers on `*.*.*`, and `*` matches `-`, so a
+# hyphenated tag would fire the npm release too. `*` does not match `/`.
+#
+# Wheels only, no sdist. setup.py compiles sources from `../emscripten/...`,
+# outside the package directory, so setuptools cannot place them in an sdist --
+# and a source build would also need the WebARKitLib git submodule, which pip
+# never has. Publishing no sdist gives users a clear "no matching distribution"
+# rather than a compile failure 200 lines deep. See #643.
+
+on:
+  push:
+    tags:
+      - 'python/*'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: >-
+          Where to publish. `pypi` PERFORMS A REAL RELEASE and cannot be undone
+          or overwritten; use `testpypi` to rehearse first.
+        type: choice
+        options:
+          - testpypi
+          - pypi
+        default: testpypi
+
+permissions:
+  contents: read
+
+jobs:
+  build-wheels:
+    name: wheel ${{ matrix.os }} py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # One failing combination should not hide the others, and a partial
+      # matrix is still useful: the publish job below refuses to run unless
+      # every wheel built.
+      fail-fast: false
+      matrix:
+        # macos-14 is arm64 and macos-13 is x86_64. Both are needed: the
+        # extension is built natively with no universal2 configuration, and
+        # with no sdist there is no fallback for the architecture that is
+        # missing.
+        os: [ubuntu-24.04, macos-14, macos-13, windows-2022]
+        # Must stay in step with requires-python in pyproject.toml and setup.py.
+        # A version declared as supported with no wheel and no sdist cannot be
+        # installed at all.
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # setup.py compiles sources from ../emscripten/WebARKitLib, so the
+          # submodule has to be present before the build starts.
+          submodules: recursive
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check the tag matches the packaged version
+        if: startsWith(github.ref, 'refs/tags/python/')
+        shell: bash
+        # The trigger accepts any python/* suffix, but the version comes from
+        # pyproject.toml and setup.py, which are hardcoded. Without this, a
+        # mistyped tag silently publishes whatever those files say -- and PyPI
+        # never allows re-uploading a version, so it cannot be corrected after
+        # the fact. Fail here, before anything is built.
+        run: |
+          set -euo pipefail
+          tag_version="${GITHUB_REF#refs/tags/python/}"
+          proj_version=$(grep -m1 '^version' python-bindings/pyproject.toml | cut -d'"' -f2)
+          setup_version=$(grep -m1 "version='" python-bindings/setup.py | cut -d"'" -f2)
+          echo "tag=$tag_version pyproject=$proj_version setup.py=$setup_version"
+          if [ "$tag_version" != "$proj_version" ] || [ "$tag_version" != "$setup_version" ]; then
+            echo "::error::Tag 'python/$tag_version' does not match the packaged version (pyproject.toml=$proj_version, setup.py=$setup_version). Bump both files, or retag."
+            exit 1
+          fi
+
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libjpeg9
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        # cmake builds the bundled zlib. libjpeg is downloaded and built from
+        # source by setup.py on both Unix platforms.
+        run: brew install cmake
+
+      - name: Cache vcpkg (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/cache@v5
+        with:
+          path: |
+            vcpkg
+            !vcpkg/.git
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+
+      - name: Install vcpkg (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path vcpkg)) {
+            git clone https://github.com/microsoft/vcpkg.git
+          }
+          .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Install libjpeg-turbo and pthreads (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          .\vcpkg\vcpkg install libjpeg-turbo
+          .\vcpkg\vcpkg install pthreads
+
+      - name: Add vcpkg to PATH (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: echo "vcpkg/installed/x64-windows/bin" >> $GITHUB_PATH
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel pybind11 numpy
+
+      - name: Build the wheel
+        working-directory: python-bindings
+        run: python setup.py bdist_wheel
+
+      # setup.py builds libjpeg locally and links the extension against it, so
+      # a raw bdist_wheel on Unix is not portable: on Linux it is also tagged
+      # `linux_x86_64`, which PyPI rejects outright. Repair bundles the shared
+      # libraries into the wheel and applies a real platform tag.
+      #
+      # Note the glibc floor this produces is the runner's (ubuntu-24.04), not
+      # manylinux2014. That is correct-but-restrictive; building inside a
+      # manylinux image would lower it. See the PR description.
+      - name: Repair the Linux wheel (auditwheel)
+        if: runner.os == 'Linux'
+        working-directory: python-bindings
+        run: |
+          set -euo pipefail
+          python -m pip install auditwheel
+          mkdir -p repaired
+          for whl in dist/*.whl; do
+            auditwheel show "$whl"
+            auditwheel repair "$whl" -w repaired/
+          done
+          rm -f dist/*.whl && mv repaired/*.whl dist/
+          ls -la dist/
+
+      - name: Repair the macOS wheel (delocate)
+        if: runner.os == 'macOS'
+        working-directory: python-bindings
+        run: |
+          set -euo pipefail
+          python -m pip install delocate
+          mkdir -p repaired
+          for whl in dist/*.whl; do
+            delocate-wheel -w repaired/ -v "$whl"
+          done
+          rm -f dist/*.whl && mv repaired/*.whl dist/
+          ls -la dist/
+
+      - name: Reject wheels PyPI will not accept
+        shell: bash
+        # A mislabelled wheel is worse than a failed build, because it uploads
+        # cleanly and then cannot be replaced. The 0.0.12 artifact on TestPyPI
+        # is tagged manylinux2014_x86_64 and contains a Windows .pyd, which is
+        # what this guards against.
+        run: |
+          set -euo pipefail
+          cd python-bindings/dist
+          for whl in *.whl; do
+            echo "checking $whl"
+            case "$whl" in
+              *-linux_x86_64.whl|*-linux_i686.whl)
+                echo "::error::$whl carries an unrepaired 'linux_*' tag, which PyPI rejects."; exit 1;;
+            esac
+            case "${{ runner.os }}:$whl" in
+              Linux:*win_amd64*|Linux:*macosx*|macOS:*win_amd64*|macOS:*linux*|macOS:*manylinux*|Windows:*linux*|Windows:*macosx*)
+                echo "::error::$whl was built on ${{ runner.os }} but carries a foreign platform tag."; exit 1;;
+            esac
+            python "$GITHUB_WORKSPACE/.github/scripts/check_wheel.py" "$whl"
+          done
+
+      - name: Smoke-test the wheel
+        working-directory: python-bindings
+        shell: bash
+        # Install the wheel and import it. A wheel that builds but cannot be
+        # imported is worse than a failed build, because it publishes cleanly.
+        run: |
+          # Deliberately NOT pre-installing numpy. It is a real runtime
+          # dependency -- arcontrollerNFT.py imports it at module load -- so it
+          # has to arrive through the package metadata. Installing it here first
+          # would hide a missing `install_requires`, which is exactly how the
+          # omission survived until now.
+          python -m pip install --find-links dist artoolkitnft
+          # Both halves: the compiled extension, and the pure-Python layer that
+          # imports it. The second also proves the package layout resolves and
+          # that numpy was pulled in as a declared dependency.
+          python -c "import artoolkitnft_core; print('extension OK:', artoolkitnft_core.__file__)"
+          python -c "from artoolkitnft import arcontrollerNFT; print('package OK')"
+
+      - name: Upload the wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: python-bindings/dist/*.whl
+          if-no-files-found: error
+
+  publish:
+    name: Publish to ${{ inputs.target || 'pypi' }}
+    # `needs` means a single failed wheel blocks the release rather than
+    # publishing a partial set. Combinations cannot be added later: PyPI does
+    # not allow re-uploading a version.
+    needs: build-wheels
+    runs-on: ubuntu-24.04
+    # Deliberately no `environment:`. PyPI's trusted publisher has an optional
+    # environment field that must match the workflow exactly if either side
+    # sets it -- and a silent mismatch there is what cost three attempts on the
+    # npm side (#620). Leave PyPI's environment field blank to match. Adding a
+    # protected environment is worthwhile hardening once publishing works.
+    permissions:
+      id-token: write   # required for PyPI trusted publishing (OIDC)
+    steps:
+      - name: Collect the wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheel-*
+          path: dist
+          merge-multiple: true
+
+      - name: List what will be published
+        run: ls -la dist/
+
+      - name: Publish to TestPyPI
+        if: inputs.target == 'testpypi'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+      - name: Publish to PyPI
+        if: inputs.target != 'testpypi'
+        # Authenticates via PyPI trusted publishing using the id-token
+        # permission above. No API token, nothing to rotate or expire.
+        uses: pypa/gh-action-pypi-publish@release/v1

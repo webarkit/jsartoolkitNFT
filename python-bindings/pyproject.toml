@@ -1,12 +1,15 @@
 [project]
 name = "artoolkitnft"
-version = "0.0.12"
+version = "0.0.13"
 authors = [
   { name="Walter Perdan", email="github@kalwaltart.it" },
 ]
 description = "This is a Python binding project for jsartoolkitNFT, which integrates WebARKitLib with Python using pybind11. It allows for augmented reality applications to be developed in Python by providing bindings to the underlying C/C++ WebARKitLib library."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
+# arcontrollerNFT.py imports numpy at module load, so it is a runtime
+# dependency, not just a build one.
+dependencies = ["numpy"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
