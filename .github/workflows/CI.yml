@@ -18,9 +18,26 @@ jobs:
           node-version-file: ".nvmrc"
 
       - name: Install ChromiumHeadless
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
+          # Bounded retry: the apt package is snap-backed, and the Snapcraft CDN
+          # returns transient 5xx that fail the whole job with nothing wrong in
+          # the code (see #602). publish.yml has carried this guard since the
+          # 1.10.2 release; CI.yml was left without it and still fails this way.
+          set +e
+          for attempt in 1 2 3; do
+            sudo apt-get update && sudo apt-get install -y chromium-browser
+            if [ $? -eq 0 ]; then
+              echo "Chromium installed on attempt $attempt"
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "::warning::Chromium install attempt $attempt failed; retrying in $((attempt * 15))s"
+              sleep $((attempt * 15))
+            fi
+          done
+          echo "::error::Chromium install failed after 3 attempts"
+          exit 1
 
       - name: Get npm cache directory
         id: npm-cache-dir

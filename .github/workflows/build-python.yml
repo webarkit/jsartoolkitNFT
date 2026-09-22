@@ -52,7 +52,7 @@ jobs:
       run: npm run python-tests
 
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
     - name: Checkout repository
@@ -76,7 +76,7 @@ jobs:
         # cmake is needed by setup.py to build the bundled zlib.
         # libjpeg-9c is downloaded and built from source by setup.py
         # (same path as on Linux), so we only need autotools, which
-        # ships with the macos-14 runner by default.
+        # ships with the macos-15 runner by default.
         brew install cmake
 
     - name: Install Python dependencies
