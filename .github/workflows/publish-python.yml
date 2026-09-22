@@ -41,7 +41,14 @@ jobs:
       # every wheel built.
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-14, windows-2022]
+        # macos-14 is arm64 and macos-13 is x86_64. Both are needed: the
+        # extension is built natively with no universal2 configuration, and
+        # with no sdist there is no fallback for the architecture that is
+        # missing.
+        os: [ubuntu-24.04, macos-14, macos-13, windows-2022]
+        # Must stay in step with requires-python in pyproject.toml and setup.py.
+        # A version declared as supported with no wheel and no sdist cannot be
+        # installed at all.
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
@@ -56,6 +63,25 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Check the tag matches the packaged version
+        if: startsWith(github.ref, 'refs/tags/python/')
+        shell: bash
+        # The trigger accepts any python/* suffix, but the version comes from
+        # pyproject.toml and setup.py, which are hardcoded. Without this, a
+        # mistyped tag silently publishes whatever those files say -- and PyPI
+        # never allows re-uploading a version, so it cannot be corrected after
+        # the fact. Fail here, before anything is built.
+        run: |
+          set -euo pipefail
+          tag_version="${GITHUB_REF#refs/tags/python/}"
+          proj_version=$(grep -m1 '^version' python-bindings/pyproject.toml | cut -d'"' -f2)
+          setup_version=$(grep -m1 "version='" python-bindings/setup.py | cut -d"'" -f2)
+          echo "tag=$tag_version pyproject=$proj_version setup.py=$setup_version"
+          if [ "$tag_version" != "$proj_version" ] || [ "$tag_version" != "$setup_version" ]; then
+            echo "::error::Tag 'python/$tag_version' does not match the packaged version (pyproject.toml=$proj_version, setup.py=$setup_version). Bump both files, or retag."
+            exit 1
+          fi
 
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
@@ -107,16 +133,78 @@ jobs:
         working-directory: python-bindings
         run: python setup.py bdist_wheel
 
+      # setup.py builds libjpeg locally and links the extension against it, so
+      # a raw bdist_wheel on Unix is not portable: on Linux it is also tagged
+      # `linux_x86_64`, which PyPI rejects outright. Repair bundles the shared
+      # libraries into the wheel and applies a real platform tag.
+      #
+      # Note the glibc floor this produces is the runner's (ubuntu-24.04), not
+      # manylinux2014. That is correct-but-restrictive; building inside a
+      # manylinux image would lower it. See the PR description.
+      - name: Repair the Linux wheel (auditwheel)
+        if: runner.os == 'Linux'
+        working-directory: python-bindings
+        run: |
+          set -euo pipefail
+          python -m pip install auditwheel
+          mkdir -p repaired
+          for whl in dist/*.whl; do
+            auditwheel show "$whl"
+            auditwheel repair "$whl" -w repaired/
+          done
+          rm -f dist/*.whl && mv repaired/*.whl dist/
+          ls -la dist/
+
+      - name: Repair the macOS wheel (delocate)
+        if: runner.os == 'macOS'
+        working-directory: python-bindings
+        run: |
+          set -euo pipefail
+          python -m pip install delocate
+          mkdir -p repaired
+          for whl in dist/*.whl; do
+            delocate-wheel -w repaired/ -v "$whl"
+          done
+          rm -f dist/*.whl && mv repaired/*.whl dist/
+          ls -la dist/
+
+      - name: Reject wheels PyPI will not accept
+        shell: bash
+        # A mislabelled wheel is worse than a failed build, because it uploads
+        # cleanly and then cannot be replaced. The 0.0.12 artifact on TestPyPI
+        # is tagged manylinux2014_x86_64 and contains a Windows .pyd, which is
+        # what this guards against.
+        run: |
+          set -euo pipefail
+          cd python-bindings/dist
+          for whl in *.whl; do
+            echo "checking $whl"
+            case "$whl" in
+              *-linux_x86_64.whl|*-linux_i686.whl)
+                echo "::error::$whl carries an unrepaired 'linux_*' tag, which PyPI rejects."; exit 1;;
+            esac
+            case "${{ runner.os }}:$whl" in
+              Linux:*win_amd64*|Linux:*macosx*|macOS:*win_amd64*|macOS:*linux*|macOS:*manylinux*|Windows:*linux*|Windows:*macosx*)
+                echo "::error::$whl was built on ${{ runner.os }} but carries a foreign platform tag."; exit 1;;
+            esac
+            python "$GITHUB_WORKSPACE/.github/scripts/check_wheel.py" "$whl"
+          done
+
       - name: Smoke-test the wheel
         working-directory: python-bindings
         shell: bash
         # Install the wheel and import it. A wheel that builds but cannot be
         # imported is worse than a failed build, because it publishes cleanly.
         run: |
-          pip install numpy pillow
-          python -m pip install --find-links dist --no-index artoolkitnft
+          # Deliberately NOT pre-installing numpy. It is a real runtime
+          # dependency -- arcontrollerNFT.py imports it at module load -- so it
+          # has to arrive through the package metadata. Installing it here first
+          # would hide a missing `install_requires`, which is exactly how the
+          # omission survived until now.
+          python -m pip install --find-links dist artoolkitnft
           # Both halves: the compiled extension, and the pure-Python layer that
-          # imports it. The second also proves the package layout resolves.
+          # imports it. The second also proves the package layout resolves and
+          # that numpy was pulled in as a declared dependency.
           python -c "import artoolkitnft_core; print('extension OK:', artoolkitnft_core.__file__)"
           python -c "from artoolkitnft import arcontrollerNFT; print('package OK')"
 
