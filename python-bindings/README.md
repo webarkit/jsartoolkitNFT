@@ -7,10 +7,25 @@ Install from PyPI:
 pip install artoolkitnft
 ```
 
-Wheels are published for CPython 3.9-3.13 on Linux, macOS (Intel and Apple silicon) and
-Windows. There is deliberately no source distribution: the build compiles sources from
-outside the package directory and needs the WebARKitLib git submodule, neither of which
-survives an sdist. On a platform without a wheel, pip reports no matching distribution.
+### Supported platforms
+
+| platform | wheels |
+|---|---|
+| Linux x86_64 | CPython 3.9-3.13 |
+| macOS Apple silicon (arm64) | CPython 3.9-3.13 |
+| Windows x86_64 | CPython 3.9-3.13 |
+| **macOS Intel (x86_64)** | **none** -- see below |
+
+There is deliberately **no source distribution**: the build compiles sources from outside
+the package directory and needs the WebARKitLib git submodule, neither of which survives an
+sdist. So on a platform without a wheel, `pip` reports `no matching distribution found`
+rather than attempting a build that cannot succeed.
+
+**Intel macOS is not supported.** GitHub retired its free Intel runner (`macos-13`) in
+December 2025; the replacement is a paid runner, and GitHub removes x86_64 macOS entirely
+in August 2027. Apple has already discontinued the architecture. If you need Intel macOS,
+build from a repository checkout following *Local development* below, or open an issue --
+cross-compiling universal2 wheels is possible if there is demand.
 
 Rehearsal builds are published to TestPyPI by running the `Publish Python package`
 workflow manually with the `testpypi` target. Note that **any** `python/*` tag publishes to
