@@ -76,23 +76,24 @@ def build_zlib():
     ]
     cmake_command += ["-DCMAKE_POLICY_VERSION_MINIMUM=3.5"]
 
-    # The bundled zlib is 1.2.11 (2017) and still uses K&R-style function
-    # definitions:
+    # zlib 1.2.11's zutil.h contains:
     #
-    #     const char * ZEXPORT zError(err)
-    #         int err;
+    #     #if defined(MACOS) || defined(TARGET_OS_MAC)
+    #       ifndef fdopen
+    #         define fdopen(fd,mode) NULL /* No fdopen() */
     #
-    # C23 removed those, and compilers have started defaulting to it. Xcode 16's
-    # clang on macos-15 rejects them outright -- confusingly reporting the error
-    # inside <stdio.h> rather than in zlib -- which broke the macOS build the
-    # moment the runner moved off macos-14. gcc will reach the same default in
-    # time, so pin the standard for both rather than waiting for Linux to break
-    # the same way.
+    # That test was written for *classic* Mac OS, but TARGET_OS_MAC is 1 on
+    # every modern Apple platform, so fdopen is defined to NULL. <stdio.h> then
+    # declares `FILE *fdopen(int, const char *)`, which expands to
+    # `FILE *NULL(int, const char *)` and fails with a confusing
+    # `expected identifier or '('` reported inside _stdio.h rather than in zlib.
+    # Xcode 16 on macos-15 hits it; the older SDK on macos-14 did not.
     #
-    # Not applied on Windows: MSVC does not understand -std, and its own C
-    # frontend still accepts this code.
-    if sys.platform != 'win32':
-        cmake_command += ["-DCMAKE_C_FLAGS=-std=gnu89"]
+    # The guard is `#ifndef fdopen`, so pre-defining it to itself makes zlib
+    # skip the broken definition while leaving every use of fdopen working.
+    # Fixed upstream after 1.2.11 -- drop this when the submodule is bumped.
+    if sys.platform == 'darwin':
+        cmake_command += ["-DCMAKE_C_FLAGS=-Dfdopen=fdopen"]
     build_command = ['cmake', '--build', build_dir, '--config', 'Release']
     install_command = ['cmake', '--install', build_dir]
 

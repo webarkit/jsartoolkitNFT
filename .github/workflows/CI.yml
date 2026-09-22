@@ -17,27 +17,36 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
-      - name: Install ChromiumHeadless
+      - name: Install Chrome for Karma
         shell: bash
+        # Not `apt-get install chromium-browser`: that package is snap-backed,
+        # and the Snapcraft CDN returns 5xx often enough to redden unrelated
+        # PRs (#602). A three-attempt retry was tried first and all three
+        # attempts failed against a sustained outage, so the dependency itself
+        # is the problem, not the flakiness.
+        #
+        # Google's .deb comes straight from dl.google.com with no snap in the
+        # path. Playwright's Chromium is not an option here: it launches but
+        # never captures under Karma, timing out after 60s per attempt.
         run: |
-          # Bounded retry: the apt package is snap-backed, and the Snapcraft CDN
-          # returns transient 5xx that fail the whole job with nothing wrong in
-          # the code (see #602). publish.yml has carried this guard since the
-          # 1.10.2 release; CI.yml was left without it and still fails this way.
-          set +e
+          set -euo pipefail
+          tmp=$(mktemp -d)
           for attempt in 1 2 3; do
-            sudo apt-get update && sudo apt-get install -y chromium-browser
-            if [ $? -eq 0 ]; then
-              echo "Chromium installed on attempt $attempt"
-              exit 0
+            if curl -fsSL -o "$tmp/chrome.deb" \
+                 https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; then
+              break
             fi
-            if [ "$attempt" -lt 3 ]; then
-              echo "::warning::Chromium install attempt $attempt failed; retrying in $((attempt * 15))s"
-              sleep $((attempt * 15))
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Could not download Chrome after 3 attempts"
+              exit 1
             fi
+            echo "::warning::Chrome download attempt $attempt failed; retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
           done
-          echo "::error::Chromium install failed after 3 attempts"
-          exit 1
+          sudo apt-get update
+          sudo apt-get install -y "$tmp/chrome.deb"
+          echo "CHROME_BIN=$(command -v google-chrome-stable)" >> "$GITHUB_ENV"
+          google-chrome-stable --version
 
       - name: Get npm cache directory
         id: npm-cache-dir
