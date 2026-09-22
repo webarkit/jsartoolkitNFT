@@ -47,26 +47,47 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: npm
 
-      - name: Install ChromiumHeadless
+      - name: Install Chrome for Karma
         shell: bash
+        # Was the snap-backed `chromium-browser` apt package behind a bounded
+        # retry. The retry is not enough: during a sustained Snapcraft CDN
+        # outage all three attempts fail (#602), and this is the workflow that
+        # publishes releases -- a tag-triggered run failing on a browser
+        # download is the worst possible time for it.
+        #
+        # Google's .deb comes straight from dl.google.com with no snap in the
+        # path. The retry is kept for genuinely transient download failures.
         run: |
-          # Bounded retry: the snap-backed apt package has failed on transient
-          # Snapcraft assertion-fetch timeouts (see #602). A tag-triggered
-          # release cannot simply be re-run, so absorb short-lived failures.
-          set +e
+          set -euo pipefail
+          tmp=$(mktemp -d)
           for attempt in 1 2 3; do
-            sudo apt-get update && sudo apt-get install -y chromium-browser
-            if [ $? -eq 0 ]; then
-              echo "Chromium installed on attempt $attempt"
-              exit 0
+            if curl -fsSL -o "$tmp/chrome.deb" \
+                 https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; then
+              break
             fi
-            if [ "$attempt" -lt 3 ]; then
-              echo "::warning::Chromium install attempt $attempt failed; retrying in $((attempt * 15))s"
-              sleep $((attempt * 15))
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Could not download Chrome after 3 attempts"
+              exit 1
             fi
+            echo "::warning::Chrome download attempt $attempt failed; retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
           done
-          echo "::error::Chromium install failed after 3 attempts"
-          exit 1
+          # apt itself needs the same treatment: a mirror hiccup during
+          # `update` or dependency resolution fails the job just as hard as a
+          # failed download, and that is the whole point of #602.
+          for attempt in 1 2 3; do
+            if sudo apt-get update && sudo apt-get install -y "$tmp/chrome.deb"; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Could not install Chrome after 3 attempts"
+              exit 1
+            fi
+            echo "::warning::Chrome install attempt $attempt failed; retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
+          echo "CHROME_BIN=$(command -v google-chrome-stable)" >> "$GITHUB_ENV"
+          google-chrome-stable --version
 
       - name: Install
         run: npm ci

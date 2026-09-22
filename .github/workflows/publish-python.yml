@@ -41,11 +41,22 @@ jobs:
       # every wheel built.
       fail-fast: false
       matrix:
-        # macos-14 is arm64 and macos-13 is x86_64. Both are needed: the
-        # extension is built natively with no universal2 configuration, and
-        # with no sdist there is no fallback for the architecture that is
-        # missing.
-        os: [ubuntu-24.04, macos-14, macos-13, windows-2022]
+        # macOS is arm64 only, deliberately.
+        #
+        # macos-13 was the last free Intel runner and was retired on
+        # 2025-12-04; jobs targeting it queue forever and never start. Its
+        # replacement, macos-15-intel, is a paid larger runner ($0.062/min,
+        # not free for public repositories) and GitHub drops x86_64 macOS
+        # entirely in August 2027. Apple has already discontinued the
+        # architecture.
+        #
+        # So Intel Mac users get no wheel, and with no sdist that means no
+        # install. That is a deliberate trade rather than an oversight -- see
+        # the supported-platforms note in python-bindings/README.md. Revisit by
+        # cross-compiling universal2 if Intel demand justifies the work.
+        #
+        # macos-15 rather than macos-14: 14 is now deprecated too.
+        os: [ubuntu-24.04, macos-15, windows-2022]
         # Must stay in step with requires-python in pyproject.toml and setup.py.
         # A version declared as supported with no wheel and no sdist cannot be
         # installed at all.
@@ -60,7 +71,7 @@ jobs:
           submodules: recursive
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -228,7 +239,7 @@ jobs:
           "$PY" -c "import artoolkitnft_core, os, sys; p = os.path.abspath(artoolkitnft_core.__file__); assert '.smoke' in p, p; print('provenance OK:', p)"
 
       - name: Upload the wheel
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
           path: python-bindings/dist/*.whl
@@ -250,7 +261,7 @@ jobs:
       id-token: write   # required for PyPI trusted publishing (OIDC)
     steps:
       - name: Collect the wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: wheel-*
           path: dist

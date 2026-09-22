@@ -2,6 +2,7 @@
 ![github stars](https://flat.badgen.net/github/stars/webarkit/jsartoolkitNFT)
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
 ![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
+![PyPI package version](https://flat.badgen.net/pypi/v/artoolkitnft)
 ![Dependabot Badge](https://flat.badgen.net/github/dependabot/webarkit/jsartoolkit-nft)
 [![Tested with Jasmine](https://img.shields.io/badge/tested_with-Jasmine-8A4182.svg)](https://jasmine.github.io/)
 [![CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml)
@@ -168,11 +169,33 @@ Try [react-three-arnft](https://github.com/j-era/react-three-arnft) a specific p
 
 ## Python bindings 🐍 (experimental)
 
-❕❕❕ ATTENTION: the Python bindings are experimental and the package is published only to **TestPyPI** for now. The API may change without notice and the bindings are not yet recommended for production use.
+❕❕❕ ATTENTION: the Python bindings are experimental. The API may change without notice and they are not yet recommended for production use.
 
 **JSARToolKitNFT** also provides Python bindings via [pybind11](https://github.com/pybind/pybind11), wrapping the same WebARKitLib C/C++ core used by the JavaScript build. They expose a high-level `ARControllerNFT` class and a lower-level `artoolkitnft_core` extension module so that NFT marker detection can be driven from Python.
 
-Install from **TestPyPI**:
+Install from **PyPI**:
+
+```bash
+pip install artoolkitnft
+```
+
+### Supported platforms
+
+| platform | wheels |
+|---|---|
+| Linux x86_64 | CPython 3.9-3.13 |
+| macOS Apple silicon (arm64) | CPython 3.9-3.13 |
+| Windows x86_64 | CPython 3.9-3.13 |
+| macOS Intel (x86_64) | **none** |
+
+Wheels only — there is deliberately **no source distribution**, because the build compiles
+sources from outside the package directory and needs the WebARKitLib git submodule, neither
+of which survives an sdist. On an unsupported platform `pip` reports
+`no matching distribution found` rather than attempting a build that cannot succeed.
+Intel macOS is absent because GitHub retired its free Intel runner and removes x86_64 macOS
+entirely in August 2027; build from source if you need it.
+
+**TestPyPI** carries rehearsal builds only, and should not be used to install the package:
 
 ```bash
 pip install -i https://test.pypi.org/simple/ artoolkitnft
@@ -193,9 +216,13 @@ pip install -i https://test.pypi.org/simple/ artoolkitnft
 - Live camera capture example (the current example processes a single static image)
 - `getKpmImageWidth` / `getKpmImageHeight` (temporarily excluded from the build)
 
-The Python bindings are built and tested on **Linux**, **macOS** and **Windows** via the [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml) workflow.
+The bindings are built and tested on **Linux**, **macOS** (Apple silicon) and **Windows** via the
+[Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml)
+workflow, and released by
+[Publish Python package](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/publish-python.yml),
+which publishes to PyPI through trusted publishing (OIDC) on a `python/<version>` tag.
 
-For full build-from-source instructions, local development tips and the TestPyPI publishing workflow, see [`python-bindings/README.md`](python-bindings/README.md).
+For full build-from-source instructions, local development tips and the publishing workflow, see [`python-bindings/README.md`](python-bindings/README.md).
 
 ## Node.js 🟢 (experimental)
 
@@ -305,8 +332,29 @@ The two suites cover different things. `tests/vitest/` drives `ARControllerNFT` 
 `process()`. The Karma specs under `tests/*.test.js` cover the legacy global API and the raw
 Emscripten bindings across the seven build targets, and are being migrated (#579).
 
-Note that the Karma targets need a system Chromium, which the CI workflows install separately;
-Playwright's browser is not currently usable for them.
+### The browser Karma needs
+
+The Karma targets need a **system Chrome or Chromium**, separate from the one Playwright
+installs for Vitest. Playwright's browser cannot be reused: it launches but never captures
+under Karma, timing out after 60s per attempt.
+
+`karma-chrome-launcher` finds it through `CHROME_BIN`, so if `npm test` reports
+`No binary for ChromeHeadless browser on your platform`, point it at your install:
+
+```bash
+# Linux — matches what CI installs
+export CHROME_BIN=$(command -v google-chrome-stable || command -v chromium)
+
+# macOS
+export CHROME_BIN="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+# Windows (PowerShell)
+$env:CHROME_BIN = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+```
+
+CI installs Google's `.deb` directly from `dl.google.com` rather than the snap-backed
+`chromium-browser` apt package, whose CDN has failed often enough to redden unrelated PRs
+(#602).
 
 Tests run against the **committed** `build/` artifacts. If you change anything under
 `emscripten/` or `tools/makem.js`, rebuild before testing or you will be testing stale
