@@ -15,8 +15,12 @@
 #include <WebARKit/WebARKitLog.h>
 #include <WebARKitVideoLuma.h>
 #include "markerDecompress.h"
+#include "NFTMarkerState.h"
+#include <array>
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
+static_assert(PAGES_MAX == TRACKING_INIT_MAX_RESULTS,
+              "the detection worker must be able to report every page");
 
 struct nftMarker
 {
@@ -82,7 +86,6 @@ private:
     bool withFiltering; // New property
 
     // Filtering-related variables
-    ARFilterTransMatInfo *ftmi;
     double filterCutoffFrequency;
     double filterSampleRate;
 
@@ -112,7 +115,14 @@ private:
 
     THREAD_HANDLE_T *threadHandle;
 
-    int detectedPage;
+    // One state per loadable page; index = page number = marker id.
+    std::array<NFTMarkerState, PAGES_MAX> markerStates;
+
+    // True between trackingInitStart() and collecting its results.
+    bool kpmSearchRunning;
+
+    bool allMarkersTracked() const;
+    void trackMarkers();
 
     int surfaceSetCount;
     AR2SurfaceSetT *surfaceSet[PAGES_MAX];

@@ -59,6 +59,30 @@ extern "C" {
 
 THREAD_HANDLE_T *trackingInitInit( KpmHandle *kpmHandle );
 int trackingInitStart( THREAD_HANDLE_T *threadHandle, ARUint8 *imagePtrLuma );
+/* Most pages one search can report. Must equal PAGES_MAX in ARToolKitNFT_js_td.h. */
+#define TRACKING_INIT_MAX_RESULTS 20
+
+typedef struct {
+    int   page;          /* page number of the matched marker */
+    float trans[3][4];   /* its initial pose */
+    float error;         /* KPM pose error */
+} TrackingInitResult;
+
+/*
+ * Collect the result of the search started by trackingInitStart(): every page
+ * KPM matched, up to maxResults.
+ * Returns 0 while the search is still running, 1 once it has finished (with
+ * *resultNum set, possibly to 0), or -1 on error.
+ */
+int trackingInitGetResults( THREAD_HANDLE_T *threadHandle, TrackingInitResult results[], int maxResults, int *resultNum );
+
+/*
+ * Single-page form, kept for the legacy threaded binding (ARToolKitJS_td.cpp).
+ * Built on trackingInitGetResults(): reports only the matched page with the
+ * lowest KPM error.
+ * Returns 0 while the search is still running, 1 with trans and *page set, or
+ * -1 if the search matched no page or on error.
+ */
 int trackingInitGetResult( THREAD_HANDLE_T *threadHandle, float trans[3][4], int *page );
 int trackingInitQuit( THREAD_HANDLE_T **threadHandle_p );
 

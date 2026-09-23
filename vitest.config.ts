@@ -20,6 +20,15 @@ import { playwright } from "@vitest/browser-playwright";
  * is tracked as follow-up work.
  */
 export default defineConfig({
+  // The threaded build needs SharedArrayBuffer, which browsers only provide to
+  // cross-origin isolated pages.
+  server: {
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+    },
+  },
+
   test: {
     include: ["tests/vitest/**/*.test.ts"],
 

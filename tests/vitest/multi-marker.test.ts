@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeAll, vi } from "vitest";
 import { CAMERA_PARAM, MARKER_PINBALL, MARKER_KUVA, loadMarkers } from "./helpers";
 import {
-  COMPOSITE_WIDTH,
-  COMPOSITE_HEIGHT,
   loadCompositeFrames,
   isFound,
   processUntil,
@@ -21,14 +19,14 @@ for (const variant of VARIANTS) {
   for (const filtering of [true, false]) {
     describe(`two markers in view (${variant.name}, filtering ${filtering ? "on" : "off"})`, () => {
       let ar: any;
-      let frames: { both: ImageData; pinballOnly: ImageData };
+      let frames: { both: ImageData; pinballOnly: ImageData; width: number; height: number };
 
       beforeAll(async () => {
         const { ARControllerNFT } = await variant.load();
-        frames = await loadCompositeFrames();
+        frames = await loadCompositeFrames(variant.frameScale);
         ar = await ARControllerNFT.initWithDimensions(
-          COMPOSITE_WIDTH,
-          COMPOSITE_HEIGHT,
+          frames.width,
+          frames.height,
           CAMERA_PARAM,
           true,
         );
@@ -132,3 +130,9 @@ for (const variant of VARIANTS) {
     });
   }
 }
+
+describe("test page isolation", () => {
+  it("is cross-origin isolated, so the threaded build can use SharedArrayBuffer", () => {
+    expect(globalThis.crossOriginIsolated).toBe(true);
+  });
+});
