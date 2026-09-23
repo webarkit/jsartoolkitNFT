@@ -105,7 +105,7 @@ function load(msg) {
         msg.marker,
         function (id) {
           ar.trackNFTMarkerId(id);
-          let marker = ar.getNFTData(ar.id, 0);
+          let marker = ar.getNFTData(id);
           console.log("nftMarker data: ", marker);
           postMessage({ type: "markerInfos", marker: marker });
           console.log("loadNFTMarker -> ", id);

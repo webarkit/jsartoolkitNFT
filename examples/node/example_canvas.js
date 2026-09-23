@@ -30,7 +30,7 @@ async function init() {
         ar.loadNFTMarker('DataNFT/pinball', function (id) {
             console.log('marker id is: ', id);
             ar.trackNFTMarkerId(id);
-            let marker = ar.getNFTData(id, 0);
+            let marker = ar.getNFTData(id);
             console.log("cameraMatrix: ", cameraMatrix);
         });
 
