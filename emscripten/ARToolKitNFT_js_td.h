@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory> // Added for std::unique_ptr
+#include <limits>
 #include <AR/config.h>
 #include <AR2/tracking.h>
 #include <AR/arFilterTransMat.h>
@@ -81,6 +82,8 @@ public:
     int getImageProcMode();
     int setup(int width, int height, int cameraID);
     void setFiltering(bool enableFiltering);
+    void setContinuousDetection(bool enabled);
+    void setDetectionInterval(double ms);
 
 private:
     bool withFiltering; // New property
@@ -121,7 +124,19 @@ private:
     // True between trackingInitStart() and collecting its results.
     bool kpmSearchRunning;
 
+    // Detection policy, applied to starting a worker search (collecting a
+    // finished one is never throttled). A search starts on any frame while no
+    // marker is tracked. While some are tracked and some are not, one starts at
+    // most once every detectionIntervalMs, and none if continuousDetection is
+    // off. The search already runs off the main thread, so the default
+    // interval is 0: start whenever the worker is free.
+    bool continuousDetection = true;
+    double detectionIntervalMs = 0.0;
+    // So the first search is never throttled.
+    double lastKpmTimeMs = -std::numeric_limits<double>::infinity();
+
     bool allMarkersTracked() const;
+    bool anyMarkerTracked() const;
     void trackMarkers();
 
     int surfaceSetCount;

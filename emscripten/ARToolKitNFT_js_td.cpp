@@ -114,6 +114,13 @@ bool ARToolKitNFT::allMarkersTracked() const {
   return true;
 }
 
+bool ARToolKitNFT::anyMarkerTracked() const {
+  for (int i = 0; i < this->surfaceSetCount; i++) {
+    if (markerStates[i].tracking) return true;
+  }
+  return false;
+}
+
 int ARToolKitNFT::detectNFTMarker() {
   if (!this->threadHandle) {
     webarkitLOGe("Error: threadHandle\n");
@@ -149,9 +156,18 @@ int ARToolKitNFT::detectNFTMarker() {
     }
   }
 
-  // Start a new search while any marker is untracked. The worker is idle here,
-  // so setting skip pages cannot race with it; kpmMatching() clears them.
-  if (!this->kpmSearchRunning && this->surfaceSetCount > 0 && !allMarkersTracked()) {
+  // Start a new search while any marker is untracked: on any frame while
+  // nothing is tracked, otherwise at most once per detectionIntervalMs, and
+  // never without continuous detection. The worker is idle here, so setting
+  // skip pages cannot race with it; kpmMatching() clears them.
+  const double now = emscripten_get_now();
+  const bool detectionDue =
+      !anyMarkerTracked() ||
+      (this->continuousDetection &&
+       now - this->lastKpmTimeMs >= this->detectionIntervalMs);
+  if (!this->kpmSearchRunning && this->surfaceSetCount > 0 && !allMarkersTracked() &&
+      detectionDue) {
+    this->lastKpmTimeMs = now;
     int skipPages[PAGES_MAX];
     int skipNum = 0;
     for (int i = 0; i < this->surfaceSetCount; i++) {
@@ -600,6 +616,17 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
 void ARToolKitNFT::setFiltering(bool enableFiltering) {
   this->withFiltering = enableFiltering;
   webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
+}
+
+void ARToolKitNFT::setContinuousDetection(bool enabled) {
+  this->continuousDetection = enabled;
+  webarkitLOGi("Continuous detection: %s", enabled ? "on" : "off");
+}
+
+void ARToolKitNFT::setDetectionInterval(double ms) {
+  // Negative (or NaN) means "every frame", as 0 does.
+  this->detectionIntervalMs = ms > 0.0 ? ms : 0.0;
+  webarkitLOGi("Detection interval: %f ms", this->detectionIntervalMs);
 }
 
 #include "ARToolKitNFT_js_bindings.cpp"

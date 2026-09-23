@@ -73,6 +73,8 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
     setFiltering(enableFiltering: boolean): void;
+    setContinuousDetection(enabled: boolean): void;
+    setDetectionInterval(ms: number): void;
     setGrayData(data: Uint8Array): void;
     private converter;
     private _initialize;

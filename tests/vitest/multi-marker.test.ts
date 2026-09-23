@@ -127,6 +127,99 @@ for (const variant of VARIANTS) {
           nowSpy.mockRestore();
         }
       });
+
+      // Detection policy. Each test sets the policy it needs and puts the build's
+      // defaults back at the end, so test order does not matter.
+      const restoreDetectionDefaults = () => {
+        ar.setContinuousDetection(true);
+        ar.setDetectionInterval(variant.detectionIntervalMs);
+      };
+
+      /**
+       * Push `frame` at least `count` times and for at least `minMs`, yielding between
+       * frames. The time floor matters for the threaded build: 20 frames there pass in
+       * less time than one worker search takes, so without it a detection that should
+       * have been gated would not have finished yet either.
+       */
+      const processFrames = async (frame: ImageData, count: number, minMs = 0) => {
+        const start = performance.now();
+        for (let i = 0; i < count || performance.now() - start < minMs; i++) {
+          ar.process(frame);
+          await new Promise((resolve) => setTimeout(resolve, 5));
+        }
+      };
+
+      // Long enough for several detection passes on every build, had they not been gated.
+      const GATED_WINDOW_MS = 2_000;
+
+      /**
+       * Get pinball tracked and kuva not, then keep pushing the pinball-only frame for a
+       * while. The extra frames let the threaded build collect any search it started on
+       * an earlier two-marker frame, and they run detection on the pinball-only frame
+       * under whatever policy is set.
+       */
+      const holdPinballAlone = async () => {
+        const pinballAlone = () => isFound(ar, 0) && !isFound(ar, 1);
+        await processUntil(ar, frames.pinballOnly, pinballAlone);
+        await processFrames(frames.pinballOnly, 10, 1_000);
+        await processUntil(ar, frames.pinballOnly, pinballAlone);
+      };
+
+      it("picks up a marker that enters while another is held", async () => {
+        restoreDetectionDefaults();
+        const lost: number[] = [];
+        const onLost = (e: any) => lost.push(e.data.index);
+        try {
+          await processUntil(ar, frames.pinballOnly, () => isFound(ar, 0) && !isFound(ar, 1));
+
+          ar.addEventListener("lostNFTMarker", onLost);
+          await processUntil(ar, frames.both, () => isFound(ar, 1));
+
+          expect(lost).not.toContain(0);
+          expect(isFound(ar, 0)).toBe(true);
+          expect(isFound(ar, 1)).toBe(true);
+        } finally {
+          ar.removeEventListener("lostNFTMarker", onLost);
+          restoreDetectionDefaults();
+        }
+      });
+
+      it("stops detecting once a marker is tracked when continuous detection is off", async () => {
+        try {
+          ar.setContinuousDetection(false);
+          await holdPinballAlone();
+
+          await processFrames(frames.both, 20, GATED_WINDOW_MS);
+          expect(isFound(ar, 0)).toBe(true);
+          expect(isFound(ar, 1)).toBe(false);
+
+          ar.setContinuousDetection(true);
+          await processUntil(ar, frames.both, () => isFound(ar, 1));
+          expect(isFound(ar, 1)).toBe(true);
+        } finally {
+          restoreDetectionDefaults();
+        }
+      });
+
+      it("detects at most once per detection interval while a marker is tracked", async () => {
+        try {
+          // Hold pinball alone with detection on every frame, so a pass has just run
+          // however long ago the previous test last detected; then widen the interval.
+          ar.setDetectionInterval(0);
+          await holdPinballAlone();
+          ar.setDetectionInterval(60_000);
+
+          await processFrames(frames.both, 20, GATED_WINDOW_MS);
+          expect(isFound(ar, 0)).toBe(true);
+          expect(isFound(ar, 1)).toBe(false);
+
+          ar.setDetectionInterval(0);
+          await processUntil(ar, frames.both, () => isFound(ar, 1));
+          expect(isFound(ar, 1)).toBe(true);
+        } finally {
+          restoreDetectionDefaults();
+        }
+      });
     });
   }
 }

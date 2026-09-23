@@ -880,6 +880,46 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
+   * Turn continuous detection on or off.
+   *
+   * Detection (KPM) is the expensive step that finds a marker which is not yet
+   * tracked; a pass costs the full detection time on the frame where it runs,
+   * far more than tracking an already-found marker. The policy is:
+   * - while no marker is tracked, detection runs on every frame;
+   * - while at least one marker is tracked and at least one loaded marker is
+   *   not, detection runs at most once per detection interval (see
+   *   {@link setDetectionInterval}), so a marker that enters the view is still
+   *   picked up;
+   * - while every loaded marker is tracked, detection does not run.
+   *
+   * With continuous detection off, no detection runs once any marker is
+   * tracked, until tracking is lost: the single-marker behaviour of 1.12.0.
+   * That is cheapest, but a second marker entering the view is not found
+   * while the first one is held.
+   * @param {boolean} enabled Default `true`.
+   * @return {void}
+   */
+  public setContinuousDetection(enabled: boolean): void {
+    this.artoolkitNFT.setContinuousDetection(enabled);
+  }
+
+  /**
+   * Set the minimum time between detection passes while at least one marker
+   * is tracked and at least one is not (see {@link setContinuousDetection}).
+   *
+   * Detection is measured in time, not frames. A longer interval spends less
+   * time detecting, at the cost of noticing a newly visible marker later;
+   * `0` detects on every frame, which costs the full detection time on every
+   * frame while any loaded marker is out of view.
+   * @param {number} ms Milliseconds. `0` means every frame; negative values
+   * are treated as `0`. Default: `300`.
+   * @return {void}
+   */
+  public setDetectionInterval(ms: number): void {
+    this.artoolkitNFT.setDetectionInterval(ms);
+  }
+
+  /**
    * Set the custom gray data (videoLuma) in case you want to add additional
    * trasnformation to gray data: for example gaussianblur or boxblur
    * with external libs.

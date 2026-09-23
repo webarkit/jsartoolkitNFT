@@ -78,6 +78,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }>;
   private nftMarkerCount: number; // = 0
   private defaultMarkerWidth: number;
+  // setContinuousDetection / setDetectionInterval warn once, then stay quiet.
+  private detectionPolicyWarned: boolean;
 
   private _bwpointer: number;
 
@@ -152,6 +154,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     this._bwpointer = null;
     this.defaultMarkerWidth = 1;
+    this.detectionPolicyWarned = false;
   }
 
   /** The static method **initWithDimensions** is the start of your app.
@@ -839,6 +842,30 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
+   * Accepted for API parity with the browser builds; does nothing here.
+   *
+   * The Node build runs on the single-marker binding, which never detects
+   * while its marker is tracked: it always behaves as
+   * `setContinuousDetection(false)`. Logs a warning the first time it is
+   * called on this controller.
+   * @param {boolean} enabled Ignored.
+   * @return {void}
+   */
+  setContinuousDetection(enabled: boolean): void {
+    this.warnDetectionPolicyUnsupported();
+  }
+
+  /**
+   * Accepted for API parity with the browser builds; does nothing here.
+   * See {@link setContinuousDetection}.
+   * @param {number} ms Ignored.
+   * @return {void}
+   */
+  setDetectionInterval(ms: number): void {
+    this.warnDetectionPolicyUnsupported();
+  }
+
+  /**
    * Set the custom gray data (videoLuma) in case you want to add additional
    * trasnformation to gray data: for example gaussianblur or boxblur
    * with external libs.
@@ -851,6 +878,20 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
   // private accessors
   // ----------------------------------------------------------------------------
+  /**
+   * Warn, once per controller, that the detection policy setters do nothing
+   * in the Node build.
+   */
+  private warnDetectionPolicyUnsupported(): void {
+    if (this.detectionPolicyWarned) return;
+    this.detectionPolicyWarned = true;
+    console.warn(
+      "jsartoolkitNFT (Node): setContinuousDetection() and setDetectionInterval() do nothing " +
+        "in the Node build. It tracks a single marker and always behaves as " +
+        "setContinuousDetection(false).",
+    );
+  }
+
   /**
    * Used internally by ARControllerNFT, it permit to add methods to this.
    * @return {any} ARControllerNFT

@@ -3,7 +3,6 @@
 ARToolKitNFT::ARToolKitNFT()
     : id(0), paramLT(nullptr), videoFrame(nullptr), videoFrameSize(0),
       videoLuma(nullptr), width(0), height(0),
-      framesSinceKpm(0),
       surfaceSetCount(0), // Running NFT marker id
       arhandle(nullptr), ar3DHandle(nullptr), 
       kpmHandle(nullptr, [](KpmHandle*){/* empty deleter */}), // Fix: proper nullptr with deleter
@@ -114,13 +113,28 @@ bool ARToolKitNFT::allMarkersTracked() const {
   return true;
 }
 
+bool ARToolKitNFT::anyMarkerTracked() const {
+  for (int i = 0; i < this->surfaceSetCount; i++) {
+    if (markerStates[i].tracking) return true;
+  }
+  return false;
+}
+
 int ARToolKitNFT::detectNFTMarker() {
   KpmResult *kpmResult = nullptr;
   int kpmResultNum = -1;
 
-  if (this->surfaceSetCount > 0 && !allMarkersTracked() &&
-      ++this->framesSinceKpm >= kKpmIntervalFrames) {
-    this->framesSinceKpm = 0;
+  // Detect every frame while nothing is tracked. Once something is, detect
+  // at most once per detectionIntervalMs (a pass costs the full KPM time on
+  // the frame where it runs), or not at all without continuous detection.
+  const double now = emscripten_get_now();
+  const bool detectionDue =
+      !anyMarkerTracked() ||
+      (this->continuousDetection &&
+       now - this->lastKpmTimeMs >= this->detectionIntervalMs);
+
+  if (this->surfaceSetCount > 0 && !allMarkersTracked() && detectionDue) {
+    this->lastKpmTimeMs = now;
 
     // Pages already being tracked need no pose from KPM this pass.
     // kpmMatching() clears the skip flags again when it finishes.
@@ -596,6 +610,17 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
 void ARToolKitNFT::setFiltering(bool enableFiltering) {
   this->withFiltering = enableFiltering;
   webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
+}
+
+void ARToolKitNFT::setContinuousDetection(bool enabled) {
+  this->continuousDetection = enabled;
+  webarkitLOGi("Continuous detection: %s", enabled ? "on" : "off");
+}
+
+void ARToolKitNFT::setDetectionInterval(double ms) {
+  // Negative (or NaN) means "every frame", as 0 does.
+  this->detectionIntervalMs = ms > 0.0 ? ms : 0.0;
+  webarkitLOGi("Detection interval: %f ms", this->detectionIntervalMs);
 }
 
 #include "ARToolKitNFT_js_bindings.cpp"

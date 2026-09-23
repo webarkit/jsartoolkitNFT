@@ -334,6 +334,14 @@ export class ARToolkitNFT implements IARToolkitNFT {
     this.instance.setFiltering(enableFiltering);
   }
 
+  public setContinuousDetection(enabled: boolean): void {
+    this.instance.setContinuousDetection(enabled);
+  }
+
+  public setDetectionInterval(ms: number): void {
+    this.instance.setDetectionInterval(ms);
+  }
+
   public getCameraLens(): any {
     return this.instance.getCameraLens();
   }
