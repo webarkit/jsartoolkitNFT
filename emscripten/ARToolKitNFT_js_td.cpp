@@ -122,6 +122,11 @@ bool ARToolKitNFT::anyMarkerTracked() const {
 }
 
 int ARToolKitNFT::detectNFTMarker() {
+  // No markers loaded yet: nothing to detect. addNFTMarkers() creates the
+  // worker, so its absence is only an error once markers are loaded.
+  if (this->surfaceSetCount == 0) {
+    return -1;
+  }
   if (!this->threadHandle) {
     webarkitLOGe("Error: threadHandle\n");
     return -1;
