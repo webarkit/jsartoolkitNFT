@@ -90,7 +90,7 @@
     "typescript": "6.0.3",
     "vitest": "^5.0.1",
     "webpack": "5.107.2",
-    "webpack-cli": "7.0.3"
+    "webpack-cli": "7.2.3"
   },
   "scripts": {
     "dev-ts": "webpack --mode development --progress --watch",
