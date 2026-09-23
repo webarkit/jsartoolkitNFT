@@ -116,12 +116,13 @@ private:
 
     // Detection policy. KPM runs on every frame while no marker is tracked.
     // While some are tracked and some are not, it runs at most once every
-    // detectionIntervalMs, and not at all if continuousDetection is off.
-    // While every loaded marker is tracked it does not run.
+    // detectionIntervalMs, counted from the end of the previous pass, and not at
+    // all if continuousDetection is off. While every loaded marker is tracked
+    // it does not run.
     bool continuousDetection = true;
     double detectionIntervalMs = 300.0;
-    // So the first pass is never throttled.
-    double lastKpmTimeMs = -std::numeric_limits<double>::infinity();
+    // When the last pass finished; -infinity so the first pass is never throttled.
+    double lastKpmEndMs = -std::numeric_limits<double>::infinity();
 
     bool allMarkersTracked() const;
     bool anyMarkerTracked() const;

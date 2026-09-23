@@ -904,8 +904,9 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Set the minimum time between detection passes while at least one marker
-   * is tracked and at least one is not (see {@link setContinuousDetection}).
+   * Set the minimum time from the end of one detection pass to the start of
+   * the next, while at least one marker is tracked and at least one is not
+   * (see {@link setContinuousDetection}).
    *
    * Detection is measured in time, not frames. A longer interval spends less
    * time detecting, at the cost of noticing a newly visible marker later;

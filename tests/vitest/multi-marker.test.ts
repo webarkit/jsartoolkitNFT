@@ -220,6 +220,32 @@ for (const variant of VARIANTS) {
           restoreDetectionDefaults();
         }
       });
+
+      it("leaves tracking-only frames after every detection pass, however long a pass takes", async () => {
+        try {
+          // An interval far shorter than a detection pass (~320 ms at 2000x1500). Counted
+          // from the start of a pass, every frame would detect again; counted from its
+          // end, tracking-only frames follow each pass. (On the threaded build detection
+          // runs off the main thread, so its frames are tracking-only either way.)
+          ar.setDetectionInterval(50);
+          await holdPinballAlone();
+
+          const frameMs: number[] = [];
+          for (let i = 0; i < 30; i++) {
+            const start = performance.now();
+            ar.process(frames.pinballOnly);
+            frameMs.push(performance.now() - start);
+            await new Promise((resolve) => setTimeout(resolve, 5));
+          }
+
+          expect(isFound(ar, 0)).toBe(true);
+          // A tracking-only frame takes ~10 ms here; a frame with a detection pass, ~320 ms.
+          const trackingOnly = frameMs.filter((ms) => ms < 100).length;
+          expect(trackingOnly).toBeGreaterThanOrEqual(10);
+        } finally {
+          restoreDetectionDefaults();
+        }
+      });
     });
   }
 }

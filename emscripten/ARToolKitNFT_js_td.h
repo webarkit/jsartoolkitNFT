@@ -127,13 +127,13 @@ private:
     // Detection policy, applied to starting a worker search (collecting a
     // finished one is never throttled). A search starts on any frame while no
     // marker is tracked. While some are tracked and some are not, one starts at
-    // most once every detectionIntervalMs, and none if continuousDetection is
-    // off. The search already runs off the main thread, so the default
+    // most once every detectionIntervalMs, counted from when the previous search
+    // finished, and none if continuousDetection is off. The search already runs off the main thread, so the default
     // interval is 0: start whenever the worker is free.
     bool continuousDetection = true;
     double detectionIntervalMs = 0.0;
-    // So the first search is never throttled.
-    double lastKpmTimeMs = -std::numeric_limits<double>::infinity();
+    // When the last search finished; -infinity so the first search is never throttled.
+    double lastKpmEndMs = -std::numeric_limits<double>::infinity();
 
     bool allMarkersTracked() const;
     bool anyMarkerTracked() const;

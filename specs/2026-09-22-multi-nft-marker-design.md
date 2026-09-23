@@ -344,6 +344,14 @@ options, and the maintainer chose "throttled, with an opt-out":
 - **While at least one marker is tracked and at least one loaded marker is not:** detect at most
   once per interval, measured in **time** (milliseconds), not frames, so the cost does not depend
   on the frame rate.
+
+  > **Revised 2026-09-23:** the interval is counted from the **end** of the previous pass, not its
+  > start. Counted from the start, a pass slower than the interval — ~320 ms at 2000x1500 against
+  > the 300 ms default — was due again on the very next frame, so large frames paid detection on
+  > every frame. Counted from the end, every pass is followed by at least one interval of
+  > tracking-only frames, whatever the frame size. The members below are now `lastKpmEndMs`,
+  > stamped when a pass finishes (threaded build: when a finished search is collected).
+  > `multi-marker.test.ts` pins this with an interval of 50 ms, far shorter than a pass.
 - **While every loaded marker is tracked:** do not detect (unchanged).
 
 Two runtime setters on every controller:

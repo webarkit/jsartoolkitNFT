@@ -142,6 +142,7 @@ int ARToolKitNFT::detectNFTMarker() {
     if (ret != 0) {
       // Finished (1) or failed (-1): either way the worker is free again.
       this->kpmSearchRunning = false;
+      this->lastKpmEndMs = emscripten_get_now();
     }
     if (ret == 1) {
       resultNum = n;
@@ -162,17 +163,17 @@ int ARToolKitNFT::detectNFTMarker() {
   }
 
   // Start a new search while any marker is untracked: on any frame while
-  // nothing is tracked, otherwise at most once per detectionIntervalMs, and
-  // never without continuous detection. The worker is idle here, so setting
+  // nothing is tracked, otherwise at most once per detectionIntervalMs counted
+  // from when the previous search finished, and never without continuous
+  // detection. The worker is idle here, so setting
   // skip pages cannot race with it; kpmMatching() clears them.
   const double now = emscripten_get_now();
   const bool detectionDue =
       !anyMarkerTracked() ||
       (this->continuousDetection &&
-       now - this->lastKpmTimeMs >= this->detectionIntervalMs);
+       now - this->lastKpmEndMs >= this->detectionIntervalMs);
   if (!this->kpmSearchRunning && this->surfaceSetCount > 0 && !allMarkersTracked() &&
       detectionDue) {
-    this->lastKpmTimeMs = now;
     int skipPages[PAGES_MAX];
     int skipNum = 0;
     for (int i = 0; i < this->surfaceSetCount; i++) {

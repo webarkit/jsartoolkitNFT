@@ -38,7 +38,8 @@ a policy:
 
 - while no marker is tracked, detection runs on every frame;
 - while at least one marker is tracked and another loaded marker is not, it runs at most once per
-  detection interval, so a marker entering the view is still picked up;
+  detection interval, counted from the end of the previous pass, so a marker entering the view is
+  still picked up and every pass is followed by tracking-only frames, however long a pass takes;
 - while every loaded marker is tracked, it does not run.
 
 Two setters on `ARControllerNFT` tune this:

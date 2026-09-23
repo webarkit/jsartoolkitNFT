@@ -125,16 +125,17 @@ int ARToolKitNFT::detectNFTMarker() {
   int kpmResultNum = -1;
 
   // Detect every frame while nothing is tracked. Once something is, detect
-  // at most once per detectionIntervalMs (a pass costs the full KPM time on
-  // the frame where it runs), or not at all without continuous detection.
+  // at most once per detectionIntervalMs, counted from the END of the previous
+  // pass, or not at all without continuous detection. A pass costs the full
+  // KPM time on the frame where it runs; timing from its start would let a
+  // pass slower than the interval run again on every frame.
   const double now = emscripten_get_now();
   const bool detectionDue =
       !anyMarkerTracked() ||
       (this->continuousDetection &&
-       now - this->lastKpmTimeMs >= this->detectionIntervalMs);
+       now - this->lastKpmEndMs >= this->detectionIntervalMs);
 
   if (this->surfaceSetCount > 0 && !allMarkersTracked() && detectionDue) {
-    this->lastKpmTimeMs = now;
 
     // Pages already being tracked need no pose from KPM this pass.
     // kpmMatching() clears the skip flags again when it finishes.
@@ -149,6 +150,7 @@ int ARToolKitNFT::detectNFTMarker() {
 
     kpmMatching(this->kpmHandle.get(), this->videoLuma.get());
     kpmGetResult(this->kpmHandle.get(), &kpmResult, &kpmResultNum);
+    this->lastKpmEndMs = emscripten_get_now();
 
     for (int i = 0; i < kpmResultNum; i++) {
       if (kpmResult[i].camPoseF != 0) continue;
