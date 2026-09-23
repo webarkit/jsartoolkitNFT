@@ -274,3 +274,51 @@ alone, kuva alone, both), one frame of `examples/node/pinball-demo.jpg` each. Al
   found, once multi-marker tracking lands. Consequence for the rest of this spec:
   `pinball-demo.jpg` is itself a two-marker frame, which makes it a useful fixture for the
   multi-marker acceptance tests in the Phases below rather than a single-marker one.
+
+## Implementation notes
+
+Found while planning or executing `specs/2026-09-23-multi-nft-marker-implementation-plan.md`, and
+folded into the implementation:
+
+- **#631 was not a matcher defect.** `examples/node/pinball-demo.jpg` photographs a printed sheet
+  carrying both targets — pinball on the left, kuva on the right, rotated 90° — so kuva's matches
+  are true detections (see "Measurements (#631)"). No inlier-ratio threshold was added (plan Task 2
+  dropped). The two #631 tests now expect both markers, and the photo serves as the suite's
+  two-marker frame; its "pinball only" variant paints the kuva print out.
+- **One page is several database entries** — one FREAK keyframe per (page, image scale).
+  `kpmMatching` keeps the best-supported entry per page.
+- **Tracking moved out of `getNFTMarkerInfo`** into `detectNFTMarker`, once per frame; the getter is
+  a pure read with an unchanged signature.
+- **Only `transform_mat` was shared between events**; `arglCameraViewRHf` already returned a fresh
+  matrix. A side effect of the fix: `getTransformationMatrix()` now returns a new array each frame a
+  marker is found, instead of one array mutated in place.
+- **`addNFTMarkers` is now bounded by `PAGES_MAX` in total**, not per call, in both the default and
+  threaded bindings, because the new per-marker arrays are indexed by the running marker count. The
+  threaded binding returns an empty result instead of calling `exit()`.
+- **The threaded getter reported every index as found** whenever any page was tracked; fixed by the
+  same restructure.
+- **A fourth TS controller, `ARControllerNFT_node.ts`,** got the same per-marker lost events.
+- **Not covered: the Node package's native binding.** `dist/ARToolkitNFT_node.js` is built from the
+  legacy `emscripten/ARToolKitJS.cpp`, which still tracks one page natively. Porting it is follow-up
+  work.
+
+## KPM cost of an unseen marker, 2026-09-23
+
+Median / p90 ms per `process()` with pinball tracked (2000x1500 frame, pinball-only view), with and
+without a second, unseen marker (kuva) loaded:
+
+```
+[kpm-cost] loaded=[/examples/DataNFT/pinball] median=8.1ms p90=8.7ms
+[kpm-cost] loaded=[/examples/DataNFT/pinball, /examples/DataNFT/kuva] median=326.8ms p90=346.6ms
+
+[kpm-cost] loaded=[/examples/DataNFT/pinball] median=9.2ms p90=10.3ms
+[kpm-cost] loaded=[/examples/DataNFT/pinball, /examples/DataNFT/kuva] median=324.8ms p90=345.7ms
+
+[kpm-cost] loaded=[/examples/DataNFT/pinball] median=8.4ms p90=9.9ms
+[kpm-cost] loaded=[/examples/DataNFT/pinball, /examples/DataNFT/kuva] median=332.4ms p90=348.6ms
+```
+
+Ratio median([pinball, kuva]) / median([pinball]), per run: 40.3, 35.3, 39.6.
+
+Shipped `kKpmIntervalFrames = 1` (plan default: a marker entering view is found on the next frame).
+Whether to raise it is left to the maintainer, given the numbers above.
