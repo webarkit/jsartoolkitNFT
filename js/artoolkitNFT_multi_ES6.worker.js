@@ -48,11 +48,10 @@ self.onmessage = function (e) {
 };
 
 let ar = null;
-let markerResult = null;
-let marker1, marker2, marker3;
+// Poses reported by the current process() call: one entry per tracked marker.
+let foundMarkers = [];
 
 const WARM_UP_TOLERANCE = 5;
-let tickCount = 0;
 
 // initialize the OneEuroFilter
 let filterMinCF = 0.0001;
@@ -68,10 +67,22 @@ if (!OneEuroFilterCtor) {
   throw new Error("OneEuroFilter constructor not found in worker context");
 }
 
-const filter =
-  OneEuroFilterCtor.length >= 2
+const createFilter = function () {
+  return OneEuroFilterCtor.length >= 2
     ? new OneEuroFilterCtor(filterMinCF, filterBeta)
     : new OneEuroFilterCtor({ minCutOff: filterMinCF, beta: filterBeta });
+};
+
+// Every marker gets its own filter and its own warm-up count: a single filter
+// fed with several markers' poses would blend them together.
+const filters = new Map();
+const tickCounts = new Map();
+const filterFor = function (index) {
+  if (!filters.has(index)) {
+    filters.set(index, createFilter());
+  }
+  return filters.get(index);
+};
 
 function load(msg) {
   console.debug("Loading marker at: ", msg.marker);
@@ -81,47 +92,37 @@ function load(msg) {
     const cameraMatrix = ar.getCameraMatrix();
 
     ar.addEventListener("getNFTMarker", function (ev) {
-      tickCount += 1;
-      if (tickCount > WARM_UP_TOLERANCE) {
-        const mat = filter.filter(Date.now(), ev.data.matrixGL_RH);
-        markerResult = {
-          type: "found",
-          index: JSON.stringify(ev.data.index),
-          matrixGL_RH: mat,
-        };
+      const index = ev.data.index;
+      const ticks = (tickCounts.get(index) || 0) + 1;
+      tickCounts.set(index, ticks);
+      if (ticks > WARM_UP_TOLERANCE) {
+        foundMarkers.push({
+          index: index,
+          matrixGL_RH: filterFor(index).filter(Date.now(), ev.data.matrixGL_RH),
+        });
       }
     });
 
     ar.addEventListener("lostNFTMarker", function (ev) {
-      filter.reset();
+      const index = ev.data.index;
+      if (filters.has(index)) {
+        filters.get(index).reset();
+      }
+      tickCounts.delete(index);
     });
-
-    const nftMarkers = new ar.artoolkitNFT.nftMarkers();
 
     ar.loadNFTMarkers(msg.marker, function (ids) {
       for (let i = 0; i < ids.length; i++) {
-        ar.trackNFTMarkerId(i);
-        nftMarkers.push_back(ar.getNFTData(i, i));
+        ar.trackNFTMarkerId(ids[i]);
       }
 
-      marker1 = ar.getNFTData(ids[0], 0);
-      marker2 = ar.getNFTData(ids[1], 1);
-      marker3 = ar.getNFTData(ids[2], 2);
-
-      nftMarkers.push_back(marker1);
-
-      console.log("Array of nftData: ", [
-        nftMarkers.get(0),
-        nftMarkers.get(1),
-        nftMarkers.get(2),
-      ]);
-
-      postMessage({
-        type: "markerInfos",
-        marker1: marker1,
-        marker2: marker2,
-        marker3: marker3,
+      // getNFTData takes only the marker index; the controller id is implied.
+      const markers = ids.map(function (id) {
+        return ar.getNFTData(id);
       });
+      console.log("NFT marker data: ", markers);
+
+      postMessage({ type: "markerInfos", markers: markers });
       console.log("loadNFTMarker -> ", ids);
       postMessage({ type: "endLoading", end: true });
     }).catch(function (err) {
@@ -144,14 +145,14 @@ function load(msg) {
 }
 
 function process() {
-  markerResult = null;
+  foundMarkers = [];
 
   if (ar && ar.process) {
     ar.process(next);
   }
 
-  if (markerResult) {
-    postMessage(markerResult);
+  if (foundMarkers.length > 0) {
+    postMessage({ type: "found", markers: foundMarkers });
   } else {
     postMessage({ type: "not found" });
   }
