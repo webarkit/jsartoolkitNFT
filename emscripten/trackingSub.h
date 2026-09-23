@@ -66,6 +66,7 @@ typedef struct {
     int   page;          /* page number of the matched marker */
     float trans[3][4];   /* its initial pose */
     float error;         /* KPM pose error */
+    int   inlierNum;     /* KPM inlier count: more means a better match */
 } TrackingInitResult;
 
 /*
@@ -78,8 +79,9 @@ int trackingInitGetResults( THREAD_HANDLE_T *threadHandle, TrackingInitResult re
 
 /*
  * Single-page form, kept for the legacy threaded binding (ARToolKitJS_td.cpp).
- * Built on trackingInitGetResults(): reports only the matched page with the
- * lowest KPM error.
+ * Built on trackingInitGetResults(): reports only the best matched page, the
+ * one with the most KPM inliers (ties: the lowest KPM error), as the
+ * single-result KPM chose it.
  * Returns 0 while the search is still running, 1 with trans and *page set, or
  * -1 if the search matched no page or on error.
  */

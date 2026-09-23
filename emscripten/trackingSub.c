@@ -160,10 +160,15 @@ int trackingInitGetResult( THREAD_HANDLE_T *threadHandle, float trans[3][4], int
     if (ret != 1) return ret;           // 0 still running, -1 error.
     if (resultNum <= 0) return (-1);    // Finished, no page matched.
 
-    // The first result with the lowest error, as the single-page worker chose.
+    // The best match, as the single-result KPM chose it: the most inliers,
+    // then the lowest error.
     best = 0;
     for (i = 1; i < resultNum; i++) {
-        if (results[i].error < results[best].error) best = i;
+        if (results[i].inlierNum > results[best].inlierNum ||
+            (results[i].inlierNum == results[best].inlierNum &&
+             results[i].error < results[best].error)) {
+            best = i;
+        }
     }
     for (j = 0; j < 3; j++) for (i = 0; i < 4; i++) trans[j][i] = results[best].trans[j][i];
     *page = results[best].page;
@@ -196,12 +201,13 @@ static void *trackingInitMain( THREAD_HANDLE_T *threadHandle )
     }
     ARLOGi("Start tracking thread.\n");
 
-    kpmGetResult( kpmHandle, &kpmResult, &kpmResultNum );
-
     for(;;) {
         if( threadStartWait(threadHandle) < 0 ) break;
 
         kpmMatching(kpmHandle, imageLumaPtr);
+        // Fetch the result array on every pass: kpmSetRefDataSet() reallocates
+        // it when markers are loaded, so a pointer cached earlier can dangle.
+        kpmGetResult( kpmHandle, &kpmResult, &kpmResultNum );
         trackingInitHandle->resultNum = 0;
         for( i = 0; i < kpmResultNum; i++ ) {
             if( kpmResult[i].camPoseF != 0 ) continue;
@@ -212,6 +218,7 @@ static void *trackingInitMain( THREAD_HANDLE_T *threadHandle )
             TrackingInitResult *result = &trackingInitHandle->results[trackingInitHandle->resultNum++];
             result->page  = kpmResult[i].pageNo;
             result->error = kpmResult[i].error;
+            result->inlierNum = kpmResult[i].inlierNum;
             for (j = 0; j < 3; j++) for (k = 0; k < 4; k++) result->trans[j][k] = kpmResult[i].camPose[j][k];
         }
 

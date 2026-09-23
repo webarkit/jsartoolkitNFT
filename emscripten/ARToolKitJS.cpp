@@ -246,13 +246,23 @@ extern "C"
           arc->ftmi = arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
       }
 
+      // KPM reports one result per matched page. This binding tracks one page,
+      // so take the best match: the most inliers, then the lowest error.
+      int best = -1;
       for (auto i = 0; i < kpmResultNum; i++) {
-          if (kpmResult[i].camPoseF == 0) {
-            float trans[3][4];
-            arc->detectedPage = kpmResult[i].pageNo;
-            std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
-            ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
+          if (kpmResult[i].camPoseF != 0) continue;
+          if (best < 0 ||
+              kpmResult[i].inlierNum > kpmResult[best].inlierNum ||
+              (kpmResult[i].inlierNum == kpmResult[best].inlierNum &&
+               kpmResult[i].error < kpmResult[best].error)) {
+            best = i;
           }
+      }
+      if (best >= 0) {
+          float trans[3][4];
+          arc->detectedPage = kpmResult[best].pageNo;
+          std::copy(&kpmResult[best].camPose[0][0], &kpmResult[best].camPose[0][0] + 3 * 4, &trans[0][0]);
+          ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
       }
     }
     return kpmResultNum;
