@@ -103,19 +103,17 @@ describe("NFT detection on a real image", () => {
 });
 
 /**
- * Detection must pick the *right* marker.
+ * Both markers are found when both are in view.
  *
- * Both datasets are loaded with the batch `loadNFTMarkers([a, b])` — the working
- * path; loading across separate calls is what #612 breaks — and the same pinball
- * photograph is pushed through. Only the pinball target is in the image, so id 0
- * should be found and id 1 should not.
+ * `pinball-demo.jpg` is a photograph of a printed sheet that carries both targets: the
+ * pinball artwork on the left and the kuva image on the right, rotated 90°. Both datasets
+ * are loaded with the batch `loadNFTMarkers([a, b])` — the working path; loading across
+ * separate calls is what #612 breaks.
  *
- * It does not work. The detection is attributed to the wrong marker: the event
- * fires with `index: 1` and `getNFTMarker(1).found` is true, while id 0 reports
- * nothing. Filed as #631; the two affected tests are skipped below.
- *
- * The matcher itself is fine — measured separately, kuva alone correctly refuses
- * to match the pinball photograph. It is the index mapping that is wrong.
+ * These tests were once skipped as #631, on the belief that only pinball was in the photo
+ * and kuva's detection was a false positive. It was not: kuva matches because kuva is
+ * there. Before multi-marker tracking (#635, #613) only one of the two could ever be
+ * reported, whichever had more inliers.
  */
 describe("detection with two markers loaded", () => {
   let ar: any;
@@ -142,8 +140,7 @@ describe("detection with two markers loaded", () => {
     expect(ar.nftMarkerCount).toBe(2);
   });
 
-  // SKIPPED — see #631. Events fire for index 1 instead of index 0.
-  it.skip("detects the marker that is in the image, and not the other one", () => {
+  it("detects both markers the photograph contains", () => {
     const byIndex = new Map<number, number>();
     ar.addEventListener("getNFTMarker", (e: any) => {
       byIndex.set(e.data.index, (byIndex.get(e.data.index) ?? 0) + 1);
@@ -153,16 +150,13 @@ describe("detection with two markers loaded", () => {
       ar.process(frame);
     }
 
-    // pinball is the target in the photograph.
     expect(byIndex.get(0) ?? 0).toBeGreaterThan(0);
-    // kuva is not, so firing for it would mean the matcher is not discriminating.
-    expect(byIndex.get(1) ?? 0).toBe(0);
+    expect(byIndex.get(1) ?? 0).toBeGreaterThan(0);
   });
 
-  // SKIPPED — see #631. found is reported on the wrong marker.
-  it.skip("reports found only for the marker that is present", () => {
+  it("reports both markers as found", () => {
     ar.process(frame);
     expect(Boolean(ar.getNFTMarker(0)?.found)).toBe(true);
-    expect(Boolean(ar.getNFTMarker(1)?.found)).toBe(false);
+    expect(Boolean(ar.getNFTMarker(1)?.found)).toBe(true);
   });
 });

@@ -15,6 +15,8 @@
 #include <WebARKitVideoLuma.h>
 #include "trackingMod.h"
 #include "markerDecompress.h"
+#include "NFTMarkerState.h"
+#include <array>
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
@@ -82,7 +84,6 @@ private:
     bool withFiltering; // New property
 
     // Filtering-related variables
-    ARFilterTransMatInfo *ftmi;
     double filterCutoffFrequency;
     double filterSampleRate;
 
@@ -107,7 +108,16 @@ private:
     std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;  // Changed from std::shared_ptr
     AR2HandleT *ar2Handle;
 
-    int detectedPage;
+    // One state per loadable page; index = page number = marker id.
+    std::array<NFTMarkerState, PAGES_MAX> markerStates;
+
+    // While any loaded marker is untracked, KPM runs once every
+    // kKpmIntervalFrames frames. While all are tracked it does not run at all.
+    static constexpr int kKpmIntervalFrames = 1;
+    int framesSinceKpm;
+
+    bool allMarkersTracked() const;
+    void trackMarkers();
 
     int surfaceSetCount;
     AR2SurfaceSetT *surfaceSet[PAGES_MAX];
