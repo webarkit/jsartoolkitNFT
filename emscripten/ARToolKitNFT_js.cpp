@@ -378,8 +378,12 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
   KpmRefDataSet *refDataSet;
   refDataSet = NULL;
 
-  if (datasetPathnames.size() >= PAGES_MAX) {
-    webarkitLOGe("Error: exceeded maximum pages.");
+  // Per-marker state lives in fixed arrays of PAGES_MAX entries (surfaceSet,
+  // markerStates) indexed up to surfaceSetCount, so the running total across
+  // every call must stay within PAGES_MAX. Refuse before any state changes.
+  if (datasetPathnames.size() >
+      static_cast<size_t>(PAGES_MAX - this->surfaceSetCount)) {
+    webarkitLOGe("Error: exceeded maximum pages (%d).", PAGES_MAX);
     return {};
   }
 
