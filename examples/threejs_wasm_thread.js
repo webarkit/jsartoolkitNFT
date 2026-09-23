@@ -171,7 +171,6 @@ export default function start(
       sphere.visible = false;
     } else {
       sphere.visible = true;
-      console.log(world);
       sphere.position.y = ((marker.height / marker.dpi) * 2.54 * 10) / 2.0;
       sphere.position.x = ((marker.width / marker.dpi) * 2.54 * 10) / 2.0;
       // set matrix of 'root' by detected 'world' matrix
