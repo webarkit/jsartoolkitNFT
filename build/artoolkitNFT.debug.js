@@ -13099,19 +13099,19 @@ function asmFunc(imports) {
  
  function detectNFTMarker($0) {
   $0 = $0 | 0;
-  var $1 = 0, $2 = 0, $3 = 0, $4 = Math_fround(0), $5 = 0, $6 = 0, $7 = 0, $8 = Math_fround(0), $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = Math_fround(0), $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = Math_fround(0), $19 = 0, $20 = Math_fround(0), $21 = 0, $22 = 0, $23 = 0, $24 = 0.0, $25 = Math_fround(0), $26 = 0, $27 = 0.0, $28 = Math_fround(0), $29 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0, $34 = 0, $35 = 0, $36 = Math_fround(0), $37 = 0.0, $38 = Math_fround(0), $39 = 0.0, $40 = 0, $41 = Math_fround(0), $42 = Math_fround(0), $43 = 0, $44 = 0.0, $45 = 0.0, $46 = 0, $47 = 0, $48 = 0.0, $49 = 0.0, $50 = 0.0, $51 = Math_fround(0), $52 = 0, $53 = Math_fround(0), $54 = 0.0, $55 = 0, $56 = 0, $57 = 0.0, $58 = 0, $59 = Math_fround(0), $60 = 0.0, $61 = 0.0, $62 = 0.0, $63 = 0, $64 = 0.0, $65 = 0.0, $66 = 0.0, $67 = Math_fround(0), $68 = 0, $69 = Math_fround(0), $70 = 0.0, $71 = 0.0, $72 = 0, $73 = 0, $74 = Math_fround(0), $75 = Math_fround(0), $76 = Math_fround(0), $77 = 0.0, $78 = 0, $79 = 0, $80 = 0.0, $81 = 0, $82 = Math_fround(0), $83 = 0.0, $84 = 0, $85 = 0.0, $86 = 0.0, $87 = 0, $88 = 0, $89 = Math_fround(0), $90 = Math_fround(0), $91 = Math_fround(0), $92 = Math_fround(0), $93 = Math_fround(0), $94 = Math_fround(0), $95 = Math_fround(0), $96 = Math_fround(0), $97 = Math_fround(0), $98 = Math_fround(0), $99 = Math_fround(0), $100 = Math_fround(0), $101 = Math_fround(0), $102 = Math_fround(0), $103 = Math_fround(0), $104 = Math_fround(0), $105 = Math_fround(0), $106 = Math_fround(0), $107 = Math_fround(0), $108 = Math_fround(0), $109 = Math_fround(0), $110 = Math_fround(0), $111 = Math_fround(0), $112 = Math_fround(0), $113 = Math_fround(0), $114 = Math_fround(0), $115 = Math_fround(0), $116 = Math_fround(0), $117 = Math_fround(0), $118 = Math_fround(0), $119 = Math_fround(0), $120 = Math_fround(0), $121 = Math_fround(0), $122 = Math_fround(0), $123 = Math_fround(0), $124 = Math_fround(0), $125 = Math_fround(0), $126 = Math_fround(0), $127 = Math_fround(0), $128 = Math_fround(0), $129 = Math_fround(0), $130 = Math_fround(0), $131 = Math_fround(0), $132 = Math_fround(0), $133 = Math_fround(0), $134 = Math_fround(0), $135 = Math_fround(0), $136 = Math_fround(0), $137 = Math_fround(0), $138 = Math_fround(0), $139 = Math_fround(0), $140 = Math_fround(0), $141 = Math_fround(0), $142 = Math_fround(0), $143 = Math_fround(0), $144 = Math_fround(0), $145 = Math_fround(0), $146 = Math_fround(0), $147 = Math_fround(0), $148 = Math_fround(0), $149 = Math_fround(0), $150 = Math_fround(0), $151 = Math_fround(0), $152 = Math_fround(0), $153 = Math_fround(0), $154 = 0.0, $155 = 0.0, $156 = 0.0, wasm2js_i32$0 = 0, wasm2js_f32$0 = Math_fround(0), wasm2js_i32$1 = 0;
-  $72 = __stack_pointer + -64 | 0;
-  __stack_pointer = $72;
-  HEAP32[$72 + 60 >> 2] = $0;
+  var $1 = 0, $2 = 0, $3 = 0, $4 = Math_fround(0), $5 = 0, $6 = 0, $7 = 0, $8 = Math_fround(0), $9 = 0, $10 = 0, $11 = 0, $12 = 0, $13 = Math_fround(0), $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = Math_fround(0), $19 = 0, $20 = Math_fround(0), $21 = 0, $22 = 0, $23 = 0, $24 = 0.0, $25 = Math_fround(0), $26 = 0, $27 = 0.0, $28 = Math_fround(0), $29 = 0, $30 = 0, $31 = 0, $32 = 0, $33 = 0, $34 = 0, $35 = 0, $36 = Math_fround(0), $37 = 0.0, $38 = Math_fround(0), $39 = 0.0, $40 = 0, $41 = Math_fround(0), $42 = Math_fround(0), $43 = 0, $44 = 0.0, $45 = 0.0, $46 = 0, $47 = 0, $48 = 0.0, $49 = 0.0, $50 = 0.0, $51 = Math_fround(0), $52 = 0, $53 = 0, $54 = Math_fround(0), $55 = 0.0, $56 = 0, $57 = 0, $58 = 0.0, $59 = Math_fround(0), $60 = 0.0, $61 = 0.0, $62 = 0.0, $63 = 0, $64 = 0.0, $65 = 0.0, $66 = 0.0, $67 = Math_fround(0), $68 = 0, $69 = Math_fround(0), $70 = 0, $71 = 0.0, $72 = 0.0, $73 = 0, $74 = Math_fround(0), $75 = Math_fround(0), $76 = Math_fround(0), $77 = 0.0, $78 = 0, $79 = 0, $80 = 0.0, $81 = 0, $82 = Math_fround(0), $83 = 0.0, $84 = 0, $85 = 0.0, $86 = 0.0, $87 = 0, $88 = 0, $89 = Math_fround(0), $90 = Math_fround(0), $91 = Math_fround(0), $92 = Math_fround(0), $93 = Math_fround(0), $94 = Math_fround(0), $95 = Math_fround(0), $96 = Math_fround(0), $97 = Math_fround(0), $98 = Math_fround(0), $99 = Math_fround(0), $100 = Math_fround(0), $101 = Math_fround(0), $102 = Math_fround(0), $103 = Math_fround(0), $104 = Math_fround(0), $105 = Math_fround(0), $106 = Math_fround(0), $107 = Math_fround(0), $108 = Math_fround(0), $109 = Math_fround(0), $110 = Math_fround(0), $111 = Math_fround(0), $112 = Math_fround(0), $113 = Math_fround(0), $114 = Math_fround(0), $115 = Math_fround(0), $116 = Math_fround(0), $117 = Math_fround(0), $118 = Math_fround(0), $119 = Math_fround(0), $120 = Math_fround(0), $121 = Math_fround(0), $122 = Math_fround(0), $123 = Math_fround(0), $124 = Math_fround(0), $125 = Math_fround(0), $126 = Math_fround(0), $127 = Math_fround(0), $128 = Math_fround(0), $129 = Math_fround(0), $130 = Math_fround(0), $131 = Math_fround(0), $132 = Math_fround(0), $133 = Math_fround(0), $134 = Math_fround(0), $135 = Math_fround(0), $136 = Math_fround(0), $137 = Math_fround(0), $138 = Math_fround(0), $139 = Math_fround(0), $140 = Math_fround(0), $141 = Math_fround(0), $142 = Math_fround(0), $143 = Math_fround(0), $144 = Math_fround(0), $145 = Math_fround(0), $146 = Math_fround(0), $147 = Math_fround(0), $148 = Math_fround(0), $149 = Math_fround(0), $150 = Math_fround(0), $151 = Math_fround(0), $152 = Math_fround(0), $153 = Math_fround(0), $154 = 0.0, $155 = 0.0, $156 = 0.0, wasm2js_i32$0 = 0, wasm2js_f32$0 = Math_fround(0), wasm2js_i32$1 = 0;
+  $70 = __stack_pointer + -64 | 0;
+  __stack_pointer = $70;
+  HEAP32[$70 + 60 >> 2] = $0;
   block : {
-   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(81020, $72 + 60 | 0)) {
+   if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(81020, $70 + 60 | 0)) {
     $10 = -1;
     break block;
    }
-   $78 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($72 + 60 | 0);
-   HEAP32[$72 + 56 >> 2] = 0;
+   $78 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($70 + 60 | 0);
+   HEAP32[$70 + 56 >> 2] = 0;
    $10 = -1;
-   HEAP32[$72 + 52 >> 2] = -1;
+   HEAP32[$70 + 52 >> 2] = -1;
    if (HEAP32[$78 + 264 >> 2] != -2) {
     break block
    }
@@ -13121,9 +13121,9 @@ function asmFunc(imports) {
     block19 : {
      block200 : {
       $35 = HEAP32[$78 + 224 >> 2];
-      $58 = HEAP32[$78 + 204 >> 2];
+      $52 = HEAP32[$78 + 204 >> 2];
       block0 : {
-       if (!($58 ? $35 : 0)) {
+       if (!($52 ? $35 : 0)) {
         arLog(0, 3, 11026, 0);
         break block0;
        }
@@ -13134,7 +13134,7 @@ function asmFunc(imports) {
         if (($84 | 0) == 1) {
          break block1
         }
-        $7 = $58;
+        $7 = $52;
         block9 : {
          block7 : {
           block4 : {
@@ -13143,14 +13143,14 @@ function asmFunc(imports) {
             HEAP32[$46 + 44 >> 2] = $15;
             HEAP32[$46 + 40 >> 2] = $34;
             $0 = Math_imul($15, $34);
-            $58 = emscripten_builtin_malloc($0);
-            if (!$58) {
+            $52 = emscripten_builtin_malloc($0);
+            if (!$52) {
              break block7
             }
             if (!$0) {
              break block9
             }
-            wasm2js_memory_copy($58, $7, $0);
+            wasm2js_memory_copy($52, $7, $0);
             break block9;
            case 4:
             $2 = ($15 | 0) / 3 | 0;
@@ -13159,13 +13159,13 @@ function asmFunc(imports) {
             $1 = ($34 | 0) / 3 | 0;
             $0 = $1 << 1;
             HEAP32[$46 + 40 >> 2] = $0;
-            $58 = emscripten_builtin_malloc(Math_imul($0, $16));
-            if (!$58) {
+            $52 = emscripten_builtin_malloc(Math_imul($0, $16));
+            if (!$52) {
              break block7
             }
             $10 = ($1 | 0) > 0 ? $1 : 0;
             $9 = ($2 | 0) > 0 ? $2 : 0;
-            $0 = $58;
+            $0 = $52;
             $5 = $0;
             while (1) {
              if (($10 | 0) == ($33 | 0)) {
@@ -13202,13 +13202,13 @@ function asmFunc(imports) {
             HEAP32[$46 + 44 >> 2] = $1;
             $0 = ($34 | 0) / 2 | 0;
             HEAP32[$46 + 40 >> 2] = $0;
-            $58 = emscripten_builtin_malloc(Math_imul($0, $1));
-            if (!$58) {
+            $52 = emscripten_builtin_malloc(Math_imul($0, $1));
+            if (!$52) {
              break block7
             }
             $9 = ($0 | 0) > 0 ? $0 : 0;
             $5 = ($1 | 0) > 0 ? $1 : 0;
-            $0 = $58;
+            $0 = $52;
             while (1) {
              if (($2 | 0) == ($9 | 0)) {
               break block9
@@ -13236,13 +13236,13 @@ function asmFunc(imports) {
             HEAP32[$46 + 44 >> 2] = $1;
             $0 = ($34 | 0) / 3 | 0;
             HEAP32[$46 + 40 >> 2] = $0;
-            $58 = emscripten_builtin_malloc(Math_imul($0, $1));
-            if (!$58) {
+            $52 = emscripten_builtin_malloc(Math_imul($0, $1));
+            if (!$52) {
              break block7
             }
             $10 = ($0 | 0) > 0 ? $0 : 0;
             $9 = ($1 | 0) > 0 ? $1 : 0;
-            $5 = $58;
+            $5 = $52;
             while (1) {
              if (($2 | 0) == ($10 | 0)) {
               break block9
@@ -13275,13 +13275,13 @@ function asmFunc(imports) {
           HEAP32[$46 + 44 >> 2] = $1;
           $0 = ($34 | 0) / 4 | 0;
           HEAP32[$46 + 40 >> 2] = $0;
-          $58 = emscripten_builtin_malloc(Math_imul($0, $1));
-          if (!$58) {
+          $52 = emscripten_builtin_malloc(Math_imul($0, $1));
+          if (!$52) {
            break block7
           }
           $10 = ($0 | 0) > 0 ? $0 : 0;
           $9 = ($1 | 0) > 0 ? $1 : 0;
-          $2 = $58;
+          $2 = $52;
           while (1) {
            if (($10 | 0) == ($33 | 0)) {
             break block9
@@ -13313,7 +13313,7 @@ function asmFunc(imports) {
          exit(1);
          wasm2js_trap();
         }
-        if ($58) {
+        if ($52) {
          break block1
         }
         break block0;
@@ -13321,7 +13321,7 @@ function asmFunc(imports) {
        $0 = HEAP32[$35 >> 2];
        $87 = __stack_pointer - 32 | 0;
        __stack_pointer = $87;
-       $73 = vision__Image__Image_28unsigned_20char__2c_20vision__ImageType_2c_20unsigned_20long_2c_20unsigned_20long_2c_20int_2c_20unsigned_20long_29($87, $58, 1, $15, $34, $15);
+       $73 = vision__Image__Image_28unsigned_20char__2c_20vision__ImageType_2c_20unsigned_20long_2c_20unsigned_20long_2c_20int_2c_20unsigned_20long_29($87, $52, 1, $15, $34, $15);
        $88 = __stack_pointer - 32 | 0;
        __stack_pointer = $88;
        $12 = HEAP32[HEAP32[$0 >> 2] >> 2];
@@ -13734,8 +13734,8 @@ function asmFunc(imports) {
        $0 = HEAP32[$17 + 4 >> 2];
        HEAP32[$1 >> 2] = HEAP32[$0 + 4 >> 2];
        HEAP32[$1 + 4 >> 2] = HEAP32[$0 + 8 >> 2];
-       $55 = $79 + 16 | 0;
-       $68 = vision__ScopedTimer__ScopedTimer_28char_20const__29($55, 5452);
+       $56 = $79 + 16 | 0;
+       $68 = vision__ScopedTimer__ScopedTimer_28char_20const__29($56, 5452);
        $81 = HEAP32[$12 + 76 >> 2];
        $40 = __stack_pointer - 16 | 0;
        __stack_pointer = $40;
@@ -13904,8 +13904,8 @@ function asmFunc(imports) {
                }
                vision__ScopedTimer___ScopedTimer_28_29($16);
                $34 = vision__ScopedTimer__ScopedTimer_28char_20const__29($43, 14354);
-               $56 = __stack_pointer - 48 | 0;
-               __stack_pointer = $56;
+               $57 = __stack_pointer - 48 | 0;
+               __stack_pointer = $57;
                $10 = $1;
                HEAP32[$1 + 64 >> 2] = HEAP32[$1 + 60 >> 2];
                $33 = $1 + 60 | 0;
@@ -13940,7 +13940,7 @@ function asmFunc(imports) {
                          $1 = $5 + 1 | 0;
                          $47 = $2 + ($1 << 5) | 0;
                          $63 = $0 + $2 | 0;
-                         $52 = $63 - 32 | 0;
+                         $53 = $63 - 32 | 0;
                          $26 = ($5 | 0) % HEAP32[$10 + 48 >> 2] | 0;
                          $16 = HEAP32[$63 - 28 >> 2];
                          $3 = HEAP32[$63 + 4 >> 2];
@@ -13972,10 +13972,10 @@ function asmFunc(imports) {
                            $8 = Math_fround(Math_fround(Math_fround($0 >>> 0) * $36) + $25);
                            $5 = 1;
                            $16 = $0 - 1 | 0;
-                           $14 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($52, $16);
-                           $19 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($52, $0);
+                           $14 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($53, $16);
+                           $19 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($53, $0);
                            $2 = $0 + 1 | 0;
-                           $29 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($52, $2);
+                           $29 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($53, $2);
                            $30 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($63, $16);
                            $15 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($63, $0);
                            $22 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($63, $2);
@@ -14015,14 +14015,14 @@ function asmFunc(imports) {
                                break block48
                               }
                              }
-                             HEAPF32[$56 + 36 >> 2] = $20;
-                             HEAP32[$56 + 28 >> 2] = $26;
-                             HEAP32[$56 + 24 >> 2] = $11;
+                             HEAPF32[$57 + 36 >> 2] = $20;
+                             HEAP32[$57 + 28 >> 2] = $26;
+                             HEAP32[$57 + 24 >> 2] = $11;
                              $4 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($17, $11, $13);
-                             HEAPF32[$56 + 16 >> 2] = $8;
-                             HEAPF32[$56 + 40 >> 2] = $4;
-                             HEAPF32[$56 + 12 >> 2] = Math_fround(Math_fround($5 >>> 0) * $36) + $25;
-                             vision__DoGScaleInvariantDetector__FeaturePoint__20std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____emplace_back_vision__DoGScaleInvariantDetector__FeaturePoint_20const___28vision__DoGScaleInvariantDetector__FeaturePoint_20const__29($33, $56 + 12 | 0);
+                             HEAPF32[$57 + 16 >> 2] = $8;
+                             HEAPF32[$57 + 40 >> 2] = $4;
+                             HEAPF32[$57 + 12 >> 2] = Math_fround(Math_fround($5 >>> 0) * $36) + $25;
+                             vision__DoGScaleInvariantDetector__FeaturePoint__20std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____emplace_back_vision__DoGScaleInvariantDetector__FeaturePoint_20const___28vision__DoGScaleInvariantDetector__FeaturePoint_20const__29($33, $57 + 12 | 0);
                             }
                             $5 = $5 + 1 | 0;
                             continue;
@@ -14067,15 +14067,15 @@ function asmFunc(imports) {
                           }
                           $4 = Math_fround($0 >>> 0);
                           $13 = Math_fround(Math_fround($4 * $51) + $38);
-                          $53 = Math_fround(Math_fround($4 * Math_fround(.5)) + Math_fround(-.25));
-                          $59 = Math_fround($53 + Math_fround(.5));
-                          $18 = Math_fround($53 + Math_fround(-.5));
+                          $54 = Math_fround(Math_fround($4 * Math_fround(.5)) + Math_fround(-.25));
+                          $59 = Math_fround($54 + Math_fround(.5));
+                          $18 = Math_fround($54 + Math_fround(-.5));
                           $5 = 2;
                           $3 = $0 - 1 | 0;
-                          $14 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($52, $3);
-                          $29 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($52, $0);
+                          $14 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($53, $3);
+                          $29 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($53, $0);
                           $2 = $0 + 1 | 0;
-                          $30 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($52, $2);
+                          $30 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($53, $2);
                           $22 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($63, $3);
                           $15 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($63, $0);
                           $21 = float_20const__20vision__Image__get_float__28unsigned_20long_29_20const($63, $2);
@@ -14120,17 +14120,17 @@ function asmFunc(imports) {
                               if (!$0) {
                                break block54
                               }
-                              $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $20, $53) < $4;
+                              $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $20, $54) < $4;
                               $4 = HEAPF32[$6 >> 2];
                               if (!$0) {
                                break block54
                               }
-                              $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $69, $53) < $4;
+                              $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $69, $54) < $4;
                               $4 = HEAPF32[$6 >> 2];
                               if (!$0) {
                                break block54
                               }
-                              $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $36, $53) < $4;
+                              $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $36, $54) < $4;
                               $4 = HEAPF32[$6 >> 2];
                               if (!$0) {
                                break block54
@@ -14168,13 +14168,13 @@ function asmFunc(imports) {
                              if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $4, $18))) {
                               break block53
                              }
-                             if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $36, $53))) {
+                             if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $36, $54))) {
                               break block53
                              }
-                             if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $69, $53))) {
+                             if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $69, $54))) {
                               break block53
                              }
-                             if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $4, $53))) {
+                             if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $4, $54))) {
                               break block53
                              }
                              if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($47, $36, $59))) {
@@ -14187,21 +14187,21 @@ function asmFunc(imports) {
                               break block53
                              }
                             }
-                            HEAP32[$56 + 28 >> 2] = $26;
-                            HEAP32[$56 + 24 >> 2] = $11;
-                            HEAPF32[$56 + 36 >> 2] = HEAPF32[$6 >> 2];
+                            HEAP32[$57 + 28 >> 2] = $26;
+                            HEAP32[$57 + 24 >> 2] = $11;
+                            HEAPF32[$57 + 36 >> 2] = HEAPF32[$6 >> 2];
                             $4 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($17, $11, $25);
-                            HEAPF32[$56 + 16 >> 2] = $13;
-                            HEAPF32[$56 + 12 >> 2] = Math_fround($8 * $51) + $38;
-                            HEAPF32[$56 + 40 >> 2] = $4;
-                            vision__DoGScaleInvariantDetector__FeaturePoint__20std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____emplace_back_vision__DoGScaleInvariantDetector__FeaturePoint_20const___28vision__DoGScaleInvariantDetector__FeaturePoint_20const__29($33, $56 + 12 | 0);
+                            HEAPF32[$57 + 16 >> 2] = $13;
+                            HEAPF32[$57 + 12 >> 2] = Math_fround($8 * $51) + $38;
+                            HEAPF32[$57 + 40 >> 2] = $4;
+                            vision__DoGScaleInvariantDetector__FeaturePoint__20std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____emplace_back_vision__DoGScaleInvariantDetector__FeaturePoint_20const___28vision__DoGScaleInvariantDetector__FeaturePoint_20const__29($33, $57 + 12 | 0);
                            }
                            $5 = $5 + 1 | 0;
                            continue;
                           };
                          };
                         }
-                        __stack_pointer = $56 + 48 | 0;
+                        __stack_pointer = $57 + 48 | 0;
                         break block56;
                        }
                        std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(84528, 15440), 2028), 3164), 192), 3735), 15492));
@@ -14262,7 +14262,7 @@ function asmFunc(imports) {
                         if ($67 > Math_fround($4 * $4)) {
                          break block59
                         }
-                        $53 = Math_fround(Math_fround($5 << 1 >>> 0) + Math_fround(.5));
+                        $54 = Math_fround(Math_fround($5 << 1 >>> 0) + Math_fround(.5));
                         $19 = $5 - 1 << 2;
                         $3 = $19 + $14 | 0;
                         block61 : {
@@ -14274,49 +14274,49 @@ function asmFunc(imports) {
                           if (!(HEAPF32[$0 + $14 >> 2] < $4) | !(HEAPF32[$15 + $19 >> 2] < $4) | (!(HEAPF32[$0 + $15 >> 2] < $4) | !(HEAPF32[$19 + $29 >> 2] < $4)) | (!(HEAPF32[$23 + $29 >> 2] < $4) | !(HEAPF32[$0 + $29 >> 2] < $4) | (!(HEAPF32[$19 + $30 >> 2] < $4) | !(HEAPF32[$23 + $30 >> 2] < $4))) | (!(HEAPF32[$0 + $30 >> 2] < $4) | !(HEAPF32[$19 + $22 >> 2] < $4) | (!(HEAPF32[$22 + $23 >> 2] < $4) | !(HEAPF32[$0 + $22 >> 2] < $4)) | (!(HEAPF32[$0 + $21 >> 2] < $4) | (!(HEAPF32[$19 + $21 >> 2] < $4) | !(HEAPF32[$21 + $23 >> 2] < $4))))) {
                            break block60
                           }
-                          $36 = Math_fround($53 + Math_fround(-2.0));
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $36, $51) < $4;
+                          $36 = Math_fround($54 + Math_fround(-2.0));
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $36, $51) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $53, $51) < $4;
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $54, $51) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          $25 = Math_fround($53 + Math_fround(2.0));
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $25, $51) < $4;
+                          $25 = Math_fround($54 + Math_fround(2.0));
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $25, $51) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $36, $59) < $4;
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $36, $59) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $53, $59) < $4;
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $54, $59) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $25, $59) < $4;
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $25, $59) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $36, $18) < $4;
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $36, $18) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $53, $18) < $4;
+                          $0 = float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $54, $18) < $4;
                           $4 = HEAPF32[$6 >> 2];
                           if (!$0) {
                            break block60
                           }
-                          if (float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $25, $18) < $4) {
+                          if (float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $25, $18) < $4) {
                            break block61
                           }
                           $4 = HEAPF32[$6 >> 2];
@@ -14328,44 +14328,44 @@ function asmFunc(imports) {
                          if (!(HEAPF32[$0 + $14 >> 2] > $4) | !(HEAPF32[$15 + $19 >> 2] > $4) | (!(HEAPF32[$0 + $15 >> 2] > $4) | !(HEAPF32[$19 + $29 >> 2] > $4)) | (!(HEAPF32[$23 + $29 >> 2] > $4) | !(HEAPF32[$0 + $29 >> 2] > $4) | (!(HEAPF32[$19 + $30 >> 2] > $4) | !(HEAPF32[$23 + $30 >> 2] > $4))) | (!(HEAPF32[$0 + $30 >> 2] > $4) | !(HEAPF32[$19 + $22 >> 2] > $4) | (!(HEAPF32[$22 + $23 >> 2] > $4) | !(HEAPF32[$0 + $22 >> 2] > $4)) | (!(HEAPF32[$0 + $21 >> 2] > $4) | (!(HEAPF32[$19 + $21 >> 2] > $4) | !(HEAPF32[$21 + $23 >> 2] > $4))))) {
                           break block59
                          }
-                         $25 = Math_fround($53 + Math_fround(-2.0));
-                         if (!(float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $25, $51) > $4)) {
+                         $25 = Math_fround($54 + Math_fround(-2.0));
+                         if (!(float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $25, $51) > $4)) {
                           break block59
                          }
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $53, $51))) {
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $54, $51))) {
                           break block59
                          }
-                         $4 = Math_fround($53 + Math_fround(2.0));
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $4, $51))) {
+                         $4 = Math_fround($54 + Math_fround(2.0));
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $4, $51))) {
                           break block59
                          }
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $25, $59))) {
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $25, $59))) {
                           break block59
                          }
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $53, $59))) {
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $54, $59))) {
                           break block59
                          }
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $4, $59))) {
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $4, $59))) {
                           break block59
                          }
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $25, $18))) {
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $25, $18))) {
                           break block59
                          }
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $53, $18))) {
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $54, $18))) {
                           break block59
                          }
-                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($52, $4, $18))) {
+                         if (!(HEAPF32[$6 >> 2] < float_20vision__bilinear_interpolation_float__28vision__Image_20const__2c_20float_2c_20float_29($53, $4, $18))) {
                           break block59
                          }
                         }
-                        HEAP32[$56 + 28 >> 2] = $26;
-                        HEAP32[$56 + 24 >> 2] = $11;
-                        HEAPF32[$56 + 36 >> 2] = HEAPF32[$6 >> 2];
+                        HEAP32[$57 + 28 >> 2] = $26;
+                        HEAP32[$57 + 24 >> 2] = $11;
+                        HEAPF32[$57 + 36 >> 2] = HEAPF32[$6 >> 2];
                         $4 = vision__GaussianScaleSpacePyramid__effectiveSigma_28unsigned_20long_2c_20float_29_20const($17, $11, $13);
-                        HEAPF32[$56 + 16 >> 2] = $8;
-                        HEAPF32[$56 + 12 >> 2] = Math_fround(Math_fround($5 >>> 0) * $38) + $20;
-                        HEAPF32[$56 + 40 >> 2] = $4;
-                        vision__DoGScaleInvariantDetector__FeaturePoint__20std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____emplace_back_vision__DoGScaleInvariantDetector__FeaturePoint_20const___28vision__DoGScaleInvariantDetector__FeaturePoint_20const__29($33, $56 + 12 | 0);
+                        HEAPF32[$57 + 16 >> 2] = $8;
+                        HEAPF32[$57 + 12 >> 2] = Math_fround(Math_fround($5 >>> 0) * $38) + $20;
+                        HEAPF32[$57 + 40 >> 2] = $4;
+                        vision__DoGScaleInvariantDetector__FeaturePoint__20std____2__vector_vision__DoGScaleInvariantDetector__FeaturePoint_2c_20std____2__allocator_vision__DoGScaleInvariantDetector__FeaturePoint____emplace_back_vision__DoGScaleInvariantDetector__FeaturePoint_20const___28vision__DoGScaleInvariantDetector__FeaturePoint_20const__29($33, $57 + 12 | 0);
                        }
                        $5 = $5 + 1 | 0;
                        continue;
@@ -14396,7 +14396,7 @@ function asmFunc(imports) {
                $4 = Math_fround($8 + Math_fround(1.0));
                $69 = Math_fround(Math_fround($4 * $4) / $8);
                $4 = HEAPF32[$10 + 52 >> 2];
-               $53 = Math_fround($4 * $4);
+               $54 = Math_fround($4 * $4);
                block99 : {
                 block95 : {
                  block62 : {
@@ -14875,7 +14875,7 @@ function asmFunc(imports) {
                       $4 = $8;
                      }
                      HEAPF32[$21 + 20 >> 2] = $4;
-                     if (!($13 >= Math_fround(0.0)) | (!($69 > Math_fround(Math_abs(HEAPF32[$21 + 32 >> 2]))) | !($53 <= Math_fround($36 * $36)))) {
+                     if (!($13 >= Math_fround(0.0)) | (!($69 > Math_fround(Math_abs(HEAPF32[$21 + 32 >> 2]))) | !($54 <= Math_fround($36 * $36)))) {
                       break block94
                      }
                      $0 = HEAP32[$10 + 32 >> 2];
@@ -16240,7 +16240,7 @@ function asmFunc(imports) {
             $0 = $34 + $2 | 0;
             $41 = HEAPF32[$0 >> 2];
             $42 = HEAPF32[$0 + 4 >> 2];
-            $53 = HEAPF32[$12 + 560 >> 2];
+            $54 = HEAPF32[$12 + 560 >> 2];
             $59 = HEAPF32[$12 + 564 >> 2];
             $18 = HEAPF32[$0 + 8 >> 2];
             $2 = $3 + 12 | 0;
@@ -16250,7 +16250,7 @@ function asmFunc(imports) {
             vision__GaussianScaleSpacePyramid__locate_28int__2c_20int__2c_20float_29_20const($17, $2, $1, Math_fround($13 * $4));
             $28 = Math_fround($4 * cosf($18));
             $18 = Math_fround($4 * sinf($18));
-            (wasm2js_i32$0 = $9, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($17, Math_fround($41 + Math_fround(Math_fround($53 * $28) - Math_fround($59 * $18))), Math_fround($42 + Math_fround(Math_fround($18 * $53) + Math_fround($28 * $59))), HEAP32[$3 + 12 >> 2], HEAP32[$3 + 8 >> 2])), HEAPF32[wasm2js_i32$0 >> 2] = wasm2js_f32$0;
+            (wasm2js_i32$0 = $9, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($17, Math_fround($41 + Math_fround(Math_fround($54 * $28) - Math_fround($59 * $18))), Math_fround($42 + Math_fround(Math_fround($18 * $54) + Math_fround($28 * $59))), HEAP32[$3 + 12 >> 2], HEAP32[$3 + 8 >> 2])), HEAPF32[wasm2js_i32$0 >> 2] = wasm2js_f32$0;
             (wasm2js_i32$0 = $9, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($17, Math_fround($41 + Math_fround(Math_fround($28 * $76) - Math_fround($69 * $18))), Math_fround($42 + Math_fround(Math_fround($18 * $76) + Math_fround($28 * $69))), HEAP32[$3 + 12 >> 2], HEAP32[$3 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 4 >> 2] = wasm2js_f32$0;
             (wasm2js_i32$0 = $9, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($17, Math_fround($41 + Math_fround(Math_fround($28 * $74) - Math_fround($75 * $18))), Math_fround($42 + Math_fround(Math_fround($18 * $74) + Math_fround($28 * $75))), HEAP32[$3 + 12 >> 2], HEAP32[$3 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 8 >> 2] = wasm2js_f32$0;
             (wasm2js_i32$0 = $9, wasm2js_f32$0 = vision__SampleReceptor_28vision__GaussianScaleSpacePyramid_20const__2c_20float_2c_20float_2c_20int_2c_20int_29($17, Math_fround($41 + Math_fround(Math_fround($28 * $153) - Math_fround($82 * $18))), Math_fround($42 + Math_fround(Math_fround($18 * $153) + Math_fround($28 * $82))), HEAP32[$3 + 12 >> 2], HEAP32[$3 + 8 >> 2])), HEAPF32[wasm2js_i32$0 + 12 >> 2] = wasm2js_f32$0;
@@ -16358,16 +16358,16 @@ function asmFunc(imports) {
        __stack_pointer = $40 + 16 | 0;
        vision__ScopedTimer___ScopedTimer_28_29($68);
        $2 = vision__Logger__getInstance_28_29();
-       vision__get_pretty_time_28_29($55);
+       vision__get_pretty_time_28_29($56);
        $0 = HEAP32[$12 + 76 >> 2];
        $1 = HEAP32[$0 + 24 >> 2];
        $0 = HEAP32[$0 + 28 >> 2];
        HEAP32[$79 >> 2] = 7441;
        HEAP32[$79 + 8 >> 2] = 23325;
-       HEAP32[$79 + 4 >> 2] = HEAP8[$79 + 27 | 0] < 0 ? HEAP32[$79 + 16 >> 2] : $55;
+       HEAP32[$79 + 4 >> 2] = HEAP8[$79 + 27 | 0] < 0 ? HEAP32[$79 + 16 >> 2] : $56;
        HEAP32[$79 + 12 >> 2] = ($0 - $1 | 0) / 20;
        vision__Logger__write_28vision__LoggerPriorityLevel_2c_20char_20const__2c_20____29($2, 18315, $79);
-       std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($55);
+       std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($56);
        $26 = HEAP32[$12 + 76 >> 2];
        $11 = __stack_pointer - 112 | 0;
        __stack_pointer = $11;
@@ -16632,8 +16632,8 @@ function asmFunc(imports) {
                $22 = HEAP32[$23 + 20 >> 2];
                $1 = 0;
                $6 = 0;
-               $55 = __stack_pointer + -64 | 0;
-               __stack_pointer = $55;
+               $56 = __stack_pointer + -64 | 0;
+               __stack_pointer = $56;
                HEAP32[$43 + 4 >> 2] = HEAP32[$43 >> 2];
                block170 : {
                 block166 : {
@@ -16641,7 +16641,7 @@ function asmFunc(imports) {
                   if (HEAP32[$26 + 28 >> 2] == HEAP32[$26 + 24 >> 2] | HEAP32[$22 + 28 >> 2] == HEAP32[$22 + 24 >> 2]) {
                    break block165
                   }
-                  if (!bool_20vision__MatrixInverse3x3_float__28float__2c_20float_20const__2c_20float_29($55 + 16 | 0, $40, Math_fround(0.0))) {
+                  if (!bool_20vision__MatrixInverse3x3_float__28float__2c_20float_20const__2c_20float_29($56 + 16 | 0, $40, Math_fround(0.0))) {
                    break block166
                   }
                   std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____reserve_28unsigned_20long_29($43, (HEAP32[$26 + 28 >> 2] - HEAP32[$26 + 24 >> 2] | 0) / 20 | 0);
@@ -16659,9 +16659,9 @@ function asmFunc(imports) {
                     $10 = $1 + Math_imul($6, 20) | 0;
                     $25 = HEAPF32[$10 >> 2];
                     $8 = HEAPF32[$10 + 4 >> 2];
-                    $4 = Math_fround(HEAPF32[$55 + 48 >> 2] + Math_fround(Math_fround(HEAPF32[$55 + 40 >> 2] * $25) + Math_fround($8 * HEAPF32[$55 + 44 >> 2])));
-                    $13 = Math_fround(Math_fround(HEAPF32[$55 + 36 >> 2] + Math_fround(Math_fround(HEAPF32[$55 + 28 >> 2] * $25) + Math_fround($8 * HEAPF32[$55 + 32 >> 2]))) / $4);
-                    $8 = Math_fround(Math_fround(HEAPF32[$55 + 24 >> 2] + Math_fround(Math_fround(HEAPF32[$55 + 16 >> 2] * $25) + Math_fround($8 * HEAPF32[$55 + 20 >> 2]))) / $4);
+                    $4 = Math_fround(HEAPF32[$56 + 48 >> 2] + Math_fround(Math_fround(HEAPF32[$56 + 40 >> 2] * $25) + Math_fround($8 * HEAPF32[$56 + 44 >> 2])));
+                    $13 = Math_fround(Math_fround(HEAPF32[$56 + 36 >> 2] + Math_fround(Math_fround(HEAPF32[$56 + 28 >> 2] * $25) + Math_fround($8 * HEAPF32[$56 + 32 >> 2]))) / $4);
+                    $8 = Math_fround(Math_fround(HEAPF32[$56 + 24 >> 2] + Math_fround(Math_fround(HEAPF32[$56 + 16 >> 2] * $25) + Math_fround($8 * HEAPF32[$56 + 20 >> 2]))) / $4);
                     $7 = HEAP32[$26 + 12 >> 2] + Math_imul(HEAP32[$26 + 8 >> 2], $6) | 0;
                     $1 = 0;
                     $5 = -1;
@@ -16678,9 +16678,9 @@ function asmFunc(imports) {
                         if (($5 | 0) != -1) {
                          break block168
                         }
-                        HEAP32[$55 + 12 >> 2] = $2;
-                        HEAP32[$55 + 8 >> 2] = $6;
-                        vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($43, $55 + 8 | 0);
+                        HEAP32[$56 + 12 >> 2] = $2;
+                        HEAP32[$56 + 8 >> 2] = $6;
+                        vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($43, $56 + 8 | 0);
                         break block167;
                        }
                       } else {
@@ -16712,16 +16712,16 @@ function asmFunc(imports) {
                      if (!(HEAPF32[$43 + 12 >> 2] > Math_fround(Math_fround($0 >>> 0) / Math_fround($5 >>> 0)))) {
                       break block167
                      }
-                     HEAP32[$55 + 12 >> 2] = $2;
-                     HEAP32[$55 + 8 >> 2] = $6;
-                     vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($43, $55 + 8 | 0);
+                     HEAP32[$56 + 12 >> 2] = $2;
+                     HEAP32[$56 + 8 >> 2] = $6;
+                     vision__match_t__20std____2__vector_vision__match_t_2c_20std____2__allocator_vision__match_t____emplace_back_vision__match_t__28vision__match_t___29($43, $56 + 8 | 0);
                     }
                     $6 = $6 + 1 | 0;
                     continue;
                    }
                   };
                  }
-                 __stack_pointer = $55 - -64 | 0;
+                 __stack_pointer = $56 - -64 | 0;
                  break block170;
                 }
                 std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__endl_5babi_ne200100_5d_char_2c_20std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__basic_ostream_char_2c_20std____2__char_traits_char______put_num_integer_promote_5babi_nn200100_5d_int__28int_29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(std____2__basic_ostream_char_2c_20std____2__char_traits_char____20std____2__operator___5babi_ne200100_5d_std____2__char_traits_char___28std____2__basic_ostream_char_2c_20std____2__char_traits_char____2c_20char_20const__29(84528, 22325), 19171), 9969), 196), 10441), 22350));
@@ -17313,7 +17313,7 @@ function asmFunc(imports) {
                       $61 = HEAPF64[$3 + 56 >> 3];
                       $49 = HEAPF64[$22 >> 3];
                       $62 = HEAPF64[$22 + 8 >> 3];
-                      $54 = HEAPF64[$22 + 40 >> 3];
+                      $55 = HEAPF64[$22 + 40 >> 3];
                       $39 = HEAPF64[$3 + 24 >> 3];
                       $37 = HEAPF64[$22 + 48 >> 3];
                       $24 = HEAPF64[$3 >> 3];
@@ -17325,27 +17325,27 @@ function asmFunc(imports) {
                       arImageProcFinal($2);
                       arImageProcFinal($1);
                       arImageProcFinal($0);
-                      $57 = $27 - $77;
-                      $27 = ($50 - $37) / $54;
-                      $65 = ($39 - $37 * $45) / $54;
+                      $58 = $27 - $77;
+                      $27 = ($50 - $37) / $55;
+                      $65 = ($39 - $37 * $45) / $55;
                       $50 = ($24 - $77 * $45 - $62 * $65) / $49;
                       $60 = Math_sqrt($45 * $45 + ($50 * $50 + $65 * $65));
-                      $48 = ($48 - $37 * $61) / $54;
+                      $48 = ($48 - $37 * $61) / $55;
                       $39 = ($44 - $77 * $61 - $62 * $48) / $49;
                       $44 = Math_sqrt($61 * $61 + ($39 * $39 + $48 * $48));
                       $24 = ($60 + $44) * .5;
-                      $154 = ($57 - $62 * $27) / $49 / $24;
+                      $154 = ($58 - $62 * $27) / $49 / $24;
                       $155 = $27 / $24;
                       $156 = 1.0 / $24;
-                      $70 = $50 / $60;
+                      $71 = $50 / $60;
                       $50 = $48 / $44;
                       $64 = $65 / $60;
-                      $54 = $39 / $44;
-                      $24 = $70 * $50 - $64 * $54;
+                      $55 = $39 / $44;
+                      $24 = $71 * $50 - $64 * $55;
                       $44 = $61 / $44;
                       $61 = $45 / $60;
                       $39 = $64 * $44 - $61 * $50;
-                      $60 = $61 * $54 - $70 * $44;
+                      $60 = $61 * $55 - $71 * $44;
                       $27 = $24 * $24 + ($39 * $39 + $60 * $60);
                       if ($27 == 0.0) {
                        break block190
@@ -17357,53 +17357,53 @@ function asmFunc(imports) {
                       $39 = -$48;
                       $1 = 0;
                       $24 = $60 / $24;
-                      $66 = $24 * $70 - $64 * $48;
+                      $66 = $24 * $71 - $64 * $48;
                       block191 : {
                        if ($66 != 0.0) {
-                        $57 = $64;
-                        $45 = $70;
+                        $58 = $64;
+                        $45 = $71;
                         $49 = $24;
                         $37 = $48;
                         $0 = 0;
                         $48 = $61;
                         break block191;
                        }
-                       $39 = $27 * $70 + $61 * $39;
+                       $39 = $27 * $71 + $61 * $39;
                        $1 = $39 != 0.0;
                        $49 = $1 ? $27 : $24;
-                       $45 = $1 ? $70 : $61;
-                       $57 = $1 ? $61 : $64;
+                       $45 = $1 ? $71 : $61;
+                       $58 = $1 ? $61 : $64;
                        $37 = $1 ? $48 : $27;
-                       $66 = $49 * $45 - $57 * $37;
+                       $66 = $49 * $45 - $58 * $37;
                        $27 = $1 ? $24 : $48;
                        $0 = $39 == 0.0;
                        $39 = -$37;
-                       $48 = $1 ? $64 : $70;
+                       $48 = $1 ? $64 : $71;
                       }
                       if ($66 == 0.0) {
                        break block190
                       }
-                      $71 = ($57 * $27 - $49 * $48) / $66;
-                      $24 = $61 * $44 + ($70 * $54 + $64 * $50);
+                      $72 = ($58 * $27 - $49 * $48) / $66;
+                      $24 = $61 * $44 + ($71 * $55 + $64 * $50);
                       $24 = $24 < 0.0 ? -$24 : $24;
                       $86 = (Math_sqrt($24 + 1.0) + Math_sqrt(1.0 - $24)) * .5;
                       $80 = $86 * $49 / $66;
-                      $24 = $37 * $57 - $45 * $49;
+                      $24 = $37 * $58 - $45 * $49;
                       $62 = $86 * $37 / $24;
                       $65 = ($45 * $27 - $37 * $48) / $24;
-                      $60 = $71 * $80 + $62 * $65;
-                      $48 = $71 * $71 + $65 * $65 + 1.0;
+                      $60 = $72 * $80 + $62 * $65;
+                      $48 = $72 * $72 + $65 * $65 + 1.0;
                       $24 = $60 * $60 - $48 * ($80 * $80 + $62 * $62 + -1.0);
                       if ($24 < 0.0) {
                        break block190
                       }
                       $24 = Math_sqrt($24);
-                      $57 = (-$60 - $24) / $48;
-                      $83 = $65 * $57 + $62;
-                      $77 = $71 * $57 + $80;
+                      $58 = (-$60 - $24) / $48;
+                      $83 = $65 * $58 + $62;
+                      $77 = $72 * $58 + $80;
                       $45 = ($24 - $60) / $48;
                       $62 = $65 * $45 + $62;
-                      $48 = $71 * $45 + $80;
+                      $48 = $72 * $45 + $80;
                       block192 : {
                        if ($1) {
                         $24 = $49;
@@ -17414,7 +17414,7 @@ function asmFunc(imports) {
                         $48 = $62;
                         $62 = $77;
                         $77 = $83;
-                        $83 = $57;
+                        $83 = $58;
                         break block192;
                        }
                        if (!$0) {
@@ -17424,63 +17424,63 @@ function asmFunc(imports) {
                         $60 = $62;
                         $48 = $45;
                         $62 = $77;
-                        $77 = $57;
+                        $77 = $58;
                         break block192;
                        }
                        $39 = -$27;
                        $24 = $37;
                        $65 = $45;
                        $60 = $62;
-                       $62 = $57;
+                       $62 = $58;
                       }
                       $80 = $83;
                       $1 = 0;
-                      $66 = $49 * $54 + $50 * $39;
+                      $66 = $49 * $55 + $50 * $39;
                       block193 : {
                        if ($66 != 0.0) {
                         $83 = $44;
-                        $57 = $50;
-                        $45 = $54;
+                        $58 = $50;
+                        $45 = $55;
                         $37 = $49;
                         $39 = $27;
                         $0 = 0;
                         break block193;
                        }
-                       $71 = $24 * $54 + $44 * $39;
-                       $1 = $71 != 0.0;
+                       $72 = $24 * $55 + $44 * $39;
+                       $1 = $72 != 0.0;
                        $37 = $1 ? $24 : $49;
-                       $45 = $1 ? $54 : $44;
-                       $57 = $1 ? $44 : $50;
+                       $45 = $1 ? $55 : $44;
+                       $58 = $1 ? $44 : $50;
                        $39 = $1 ? $27 : $24;
-                       $66 = $37 * $45 - $57 * $39;
+                       $66 = $37 * $45 - $58 * $39;
                        $24 = $1 ? $49 : $27;
-                       $83 = $1 ? $50 : $54;
-                       $0 = $71 == 0.0;
+                       $83 = $1 ? $50 : $55;
+                       $0 = $72 == 0.0;
                       }
                       if ($66 == 0.0) {
                        break block190
                       }
-                      $85 = ($57 * $24 - $37 * $83) / $66;
+                      $85 = ($58 * $24 - $37 * $83) / $66;
                       $66 = $86 * $37 / $66;
-                      $27 = $39 * $57 - $45 * $37;
-                      $71 = $86 * $39 / $27;
-                      $57 = ($45 * $24 - $39 * $83) / $27;
-                      $45 = $85 * $66 + $71 * $57;
-                      $49 = $85 * $85 + $57 * $57 + 1.0;
-                      $27 = $45 * $45 - $49 * ($66 * $66 + $71 * $71 + -1.0);
+                      $27 = $39 * $58 - $45 * $37;
+                      $72 = $86 * $39 / $27;
+                      $58 = ($45 * $24 - $39 * $83) / $27;
+                      $45 = $85 * $66 + $72 * $58;
+                      $49 = $85 * $85 + $58 * $58 + 1.0;
+                      $27 = $45 * $45 - $49 * ($66 * $66 + $72 * $72 + -1.0);
                       if ($27 < 0.0) {
                        break block190
                       }
                       $24 = Math_sqrt($27);
                       $27 = (-$45 - $24) / $49;
-                      $37 = $57 * $27 + $71;
+                      $37 = $58 * $27 + $72;
                       $39 = $85 * $27 + $66;
                       $49 = ($24 - $45) / $49;
-                      $24 = $57 * $49 + $71;
+                      $24 = $58 * $49 + $72;
                       $44 = $85 * $49 + $66;
                       block194 : {
                        if ($1) {
-                        $54 = $44;
+                        $55 = $44;
                         $50 = $49;
                         $44 = $24;
                         $24 = $39;
@@ -17488,7 +17488,7 @@ function asmFunc(imports) {
                         break block194;
                        }
                        if (!$0) {
-                        $54 = $44;
+                        $55 = $44;
                         $50 = $24;
                         $44 = $49;
                         $24 = $39;
@@ -17496,16 +17496,16 @@ function asmFunc(imports) {
                         $27 = $37;
                         break block194;
                        }
-                       $54 = $49;
+                       $55 = $49;
                        $50 = $24;
                        $24 = $27;
                        $27 = $37;
                       }
                       $37 = $77 * $39 + ($62 * $24 + $80 * $27);
                       $45 = $37 < 0.0 ? -$37 : $37;
-                      $37 = $77 * $44 + ($62 * $54 + $80 * $50);
+                      $37 = $77 * $44 + ($62 * $55 + $80 * $50);
                       $64 = $37 < 0.0 ? -$37 : $37;
-                      $37 = $48 * $44 + ($65 * $54 + $60 * $50);
+                      $37 = $48 * $44 + ($65 * $55 + $60 * $50);
                       $49 = $37 < 0.0 ? -$37 : $37;
                       $37 = $48 * $39 + ($65 * $24 + $60 * $27);
                       $37 = $37 < 0.0 ? -$37 : $37;
@@ -17513,7 +17513,7 @@ function asmFunc(imports) {
                        if ($49 < $64) {
                         $61 = $48;
                         $64 = $60;
-                        $70 = $65;
+                        $71 = $65;
                         if ($45 > $49) {
                          break block190
                         }
@@ -17522,7 +17522,7 @@ function asmFunc(imports) {
                        $0 = $45 > $64;
                        $44 = $0 ? $44 : $39;
                        $50 = $0 ? $50 : $27;
-                       $24 = $0 ? $54 : $24;
+                       $24 = $0 ? $55 : $24;
                        break block196;
                       }
                       if ($37 < $64) {
@@ -17531,16 +17531,16 @@ function asmFunc(imports) {
                        }
                        $44 = $39;
                        $50 = $27;
-                       $54 = $24;
+                       $55 = $24;
                        $61 = $48;
                        $64 = $60;
-                       $70 = $65;
+                       $71 = $65;
                        break block190;
                       }
                       $0 = $45 > $64;
                       $44 = $0 ? $44 : $39;
                       $50 = $0 ? $50 : $27;
-                      $24 = $0 ? $54 : $24;
+                      $24 = $0 ? $55 : $24;
                       break block196;
                      }
                      arImageProcFinal($10);
@@ -17550,23 +17550,23 @@ function asmFunc(imports) {
                     $44 = $39;
                     $50 = $27;
                    }
-                   $54 = $24;
+                   $55 = $24;
                    $61 = $77;
                    $64 = $80;
-                   $70 = $62;
+                   $71 = $62;
                   }
                   HEAPF64[$40 + 176 >> 3] = $61;
                   HEAPF64[$40 + 144 >> 3] = $64;
-                  HEAPF64[$40 + 112 >> 3] = $70;
+                  HEAPF64[$40 + 112 >> 3] = $71;
                   HEAPF64[$40 + 184 >> 3] = $44;
                   HEAPF64[$40 + 152 >> 3] = $50;
-                  HEAPF64[$40 + 120 >> 3] = $54;
+                  HEAPF64[$40 + 120 >> 3] = $55;
                   HEAPF64[$40 + 200 >> 3] = $156;
                   HEAPF64[$40 + 168 >> 3] = $155;
                   HEAPF64[$40 + 136 >> 3] = $154;
-                  $39 = $70 * $50 - $64 * $54;
+                  $39 = $71 * $50 - $64 * $55;
                   $24 = $64 * $44 - $61 * $50;
-                  $27 = $61 * $54 - $70 * $44;
+                  $27 = $61 * $55 - $71 * $44;
                   $44 = Math_sqrt($39 * $39 + ($24 * $24 + $27 * $27));
                   HEAPF64[$40 + 192 >> 3] = $39 / $44;
                   HEAPF64[$40 + 160 >> 3] = $27 / $44;
@@ -17703,7 +17703,7 @@ function asmFunc(imports) {
        if (($84 | 0) == 1) {
         break block0
        }
-       emscripten_builtin_free($58);
+       emscripten_builtin_free($52);
       }
       __stack_pointer = $46 + 48 | 0;
       break __inlined_func$kpmMatching$6;
@@ -17717,8 +17717,8 @@ function asmFunc(imports) {
    }
    $0 = HEAP32[$78 + 224 >> 2];
    if ($0) {
-    HEAP32[$72 + 56 >> 2] = HEAP32[$0 + 52 >> 2];
-    HEAP32[$72 + 52 >> 2] = HEAP32[$0 + 56 >> 2];
+    HEAP32[$70 + 56 >> 2] = HEAP32[$0 + 52 >> 2];
+    HEAP32[$70 + 52 >> 2] = HEAP32[$0 + 56 >> 2];
    }
    if (HEAPU8[$78 + 236 | 0] == 1) {
     $27 = HEAPF64[$78 + 256 >> 3];
@@ -17751,51 +17751,77 @@ function asmFunc(imports) {
     }
     HEAP32[$78 + 240 >> 2] = $0;
    }
-   $3 = $78 + 272 | 0;
+   $10 = HEAP32[$70 + 52 >> 2];
+   $3 = ($10 | 0) > 0 ? $10 : 0;
+   $1 = -1;
+   $9 = HEAP32[$70 + 56 >> 2];
    $0 = 0;
    while (1) {
-    $10 = HEAP32[$72 + 52 >> 2];
-    if (($10 | 0) <= ($0 | 0)) {
-     break block
-    }
-    $2 = HEAP32[$72 + 56 >> 2] + Math_imul($0, 68) | 0;
-    if (!HEAP32[$2 + 60 >> 2]) {
-     $1 = HEAP32[$2 + 48 >> 2];
+    if (($0 | 0) == ($3 | 0)) {
+     if (($1 | 0) < 0) {
+      break block
+     }
+     $0 = $9 + Math_imul($1, 68) | 0;
+     $1 = HEAP32[$0 + 48 >> 2];
      HEAP32[$78 + 264 >> 2] = $1;
-     wasm2js_memory_copy($72, $2, 48);
-     $10 = 0;
-     $7 = HEAP32[($1 << 2) + $3 >> 2];
+     wasm2js_memory_copy($70, $0, 48);
+     $0 = 0;
+     $7 = HEAP32[($78 + ($1 << 2) | 0) + 272 >> 2];
      if ($7) {
       HEAP32[$7 + 152 >> 2] = 1;
-      $58 = $7 + 8 | 0;
+      $3 = $7 + 8 | 0;
       while (1) {
-       if (($10 | 0) != 3) {
-        $1 = $10 << 4;
-        $5 = $1 + $58 | 0;
-        $2 = $1 + $72 | 0;
-        $9 = 0;
+       if (($0 | 0) != 3) {
+        $1 = $0 << 4;
+        $52 = $1 + $3 | 0;
+        $5 = $1 + $70 | 0;
+        $1 = 0;
         while (1) {
-         if (($9 | 0) != 4) {
-          $1 = $9 << 2;
-          HEAPF32[$1 + $5 >> 2] = HEAPF32[$1 + $2 >> 2];
-          $9 = $9 + 1 | 0;
+         if (($1 | 0) != 4) {
+          $2 = $1 << 2;
+          HEAPF32[$2 + $52 >> 2] = HEAPF32[$2 + $5 >> 2];
+          $1 = $1 + 1 | 0;
           continue;
          }
          break;
         };
-        $10 = $10 + 1 | 0;
+        $0 = $0 + 1 | 0;
         continue;
        }
        break;
       };
       HEAP32[$7 + 168 >> 2] = -1;
      }
+     $10 = HEAP32[$70 + 52 >> 2];
+    } else {
+     $7 = $9 + Math_imul($0, 68) | 0;
+     block2104 : {
+      if (HEAP32[$7 + 60 >> 2]) {
+       break block2104
+      }
+      block3105 : {
+       if (($1 | 0) < 0) {
+        break block3105
+       }
+       $52 = HEAP32[$7 + 56 >> 2];
+       $5 = $9 + Math_imul($1, 68) | 0;
+       $2 = HEAP32[$5 + 56 >> 2];
+       if (($52 | 0) > ($2 | 0)) {
+        break block3105
+       }
+       if (!(HEAPF32[$7 + 52 >> 2] < HEAPF32[$5 + 52 >> 2]) | ($2 | 0) != ($52 | 0)) {
+        break block2104
+       }
+      }
+      $1 = $0;
+     }
+     $0 = $0 + 1 | 0;
+     continue;
     }
-    $0 = $0 + 1 | 0;
-    continue;
+    break;
    };
   }
-  __stack_pointer = $72 - -64 | 0;
+  __stack_pointer = $70 - -64 | 0;
   return $10 | 0;
  }
  
