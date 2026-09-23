@@ -22,8 +22,7 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private grayscaleEnabled;
     private grayscaleSource;
     private videoLumaInternal;
-    private nftMarkerFound;
-    private nftMarkerFoundTime;
+    private markerLostTracker;
     private nftMarkerCount;
     private defaultMarkerWidth;
     private _bwpointer;

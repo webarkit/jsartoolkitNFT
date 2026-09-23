@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import { CAMERA_PARAM, MARKER_PINBALL, MARKER_KUVA, loadMarkers } from "./helpers";
 import {
   COMPOSITE_WIDTH,
@@ -72,6 +72,62 @@ for (const variant of VARIANTS) {
       it("returns MARKER_INDEX_OUT_OF_BOUNDS (-3) for an index outside the loaded markers", () => {
         expect(ar.getNFTMarker(-1)).toBe(-3);
         expect(ar.getNFTMarker(2)).toBe(-3);
+      });
+
+      it("gives each getNFTMarker event its own matrix", async () => {
+        await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
+        const events: { ref: Float64Array; copy: number[] }[] = [];
+        const onGet = (e: any) =>
+          events.push({ ref: e.data.matrix, copy: Array.from(e.data.matrix as Float64Array) });
+        ar.addEventListener("getNFTMarker", onGet);
+        ar.process(frames.both);
+        ar.removeEventListener("getNFTMarker", onGet);
+
+        expect(events.length).toBe(2);
+        expect(events[0].ref).not.toBe(events[1].ref);
+        // A listener that kept the matrix still sees the values it was given.
+        for (const event of events) {
+          expect(Array.from(event.ref)).toEqual(event.copy);
+        }
+      });
+
+      it("reports kuva lost while pinball stays tracked", async () => {
+        let clock = 1_000_000;
+        const nowSpy = vi.spyOn(Date, "now").mockImplementation(() => clock);
+        try {
+          await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
+
+          const lost: number[] = [];
+          const onLost = (e: any) => lost.push(e.data.index);
+          ar.addEventListener("lostNFTMarker", onLost);
+
+          // Remove kuva; advance 50 ms per frame until the loss is reported.
+          for (let i = 0; i < 60 && lost.length === 0; i++) {
+            clock += 50;
+            ar.process(frames.pinballOnly);
+            await new Promise((resolve) => setTimeout(resolve, 5));
+          }
+          expect(lost).toEqual([1]);
+
+          // Afterwards pinball keeps being reported, kuva does not come back,
+          // and nothing else is reported lost.
+          const kept: number[] = [];
+          const onGet = (e: any) => kept.push(e.data.index);
+          ar.addEventListener("getNFTMarker", onGet);
+          for (let i = 0; i < 10; i++) {
+            clock += 50;
+            ar.process(frames.pinballOnly);
+            await new Promise((resolve) => setTimeout(resolve, 5));
+          }
+          ar.removeEventListener("getNFTMarker", onGet);
+          ar.removeEventListener("lostNFTMarker", onLost);
+
+          expect(kept.length).toBeGreaterThan(0);
+          expect(kept.every((index) => index === 0)).toBe(true);
+          expect(lost).toEqual([1]);
+        } finally {
+          nowSpy.mockRestore();
+        }
       });
     });
   }
