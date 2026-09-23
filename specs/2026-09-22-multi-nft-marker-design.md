@@ -210,3 +210,67 @@ The `WebARKit/NFT` source relocation — moving `lib/SRC/KPM` to `WebARKit/NFT` 
 WebARKitLib `feat-NFT` (`da96f12`), and is deliberately **not** the base for this work. It
 moves both files this spec targets, so whichever lands second will need the other ported
 across. That cost was accepted in exchange for a clean baseline.
+
+## Measurements (#631), 2026-09-23
+
+WebARKitLib `28735ee`, jsartoolkitNFT `52c318e`.
+
+Instrumentation: a temporary `std::printf("[631] image=%d inliers=%d ref_points=%d
+hough=%d\n", ...)` directly after `TIMED("Find Inliers (2)")` in
+`visual_database-inline.h`'s `query()`, printing before the existing `mMinNumInliers`
+comparison. `db_id` (`image` above) is a global index over every loaded reference image,
+assigned in load order: pinball occupies 0–8 (9 images), and when kuva is loaded after it,
+kuva occupies 9–22 (14 images); loaded alone, kuva occupies 0–13. `page %d, image num %d,
+points - %d` (from `kpmSetRefDataSet`, unchanged) confirms the page a `db_id` belongs to.
+Six runs: node (`sharp` decoder) and browser (canvas decoder) × three loaded sets (pinball
+alone, kuva alone, both), one frame of `examples/node/pinball-demo.jpg` each. All emitted
+`[631]` lines have `inliers >= 8`, so none are excluded by the retained floor.
+
+| decoder | loaded | db_id | marker | inliers | ref_points | hough | ratio_ref | ratio_hough | class |
+|---|---|---|---|---|---|---|---|---|---|
+| node | pinball | 0 | pinball | 28 | 636 | 33 | 0.044 | 0.848 | true |
+| node | pinball | 1 | pinball | 36 | 648 | 41 | 0.056 | 0.878 | true |
+| node | pinball | 2 | pinball | 34 | 615 | 38 | 0.055 | 0.895 | true |
+| node | pinball | 4 | pinball | 26 | 590 | 33 | 0.044 | 0.788 | true |
+| node | kuva | 0 | kuva | 32 | 399 | 36 | 0.080 | 0.889 | false |
+| node | kuva | 1 | kuva | 26 | 395 | 32 | 0.066 | 0.813 | false |
+| node | kuva | 2 | kuva | 24 | 357 | 35 | 0.067 | 0.686 | false |
+| node | pinball+kuva | 0 | pinball | 28 | 636 | 33 | 0.044 | 0.848 | true |
+| node | pinball+kuva | 1 | pinball | 36 | 648 | 41 | 0.056 | 0.878 | true |
+| node | pinball+kuva | 2 | pinball | 34 | 615 | 38 | 0.055 | 0.895 | true |
+| node | pinball+kuva | 4 | pinball | 26 | 590 | 33 | 0.044 | 0.788 | true |
+| node | pinball+kuva | 9 | kuva | 32 | 399 | 36 | 0.080 | 0.889 | false |
+| node | pinball+kuva | 10 | kuva | 26 | 395 | 32 | 0.066 | 0.813 | false |
+| node | pinball+kuva | 11 | kuva | 24 | 357 | 35 | 0.067 | 0.686 | false |
+| browser | pinball | 0 | pinball | 23 | 636 | 32 | 0.036 | 0.719 | true |
+| browser | pinball | 1 | pinball | 29 | 648 | 40 | 0.045 | 0.725 | true |
+| browser | pinball | 2 | pinball | 33 | 615 | 39 | 0.054 | 0.846 | true |
+| browser | pinball | 4 | pinball | 27 | 590 | 34 | 0.046 | 0.794 | true |
+| browser | kuva | 0 | kuva | 35 | 399 | 36 | 0.088 | 0.972 | false |
+| browser | kuva | 1 | kuva | 26 | 395 | 31 | 0.066 | 0.839 | false |
+| browser | kuva | 2 | kuva | 26 | 357 | 36 | 0.073 | 0.722 | false |
+| browser | pinball+kuva | 0 | pinball | 23 | 636 | 32 | 0.036 | 0.719 | true |
+| browser | pinball+kuva | 1 | pinball | 29 | 648 | 40 | 0.045 | 0.725 | true |
+| browser | pinball+kuva | 2 | pinball | 33 | 615 | 39 | 0.054 | 0.846 | true |
+| browser | pinball+kuva | 4 | pinball | 27 | 590 | 34 | 0.046 | 0.794 | true |
+| browser | pinball+kuva | 9 | kuva | 35 | 399 | 36 | 0.088 | 0.972 | false |
+| browser | pinball+kuva | 10 | kuva | 26 | 395 | 31 | 0.066 | 0.839 | false |
+| browser | pinball+kuva | 11 | kuva | 26 | 357 | 36 | 0.073 | 0.722 | false |
+
+- ratio_ref: T = 0.054 (33/615, browser pinball's own best match), F = 0.088 (35/399, browser
+  kuva against the pinball photo) → does not separate (F > T)
+- ratio_hough: T = 0.846 (33/39, browser pinball), F = 0.972 (35/36, browser kuva) → does not
+  separate (F > T)
+- **Decision: no inlier ratio separates the two, and none should.**
+  `examples/node/pinball-demo.jpg` is a photo of a printed sheet carrying **both** targets:
+  pinball is the left print, kuva — the room with plants and a square ARToolKit marker,
+  `kuva.iset`'s embedded 640x480 reference JPEG — is the right print, rotated 90°. Kuva's
+  matches are true detections, not false positives: that is why kuva matches at three
+  consistent scales, with more inliers, a higher ratio, and a lower pose error than pinball.
+  **#631 is not a matcher defect.** The "only pinball is in the image" premise of the #631
+  tests was wrong. No threshold is added — the ratio work above stops here, and Task 2 of
+  the implementation plan (adding a `kMinInlierRatio` constant) is dropped. The two #631
+  tests in `tests/vitest/detection.test.ts` are to be rewritten to expect **both** markers
+  found, once multi-marker tracking lands. Consequence for the rest of this spec:
+  `pinball-demo.jpg` is itself a two-marker frame, which makes it a useful fixture for the
+  multi-marker acceptance tests in the Phases below rather than a single-marker one.
