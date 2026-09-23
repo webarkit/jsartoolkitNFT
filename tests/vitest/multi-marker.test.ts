@@ -36,10 +36,32 @@ for (const variant of VARIANTS) {
         ids.forEach((id) => ar.trackNFTMarkerId(id));
       }, 150_000);
 
-      it("finds both markers in the same frame", async () => {
+      it("tracks both markers at once", async () => {
         await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
         expect(isFound(ar, 0)).toBe(true);
         expect(isFound(ar, 1)).toBe(true);
+      });
+
+      it("detects both markers from a single detection pass", async () => {
+        // Lose both first, so the next pass starts with nothing tracked. A matcher that
+        // returned one page per pass (#635) would find one marker here and the other on
+        // a later pass; "tracks both markers at once" cannot tell that apart.
+        const blank = new ImageData(frames.width, frames.height);
+        await processUntil(ar, blank, () => !isFound(ar, 0) && !isFound(ar, 1));
+
+        // The first process() that finds any marker must find both. On the threaded
+        // build, calls made while the worker is still searching find nothing yet.
+        for (let i = 0; i < 120; i++) {
+          ar.process(frames.both);
+          const pinball = isFound(ar, 0);
+          const kuva = isFound(ar, 1);
+          if (pinball || kuva) {
+            expect({ pinball, kuva }).toEqual({ pinball: true, kuva: true });
+            return;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 5));
+        }
+        throw new Error("no marker was detected after 120 frames");
       });
 
       it("fires getNFTMarker exactly once for each marker per process()", async () => {
