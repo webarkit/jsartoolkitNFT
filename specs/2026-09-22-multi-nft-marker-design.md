@@ -128,6 +128,13 @@ frames otherwise. `kpmSetMatchingSkipPage` (already used at `kpmMatching.cpp:348
 already-tracked pages, so each KPM pass gets cheaper as more markers are held — the right
 cost curve. N is tunable; pick a default by measurement, not taste.
 
+> **Correction, 2026-09-23.** The "cheaper as more markers are held" claim above is false in the
+> FREAK (binary) path this port uses. `kpmMatching()` still extracts the frame's features, and
+> `freakMatcher->query()` still matches them against every keyframe, tracked pages included;
+> `skipF` only skips the pose computation for a skipped page afterwards. A pass costs about the
+> same however many markers are held. And the throttle ended up measured in time, not frames: see
+> "Detection policy (decided 2026-09-23)" below.
+
 `getNFTMarkerInfo(markerIndex)` already takes an index and returns `found`/`pose`, so its
 signature is unchanged — only its internal guard moves from the shared scalar to that
 marker's own state.
@@ -322,3 +329,97 @@ Ratio median([pinball, kuva]) / median([pinball]), per run: 40.3, 35.3, 39.6.
 
 Shipped `kKpmIntervalFrames = 1` (plan default: a marker entering view is found on the next frame).
 Whether to raise it is left to the maintainer, given the numbers above.
+
+> **Superseded, 2026-09-23:** the frame-count throttle was replaced by a time-based one; see
+> "Detection policy (decided 2026-09-23)".
+
+## Detection policy (decided 2026-09-23)
+
+The numbers above made the "every frame" default untenable: with several markers loaded and one
+in view — the common case — every frame paid a full KPM pass (~320 ms at 2000x1500, ~40x the
+tracking-only frame) where 1.12.0 had stopped detecting. The final branch review laid out the
+options, and the maintainer chose "throttled, with an opt-out":
+
+- **While no marker is tracked:** detect on every frame, as in 1.12.0.
+- **While at least one marker is tracked and at least one loaded marker is not:** detect at most
+  once per interval, measured in **time** (milliseconds), not frames, so the cost does not depend
+  on the frame rate.
+- **While every loaded marker is tracked:** do not detect (unchanged).
+
+Two runtime setters on every controller:
+
+- `setContinuousDetection(enabled)`, default `true`. With `false`, once any marker is tracked no
+  detection runs until tracking is lost: exactly the 1.12.0 behaviour.
+- `setDetectionInterval(ms)`, the interval above; `0` means every frame, negative values count as
+  `0`.
+
+Defaults: **300 ms** in the default and SIMD builds (`ARToolKitNFT_js.{h,cpp}`: members
+`continuousDetection`, `detectionIntervalMs`, `lastKpmTimeMs`, timed with `emscripten_get_now()`;
+the frame counter `kKpmIntervalFrames` is gone). **0** in the threaded build
+(`ARToolKitNFT_js_td.{h,cpp}`), whose default behaviour is unchanged: it already detects on a
+worker, one search at a time, off the main thread. It applies the same gate to *starting* a worker
+search — collecting a finished one is never throttled — so an app can set an interval there to
+save worker CPU. The Node controller has both setters for API parity; its legacy single-marker
+binding (`ARToolKitJS.cpp`) always behaves as `setContinuousDetection(false)`, so they only log a
+one-time warning.
+
+A pass still costs the full detection time on the frame where it runs; the interval bounds how
+often that happens, not how long it takes. See the measurements below.
+
+**`kpmSetProcMode(KpmProcHalfSize)` is not a safe way to cut that cost.** In the FREAK (binary)
+path, `kpmMatching()` resizes the luma buffer but still calls `freakMatcher->query(imageLuma, xsize,
+ysize)` with the *full-size* dimensions, and the pose is computed from
+`getQueryFeaturePoints()` — the unscaled query points — rather than from the rescaled
+`inDataSet.coord`. Both are wrong for any mode other than `KpmProcFullSize`. Fixing that is
+WebARKitLib work, out of scope here.
+
+## Detection cost at camera sizes, 2026-09-23
+
+Harness: `tests/vitest/kpm-cost.test.ts` (committed as `describe.skip`; its header says how to run
+it). Default build, Chromium via Playwright, frames drawn from `examples/node/pinball-demo.jpg`
+with `loadCompositeFrames(scale)`, kuva painted out (`pinballOnly`), pinball tracked. 60
+`process()` calls per case, paced at ~30 fps like a camera (the interval is measured in time).
+Policy (a) `setDetectionInterval(0)`: a detection pass on every frame while kuva is unseen.
+Policy (b) the defaults: continuous detection, 300 ms.
+
+**At 320x240 pinball is not detected at all** (200 frames, either loaded set): the print is too
+small in the photo. Scanning upward, 340x255 (scale 0.17) is the smallest size where it is, so it
+stands in for 320x240. Two runs, ms per `process()`:
+
+```
+run A
+[kpm-cost] 320x240 loaded=[pinball] pinball NOT found in 200 frames
+[kpm-cost] 320x240 loaded=[pinball,kuva] pinball NOT found in 200 frames
+[kpm-cost] 340x255 loaded=[pinball] interval=0: median=1.8ms p90=2.2ms max=2.7ms (n=60, frames without pinball=0)
+[kpm-cost] 340x255 loaded=[pinball] defaults (interval=300): median=1.8ms p90=2.1ms max=3.5ms (n=60, frames without pinball=0)
+[kpm-cost] 340x255 loaded=[pinball,kuva] interval=0: median=34.6ms p90=37.5ms max=40.6ms (n=60, frames without pinball=0)
+[kpm-cost] 340x255 loaded=[pinball,kuva] defaults (interval=300): median=1.8ms p90=33.5ms max=38.1ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball] interval=0: median=2.2ms p90=2.6ms max=3.4ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball] defaults (interval=300): median=2.3ms p90=2.7ms max=3.5ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball,kuva] interval=0: median=75.2ms p90=83.8ms max=85.3ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball,kuva] defaults (interval=300): median=2.4ms p90=76.5ms max=85.2ms (n=60, frames without pinball=0)
+
+run B
+[kpm-cost] 320x240 loaded=[pinball] pinball NOT found in 200 frames
+[kpm-cost] 320x240 loaded=[pinball,kuva] pinball NOT found in 200 frames
+[kpm-cost] 340x255 loaded=[pinball] interval=0: median=1.8ms p90=2.2ms max=2.5ms (n=60, frames without pinball=0)
+[kpm-cost] 340x255 loaded=[pinball] defaults (interval=300): median=1.8ms p90=2.0ms max=2.1ms (n=60, frames without pinball=0)
+[kpm-cost] 340x255 loaded=[pinball,kuva] interval=0: median=35.0ms p90=38.1ms max=40.0ms (n=60, frames without pinball=0)
+[kpm-cost] 340x255 loaded=[pinball,kuva] defaults (interval=300): median=1.9ms p90=34.4ms max=37.7ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball] interval=0: median=2.2ms p90=2.5ms max=2.9ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball] defaults (interval=300): median=2.3ms p90=2.4ms max=3.8ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball,kuva] interval=0: median=83.1ms p90=92.9ms max=104.8ms (n=60, frames without pinball=0)
+[kpm-cost] 640x480 loaded=[pinball,kuva] defaults (interval=300): median=2.4ms p90=75.7ms max=86.2ms (n=60, frames without pinball=0)
+```
+
+Reading it:
+
+- With only the visible marker loaded, nothing is detected and a frame costs ~2 ms at both sizes.
+- With an unseen marker loaded and detection on every frame, a frame costs ~35 ms at 340x255 and
+  ~75-83 ms at 640x480 — over one 30 fps frame budget (33 ms) even at the smallest usable size.
+- With the 300 ms default, the median frame is back to ~2 ms; a pass still lands about once per
+  300 ms (roughly every ninth frame at 30 fps), which is what the p90 and max show — the cost of a
+  pass is unchanged, only how often it runs.
+- Intermediate sizes from the same session (one run each, same harness): 400x300 58 ms, 480x360
+  78 ms, 560x420 95 ms median per frame with detection every frame; ~2 ms median with the
+  default.
