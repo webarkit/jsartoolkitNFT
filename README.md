@@ -51,7 +51,8 @@ Two setters on `ARControllerNFT` tune this:
 
 The threaded (Pthread) build detects on a worker thread, off the main thread, so its default
 interval is `0`; both setters work there too, and an interval saves worker CPU. The Node.js build
-is single-marker: it tracks one marker at a time, and the two setters only log a warning there.
+runs the same native code as the default build, so it tracks several markers and honours both
+setters, with the same `300` ms default interval.
 
 Note for upgraders: `getTransformationMatrix()` now returns a fresh array for each frame a marker
 is found, instead of updating one array in place. Read it each frame rather than keeping a
@@ -309,9 +310,13 @@ init();
 
 ### What works
 
-- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`)
+- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`). Camera and marker paths are read
+  from disk relative to the working directory.
 - KPM-based marker detection and AR2 tracking with pose matrix output
-- Event listener for `getNFTMarker`
+- [Multi-marker tracking](#multi-marker-tracking): load several markers with
+  `loadNFTMarkers(['DataNFT/pinball', 'DataNFT/kuva'], onSuccess, onError)` and each one in view
+  is tracked, with `setContinuousDetection()` / `setDetectionInterval()` as in the browser builds
+- Event listeners for `getNFTMarker` and `lostNFTMarker`
 - Decoding image input via [sharp](https://github.com/lovell/sharp) or the [canvas](https://github.com/Automattic/node-canvas) package (`process()` expects **RGBA** pixel data). Neither is a dependency of this package — install whichever you prefer.
 
 ### Not yet implemented
