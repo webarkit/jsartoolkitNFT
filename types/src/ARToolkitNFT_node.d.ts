@@ -36,6 +36,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
     private module;
     private cameraCount;
     private nodefsMounted;
+    private markersAdded;
     private version;
     NFTMarkerInfo: {
         error: number;
