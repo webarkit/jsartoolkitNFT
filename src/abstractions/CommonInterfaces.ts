@@ -226,3 +226,9 @@ export interface ARToolkitNFTModule {
   AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR_MULTI: number;
   AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
 }
+
+// The Node build also exports NODEFS, which ARToolkitNFT_node mounts to read
+// the camera and marker files from the working directory.
+export interface ARToolkitNFTNodeModule extends ARToolkitNFTModule {
+  NODEFS: any;
+}

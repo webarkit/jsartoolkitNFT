@@ -34,69 +34,9 @@
  *
  */
 
-import Module from "../../build/artoolkitNFT_node_wasm";
-export async function initARToolkitNFT() {
-  return new Promise((resolve) => {
-    const artoolkitNFT = {
-      UNKNOWN_MARKER: -1,
-      NFT_MARKER: 0, // 0,
-    };
+import ARToolkitNFT from "../../build/artoolkitNFT_node_wasm";
+import { ARToolkitNFTNodeModule } from "../abstractions/CommonInterfaces";
 
-    const FUNCTIONS = [
-      "setup",
-      "teardown",
-
-      "setupAR2",
-
-      "setLogLevel",
-      "getLogLevel",
-
-      "setDebugMode",
-      "getDebugMode",
-
-      "getProcessingImage",
-
-      "detectMarker",
-      "detectNFTMarker",
-      "getNFTMarker",
-      "getNFTData",
-
-      "setProjectionNearPlane",
-      "getProjectionNearPlane",
-
-      "setProjectionFarPlane",
-      "getProjectionFarPlane",
-
-      "setThresholdMode",
-      "getThresholdMode",
-
-      "setThreshold",
-      "getThreshold",
-
-      "setImageProcMode",
-      "getImageProcMode",
-
-      "getCameraLens",
-      "passVideoData",
-    ];
-
-    function runWhenLoaded() {
-      FUNCTIONS.forEach(function (n) {
-        //@ts-ignore
-        artoolkitNFT[n] = Module[n];
-      });
-
-      for (const m in Module) {
-        //@ts-ignore
-        if (m.match(/^AR/)) artoolkitNFT[m] = Module[m];
-      }
-    }
-
-    Module.onRuntimeInitialized = async function () {
-      runWhenLoaded();
-      // need to wrap this in an object
-      // otherwise it will cause Chrome to crash
-      resolve(this);
-    };
-  });
+export async function initARToolkitNFT(): Promise<ARToolkitNFTNodeModule> {
+  return (await ARToolkitNFT()) as ARToolkitNFTNodeModule;
 }

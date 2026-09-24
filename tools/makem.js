@@ -284,8 +284,11 @@ if (DEBUG_LOGS) {
 const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
 
 const WASM_FLAGS = " -s SINGLE_FILE=1";
+// MODULARIZE without EXPORT_ES6 emits a CommonJS factory, which is what the
+// commonjs2 Node dist needs. Each call builds a fresh module, so every
+// controller gets its own heap and filesystem.
 const NODE_FLAGS =
-  ' -s ENVIRONMENT=node -s FORCE_FILESYSTEM -s EXPORTED_RUNTIME_METHODS=["NODEFS","FS","HEAPU8"] -lnodefs.js';
+  ' -s ENVIRONMENT=node -s MODULARIZE=1 -s FORCE_FILESYSTEM -s EXPORTED_RUNTIME_METHODS=["NODEFS","FS","HEAPU8"] -lnodefs.js';
 const SIMD128_FLAGS = " -msimd128";
 const ES6_FLAGS = " -s EXPORT_ES6=1 -s MODULARIZE=1 -sENVIRONMENT=web ";
 
@@ -518,7 +521,7 @@ const compile_wasm_node = [
   ...INCLUDES.split(" "),
   ...ALL_BC.split(" "),
   ...LIBZ_A.split(" "),
-  ...MAIN_SOURCES.split(" "),
+  ...MAIN_SOURCES_IMPROVED_ES6.split(" "),
   ...FLAGS.split(" "),
   ...WASM_FLAGS.split(" "),
   ...DEFINES.split(" "),

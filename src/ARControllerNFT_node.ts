@@ -78,8 +78,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }>;
   private nftMarkerCount: number; // = 0
   private defaultMarkerWidth: number;
-  // setContinuousDetection / setDetectionInterval warn once, then stay quiet.
-  private detectionPolicyWarned: boolean;
 
   private _bwpointer: number;
 
@@ -154,7 +152,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     this._bwpointer = null;
     this.defaultMarkerWidth = 1;
-    this.detectionPolicyWarned = false;
   }
 
   /** The static method **initWithDimensions** is the start of your app.
@@ -355,7 +352,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number}
    */
   detectNFTMarker(): number {
-    return this.artoolkitNFT.detectNFTMarker(this.id);
+    return this.artoolkitNFT.detectNFTMarker();
   }
 
   /**
@@ -398,17 +395,16 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {Object} The NFTMarkerInfo struct.
    */
   getNFTMarker(markerIndex: number): INFTMarkerInfo {
-    return this.artoolkitNFT.getNFTMarker(this.id, markerIndex);
+    return this.artoolkitNFT.getNFTMarker(markerIndex);
   }
 
   /**
    * **GetNFTData** will return the width. height and dpi of the NFT marker.
-   * @param id the internal id (this.id)
    * @param index the index of the NFT marker, in case you have multi NFT markers.
    * @returns {object}
    */
   getNFTData(index: number) {
-    return this.artoolkitNFT.getNFTData(this.id, index);
+    return this.artoolkitNFT.getNFTData(index);
   }
 
   // event handling
@@ -599,7 +595,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @see getDebugMode()
    */
   setDebugMode(mode: boolean): number {
-    return this.artoolkitNFT.setDebugMode(this.id, mode);
+    return this.artoolkitNFT.setDebugMode(mode);
   }
 
   /**
@@ -608,7 +604,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @see  setDebugMode()
    */
   getDebugMode(): boolean {
-    return this.artoolkitNFT.getDebugMode(this.id);
+    return this.artoolkitNFT.getDebugMode();
   }
 
   /**
@@ -616,7 +612,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} HEAP offset to the debug processing image.
    */
   getProcessingImage(): number {
-    return this.artoolkitNFT.getProcessingImage(this.id);
+    return this.artoolkitNFT.getProcessingImage();
   }
 
   /**
@@ -653,7 +649,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} 0 (void)
    */
   setProjectionNearPlane(value: number): void {
-    return this.artoolkitNFT.setProjectionNearPlane(this.id, value);
+    return this.artoolkitNFT.setProjectionNearPlane(value);
   }
 
   /**
@@ -661,7 +657,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} the value of the near plane.
    */
   getProjectionNearPlane(): number {
-    return this.artoolkitNFT.getProjectionNearPlane(this.id);
+    return this.artoolkitNFT.getProjectionNearPlane();
   }
 
   /**
@@ -670,7 +666,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} 0 (void)
    */
   setProjectionFarPlane(value: number): void {
-    return this.artoolkitNFT.setProjectionFarPlane(this.id, value);
+    return this.artoolkitNFT.setProjectionFarPlane(value);
   }
 
   /**
@@ -678,7 +674,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} the value of the far plane.
    */
   getProjectionFarPlane(): number {
-    return this.artoolkitNFT.getProjectionFarPlane(this.id);
+    return this.artoolkitNFT.getProjectionFarPlane();
   }
 
   /**
@@ -691,7 +687,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
    */
   setThresholdMode(mode: number): number {
-    return this.artoolkitNFT.setThresholdMode(this.id, mode);
+    return this.artoolkitNFT.setThresholdMode(mode);
   }
 
   /**
@@ -700,7 +696,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @see getVideoThresholdMode()
    */
   getThresholdMode(): number {
-    return this.artoolkitNFT.getThresholdMode(this.id);
+    return this.artoolkitNFT.getThresholdMode();
   }
 
   /**
@@ -723,7 +719,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} threshold An integer in the range [0,255] (inclusive).
    */
   setThreshold(threshold: number): number {
-    return this.artoolkitNFT.setThreshold(this.id, threshold);
+    return this.artoolkitNFT.setThreshold(threshold);
   }
 
   /**
@@ -738,7 +734,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} The current threshold value.
    */
   getThreshold(): number {
-    return this.artoolkitNFT.getThreshold(this.id);
+    return this.artoolkitNFT.getThreshold();
   }
 
   /**
@@ -801,7 +797,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   loadNFTMarkers(markerURLs: any, onSuccess: any, onError: any) {
     const self = this;
     
-    this.artoolkitNFT.addNFTMarkers(this.id, markerURLs, function (ids) {
+    this.artoolkitNFT.addNFTMarkers(markerURLs, function (ids) {
       
       self.nftMarkerCount += ids.length;
       onSuccess(ids);
@@ -829,7 +825,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
    */
   setImageProcMode(mode: number): number {
-    return this.artoolkitNFT.setImageProcMode(this.id, mode);
+    return this.artoolkitNFT.setImageProcMode(mode);
   }
 
   /**
@@ -838,31 +834,57 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} The current image processing mode.
    */
   getImageProcMode(): number {
-    return this.artoolkitNFT.getImageProcMode(this.id);
+    return this.artoolkitNFT.getImageProcMode();
   }
 
   /**
-   * Accepted for API parity with the browser builds; does nothing here.
+   * Set the filtering mode.
+   * @param {boolean} enableFiltering
+   * @return {void}
+   */
+  setFiltering(enableFiltering: boolean): void {
+    this.artoolkitNFT.setFiltering(enableFiltering);
+  }
+
+  /**
+   * Turn continuous detection on or off.
    *
-   * The Node build runs on the single-marker binding, which never detects
-   * while its marker is tracked: it always behaves as
-   * `setContinuousDetection(false)`. Logs a warning the first time it is
-   * called on this controller.
-   * @param {boolean} enabled Ignored.
+   * Detection (KPM) is the expensive step that finds a marker which is not yet
+   * tracked; a pass costs the full detection time on the frame where it runs,
+   * far more than tracking an already-found marker. The policy is:
+   * - while no marker is tracked, detection runs on every frame;
+   * - while at least one marker is tracked and at least one loaded marker is
+   *   not, detection runs at most once per detection interval (see
+   *   {@link setDetectionInterval}), so a marker that enters the view is still
+   *   picked up;
+   * - while every loaded marker is tracked, detection does not run.
+   *
+   * With continuous detection off, no detection runs once any marker is
+   * tracked, until tracking is lost: the single-marker behaviour of 1.12.0.
+   * That is cheapest, but a second marker entering the view is not found
+   * while the first one is held.
+   * @param {boolean} enabled Default `true`.
    * @return {void}
    */
   setContinuousDetection(enabled: boolean): void {
-    this.warnDetectionPolicyUnsupported();
+    this.artoolkitNFT.setContinuousDetection(enabled);
   }
 
   /**
-   * Accepted for API parity with the browser builds; does nothing here.
-   * See {@link setContinuousDetection}.
-   * @param {number} ms Ignored.
+   * Set the minimum time from the end of one detection pass to the start of
+   * the next, while at least one marker is tracked and at least one is not
+   * (see {@link setContinuousDetection}).
+   *
+   * Detection is measured in time, not frames. A longer interval spends less
+   * time detecting, at the cost of noticing a newly visible marker later;
+   * `0` detects on every frame, which costs the full detection time on every
+   * frame while any loaded marker is out of view.
+   * @param {number} ms Milliseconds. `0` means every frame; negative values
+   * are treated as `0`. Default: `300`.
    * @return {void}
    */
   setDetectionInterval(ms: number): void {
-    this.warnDetectionPolicyUnsupported();
+    this.artoolkitNFT.setDetectionInterval(ms);
   }
 
   /**
@@ -878,20 +900,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
   // private accessors
   // ----------------------------------------------------------------------------
-  /**
-   * Warn, once per controller, that the detection policy setters do nothing
-   * in the Node build.
-   */
-  private warnDetectionPolicyUnsupported(): void {
-    if (this.detectionPolicyWarned) return;
-    this.detectionPolicyWarned = true;
-    console.warn(
-      "jsartoolkitNFT (Node): setContinuousDetection() and setDetectionInterval() do nothing " +
-        "in the Node build. It tracks a single marker and always behaves as " +
-        "setContinuousDetection(false).",
-    );
-  }
-
   /**
    * Used internally by ARControllerNFT, it permit to add methods to this.
    * @return {any} ARControllerNFT
@@ -935,7 +943,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     this.videoLuma = new Uint8Array(this.framesize);
     
-    this.camera_mat = this.artoolkitNFT.getCameraLens(this.id);
+    this.camera_mat = this.artoolkitNFT.getCameraLens();
 
     this.setProjectionNearPlane(0.1);
     this.setProjectionFarPlane(1000);
@@ -955,7 +963,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {number} 0 (void)
    */
   private _initNFT() {
-    this.artoolkitNFT.setupAR2(this.id);
+    this.artoolkitNFT.setupAR2();
   }
 
   /**
@@ -1009,7 +1017,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     if (this.videoLuma) {
       //@ts-ignore
-      this.artoolkitNFT.passVideoData(this.id, sourceImage, this.videoLuma);
+      this.artoolkitNFT.passVideoData(sourceImage, this.videoLuma, false);
       return true;
     }
 

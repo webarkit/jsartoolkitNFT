@@ -33,19 +33,26 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-//@ts-nocheck
 import { initARToolkitNFT } from "./factoryFunctions/initARToolkitNFT_node";
-import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
-import { INFTMarkerInfo, ARLogLevel } from "./abstractions/CommonInterfaces";
-import Utils from "./Utils";
+import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
+import {
+  INFTMarkerInfo,
+  ARLogLevel,
+  ARToolkitNFTNodeModule,
+  IARToolKitNFTInstance,
+} from "./abstractions/CommonInterfaces";
 import packageJson from "../package.json";
-const https = require('https');
 const { version } = packageJson;
 
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
 
-export class ARToolkitNFT implements IARToolkitNFT {
+// Where the working directory is mounted in the Emscripten filesystem. Camera
+// and marker paths are resolved against it, so they are relative to
+// process.cwd() at the time the camera is loaded.
+const NODEFS_MOUNT = "/temp";
+
+export class ARToolkitNFT implements IARToolkitNFT_node {
   /**
    * static properties
    */
@@ -99,10 +106,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
   static AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR_MULTI: number;
   static AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
 
-  private instance: any;
-  private module: any;
-  private markerNFTCount: number;
+  private instance: IARToolKitNFTInstance;
+  private module: ARToolkitNFTNodeModule;
   private cameraCount: number;
+  private nodefsMounted: boolean;
   private version: string;
 
   public NFTMarkerInfo: {
@@ -134,17 +141,16 @@ export class ARToolkitNFT implements IARToolkitNFT {
    * The ARToolkitNFT constructor. It has no arguments.
    * These properties are initialized:
    * - instance
-   * - markerNFTCount
    * - cameraCount
    * - version
-   * A message is displayed in the browser console during the intitialization, for example:
+   * A message is displayed in the console during the intitialization, for example:
    * "ARToolkitNFT 1.5.0"
    */
   constructor() {
     // reference to WASM module
     this.instance;
-    this.markerNFTCount = 0;
     this.cameraCount = 0;
+    this.nodefsMounted = false;
     this.version = version;
     console.info("ARToolkitNFT ", this.version);
   }
@@ -153,17 +159,14 @@ export class ARToolkitNFT implements IARToolkitNFT {
 
   // initialization
   /**
-   * Init the class injecting the Wasm Module, link the instanced methods and
-   * create a global artoolkitNFT variable.
+   * Init the class injecting the Wasm Module and link the instanced methods.
+   * Every call builds its own module, so each ARToolkitNFT has its own heap
+   * and filesystem.
    * @return {object} the this object
    */
   public async init() {
     const instance = await initARToolkitNFT();
-    //@ts-ignore
-    //console.log("instance: ", instance);
-    
-    //this.instance = new instance.Module();
-    this.instance = instance;
+    this.instance = new instance.ARToolKitNFT(true);
 
     this.module = instance;
     this.FS = instance.FS;
@@ -238,7 +241,7 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.setup(width, height, cameraId);
   }
 
-  public teardown(id: number): void {
+  public teardown(): void {
     if (this.videoFramePtr) {
       this.free(this.videoFramePtr);
       this.videoFramePtr = 0;
@@ -247,35 +250,47 @@ export class ARToolkitNFT implements IARToolkitNFT {
       this.free(this.videoLumaPtr);
       this.videoLumaPtr = 0;
     }
-    this.instance.teardown(id);
+    this.instance.teardown();
   }
 
-  public setupAR2(id: number): void {
-    this.instance.setupAR2(id);
+  public setupAR2(): void {
+    this.instance.setupAR2();
   }
 
-  public setDebugMode(id: number, mode: boolean): number {
-    return this.instance.setDebugMode(id, mode);
+  public setDebugMode(mode: boolean): number {
+    return this.instance.setDebugMode(mode);
   }
 
-  public getDebugMode(id: number): boolean {
-    return this.instance.getDebugMode(id);
+  public getDebugMode(): boolean {
+    return this.instance.getDebugMode();
   }
 
-  public getProcessingImage(id: number): number {
-    return this.instance.getProcessingImage(id);
+  public setFiltering(enableFiltering: boolean): void {
+    this.instance.setFiltering(enableFiltering);
   }
 
-  public detectNFTMarker(id: number): number {
-    return this.instance.detectNFTMarker(id);
+  public setContinuousDetection(enabled: boolean): void {
+    this.instance.setContinuousDetection(enabled);
   }
 
-  public getNFTMarker(id: number, markerIndex: number): INFTMarkerInfo {
-    return this.instance.getNFTMarker(id, markerIndex);
+  public setDetectionInterval(ms: number): void {
+    this.instance.setDetectionInterval(ms);
   }
 
-  public getNFTData(id: number, index: number): object {
-    return this.instance.getNFTData(id, index);
+  public getProcessingImage(): number {
+    return this.instance.getProcessingImage();
+  }
+
+  public detectNFTMarker(): number {
+    return this.instance.detectNFTMarker();
+  }
+
+  public getNFTMarker(markerIndex: number): INFTMarkerInfo {
+    return this.instance.getNFTMarker(markerIndex);
+  }
+
+  public getNFTData(index: number): object {
+    return this.instance.getNFTData(index);
   }
 
   /**
@@ -297,62 +312,62 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getLogLevel();
   }
 
-  public setProjectionNearPlane(id: number, value: number): void {
-    this.instance.setProjectionNearPlane(id, value);
+  public setProjectionNearPlane(value: number): void {
+    this.instance.setProjectionNearPlane(value);
   }
 
-  public getProjectionNearPlane(id: number): number {
-    return this.instance.getProjectionNearPlane(id);
+  public getProjectionNearPlane(): number {
+    return this.instance.getProjectionNearPlane();
   }
 
-  public setProjectionFarPlane(id: number, value: number): void {
-    this.instance.setProjectionFarPlane(id, value);
+  public setProjectionFarPlane(value: number): void {
+    this.instance.setProjectionFarPlane(value);
   }
 
-  public getProjectionFarPlane(id: number): number {
-    return this.instance.getProjectionFarPlane(id);
+  public getProjectionFarPlane(): number {
+    return this.instance.getProjectionFarPlane();
   }
 
-  public setThresholdMode(id: number, mode: number): number {
-    return this.instance.setThresholdMode(id, mode);
+  public setThresholdMode(mode: number): number {
+    return this.instance.setThresholdMode(mode);
   }
 
-  public getThresholdMode(id): number {
-    return this.instance.getThresholdMode(id);
+  public getThresholdMode(): number {
+    return this.instance.getThresholdMode();
   }
 
-  public setThreshold(id: number, threshold: number): number {
-    return this.instance.setThreshold(id, threshold);
+  public setThreshold(threshold: number): number {
+    return this.instance.setThreshold(threshold);
   }
 
-  public getThreshold(id: number): number {
-    return this.instance.getThreshold(id);
+  public getThreshold(): number {
+    return this.instance.getThreshold();
   }
 
-  public setImageProcMode(id: number, mode: number): number {
-    return this.instance.setImageProcMode(id, mode);
+  public setImageProcMode(mode: number): number {
+    return this.instance.setImageProcMode(mode);
   }
 
-  public getImageProcMode(id: number): number {
-    return this.instance.getImageProcMode(id);
+  public getImageProcMode(): number {
+    return this.instance.getImageProcMode();
   }
 
-  public getCameraLens(id: number): any {
-    return this.instance.getCameraLens(id);
+  public getCameraLens(): any {
+    return this.instance.getCameraLens();
   }
 
   public passVideoData(
-    id: number,
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
+    lumaInternal: boolean,
   ): void {
     if (this.videoFramePtr) {
       this.HEAPU8.set(videoFrame, this.videoFramePtr);
     }
-    if (this.videoLumaPtr) {
+    if (this.videoLumaPtr && !lumaInternal) {
       this.HEAPU8.set(videoLuma, this.videoLumaPtr);
     }
-    this.instance.passVideoData(id, this.videoFramePtr, this.videoLumaPtr);
+    this.instance.passVideoData(this.videoFramePtr, this.videoLumaPtr, lumaInternal);
   }
 
   // ---------------------------------------------------------------------------
@@ -361,230 +376,90 @@ export class ARToolkitNFT implements IARToolkitNFT {
   /**
    * Load the camera, this is an important and required step, Internally fill
    * the ARParam struct.
-   * @param {string} urlOrData: the camera parameter, usually a path to a .dat file
-   * @return {number} a number, the internal id.
+   * @param {Uint8Array|string} pathOrData the camera parameter: a path to a
+   * .dat file, relative to the working directory, or its contents.
+   * @return {Promise<number>} a promise that resolves to a number, the internal id.
    */
- /* public async loadCamera(urlOrData: Uint8Array | string): Promise<number> {
-    const target = "/camera_param_" + this.cameraCount++;
-
-    let data: Uint8Array;
-
-    console.log("loadCamera: ", urlOrData);
-    
-
-    if (urlOrData instanceof Uint8Array) {
+  public async loadCamera(pathOrData: Uint8Array | string): Promise<number> {
+    if (pathOrData instanceof Uint8Array) {
       // assume preloaded camera params
-      data = urlOrData;
-    } else {
-      // fetch data via HTTP
-      try {
-        data = await Utils.fetchRemoteData(urlOrData);
-      } catch (error) {
-        throw new Error("Error in loadCamera function: ", error);
-      }
+      const target = "/camera_param_" + this.cameraCount++;
+      this.FS.writeFile(target, pathOrData, { encoding: "binary" });
+      return this.instance._loadCamera(target);
     }
 
-    this._storeDataFile(data, target);
-
-    // return the internal marker ID
-    return this.instance._loadCamera(target);
-  }
-*/
-
-  public async loadCamera(url: string): Promise<any> {
-    // Mount the FileSystem on /temp directory
-    this.instance.FS.mkdir('/temp'); 
-    this.instance.FS.mount(this.instance.NODEFS, { root: '.' }, '/temp');
-    return this.instance._loadCamera('/temp/'+ url);
+    this.mountWorkingDirectory();
+    return this.instance._loadCamera(NODEFS_MOUNT + "/" + pathOrData);
   }
 
   /**
-   * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
-   * the url of the file without the extension. If fails to load it raise an error.
-   * @param {number} arId internal id
-   * @param {Array<string>} urls  array of urls of the descriptors files without ext
+   * Load the NFT Markers (.fset, .iset and .fset3) in the code. Each entry is
+   * the path of the descriptor files without the extension, relative to the
+   * working directory. The files are read in place through NODEFS.
+   * @param {Array<string>} urls array of paths of the descriptor files without ext
    * @param {function} callback the callback to retrieve the ids.
    * @param {function} onError2 the error callback.
+   * @return {Array<number>} an array of ids.
    */
-  /*public addNFTMarkers(
-    urls: Array<string | Array<string>>,
-    callback: (filename: number[]) => void,
+  public addNFTMarkers(
+    urls: Array<string>,
+    callback: (ids: number[]) => void,
     onError2: (errorNumber: number) => void,
   ): Array<number> {
-    var prefixes: any = [];
-    var pending = urls.length * 3;
-    var onSuccess = (filename: Uint8Array) => {
-      pending -= 1;
-      if (pending === 0) {
-        const vec = new this.StringList();
-        const markerIds = [];
-        for (let i = 0; i < prefixes.length; i++) {
-          vec.push_back(prefixes[i]);
-        }
-        var ret = this.instance._addNFTMarkers(vec);
-        for (let i = 0; i < ret.size(); i++) {
-          markerIds.push(ret.get(i));
-        }
+    this.mountWorkingDirectory();
 
-        console.log("add nft marker ids: ", markerIds);
-        if (callback) callback(markerIds);
+    const prefixes = urls.map((url) => NODEFS_MOUNT + "/" + url);
+
+    for (const prefix of prefixes) {
+      for (const ext of [".fset", ".iset", ".fset3"]) {
+        if (!this.FS.analyzePath(prefix + ext).exists) {
+          console.log("failed to load: ", prefix + ext);
+          if (onError2) onError2(-1);
+          return [];
+        }
       }
-    };
-    var onError = (filename: string, errorNumber?: number) => {
-      console.log("failed to load: ", filename);
-      onError2(errorNumber);
-    };
-
-    let Ids: Array<number> = [];
-
-    urls.forEach((element, index) => {
-      var prefix = "/markerNFT_" + this.markerNFTCount;
-      prefixes.push(prefix);
-
-      if (Array.isArray(element)) {
-        element.forEach((url) => {
-          const filename = prefix + "." + url.split(".").pop();
-
-          this.ajax(
-            url,
-            filename,
-            onSuccess.bind(filename),
-            onError.bind(filename),
-          );
-        });
-
-        this.markerNFTCount += 1;
-      } else {
-        var filename1 = prefix + ".fset";
-        var filename2 = prefix + ".iset";
-        var filename3 = prefix + ".fset3";
-
-        this.ajax(
-          element + ".fset",
-          filename1,
-          onSuccess.bind(filename1),
-          onError.bind(filename1),
-        );
-        this.ajax(
-          element + ".iset",
-          filename2,
-          onSuccess.bind(filename2),
-          onError.bind(filename2),
-        );
-        this.ajax(
-          element + ".fset3",
-          filename3,
-          onSuccess.bind(filename3),
-          onError.bind(filename3),
-        );
-
-        this.markerNFTCount += 1;
-      }
-
-      Ids.push(index);
-    });
-
-    return Ids;
-  }*/
-
-  public addNFTMarkers(arId, urls, callback, onError) {
-    const prefixes = [];
-    let pending = urls.length * 3;
-    const onSuccess = (filename) => {
-        pending -= 1;
-        if (pending === 0) {
-            const vec = new this.StringList();
-            const markerIds = [];
-            for (let i = 0; i < prefixes.length; i++) {
-                vec.push_back(prefixes[i]);
-            }
-            var ret = this.instance._addNFTMarkers(arId, vec);
-            for (let i = 0; i < ret.size(); i++) {
-                markerIds.push(ret.get(i));
-            }
-
-            console.log("add nft marker ids: ", markerIds);
-            if (callback) callback(markerIds);
-        }
-    };
-    var onError = (filename, errorNumber) => {
-        console.log("failed to load: ", filename);
-        onError(errorNumber);
     }
 
-    for (let i = 0; i < urls.length; i++) {
-        const url = urls[i];
-
-        const prefix = '/temp/' + url;
-        prefixes.push(prefix);
-
-        const filename1 = url + '.fset';
-        const filename2 = url + '.iset';
-        const filename3 = url + '.fset3';
-
-        this.ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1));
-        this.ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2));
-        this.ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3));
-        //this.marker_count += 1;
+    const vec = new this.StringList();
+    for (const prefix of prefixes) {
+      vec.push_back(prefix);
     }
-}
+    // The binding returns a std::vector<int>; the instance interface types it
+    // loosely, so read it through `any`.
+    const ret: any = this.instance._addNFTMarkers(vec);
+    vec.delete();
 
+    const markerIds: number[] = [];
+    for (let i = 0; i < ret.size(); i++) {
+      markerIds.push(ret.get(i));
+    }
+    ret.delete();
 
+    // The native loader returns no ids when any dataset fails to parse or the
+    // marker limit would be exceeded.
+    if (markerIds.length !== urls.length) {
+      console.log("failed to add NFT markers: ", urls);
+      if (onError2) onError2(-1);
+      return [];
+    }
 
+    console.log("add nft marker ids: ", markerIds);
+    if (callback) callback(markerIds);
+    return markerIds;
+  }
 
   // ---------------------------------------------------------------------------
 
   // implementation
+
   /**
-   * Used internally by LoadCamera method
+   * Mount the working directory on NODEFS_MOUNT, once per module.
    * @return {void}
    */
-  private _storeDataFile(data: Uint8Array, target: string) {
-    // FS is provided by emscripten
-    // Note: valid data must be in binary format encoded as Uint8Array
-    this.FS.writeFile(target, data, {
-      encoding: "binary",
-    });
-  }
-
-  /**
-   * Used internally by the addNFTMarkers method
-   * @param url url of the marker.
-   * @param target the target of the marker.
-   * @param callback callback  to get the binary data.
-   * @param errorCallback the error callback.
-   */
-  /*private ajax(
-    url: string,
-    target: string,
-    callback: (byteArray: Uint8Array) => void,
-    errorCallback: (url: string, message: number) => void,
-  ) {
-    const oReq = new https.request(url);
-    oReq.open("GET", url, true);
-    oReq.responseType = "arraybuffer"; // blob arraybuffer
-    const writeByteArrayToFS = (
-      target: string,
-      byteArray: Uint8Array,
-      callback: (byteArray: Uint8Array) => void,
-    ) => {
-      this.FS.writeFile(target, byteArray, { encoding: "binary" });
-      callback(byteArray);
-    };
-
-    oReq.onload = function () {
-      if (this.status == 200) {
-        var arrayBuffer = oReq.response;
-        var byteArray = new Uint8Array(arrayBuffer);
-        writeByteArrayToFS(target, byteArray, callback);
-      } else {
-        errorCallback(url, this.status);
-      }
-    };
-
-    oReq.send();
-  }*/
-    private ajax(url, target, callback, errorCallback) {
-      callback("/temp/" + target);
+  private mountWorkingDirectory(): void {
+    if (this.nodefsMounted) return;
+    this.FS.mkdir(NODEFS_MOUNT);
+    this.FS.mount(this.module.NODEFS, { root: "." }, NODEFS_MOUNT);
+    this.nodefsMounted = true;
   }
 }

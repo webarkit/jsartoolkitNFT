@@ -128,3 +128,6 @@ export interface ARToolkitNFTModule {
     AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR_MULTI: number;
     AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
 }
+export interface ARToolkitNFTNodeModule extends ARToolkitNFTModule {
+    NODEFS: any;
+}
