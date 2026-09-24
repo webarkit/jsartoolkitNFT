@@ -776,6 +776,26 @@ changing the detection or tracking path, still verify against a real example.
 `examples/node/example_dist.js` runs a full detect-and-track pass on a static image with no
 camera; the browser examples need one.
 
+### New methods need new tests
+
+**Every new method or function, in TypeScript or JavaScript, ships with a test in the same PR.**
+This applies to public methods on `ARControllerNFT` or `ARToolkitNFT` in `src/`, and to
+additions to the legacy APIs in `js/`. A method with no test can break in any later PR without
+anyone noticing; #614 shipped exactly that way.
+
+Put the test where the method is used:
+
+| New code | Test goes in |
+|---|---|
+| A method in `src/` (all four entry points: default, `_simd`, `_td`, `_node`) | `tests/vitest/controller.test.ts`, or a focused `tests/vitest/<feature>.test.ts`. Loop over `VARIANTS` from `tests/vitest/variants.ts` when the behaviour should hold on every browser build. |
+| A method on the Node build | `tests/node/` |
+| A method in `js/artoolkitNFT.api.js` or `js/artoolkitNFT_ES6.api.js` | the shared suite in `tests/vitest/legacy.ts`, which runs on every legacy and embed build |
+| A new `Module.x` runtime export | `tests/vitest/module-surface.test.ts` |
+
+The test has to exercise the behaviour, not just the method's existence. Call the method and
+assert on what it returns or changes. Where you can, break the implementation on purpose once
+and watch the test fail, then restore it; a test that cannot fail proves nothing.
+
 ````
 
 - [ ] **Step 5: CLAUDE.md**
