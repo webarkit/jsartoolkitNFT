@@ -25,7 +25,6 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     private markerLostTracker;
     private nftMarkerCount;
     private defaultMarkerWidth;
-    private detectionPolicyWarned;
     private _bwpointer;
     constructor();
     constructor(width: number, height: number);
@@ -74,10 +73,10 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     loadNFTMarkers(markerURLs: any, onSuccess: any, onError: any): void;
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
+    setFiltering(enableFiltering: boolean): void;
     setContinuousDetection(enabled: boolean): void;
     setDetectionInterval(ms: number): void;
     setGrayData(data: Uint8Array): void;
-    private warnDetectionPolicyUnsupported;
     private converter;
     private _initialize;
     private _initNFT;
