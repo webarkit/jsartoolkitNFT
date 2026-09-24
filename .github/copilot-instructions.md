@@ -16,6 +16,6 @@ Read it before making changes — it is the canonical source and this file is on
   commit on the branch. A regression shipped exactly this way in 1.10.1.
 - **Anything reached as `Module.x` must be in `EXPORTED_RUNTIME_METHODS`** in
   `tools/makem.js`, or it is silently `undefined` at runtime.
-- **A green `npm test` proves very little.** The suite never loads an NFT marker and never
-  calls `process()`. Verify tracking changes against a real example such as
-  `examples/node/example_dist.js`.
+- **A green `npm test` proves the artifacts load and detect, not that tracking is good.** The
+  suite detects one marker in one photo per build; it does not measure stability or recovery.
+  Verify tracking changes against a real example such as `examples/node/example_dist.js`.

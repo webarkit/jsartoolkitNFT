@@ -134,20 +134,43 @@ structurally aligned so diffs stay readable.
 ## Testing
 
 ```bash
-npm test          # all seven build targets via Karma + Jasmine
+npm test          # Vitest in Playwright's Chromium, then the Node suite
 npm run format-check
 ```
 
-Be careful what you conclude from a green run. The suite currently totals roughly 46
-assertions across all seven targets, completes in under a second, and **never loads an NFT
-marker or calls `process()`**. It checks method existence, matrix shapes and debug flags.
+`npm test` runs two suites:
 
-Green means nothing crashed on startup. It does not mean tracking works. When changing
-anything in the detection or tracking path, verify against a real example —
-`examples/node/example_dist.js` runs a full detect-and-track pass on a static image and
-requires no camera.
+- **`tests/vitest/`**, in a real Chromium. It drives `src/` (what `dist/` ships) through marker
+  loading and detection on a real photo. It also detects the pinball marker once with every
+  committed browser artifact in `build/`, checks each ES6 module's runtime exports, and
+  smoke-tests the `dist/ARToolkitNFT.js` bundle.
+- **`tests/node/`**: the Node build, with `node --test`.
 
-Refreshing the suite is tracked in issue #579.
+A green run means every artifact loads and detects a marker in one fixed photo. It does not
+measure tracking quality: stability, jitter, or loss and recovery on a moving camera. When
+changing the detection or tracking path, still verify against a real example.
+`examples/node/example_dist.js` runs a full detect-and-track pass on a static image with no
+camera; the browser examples need one.
+
+### New methods need new tests
+
+**Every new method or function, in TypeScript or JavaScript, ships with a test in the same PR.**
+This applies to public methods on `ARControllerNFT` or `ARToolkitNFT` in `src/`, and to
+additions to the legacy APIs in `js/`. A method with no test can break in any later PR without
+anyone noticing; #614 shipped exactly that way.
+
+Put the test where the method is used:
+
+| New code | Test goes in |
+|---|---|
+| A method in `src/` browser entry points (default, `_simd`, `_td`) | `tests/vitest/controller.test.ts`, or a focused `tests/vitest/<feature>.test.ts`. Loop over `VARIANTS` from `tests/vitest/variants.ts` when the behaviour should hold on every browser build. |
+| The same method on the Node entry point (`_node`) | `tests/node/` as well. The browser suite cannot load the Node build, so a method added to all four entry points needs both. |
+| A method in `js/artoolkitNFT.api.js` or `js/artoolkitNFT_ES6.api.js` | the shared suite in `tests/vitest/legacy.ts`, which runs on every legacy and embed build |
+| A new `Module.x` runtime export | `tests/vitest/module-surface.test.ts`, which checks the four ES6 module builds. The global builds' `Module` is only covered indirectly, by the detection in `tests/vitest/legacy.ts`, so add an assertion there if the legacy API uses the export. |
+
+The test has to exercise the behaviour, not just the method's existence. Call the method and
+assert on what it returns or changes. Where you can, break the implementation on purpose once
+and watch the test fail, then restore it; a test that cannot fail proves nothing.
 
 ---
 
