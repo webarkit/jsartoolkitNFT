@@ -81,6 +81,8 @@ export interface IARToolKitNFTInstance {
     setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
     setFiltering(enableFiltering: boolean): void;
+    setContinuousDetection(enabled: boolean): void;
+    setDetectionInterval(ms: number): void;
     _decompressZFT(prefix: string, prefixTemp: string): number;
     [key: string]: any;
 }

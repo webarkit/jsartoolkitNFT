@@ -3,8 +3,6 @@
 ARToolKitNFT::ARToolKitNFT()
     : id(0), paramLT(nullptr), videoFrame(nullptr), videoFrameSize(0),
       videoLuma(nullptr), width(0), height(0),
-      detectedPage(-2),   // -2 Tracking not inited, -1 tracking inited OK, >= 0
-                          // tracking online on page.
       surfaceSetCount(0), // Running NFT marker id
       arhandle(nullptr), ar3DHandle(nullptr), 
       kpmHandle(nullptr, [](KpmHandle*){/* empty deleter */}), // Fix: proper nullptr with deleter
@@ -22,7 +20,6 @@ ARToolKitNFT::ARToolKitNFT(bool withFiltering)
 
 
     if (withFiltering) {
-        ftmi = nullptr;
         filterCutoffFrequency = 60.0;
         filterSampleRate = 120.0;
     }
@@ -31,7 +28,12 @@ ARToolKitNFT::ARToolKitNFT(bool withFiltering)
 
 ARToolKitNFT::~ARToolKitNFT() {
   teardown();
-  arFilterTransMatFinal(this->ftmi);
+  for (auto &state : markerStates) {
+    if (state.ftmi) {
+      arFilterTransMatFinal(state.ftmi);
+      state.ftmi = nullptr;
+    }
+  }
 }
 
 int ARToolKitNFT::passVideoData(uintptr_t videoFramePtr,
@@ -74,90 +76,135 @@ int ARToolKitNFT::passVideoData(uintptr_t videoFramePtr,
 }
 
 emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
-    auto NFTMarkerInfo = emscripten::val::object();
+  if (markerIndex < 0 || markerIndex >= this->surfaceSetCount) {
+    return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
+  }
+
+  // Tracking itself happens once per frame in detectNFTMarker(); this only
+  // reports the result, so calling it more than once per frame is harmless.
+  const NFTMarkerState &state = markerStates[markerIndex];
+  auto NFTMarkerInfo = emscripten::val::object();
+  NFTMarkerInfo.set("id", markerIndex);
+
+  if (state.tracking) {
     auto pose = emscripten::val::array();
-
-    if (this->surfaceSetCount <= markerIndex) {
-        return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
+    int idx = 0;
+    for (auto x = 0; x < 3; x++) {
+      for (auto y = 0; y < 4; y++) {
+        pose.set(idx++, state.pose[x][y]);
+      }
     }
+    NFTMarkerInfo.set("error", state.err);
+    NFTMarkerInfo.set("found", 1);
+    NFTMarkerInfo.set("pose", pose);
+  } else {
+    NFTMarkerInfo.set("error", -1);
+    NFTMarkerInfo.set("found", 0);
+    NFTMarkerInfo.set("pose", emscripten::val(emscripten::typed_memory_view(12, zeros.data())));
+  }
 
-    float trans[3][4];
-    float err = -1;
+  return NFTMarkerInfo;
+}
 
-    if (this->detectedPage == markerIndex) {
-        int trackResult = ar2TrackingMod(this->ar2Handle, this->surfaceSet[this->detectedPage],
-                                         this->videoFrame.get(), trans, &err);
+bool ARToolKitNFT::allMarkersTracked() const {
+  for (int i = 0; i < this->surfaceSetCount; i++) {
+    if (!markerStates[i].tracking) return false;
+  }
+  return true;
+}
 
-        if (withFiltering) {
-            ARdouble transF[3][4];
-            std::copy(&trans[0][0], &trans[0][0] + 3 * 4, &transF[0][0]);
-
-            bool reset = (trackResult < 0);
-            if (arFilterTransMat(this->ftmi, transF, reset) < 0) {
-                webarkitLOGe("arFilterTransMat error with marker %d.", markerIndex);
-            }
-
-            int idx = 0;
-            for (auto x = 0; x < 3; x++) {
-                for (auto y = 0; y < 4; y++) {
-                    pose.set(idx++, transF[x][y]);
-                }
-            }
-        } else {
-            int idx = 0;
-            for (auto x = 0; x < 3; x++) {
-                for (auto y = 0; y < 4; y++) {
-                    pose.set(idx++, trans[x][y]);
-                }
-            }
-        }
-
-        if (trackResult < 0) {
-            webarkitLOGi("Tracking lost. %d", trackResult);
-            this->detectedPage = -2;
-        } else {
-            ARLOGi("Tracked page %d (max %d).\n",
-                   this->surfaceSet[this->detectedPage], this->surfaceSetCount - 1);
-        }
-    }
-
-    if (this->detectedPage == markerIndex) {
-        NFTMarkerInfo.set("id", markerIndex);
-        NFTMarkerInfo.set("error", err);
-        NFTMarkerInfo.set("found", 1);
-        NFTMarkerInfo.set("pose", pose);
-    } else {
-        NFTMarkerInfo.set("id", markerIndex);
-        NFTMarkerInfo.set("error", -1);
-        NFTMarkerInfo.set("found", 0);
-        NFTMarkerInfo.set("pose", emscripten::val(emscripten::typed_memory_view(12, zeros.data())));
-    }
-
-    return NFTMarkerInfo;
+bool ARToolKitNFT::anyMarkerTracked() const {
+  for (int i = 0; i < this->surfaceSetCount; i++) {
+    if (markerStates[i].tracking) return true;
+  }
+  return false;
 }
 
 int ARToolKitNFT::detectNFTMarker() {
-    KpmResult* kpmResult = nullptr;
-    int kpmResultNum = -1;
+  KpmResult *kpmResult = nullptr;
+  int kpmResultNum = -1;
 
-    if (this->detectedPage == -2) {
-        kpmMatching(this->kpmHandle.get(), this->videoLuma.get());
-        kpmGetResult(this->kpmHandle.get(), &kpmResult, &kpmResultNum);
+  // Detect every frame while nothing is tracked. Once something is, detect
+  // at most once per detectionIntervalMs, counted from the END of the previous
+  // pass, or not at all without continuous detection. A pass costs the full
+  // KPM time on the frame where it runs; timing from its start would let a
+  // pass slower than the interval run again on every frame.
+  const double now = emscripten_get_now();
+  const bool detectionDue =
+      !anyMarkerTracked() ||
+      (this->continuousDetection &&
+       now - this->lastKpmEndMs >= this->detectionIntervalMs);
 
-        if (withFiltering) {
-            this->ftmi = arFilterTransMatInit(this->filterSampleRate, this->filterCutoffFrequency);
-        }
+  if (this->surfaceSetCount > 0 && !allMarkersTracked() && detectionDue) {
 
-        for (auto i = 0; i < kpmResultNum; i++) {
-            if (kpmResult[i].camPoseF == 0) {
-                float trans[3][4];
-                this->detectedPage = kpmResult[i].pageNo;
-                std::copy(&kpmResult[i].camPose[0][0], &kpmResult[i].camPose[0][0] + 3 * 4, &trans[0][0]);
-                ar2SetInitTrans(this->surfaceSet[this->detectedPage], trans);
-            }
-        }
+    // Pages already being tracked need no pose from KPM this pass.
+    // kpmMatching() clears the skip flags again when it finishes.
+    int skipPages[PAGES_MAX];
+    int skipNum = 0;
+    for (int i = 0; i < this->surfaceSetCount; i++) {
+      if (markerStates[i].tracking) skipPages[skipNum++] = i;
     }
-    return kpmResultNum;
+    if (skipNum > 0) {
+      kpmSetMatchingSkipPage(this->kpmHandle.get(), skipPages, skipNum);
+    }
+
+    kpmMatching(this->kpmHandle.get(), this->videoLuma.get());
+    kpmGetResult(this->kpmHandle.get(), &kpmResult, &kpmResultNum);
+    this->lastKpmEndMs = emscripten_get_now();
+
+    for (int i = 0; i < kpmResultNum; i++) {
+      if (kpmResult[i].camPoseF != 0) continue;
+      const int page = kpmResult[i].pageNo;
+      if (page < 0 || page >= this->surfaceSetCount) {
+        ARLOGe("KPM reported page %d, outside 0..%d.\n", page, this->surfaceSetCount - 1);
+        continue;
+      }
+      NFTMarkerState &state = markerStates[page];
+      if (state.tracking) continue;
+      ar2SetInitTrans(this->surfaceSet[page], kpmResult[i].camPose);
+      state.tracking = true;
+      state.filterNeedsReset = true;
+    }
+  }
+
+  trackMarkers();
+  return kpmResultNum;
+}
+
+void ARToolKitNFT::trackMarkers() {
+  for (int page = 0; page < this->surfaceSetCount; page++) {
+    NFTMarkerState &state = markerStates[page];
+    if (!state.tracking) continue;
+
+    float trans[3][4];
+    float err = -1.0f;
+    const int trackResult = ar2TrackingMod(this->ar2Handle, this->surfaceSet[page],
+                                           this->videoFrame.get(), trans, &err);
+    if (trackResult < 0) {
+      ARLOGi("Tracking lost on page %d. %d\n", page, trackResult);
+      state.tracking = false;
+      state.err = -1.0f;
+      continue;
+    }
+
+    for (int r = 0; r < 3; r++) {
+      for (int c = 0; c < 4; c++) {
+        state.pose[r][c] = trans[r][c];
+      }
+    }
+    if (withFiltering) {
+      if (!state.ftmi) {
+        state.ftmi = arFilterTransMatInit(this->filterSampleRate, this->filterCutoffFrequency);
+        state.filterNeedsReset = true;
+      }
+      if (arFilterTransMat(state.ftmi, state.pose, state.filterNeedsReset ? 1 : 0) < 0) {
+        webarkitLOGe("arFilterTransMat error with marker %d.", page);
+      }
+      state.filterNeedsReset = false;
+    }
+    state.err = err;
+    ARLOGi("Tracked page %d (max %d).\n", page, this->surfaceSetCount - 1);
+  }
 }
 
 std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
@@ -347,8 +394,12 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
   KpmRefDataSet *refDataSet;
   refDataSet = NULL;
 
-  if (datasetPathnames.size() >= PAGES_MAX) {
-    webarkitLOGe("Error: exceeded maximum pages.");
+  // Per-marker state lives in fixed arrays of PAGES_MAX entries (surfaceSet,
+  // markerStates) indexed up to surfaceSetCount, so the running total across
+  // every call must stay within PAGES_MAX. Refuse before any state changes.
+  if (datasetPathnames.size() >
+      static_cast<size_t>(PAGES_MAX - this->surfaceSetCount)) {
+    webarkitLOGe("Error: exceeded maximum pages (%d).", PAGES_MAX);
     return {};
   }
 
@@ -561,6 +612,17 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
 void ARToolKitNFT::setFiltering(bool enableFiltering) {
   this->withFiltering = enableFiltering;
   webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
+}
+
+void ARToolKitNFT::setContinuousDetection(bool enabled) {
+  this->continuousDetection = enabled;
+  webarkitLOGi("Continuous detection: %s", enabled ? "on" : "off");
+}
+
+void ARToolKitNFT::setDetectionInterval(double ms) {
+  // Negative (or NaN) means "every frame", as 0 does.
+  this->detectionIntervalMs = ms > 0.0 ? ms : 0.0;
+  webarkitLOGi("Detection interval: %f ms", this->detectionIntervalMs);
 }
 
 #include "ARToolKitNFT_js_bindings.cpp"

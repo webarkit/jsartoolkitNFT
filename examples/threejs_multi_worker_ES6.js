@@ -78,11 +78,6 @@ export default function start(
     new THREE.MeshNormalMaterial(),
   );
 
-  const root = new THREE.Object3D();
-  scene.add(root);
-
-  let marker1, marker2, marker3;
-
   sphere.material.flatShading;
   sphere.scale.set(200, 200, 200);
 
@@ -90,13 +85,24 @@ export default function start(
   cube.scale.set(200, 200, 200);
 
   cone.material.flatShading;
-  cone.rotation.x = 90;
+  // Stand the cone upright on the marker: turn its axis from +y to the marker's
+  // +z (rotations are in radians), then lift it by half its height (1 * 200),
+  // since ConeGeometry is centred on its mid-height.
+  cone.rotation.x = Math.PI / 2;
+  cone.position.z = 100;
   cone.scale.set(200, 200, 200);
 
-  root.matrixAutoUpdate = false;
-  root.add(sphere);
-  root.add(cube);
-  root.add(cone);
+  // One model per marker, in marker-index order, each under its own root so
+  // every tracked marker is drawn at once with its own pose.
+  const models = [sphere, cube, cone];
+  const roots = models.map(function (model) {
+    const root = new THREE.Object3D();
+    root.matrixAutoUpdate = false;
+    root.visible = false;
+    root.add(model);
+    scene.add(root);
+    return root;
+  });
 
   const load = function () {
     vw = input_width;
@@ -172,16 +178,13 @@ export default function start(
           break;
         }
         case "markerInfos": {
-          marker1 = msg.marker1;
-          sphere.position.y =
-            ((marker1.height / marker1.dpi) * 2.54 * 10) / 2.0;
-          sphere.position.x = ((marker1.width / marker1.dpi) * 2.54 * 10) / 2.0;
-          marker2 = msg.marker2;
-          cube.position.y = ((marker2.height / marker2.dpi) * 2.54 * 10) / 2.0;
-          cube.position.x = ((marker2.width / marker2.dpi) * 2.54 * 10) / 2.0;
-          marker3 = msg.marker3;
-          cone.position.y = ((marker3.height / marker3.dpi) * 2.54 * 10) / 2.0;
-          cone.position.x = ((marker3.width / marker3.dpi) * 2.54 * 10) / 2.0;
+          // Centre each model on its own marker: half the marker's size in mm.
+          msg.markers.forEach(function (marker, i) {
+            const model = models[i];
+            if (!model) return;
+            model.position.x = ((marker.width / marker.dpi) * 2.54 * 10) / 2.0;
+            model.position.y = ((marker.height / marker.dpi) * 2.54 * 10) / 2.0;
+          });
         }
       }
       track_update();
@@ -189,18 +192,20 @@ export default function start(
     };
   };
 
-  let world, index;
+  // Latest pose of each tracked marker, keyed by marker index.
+  let worlds = new Map();
 
   const found = function (msg) {
-    if (!msg) {
-      world = null;
-    } else {
-      world =
-        typeof msg.matrixGL_RH === "string"
-          ? JSON.parse(msg.matrixGL_RH)
-          : msg.matrixGL_RH;
-      index = JSON.parse(msg.index);
-    }
+    worlds = new Map();
+    if (!msg) return;
+    msg.markers.forEach(function (marker) {
+      worlds.set(
+        marker.index,
+        typeof marker.matrixGL_RH === "string"
+          ? JSON.parse(marker.matrixGL_RH)
+          : marker.matrixGL_RH,
+      );
+    });
   };
 
   let lasttime = Date.now();
@@ -213,27 +218,14 @@ export default function start(
     time += dt;
     lasttime = now;
 
-    if (!world) {
-      sphere.visible = false;
-      cube.visible = false;
-      cone.visible = false;
-    } else {
-      if (index === 0) {
-        sphere.visible = true;
-        cube.visible = false;
-        cone.visible = false;
-      } else if (index === 1) {
-        sphere.visible = false;
-        cube.visible = true;
-        cone.visible = false;
-      } else if (index === 2) {
-        sphere.visible = false;
-        cube.visible = false;
-        cone.visible = true;
+    // Show each marker's model at that marker's pose, and hide the untracked ones.
+    roots.forEach(function (root, i) {
+      const world = worlds.get(i);
+      root.visible = world !== undefined;
+      if (world) {
+        setMatrix(root.matrix, world);
       }
-      // set matrix of 'root' by detected 'world' matrix
-      setMatrix(root.matrix, world);
-    }
+    });
     renderer.render(scene, camera);
   };
 

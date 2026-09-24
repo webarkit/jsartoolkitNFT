@@ -40,6 +40,7 @@ import {
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { ARToolkitNFT } from "./ARToolkitNFT";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
+import { MarkerLostTracker } from "./MarkerLostTracker";
 
 export class ARControllerNFT implements AbstractARControllerNFT {
   // private declarations
@@ -69,8 +70,11 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private grayscaleSource: Uint8Array;
   private videoLumaInternal: boolean; // Added videoLumaInternal
 
-  private nftMarkerFound: boolean; // = false
-  private nftMarkerFoundTime: number;
+  // When each marker was last found, and where; drives lostNFTMarker per marker.
+  private markerLostTracker: MarkerLostTracker<{
+    matrix: Float64Array;
+    matrixGL_RH: Float64Array;
+  }>;
   private nftMarkerCount: number; // = 0
   private defaultMarkerWidth: number;
 
@@ -153,8 +157,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     this.camera_mat = null;
 
     // this is to workaround the introduction of "self" variable
-    this.nftMarkerFound = false;
-    this.nftMarkerFoundTime = 0;
+    this.markerLostTracker = new MarkerLostTracker(200);
     this.nftMarkerCount = 0;
 
     this._bwpointer = null;
@@ -326,8 +329,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     let nftMarkerCount = this.nftMarkerCount;
     this.detectNFTMarker();
 
-    // in ms
-    const MARKER_LOST_TIME = 200;
+    const now = Date.now();
 
     for (let i = 0; i < nftMarkerCount; i++) {
       let nftMarkerInfo: IARToolkitNFT["NFTMarkerInfo"] = this.getNFTMarker(i);
@@ -335,14 +337,17 @@ export class ARControllerNFT implements AbstractARControllerNFT {
       let markerType = ARToolkitNFT.NFT_MARKER;
 
       if (nftMarkerInfo.found) {
-        this.nftMarkerFound = <boolean>(<unknown>i);
-        this.nftMarkerFoundTime = Date.now();
-
         let visible: INFTMarker = this.trackNFTMarkerId(i);
         visible.matrix.set(nftMarkerInfo.pose);
         visible.inCurrent = true;
-        this.transMatToGLMat(visible.matrix, this.transform_mat);
-        this.transformGL_RH = this.arglCameraViewRHf(this.transform_mat);
+        // A fresh matrix per event: with several markers found in one frame a
+        // shared buffer would be overwritten by the next marker while a
+        // listener still holds it.
+        const matrix = this.transMatToGLMat(visible.matrix, new Float64Array(16));
+        const matrixGL_RH = this.arglCameraViewRHf(matrix);
+        this.transform_mat = matrix;
+        this.transformGL_RH = matrixGL_RH;
+        this.markerLostTracker.markFound(i, now, { matrix, matrixGL_RH });
         this.dispatchEvent({
           name: "getNFTMarker",
           target: this,
@@ -350,14 +355,13 @@ export class ARControllerNFT implements AbstractARControllerNFT {
             index: i,
             type: markerType,
             marker: nftMarkerInfo,
-            matrix: this.transform_mat,
-            matrixGL_RH: this.transformGL_RH,
+            matrix: matrix,
+            matrixGL_RH: matrixGL_RH,
           },
         });
-      } else if (this.nftMarkerFound === <boolean>(<unknown>i)) {
-        // for now this marker found/lost events handling is for one marker at a time
-        if (Date.now() - this.nftMarkerFoundTime > MARKER_LOST_TIME) {
-          this.nftMarkerFound = false;
+      } else {
+        const lastSeen = this.markerLostTracker.checkLost(i, now);
+        if (lastSeen) {
           this.dispatchEvent({
             name: "lostNFTMarker",
             target: this,
@@ -365,8 +369,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
               index: i,
               type: markerType,
               marker: nftMarkerInfo,
-              matrix: this.transform_mat,
-              matrixGL_RH: this.transformGL_RH,
+              matrix: lastSeen.matrix,
+              matrixGL_RH: lastSeen.matrixGL_RH,
             },
           });
         }
@@ -873,6 +877,47 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   public setFiltering(enableFiltering: boolean): void {
     this.artoolkitNFT.setFiltering(enableFiltering);
+  }
+
+  /**
+   * Turn continuous detection on or off.
+   *
+   * Detection (KPM) is the expensive step that finds a marker which is not yet
+   * tracked; a pass costs the full detection time on the frame where it runs,
+   * far more than tracking an already-found marker. The policy is:
+   * - while no marker is tracked, detection runs on every frame;
+   * - while at least one marker is tracked and at least one loaded marker is
+   *   not, detection runs at most once per detection interval (see
+   *   {@link setDetectionInterval}), so a marker that enters the view is still
+   *   picked up;
+   * - while every loaded marker is tracked, detection does not run.
+   *
+   * With continuous detection off, no detection runs once any marker is
+   * tracked, until tracking is lost: the single-marker behaviour of 1.12.0.
+   * That is cheapest, but a second marker entering the view is not found
+   * while the first one is held.
+   * @param {boolean} enabled Default `true`.
+   * @return {void}
+   */
+  public setContinuousDetection(enabled: boolean): void {
+    this.artoolkitNFT.setContinuousDetection(enabled);
+  }
+
+  /**
+   * Set the minimum time from the end of one detection pass to the start of
+   * the next, while at least one marker is tracked and at least one is not
+   * (see {@link setContinuousDetection}).
+   *
+   * Detection is measured in time, not frames. A longer interval spends less
+   * time detecting, at the cost of noticing a newly visible marker later;
+   * `0` detects on every frame, which costs the full detection time on every
+   * frame while any loaded marker is out of view.
+   * @param {number} ms Milliseconds. `0` means every frame; negative values
+   * are treated as `0`. Default: `300`.
+   * @return {void}
+   */
+  public setDetectionInterval(ms: number): void {
+    this.artoolkitNFT.setDetectionInterval(ms);
   }
 
   /**

@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory> // Added for std::unique_ptr
+#include <limits>
 #include <AR/config.h>
 #include <AR2/tracking.h>
 #include <AR/arFilterTransMat.h>
@@ -15,8 +16,12 @@
 #include <WebARKit/WebARKitLog.h>
 #include <WebARKitVideoLuma.h>
 #include "markerDecompress.h"
+#include "NFTMarkerState.h"
+#include <array>
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
+static_assert(PAGES_MAX == TRACKING_INIT_MAX_RESULTS,
+              "the detection worker must be able to report every page");
 
 struct nftMarker
 {
@@ -77,12 +82,13 @@ public:
     int getImageProcMode();
     int setup(int width, int height, int cameraID);
     void setFiltering(bool enableFiltering);
+    void setContinuousDetection(bool enabled);
+    void setDetectionInterval(double ms);
 
 private:
     bool withFiltering; // New property
 
     // Filtering-related variables
-    ARFilterTransMatInfo *ftmi;
     double filterCutoffFrequency;
     double filterSampleRate;
 
@@ -112,7 +118,26 @@ private:
 
     THREAD_HANDLE_T *threadHandle;
 
-    int detectedPage;
+    // One state per loadable page; index = page number = marker id.
+    std::array<NFTMarkerState, PAGES_MAX> markerStates;
+
+    // True between trackingInitStart() and collecting its results.
+    bool kpmSearchRunning;
+
+    // Detection policy, applied to starting a worker search (collecting a
+    // finished one is never throttled). A search starts on any frame while no
+    // marker is tracked. While some are tracked and some are not, one starts at
+    // most once every detectionIntervalMs, counted from when the previous search
+    // finished, and none if continuousDetection is off. The search already runs off the main thread, so the default
+    // interval is 0: start whenever the worker is free.
+    bool continuousDetection = true;
+    double detectionIntervalMs = 0.0;
+    // When the last search finished; -infinity so the first search is never throttled.
+    double lastKpmEndMs = -std::numeric_limits<double>::infinity();
+
+    bool allMarkersTracked() const;
+    bool anyMarkerTracked() const;
+    void trackMarkers();
 
     int surfaceSetCount;
     AR2SurfaceSetT *surfaceSet[PAGES_MAX];

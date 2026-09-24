@@ -103,9 +103,10 @@ function load(msg) {
         for (let i = 0; i < ids.length; i++) {
           ar.trackNFTMarkerId(i);
         }
-        marker1 = ar.getNFTData(ar.id, 0);
-        marker2 = ar.getNFTData(ar.id, 1);
-        marker3 = ar.getNFTData(ar.id, 2);
+        // getNFTData takes only the marker index; the controller id is implied.
+        marker1 = ar.getNFTData(ids[0]);
+        marker2 = ar.getNFTData(ids[1]);
+        marker3 = ar.getNFTData(ids[2]);
         postMessage({
           type: "markerInfos",
           marker1: marker1,

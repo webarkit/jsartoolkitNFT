@@ -57,9 +57,8 @@ typedef struct {
     KpmHandle              *kpmHandle;      // KPM-related data.
     ARUint8                *imageLumaPtr;   // Pointer to image being tracked.
     int                     imageSize;      // Bytes per image.
-    float                   trans[3][4];    // Transform containing pose of tracked image.
-    int                     page;           // Assigned page number of tracked image.
-    int                     flag;           // Tracked successfully.
+    TrackingInitResult      results[TRACKING_INIT_MAX_RESULTS]; // Every matched page.
+    int                     resultNum;                          // How many of results[] are set.
 } TrackingInitHandle;
 
 static void *trackingInitMain( THREAD_HANDLE_T *threadHandle );
@@ -100,7 +99,7 @@ THREAD_HANDLE_T *trackingInitInit( KpmHandle *kpmHandle )
     trackingInitHandle->kpmHandle = kpmHandle;
     trackingInitHandle->imageSize = kpmHandleGetXSize(kpmHandle) * kpmHandleGetYSize(kpmHandle);
     trackingInitHandle->imageLumaPtr  = (ARUint8 *)malloc(trackingInitHandle->imageSize);
-    trackingInitHandle->flag      = 0;
+    trackingInitHandle->resultNum = 0;
 
     threadHandle = threadInit(0, trackingInitHandle, trackingInitMain);
     return threadHandle;
@@ -126,27 +125,54 @@ int trackingInitStart( THREAD_HANDLE_T *threadHandle, ARUint8 *imageLumaPtr )
     return 0;
 }
 
-int trackingInitGetResult( THREAD_HANDLE_T *threadHandle, float trans[3][4], int *page )
+int trackingInitGetResults( THREAD_HANDLE_T *threadHandle, TrackingInitResult results[], int maxResults, int *resultNum )
 {
     TrackingInitHandle     *trackingInitHandle;
-    int  i, j;
+    int                     n;
+
+    if (!threadHandle || !results || !resultNum || maxResults <= 0) {
+        ARLOGe("trackingInitGetResults(): Error: NULL argument or maxResults <= 0.\n");
+        return (-1);
+    }
+    if( threadGetStatus( threadHandle ) == 0 ) return 0;
+    threadEndWait( threadHandle );
+    trackingInitHandle = (TrackingInitHandle *)threadGetArg(threadHandle);
+    if (!trackingInitHandle) return (-1);
+
+    n = trackingInitHandle->resultNum < maxResults ? trackingInitHandle->resultNum : maxResults;
+    memcpy(results, trackingInitHandle->results, n * sizeof(TrackingInitResult));
+    *resultNum = n;
+    return 1;
+}
+
+int trackingInitGetResult( THREAD_HANDLE_T *threadHandle, float trans[3][4], int *page )
+{
+    TrackingInitResult      results[TRACKING_INIT_MAX_RESULTS];
+    int                     resultNum = 0;
+    int                     best, ret, i, j;
 
     if (!threadHandle || !trans || !page)  {
         ARLOGe("trackingInitGetResult(): Error: NULL threadHandle or trans or page.\n");
         return (-1);
     }
 
-    if( threadGetStatus( threadHandle ) == 0 ) return 0;
-    threadEndWait( threadHandle );
-    trackingInitHandle = (TrackingInitHandle *)threadGetArg(threadHandle);
-    if (!trackingInitHandle) return (-1);
-    if( trackingInitHandle->flag ) {
-        for (j = 0; j < 3; j++) for (i = 0; i < 4; i++) trans[j][i] = trackingInitHandle->trans[j][i];
-        *page = trackingInitHandle->page;
-        return 1;
-    }
+    ret = trackingInitGetResults( threadHandle, results, TRACKING_INIT_MAX_RESULTS, &resultNum );
+    if (ret != 1) return ret;           // 0 still running, -1 error.
+    if (resultNum <= 0) return (-1);    // Finished, no page matched.
 
-    return -1;
+    // The best match, as the single-result KPM chose it: the most inliers,
+    // then the lowest error.
+    best = 0;
+    for (i = 1; i < resultNum; i++) {
+        if (results[i].inlierNum > results[best].inlierNum ||
+            (results[i].inlierNum == results[best].inlierNum &&
+             results[i].error < results[best].error)) {
+            best = i;
+        }
+    }
+    for (j = 0; j < 3; j++) for (i = 0; i < 4; i++) trans[j][i] = results[best].trans[j][i];
+    *page = results[best].page;
+    return 1;
 }
 
 static void *trackingInitMain( THREAD_HANDLE_T *threadHandle )
@@ -156,7 +182,6 @@ static void *trackingInitMain( THREAD_HANDLE_T *threadHandle )
     KpmResult              *kpmResult = NULL;
     int                     kpmResultNum;
     ARUint8                *imageLumaPtr;
-    float                  err;
     int                    i, j, k;
 
     if (!threadHandle) {
@@ -176,22 +201,25 @@ static void *trackingInitMain( THREAD_HANDLE_T *threadHandle )
     }
     ARLOGi("Start tracking thread.\n");
 
-    kpmGetResult( kpmHandle, &kpmResult, &kpmResultNum );
-
     for(;;) {
         if( threadStartWait(threadHandle) < 0 ) break;
 
         kpmMatching(kpmHandle, imageLumaPtr);
-        trackingInitHandle->flag = 0;
+        // Fetch the result array on every pass: kpmSetRefDataSet() reallocates
+        // it when markers are loaded, so a pointer cached earlier can dangle.
+        kpmGetResult( kpmHandle, &kpmResult, &kpmResultNum );
+        trackingInitHandle->resultNum = 0;
         for( i = 0; i < kpmResultNum; i++ ) {
             if( kpmResult[i].camPoseF != 0 ) continue;
-            ARLOGd("kpmGetPose OK.\n");
-            if( trackingInitHandle->flag == 0 || err > kpmResult[i].error ) { // Take the first or best result.
-                trackingInitHandle->flag = 1;
-                trackingInitHandle->page = kpmResult[i].pageNo;
-                for (j = 0; j < 3; j++) for (k = 0; k < 4; k++) trackingInitHandle->trans[j][k] = kpmResult[i].camPose[j][k];
-                err = kpmResult[i].error;
+            if( trackingInitHandle->resultNum >= TRACKING_INIT_MAX_RESULTS ) {
+                ARLOGe("trackingInitMain(): more than %d pages matched; ignoring the rest.\n", TRACKING_INIT_MAX_RESULTS);
+                break;
             }
+            TrackingInitResult *result = &trackingInitHandle->results[trackingInitHandle->resultNum++];
+            result->page  = kpmResult[i].pageNo;
+            result->error = kpmResult[i].error;
+            result->inlierNum = kpmResult[i].inlierNum;
+            for (j = 0; j < 3; j++) for (k = 0; k < 4; k++) result->trans[j][k] = kpmResult[i].camPose[j][k];
         }
 
         threadEndSignal(threadHandle);

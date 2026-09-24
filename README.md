@@ -26,6 +26,37 @@ Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 - Multi NFT markers !!!
 
+### Multi-marker tracking
+
+Load several NFT markers with `loadNFTMarkers()` and every one in view is tracked at the same
+time: `getNFTMarker` fires once per visible marker each frame, with that marker's `index` and its
+own pose, and `lostNFTMarker` fires for each marker on its own when it leaves the view.
+
+Detection — finding a marker that is not tracked yet — is far more expensive than tracking one
+that is: a detection pass costs the full detection time on the frame where it runs. So it follows
+a policy:
+
+- while no marker is tracked, detection runs on every frame;
+- while at least one marker is tracked and another loaded marker is not, it runs at most once per
+  detection interval, counted from the end of the previous pass, so a marker entering the view is
+  still picked up and every pass is followed by tracking-only frames, however long a pass takes;
+- while every loaded marker is tracked, it does not run.
+
+Two setters on `ARControllerNFT` tune this:
+
+- `setContinuousDetection(enabled)` — default `true`. With `false`, no detection runs once any
+  marker is tracked, until tracking is lost (the single-marker behaviour of 1.12.0 and earlier).
+- `setDetectionInterval(ms)` — the interval above, in milliseconds. Default `300` in the default
+  and SIMD builds. `0` detects on every frame; negative values count as `0`.
+
+The threaded (Pthread) build detects on a worker thread, off the main thread, so its default
+interval is `0`; both setters work there too, and an interval saves worker CPU. The Node.js build
+is single-marker: it tracks one marker at a time, and the two setters only log a warning there.
+
+Note for upgraders: `getTransformationMatrix()` now returns a fresh array for each frame a marker
+is found, instead of updating one array in place. Read it each frame rather than keeping a
+reference and expecting it to change.
+
 ## WASM
 
 has **WASM** embedded in a single file!

@@ -18,6 +18,8 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("_loadCamera", &ARToolKitNFT::loadCamera)
       .function("setup", &ARToolKitNFT::setup)
       .function("setFiltering", &ARToolKitNFT::setFiltering)
+      .function("setContinuousDetection", &ARToolKitNFT::setContinuousDetection)
+      .function("setDetectionInterval", &ARToolKitNFT::setDetectionInterval)
       .function("getCameraLens", &ARToolKitNFT::getCameraLens)
       .function("recalculateCameraLens", &ARToolKitNFT::recalculateCameraLens)
       .function("passVideoData", &ARToolKitNFT::passVideoData)

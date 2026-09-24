@@ -40,6 +40,7 @@ import {
 import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
 import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
+import { MarkerLostTracker } from "./MarkerLostTracker";
 const emitter = require('events').EventEmitter;
 
 export class ARControllerNFT implements AbstractARControllerNFT {
@@ -70,10 +71,15 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private grayscaleEnabled: boolean;
   private grayscaleSource: Uint8Array;
 
-  private nftMarkerFound: boolean; // = false
-  private nftMarkerFoundTime: number;
+  // When each marker was last found, and where; drives lostNFTMarker per marker.
+  private markerLostTracker: MarkerLostTracker<{
+    matrix: Float64Array;
+    matrixGL_RH: Float64Array;
+  }>;
   private nftMarkerCount: number; // = 0
   private defaultMarkerWidth: number;
+  // setContinuousDetection / setDetectionInterval warn once, then stay quiet.
+  private detectionPolicyWarned: boolean;
 
   private _bwpointer: number;
 
@@ -143,12 +149,12 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     this.camera_mat = null;
 
     // this is to workaround the introduction of "self" variable
-    this.nftMarkerFound = false;
-    this.nftMarkerFoundTime = 0;
+    this.markerLostTracker = new MarkerLostTracker(200);
     this.nftMarkerCount = 0;
 
     this._bwpointer = null;
     this.defaultMarkerWidth = 1;
+    this.detectionPolicyWarned = false;
   }
 
   /** The static method **initWithDimensions** is the start of your app.
@@ -294,8 +300,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     let nftMarkerCount = this.nftMarkerCount;
     this.detectNFTMarker();
 
-    // in ms
-    const MARKER_LOST_TIME = 200;
+    const now = Date.now();
 
     for (let i = 0; i < nftMarkerCount; i++) {
       let nftMarkerInfo: IARToolkitNFT_node["NFTMarkerInfo"] = this.getNFTMarker(i);
@@ -303,14 +308,17 @@ export class ARControllerNFT implements AbstractARControllerNFT {
       let markerType = ARToolkitNFT.NFT_MARKER;
 
       if (nftMarkerInfo.found) {
-        this.nftMarkerFound = <boolean>(<unknown>i);
-        this.nftMarkerFoundTime = Date.now();
-
         let visible: INFTMarker = this.trackNFTMarkerId(i);
         visible.matrix.set(nftMarkerInfo.pose);
         visible.inCurrent = true;
-        this.transMatToGLMat(visible.matrix, this.transform_mat);
-        this.transformGL_RH = this.arglCameraViewRHf(this.transform_mat);
+        // A fresh matrix per event: with several markers found in one frame a
+        // shared buffer would be overwritten by the next marker while a
+        // listener still holds it.
+        const matrix = this.transMatToGLMat(visible.matrix, new Float64Array(16));
+        const matrixGL_RH = this.arglCameraViewRHf(matrix);
+        this.transform_mat = matrix;
+        this.transformGL_RH = matrixGL_RH;
+        this.markerLostTracker.markFound(i, now, { matrix, matrixGL_RH });
         this.dispatchEvent({
           name: "getNFTMarker",
           target: this,
@@ -318,14 +326,13 @@ export class ARControllerNFT implements AbstractARControllerNFT {
             index: i,
             type: markerType,
             marker: nftMarkerInfo,
-            matrix: this.transform_mat,
-            matrixGL_RH: this.transformGL_RH,
+            matrix: matrix,
+            matrixGL_RH: matrixGL_RH,
           },
         });
-      } else if (this.nftMarkerFound === <boolean>(<unknown>i)) {
-        // for now this marker found/lost events handling is for one marker at a time
-        if (Date.now() - this.nftMarkerFoundTime > MARKER_LOST_TIME) {
-          this.nftMarkerFound = false;
+      } else {
+        const lastSeen = this.markerLostTracker.checkLost(i, now);
+        if (lastSeen) {
           this.dispatchEvent({
             name: "lostNFTMarker",
             target: this,
@@ -333,8 +340,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
               index: i,
               type: markerType,
               marker: nftMarkerInfo,
-              matrix: this.transform_mat,
-              matrixGL_RH: this.transformGL_RH,
+              matrix: lastSeen.matrix,
+              matrixGL_RH: lastSeen.matrixGL_RH,
             },
           });
         }
@@ -835,6 +842,30 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
+   * Accepted for API parity with the browser builds; does nothing here.
+   *
+   * The Node build runs on the single-marker binding, which never detects
+   * while its marker is tracked: it always behaves as
+   * `setContinuousDetection(false)`. Logs a warning the first time it is
+   * called on this controller.
+   * @param {boolean} enabled Ignored.
+   * @return {void}
+   */
+  setContinuousDetection(enabled: boolean): void {
+    this.warnDetectionPolicyUnsupported();
+  }
+
+  /**
+   * Accepted for API parity with the browser builds; does nothing here.
+   * See {@link setContinuousDetection}.
+   * @param {number} ms Ignored.
+   * @return {void}
+   */
+  setDetectionInterval(ms: number): void {
+    this.warnDetectionPolicyUnsupported();
+  }
+
+  /**
    * Set the custom gray data (videoLuma) in case you want to add additional
    * trasnformation to gray data: for example gaussianblur or boxblur
    * with external libs.
@@ -847,6 +878,20 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
   // private accessors
   // ----------------------------------------------------------------------------
+  /**
+   * Warn, once per controller, that the detection policy setters do nothing
+   * in the Node build.
+   */
+  private warnDetectionPolicyUnsupported(): void {
+    if (this.detectionPolicyWarned) return;
+    this.detectionPolicyWarned = true;
+    console.warn(
+      "jsartoolkitNFT (Node): setContinuousDetection() and setDetectionInterval() do nothing " +
+        "in the Node build. It tracks a single marker and always behaves as " +
+        "setContinuousDetection(false).",
+    );
+  }
+
   /**
    * Used internally by ARControllerNFT, it permit to add methods to this.
    * @return {any} ARControllerNFT

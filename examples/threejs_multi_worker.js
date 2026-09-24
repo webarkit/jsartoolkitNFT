@@ -91,7 +91,11 @@ export default function start(
   cube.scale.set(200, 200, 200);
 
   cone.material.flatShading;
-  cone.rotation.x = 90;
+  // Stand the cone upright on the marker: turn its axis from +y to the marker's
+  // +z (rotations are in radians), then lift it by half its height (1 * 200),
+  // since ConeGeometry is centred on its mid-height.
+  cone.rotation.x = Math.PI / 2;
+  cone.position.z = 100;
   cone.scale.set(200, 200, 200);
 
   root.matrixAutoUpdate = false;

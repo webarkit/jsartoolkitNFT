@@ -171,6 +171,10 @@ export interface IARToolKitNFTInstance {
   // Filtering
   setFiltering(enableFiltering: boolean): void;
 
+  // Detection policy
+  setContinuousDetection(enabled: boolean): void;
+  setDetectionInterval(ms: number): void;
+
   // ZFT decompression
   _decompressZFT(prefix: string, prefixTemp: string): number;
 
