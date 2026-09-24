@@ -66,9 +66,9 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "8.0.1",
-    "@babel/plugin-transform-runtime": "8.0.1",
-    "@babel/preset-env": "8.0.2",
+    "@babel/core": "8.0.6",
+    "@babel/plugin-transform-runtime": "8.0.6",
+    "@babel/preset-env": "8.0.6",
     "@types/node": "^24.13.2",
     "@vitest/browser": "^5.0.1",
     "@vitest/browser-playwright": "^5.0.1",
@@ -77,14 +77,14 @@
     "canvas": "^3.2.3",
     "glob": "^7.2.3",
     "playwright": "^1.63.0",
-    "prettier": "^3.8.5",
+    "prettier": "^3.9.9",
     "sharp": "^0.35.4",
     "ts-loader": "^9.6.2",
-    "typedoc": "0.28.19",
+    "typedoc": "0.28.20",
     "typescript": "6.0.3",
     "vitest": "^5.0.1",
-    "webpack": "5.107.2",
-    "webpack-cli": "7.0.3"
+    "webpack": "5.111.1",
+    "webpack-cli": "7.2.3"
   },
   "scripts": {
     "dev-ts": "webpack --mode development --progress --watch",
@@ -109,7 +109,7 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "8.0.0",
-    "axios": "1.18.1"
+    "@babel/runtime": "8.0.5",
+    "axios": "1.20.0"
   }
 }
