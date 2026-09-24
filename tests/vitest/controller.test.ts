@@ -13,10 +13,10 @@ import {
  * ARControllerNFT, driven through `src/` — the code that ships as `dist/` and
  * that consumers import.
  *
- * The Karma specs this sits alongside exercise either the deprecated
- * `js/artoolkitNFT.api.js` or the raw Emscripten binding, and never load a
- * marker or push a frame. That gap is why #614 shipped: `process()` was broken
- * on every path and the suite stayed green. See #579.
+ * The other build artifacts get one detection suite each (`legacy-*.test.ts`,
+ * `embed-es6.test.ts`); this file covers the shipped API in depth. #614 is why
+ * both exist: `process()` was broken on every path while a suite that never
+ * pushed a frame stayed green. See #579.
  */
 describe("ARControllerNFT", () => {
   let ar: any;

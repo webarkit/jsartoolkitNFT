@@ -4,20 +4,17 @@ import { playwright } from "@vitest/browser-playwright";
 /**
  * Vitest runs the specs in a real Chromium supplied by Playwright.
  *
- * Two things this buys over the Karma setup it sits alongside:
- *
- * - Vite serves the repository root, so `examples/DataNFT/**` and
- *   `examples/Data/**` are fetchable by the specs with no proxy configuration.
+ * - Vite serves the repository root, so `examples/DataNFT/**`, `examples/Data/**`
+ *   and the committed `build/` and `dist/` artifacts are fetchable by the specs
+ *   with no proxy configuration.
  * - Specs import `src/` directly. Vite compiles the TypeScript, so the tests
  *   exercise the code that ships as `dist/` without a webpack build in between,
  *   and coverage of `src/` becomes meaningful (see #580).
+ * - Each test file runs in its own iframe. The legacy builds set page globals, so
+ *   `tests/vitest/legacy-*.test.ts` rely on this to keep one build per page.
  *
  * The browser is managed by Playwright rather than installed with apt, which is
- * the flaky step described in #602.
- *
- * Scope: this is the first slice of #579. It covers the default ES6/TypeScript
- * target only. Extending to the full seven-target matrix, and retiring Karma,
- * is tracked as follow-up work.
+ * the flaky step described in #602. It is the only browser the suite needs.
  */
 export default defineConfig({
   // The threaded build needs SharedArrayBuffer, which browsers only provide to
