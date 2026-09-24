@@ -32,15 +32,6 @@ export interface SuiteOptions {
   frameScale?: number;
   /** Frames to push before giving up on detection. The threaded build needed 28. */
   maxFrames?: number;
-  /**
-   * Expect `dispose()` to abort. The legacy bindings' `teardown()`
-   * (emscripten/ARToolKitJS.cpp, ARToolKitJS_td.cpp) calls `delete` on a pointer
-   * into its `std::unordered_map` and then erases the same entry, a double free.
-   * Every legacy build has it (#663); only the debug build's allocator checks catch it.
-   * The test then asserts that exact abort. Once the C++ is fixed, dispose() stops
-   * throwing, the assertion fails, and this option should be removed.
-   */
-  disposeAborts?: boolean;
 }
 
 /** Longest a build or its camera parameters may take to become ready. */
@@ -209,25 +200,9 @@ export function controllerDetectionSuite(
 
     // Last, because it tears the controller down. A test rather than an afterAll
     // hook, so a teardown failure is reported by name.
-    //
-    // Every build this suite runs on shares the teardown() double free (#663).
-    // The debug build is the only one where calling dispose() is well defined:
-    // its allocator checks abort, and the test pins that abort. Elsewhere the
-    // call is undefined behaviour that happens not to crash, which asserts
-    // nothing, so it is skipped by name. The isolated test iframe is discarded
-    // after the file either way. Once #663 is fixed, the debug assertion fails:
-    // remove `disposeAborts` and this skip together.
-    if (options.disposeAborts) {
-      it("disposes the controller (aborts: teardown double free)", () => {
-        expect(() => ar.dispose()).toThrow(
-          /Aborted\(native code called abort\(\)\)/,
-        );
-      });
-    } else {
-      it.skip("disposes the controller (skipped until #663: teardown() double free)", () => {
-        ar.dispose();
-      });
-    }
+    it("disposes the controller", () => {
+      ar.dispose();
+    });
   });
 }
 
