@@ -17,11 +17,9 @@
  *
  * The names say "composite" for historical reasons: the frames are built on a canvas.
  *
- * `loadCompositeFrames(scale)` can draw the photo smaller. The threaded build has a fixed
- * 128 MB heap that cannot grow, and that is too little for KPM on a 2000 x 1500 frame, so
- * its variant runs at half scale (see `frameScale` in variants.ts). Callers must size the
- * controller from the returned `width` / `height`. `COMPOSITE_WIDTH` / `COMPOSITE_HEIGHT`
- * stay the full-scale size of the photo.
+ * `loadCompositeFrames(scale)` can draw the photo smaller (the KPM cost benchmark sweeps
+ * frame sizes). Callers must size the controller from the returned `width` / `height`.
+ * `COMPOSITE_WIDTH` / `COMPOSITE_HEIGHT` stay the full-scale size of the photo.
  */
 
 export const COMPOSITE_WIDTH = 2000;

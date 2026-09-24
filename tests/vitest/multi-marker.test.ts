@@ -23,7 +23,7 @@ for (const variant of VARIANTS) {
 
       beforeAll(async () => {
         const { ARControllerNFT } = await variant.load();
-        frames = await loadCompositeFrames(variant.frameScale);
+        frames = await loadCompositeFrames();
         ar = await ARControllerNFT.initWithDimensions(
           frames.width,
           frames.height,

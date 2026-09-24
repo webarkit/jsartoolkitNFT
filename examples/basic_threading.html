@@ -51,9 +51,11 @@
     </a>
 
     <script src="js/third_party/three.js/stats.min.js"></script>
-    <script async src="../build/artoolkitNFT_thread.js"></script>
-    <script async src="../js/OneEuroFilter.js"></script>
-    <script async src="load_thread.js"></script>
+    <!-- defer, not async: load_thread.js needs OneEuroFilter at load time, and async
+         scripts run in whatever order they finish downloading. -->
+    <script defer src="../build/artoolkitNFT_thread.js"></script>
+    <script defer src="../js/OneEuroFilter.js"></script>
+    <script defer src="load_thread.js"></script>
 
     <script type="module">
       import start from "./threejs_wasm_thread.js";
