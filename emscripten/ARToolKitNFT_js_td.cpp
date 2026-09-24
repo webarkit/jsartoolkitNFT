@@ -1,4 +1,5 @@
 #include "ARToolKitNFT_js_td.h"
+#include "KpmRefDataSetCopy.h"
 
 ARToolKitNFT::ARToolKitNFT()
     : id(0), paramLT(nullptr), videoFrame(nullptr), videoFrameSize(0),
@@ -305,10 +306,24 @@ void ARToolKitNFT::deleteHandle() {
 }
 
 int ARToolKitNFT::teardown() {
+  // Stop the detection worker before freeing what it uses: wait for a running
+  // search, then let the thread exit.
+  if (this->threadHandle) {
+    if (this->kpmSearchRunning) {
+      threadEndWait(this->threadHandle);
+      this->kpmSearchRunning = false;
+    }
+    trackingInitQuit(&this->threadHandle);
+  }
+
   // Reset unique pointers instead of freeing memory
   this->videoFrame.reset();
   this->videoLuma.reset();
   this->videoFrameSize = 0;
+
+  if (this->refDataSetAll) {
+    kpmDeleteRefDataSet(&this->refDataSetAll);
+  }
 
   deleteHandle();
 
@@ -415,83 +430,123 @@ ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
     return {};
   }
 
-  KpmHandle *kpmHandle = this->kpmHandle.get();
+  // One detection worker for the controller's lifetime, created by the first
+  // call. teardown() stops it.
+  if (!this->threadHandle) {
+    this->threadHandle = trackingInit(this->kpmHandle.get());
+    if (!this->threadHandle) {
+      webarkitLOGe("Error: could not start the detection worker.");
+      return {};
+    }
+  }
 
-  this->threadHandle = trackingInit(this->kpmHandle.get());
+  // Markers loaded by earlier calls keep their ids, so this batch continues
+  // the sequence: marker id = KPM page number = surfaceSet slot.
+  const int firstId = this->surfaceSetCount;
+  const int batchSize = static_cast<int>(datasetPathnames.size());
 
-  KpmRefDataSet *refDataSet;
-  refDataSet = NULL;
+  // Load the whole batch before changing any state, so a marker that fails to
+  // load leaves the markers from earlier calls untouched.
+  KpmRefDataSet *batchRefDataSet = nullptr;
+  auto discardBatch = [&](int loadedSurfaces) {
+    for (int j = 0; j < loadedSurfaces; j++) {
+      ar2FreeSurfaceSet(&this->surfaceSet[firstId + j]);
+    }
+    if (batchRefDataSet) {
+      kpmDeleteRefDataSet(&batchRefDataSet);
+    }
+  };
 
-  std::vector<int> markerIds = {};
-
-  for (int i = 0; i < datasetPathnames.size(); i++) {
-    webarkitLOGi("datasetPathnames size: %i", datasetPathnames.size());
-    webarkitLOGi("add NFT marker-> '%s'", datasetPathnames[i].c_str());
-
+  for (int i = 0; i < batchSize; i++) {
     const char *datasetPathname = datasetPathnames[i].c_str();
-    int pageNo = i;
-    markerIds.push_back(i);
+    const int id = firstId + i;
+    webarkitLOGi("add NFT marker-> '%s'", datasetPathname);
 
     // Load KPM data.
     KpmRefDataSet *refDataSet2;
     webarkitLOGi("Reading %s.fset3", datasetPathname);
     if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0) {
       webarkitLOGe("Error reading KPM data from %s.fset3", datasetPathname);
+      discardBatch(i);
       return {};
     }
-    webarkitLOGi("Assigned page no. %d.", pageNo);
-    if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages,
-                                    pageNo) < 0) {
+    webarkitLOGi("Assigned page no. %d.", id);
+    if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages, id) < 0) {
       webarkitLOGe("Error: kpmChangePageNoOfRefDataSet");
+      kpmDeleteRefDataSet(&refDataSet2);
+      discardBatch(i);
       return {};
     }
-    if (kpmMergeRefDataSet(&refDataSet, &refDataSet2) < 0) {
+    if (kpmMergeRefDataSet(&batchRefDataSet, &refDataSet2) < 0) {
       webarkitLOGe("Error: kpmMergeRefDataSet");
+      discardBatch(i);
       return {};
     }
-    webarkitLOGi("Done.");
 
     // Load AR2 data.
     webarkitLOGi("Reading %s.fset", datasetPathname);
-
-    if ((this->surfaceSet[i] =
-             ar2ReadSurfaceSet(datasetPathname, "fset", NULL)) == NULL) {
+    if ((this->surfaceSet[id] = ar2ReadSurfaceSet(datasetPathname, "fset", nullptr)) == nullptr) {
       webarkitLOGe("Error reading data from %s.fset", datasetPathname);
+      discardBatch(i);
       return {};
     }
-
-    int surfaceSetCount = this->surfaceSetCount;
-    int numIset = this->surfaceSet[i]->surface[0].imageSet->num;
-    this->nft.width_NFT =
-        this->surfaceSet[i]->surface[0].imageSet->scale[0]->xsize;
-    this->nft.height_NFT =
-        this->surfaceSet[i]->surface[0].imageSet->scale[0]->ysize;
-    this->nft.dpi_NFT = this->surfaceSet[i]->surface[0].imageSet->scale[0]->dpi;
-
-    webarkitLOGi("NFT num. of ImageSet: %i", numIset);
-    webarkitLOGi("NFT marker width: %i", this->nft.width_NFT);
-    webarkitLOGi("NFT marker height: %i", this->nft.height_NFT);
-    webarkitLOGi("NFT marker dpi: %i", this->nft.dpi_NFT);
-
-    this->nft.id_NFT = i;
-    this->nft.width_NFT = this->nft.width_NFT;
-    this->nft.height_NFT = this->nft.height_NFT;
-    this->nft.dpi_NFT = this->nft.dpi_NFT;
-    this->nftMarkers.push_back(this->nft);
-
-    webarkitLOGi("Done.");
-    surfaceSetCount++;
   }
 
-  if (kpmSetRefDataSet(kpmHandle, refDataSet) < 0) {
-    webarkitLOGe("Error: kpmSetRefDataSet");
+  // Hand KPM every marker loaded so far: kpmSetRefDataSet() rebuilds the
+  // matcher from the set it is given, so the new batch alone would drop the
+  // markers from earlier calls. The batch is merged into a copy of the
+  // accumulated set, which replaces it only once KPM accepts it; a rejected
+  // batch (kpmSetRefDataSet() checks its image limit before changing
+  // anything) leaves the earlier markers loaded and detectable.
+  KpmRefDataSet *combined = nullptr;
+  if (this->refDataSetAll &&
+      (combined = kpmCopyRefDataSet(this->refDataSetAll)) == nullptr) {
+    webarkitLOGe("Error: out of memory copying the KPM reference data.");
+    discardBatch(batchSize);
     return {};
   }
-  kpmDeleteRefDataSet(&refDataSet);
+  if (kpmMergeRefDataSet(&combined, &batchRefDataSet) < 0) {
+    webarkitLOGe("Error: kpmMergeRefDataSet");
+    kpmDeleteRefDataSet(&combined);
+    discardBatch(batchSize);
+    return {};
+  }
 
+  // kpmSetRefDataSet() replaces the matcher the worker searches with. Wait for
+  // a running search to finish first; its result is for the old marker set,
+  // so it is dropped, and the next frame starts a search over the new one.
+  if (this->kpmSearchRunning) {
+    threadEndWait(this->threadHandle);
+    this->kpmSearchRunning = false;
+    this->lastKpmEndMs = emscripten_get_now();
+  }
+
+  if (kpmSetRefDataSet(this->kpmHandle.get(), combined) < 0) {
+    webarkitLOGe("Error: kpmSetRefDataSet");
+    kpmDeleteRefDataSet(&combined);
+    discardBatch(batchSize);
+    return {};
+  }
+  kpmDeleteRefDataSet(&this->refDataSetAll);
+  this->refDataSetAll = combined;
+
+  std::vector<int> markerIds;
+  for (int i = 0; i < batchSize; i++) {
+    const int id = firstId + i;
+    AR2SurfaceSetT *surface = this->surfaceSet[id];
+    this->nft.id_NFT = id;
+    this->nft.width_NFT = surface->surface[0].imageSet->scale[0]->xsize;
+    this->nft.height_NFT = surface->surface[0].imageSet->scale[0]->ysize;
+    this->nft.dpi_NFT = surface->surface[0].imageSet->scale[0]->dpi;
+    ARLOGi("NFT marker %d: %d x %d at %d dpi.\n", id, this->nft.width_NFT,
+           this->nft.height_NFT, this->nft.dpi_NFT);
+    this->nftMarkers.push_back(this->nft);
+    this->markerStates[id] = NFTMarkerState{};
+    markerIds.push_back(id);
+  }
+
+  this->surfaceSetCount += batchSize;
   webarkitLOGi("Loading of NFT data complete.");
-
-  this->surfaceSetCount += markerIds.size();
 
   return markerIds;
 }

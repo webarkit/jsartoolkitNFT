@@ -130,6 +130,10 @@ private:
 
     int surfaceSetCount;
     AR2SurfaceSetT *surfaceSet[PAGES_MAX];
+    // KPM reference data of every marker loaded so far, across all
+    // addNFTMarkers() calls. kpmSetRefDataSet() rebuilds the matcher from
+    // scratch, so each call must hand it the whole set, not just the new batch.
+    KpmRefDataSet *refDataSetAll = nullptr;
     std::unordered_map<int, AR2SurfaceSetT *> surfaceSets;
     // nftMarker struct inside arController
     nftMarker nft;
