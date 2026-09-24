@@ -68,7 +68,7 @@
   "devDependencies": {
     "@babel/core": "8.0.1",
     "@babel/plugin-transform-runtime": "8.0.1",
-    "@babel/preset-env": "8.0.2",
+    "@babel/preset-env": "8.0.6",
     "@types/node": "^24.13.2",
     "@vitest/browser": "^5.0.1",
     "@vitest/browser-playwright": "^5.0.1",
