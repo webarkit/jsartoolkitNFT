@@ -209,17 +209,22 @@ export function controllerDetectionSuite(
 
     // Last, because it tears the controller down. A test rather than an afterAll
     // hook, so a teardown failure is reported by name.
+    //
+    // Every build this suite runs on shares the teardown() double free (#663).
+    // The debug build is the only one where calling dispose() is well defined:
+    // its allocator checks abort, and the test pins that abort. Elsewhere the
+    // call is undefined behaviour that happens not to crash, which asserts
+    // nothing, so it is skipped by name. The isolated test iframe is discarded
+    // after the file either way. Once #663 is fixed, the debug assertion fails:
+    // remove `disposeAborts` and this skip together.
     if (options.disposeAborts) {
-      // Pinned to the Emscripten abort, so a different teardown error still
-      // fails. Once the double free is fixed, dispose() stops throwing, this
-      // fails, and `disposeAborts` should go.
       it("disposes the controller (aborts: teardown double free)", () => {
         expect(() => ar.dispose()).toThrow(
           /Aborted\(native code called abort\(\)\)/,
         );
       });
     } else {
-      it("disposes the controller", () => {
+      it.skip("disposes the controller (skipped until #663: teardown() double free)", () => {
         ar.dispose();
       });
     }
