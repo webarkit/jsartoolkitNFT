@@ -189,6 +189,16 @@ The version appears in **three** places and all must agree:
 The last two are hardcoded and are not updated by `npm version`. Missing them ships artifacts
 that report the previous release.
 
+A version bump also needs **both rebuilds** committed in the same PR:
+
+- `npm run build-docker`: the two API files above are compiled into the legacy and embed builds
+  as `--pre-js`.
+- `npm run build-ts`: `src/ARToolkitNFT*.ts` import `version` from `package.json`, and webpack
+  inlines it into every `dist/` bundle.
+
+Check that nothing still carries the old version: `grep -l "<old version>" build/*.js dist/*.js`
+should print nothing.
+
 ---
 
 ## Gotchas
