@@ -1,2 +1,5 @@
 export = Module;
-declare var Module: any;
+declare function Module(moduleArg?: {}): Promise<{}>;
+declare namespace Module {
+    export { Module as default };
+}

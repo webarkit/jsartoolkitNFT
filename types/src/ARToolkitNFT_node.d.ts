@@ -1,6 +1,6 @@
-import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
+import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
 import { INFTMarkerInfo, ARLogLevel } from "./abstractions/CommonInterfaces";
-export declare class ARToolkitNFT implements IARToolkitNFT {
+export declare class ARToolkitNFT implements IARToolkitNFT_node {
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
     static ERROR_MARKER_INDEX_OUT_OF_BOUNDS: number;
@@ -34,8 +34,8 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     static AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
     private instance;
     private module;
-    private markerNFTCount;
     private cameraCount;
+    private nodefsMounted;
     private version;
     NFTMarkerInfo: {
         error: number;
@@ -54,30 +54,32 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     constructor();
     init(): Promise<this>;
     setup(width: number, height: number, cameraId: number): number;
-    teardown(id: number): void;
-    setupAR2(id: number): void;
-    setDebugMode(id: number, mode: boolean): number;
-    getDebugMode(id: number): boolean;
-    getProcessingImage(id: number): number;
-    detectNFTMarker(id: number): number;
-    getNFTMarker(id: number, markerIndex: number): INFTMarkerInfo;
-    getNFTData(id: number, index: number): object;
+    teardown(): void;
+    setupAR2(): void;
+    setDebugMode(mode: boolean): number;
+    getDebugMode(): boolean;
+    setFiltering(enableFiltering: boolean): void;
+    setContinuousDetection(enabled: boolean): void;
+    setDetectionInterval(ms: number): void;
+    getProcessingImage(): number;
+    detectNFTMarker(): number;
+    getNFTMarker(markerIndex: number): INFTMarkerInfo;
+    getNFTData(index: number): object;
     setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
-    setProjectionNearPlane(id: number, value: number): void;
-    getProjectionNearPlane(id: number): number;
-    setProjectionFarPlane(id: number, value: number): void;
-    getProjectionFarPlane(id: number): number;
-    setThresholdMode(id: number, mode: number): number;
-    getThresholdMode(id: any): number;
-    setThreshold(id: number, threshold: number): number;
-    getThreshold(id: number): number;
-    setImageProcMode(id: number, mode: number): number;
-    getImageProcMode(id: number): number;
-    getCameraLens(id: number): any;
-    passVideoData(id: number, videoFrame: Uint8ClampedArray, videoLuma: Uint8Array): void;
-    loadCamera(url: string): Promise<any>;
-    addNFTMarkers(arId: any, urls: any, callback: any, onError: any): void;
-    private _storeDataFile;
-    private ajax;
+    setProjectionNearPlane(value: number): void;
+    getProjectionNearPlane(): number;
+    setProjectionFarPlane(value: number): void;
+    getProjectionFarPlane(): number;
+    setThresholdMode(mode: number): number;
+    getThresholdMode(): number;
+    setThreshold(threshold: number): number;
+    getThreshold(): number;
+    setImageProcMode(mode: number): number;
+    getImageProcMode(): number;
+    getCameraLens(): any;
+    passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
+    loadCamera(pathOrData: Uint8Array | string): Promise<number>;
+    addNFTMarkers(urls: Array<string>, callback: (ids: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
+    private mountWorkingDirectory;
 }

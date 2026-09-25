@@ -52,7 +52,7 @@ if (!EMSCRIPTEN_ROOT) {
 const EMCC = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "emcc") : "emcc";
 const EMPP = EMSCRIPTEN_ROOT ? path.resolve(EMSCRIPTEN_ROOT, "em++") : "em++";
 const OPTIMIZE_FLAGS = " -Oz "; // -Oz for smallest size
-const MEM = 128 * 1024 * 1024; // 64MB
+const MEM = 128 * 1024 * 1024; // 128 MB initial heap
 
 const SOURCE_PATH = path.resolve(__dirname, "../emscripten/") + "/";
 const OUTPUT_PATH = path.resolve(__dirname, "../build/") + "/";
@@ -281,11 +281,20 @@ if (DEBUG_LOGS) {
   FLAGS += " -D DEBUG=1 ";
 }
 
-const FLAGS_NO_MEMORY_GROWTH = FLAGS.replace(" -s ALLOW_MEMORY_GROWTH=1", " ");
+// The threaded builds grow their heap too. KPM on a 2000x1500 frame needs about
+// 320-380 MB, well past the 128 MB initial heap, so a fixed heap large enough would
+// reserve that much shared memory up front even for small frames. The cap stays
+// below the 2 GB default because a shared memory reserves its maximum, which some
+// phones cannot. Growth with -pthread makes Emscripten's glue re-check its heap
+// views on each access; the per-frame cost measured the same as a fixed heap.
+const THREAD_MEMORY_FLAGS = " -s MAXIMUM_MEMORY=1GB";
 
 const WASM_FLAGS = " -s SINGLE_FILE=1";
+// MODULARIZE without EXPORT_ES6 emits a CommonJS factory, which is what the
+// commonjs2 Node dist needs. Each call builds a fresh module, so every
+// controller gets its own heap and filesystem.
 const NODE_FLAGS =
-  ' -s ENVIRONMENT=node -s FORCE_FILESYSTEM -s EXPORTED_RUNTIME_METHODS=["NODEFS","FS","HEAPU8"] -lnodefs.js';
+  ' -s ENVIRONMENT=node -s MODULARIZE=1 -s FORCE_FILESYSTEM -s EXPORTED_RUNTIME_METHODS=["NODEFS","FS","HEAPU8"] -lnodefs.js';
 const SIMD128_FLAGS = " -msimd128";
 const ES6_FLAGS = " -s EXPORT_ES6=1 -s MODULARIZE=1 -sENVIRONMENT=web ";
 
@@ -518,7 +527,7 @@ const compile_wasm_node = [
   ...INCLUDES.split(" "),
   ...ALL_BC.split(" "),
   ...LIBZ_A.split(" "),
-  ...MAIN_SOURCES.split(" "),
+  ...MAIN_SOURCES_IMPROVED_ES6.split(" "),
   ...FLAGS.split(" "),
   ...WASM_FLAGS.split(" "),
   ...DEFINES.split(" "),
@@ -533,7 +542,8 @@ const compile_wasm_thread = [
   ...THREAD_BC.split(" "),
   ...LIBZ_A.split(" "),
   ...MAIN_SOURCES_TD.split(" "),
-  ...FLAGS_NO_MEMORY_GROWTH.split(" "),
+  ...FLAGS.split(" "),
+  ...THREAD_MEMORY_FLAGS.split(" "),
   "-pthread",
   ...WASM_FLAGS.split(" "),
   ...SIMD128_FLAGS.split(" "),
@@ -593,7 +603,8 @@ const compile_wasm_es6_thread = [
   ...THREAD_BC.split(" "),
   ...LIBZ_A.split(" "),
   ...MAIN_SOURCES_TD_ES6.split(" "),
-  ...FLAGS_NO_MEMORY_GROWTH.split(" "),
+  ...FLAGS.split(" "),
+  ...THREAD_MEMORY_FLAGS.split(" "),
   "-pthread",
   ...WASM_FLAGS.split(" "),
   ...DEFINES.split(" "),

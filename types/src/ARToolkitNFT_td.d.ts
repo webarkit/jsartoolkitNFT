@@ -75,6 +75,8 @@ export declare class ARToolkitNFT implements IARToolkitNFT {
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
     setFiltering(enableFiltering: boolean): void;
+    setContinuousDetection(enabled: boolean): void;
+    setDetectionInterval(ms: number): void;
     getCameraLens(): any;
     passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
     loadCamera(urlOrData: Uint8Array | string): Promise<number>;

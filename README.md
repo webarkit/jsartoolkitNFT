@@ -3,8 +3,8 @@
 ![github forks](https://flat.badgen.net/github/forks/webarkit/jsartoolkitNFT)
 ![npm package version](https://flat.badgen.net/npm/v/@webarkit/jsartoolkit-nft)
 ![PyPI package version](https://flat.badgen.net/pypi/v/artoolkitnft)
-![Dependabot Badge](https://flat.badgen.net/github/dependabot/webarkit/jsartoolkit-nft)
-[![Tested with Jasmine](https://img.shields.io/badge/tested_with-Jasmine-8A4182.svg)](https://jasmine.github.io/)
+![Dependabot Badge](https://flat.badgen.net/github/dependabot/webarkit/jsartoolkitNFT)
+[![Tested with Vitest](https://img.shields.io/badge/tested_with-Vitest-6E9F18.svg?logo=vitest&logoColor=white)](https://vitest.dev/)
 [![CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml)
 [![Build jsartoolkitNFT CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml)
 
@@ -25,6 +25,38 @@ Try the example !! [www.webarkit.org/examples/artoolkitnft_es6_example](https://
 
 - NFT (natural feature tracking) markers ✅ 🎉 🎨
 - Multi NFT markers !!!
+
+### Multi-marker tracking
+
+Load several NFT markers with `loadNFTMarkers()` and every one in view is tracked at the same
+time: `getNFTMarker` fires once per visible marker each frame, with that marker's `index` and its
+own pose, and `lostNFTMarker` fires for each marker on its own when it leaves the view.
+
+Detection — finding a marker that is not tracked yet — is far more expensive than tracking one
+that is: a detection pass costs the full detection time on the frame where it runs. So it follows
+a policy:
+
+- while no marker is tracked, detection runs on every frame;
+- while at least one marker is tracked and another loaded marker is not, it runs at most once per
+  detection interval, counted from the end of the previous pass, so a marker entering the view is
+  still picked up and every pass is followed by tracking-only frames, however long a pass takes;
+- while every loaded marker is tracked, it does not run.
+
+Two setters on `ARControllerNFT` tune this:
+
+- `setContinuousDetection(enabled)` — default `true`. With `false`, no detection runs once any
+  marker is tracked, until tracking is lost (the single-marker behaviour of 1.12.0 and earlier).
+- `setDetectionInterval(ms)` — the interval above, in milliseconds. Default `300` in the default
+  and SIMD builds. `0` detects on every frame; negative values count as `0`.
+
+The threaded (Pthread) build detects on a worker thread, off the main thread, so its default
+interval is `0`; both setters work there too, and an interval saves worker CPU. The Node.js build
+runs the same native code as the default build, so it tracks several markers and honours both
+setters, with the same `300` ms default interval.
+
+Note for upgraders: `getTransformationMatrix()` now returns a fresh array for each frame a marker
+is found, instead of updating one array in place. Read it each frame rather than keeping a
+reference and expecting it to change.
 
 ## WASM
 
@@ -278,9 +310,15 @@ init();
 
 ### What works
 
-- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`)
+- Loading NFT marker datasets (`.fset`, `.fset3`, `.iset`). Camera and marker paths are read
+  from disk relative to the working directory.
 - KPM-based marker detection and AR2 tracking with pose matrix output
-- Event listener for `getNFTMarker`
+- [Multi-marker tracking](#multi-marker-tracking): load several markers with
+  `loadNFTMarkers(['DataNFT/pinball', 'DataNFT/kuva'], onSuccess, onError)` and each one in view
+  is tracked, with `setContinuousDetection()` / `setDetectionInterval()` as in the browser builds.
+  Markers can also be added in later calls: ids continue from the markers already loaded, and a
+  call that fails leaves them in place.
+- Event listeners for `getNFTMarker` and `lostNFTMarker`
 - Decoding image input via [sharp](https://github.com/lovell/sharp) or the [canvas](https://github.com/Automattic/node-canvas) package (`process()` expects **RGBA** pixel data). Neither is a dependency of this package — install whichever you prefer.
 
 ### Not yet implemented
@@ -303,7 +341,7 @@ cd examples/node && node example_dist.js
 - `js/` (api and workers of JSARToolKitNFT.js for the standard api)
 - `python-bindings/` (experimental Python bindings — see section above)
 - `src/` (source code of ARToolKitNFT with Typescript)
-- `tests/` (Karma/Jasmine specs, plus the Vitest browser suite in `tests/vitest/` — see [Running the tests](#running-the-tests-))
+- `tests/` (the Vitest browser suite in `tests/vitest/` and the Node suite in `tests/node/` — see [Running the tests](#running-the-tests-))
 - `tools/` (build scripts for building JSARToolKitNFT with Emscripten)
 - `types/` (type definitions of ARToolKitNFT)
 
@@ -316,49 +354,40 @@ npm ci
 npx playwright install chromium
 ```
 
-That second step is required. The Vitest suite runs in a real Chromium supplied by Playwright,
-and without it you get a missing-executable error before any spec starts.
+That second step is required. The browser suite runs in a real Chromium supplied by Playwright,
+and without it you get a missing-executable error before any spec starts. It is the only browser
+the tests need.
 
 ```bash
-npm test              # the full suite: Vitest first, then the seven Karma targets
-npm run test:vitest   # just the Vitest browser suite (a couple of seconds)
-npm run test:coverage # the same, with an lcov report scoped to src/
+npm test              # everything: the browser suite, then the Node suite
+npm run test:vitest   # the browser suite only
+npm run test:node     # the Node suite only
+npm run test:coverage # the browser suite, with an lcov report scoped to src/
 ```
 
-`npm run test:vitest:watch` re-runs on change while you work.
-
-The two suites cover different things. `tests/vitest/` drives `ARControllerNFT` through
-`src/` — the code published as `dist/` — and loads a real NFT marker and pushes frames through
-`process()`. The Karma specs under `tests/*.test.js` cover the legacy global API and the raw
-Emscripten bindings across the seven build targets, and are being migrated (#579).
-
-### The browser Karma needs
-
-The Karma targets need a **system Chrome or Chromium**, separate from the one Playwright
-installs for Vitest. Playwright's browser cannot be reused: it launches but never captures
-under Karma, timing out after 60s per attempt.
-
-`karma-chrome-launcher` finds it through `CHROME_BIN`, so if `npm test` reports
-`No binary for ChromeHeadless browser on your platform`, point it at your install:
+`npm run test:vitest:watch` re-runs on change while you work. To run a single file, pass its
+path:
 
 ```bash
-# Linux — matches what CI installs
-export CHROME_BIN=$(command -v google-chrome-stable || command -v chromium)
-
-# macOS
-export CHROME_BIN="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-
-# Windows (PowerShell)
-$env:CHROME_BIN = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+npx vitest run tests/vitest/legacy-min.test.ts
 ```
 
-CI installs Google's `.deb` directly from `dl.google.com` rather than the snap-backed
-`chromium-browser` apt package, whose CDN has failed often enough to redden unrelated PRs
-(#602).
+What the suites cover:
 
-Tests run against the **committed** `build/` artifacts. If you change anything under
-`emscripten/` or `tools/makem.js`, rebuild before testing or you will be testing stale
-WebAssembly — see [AGENTS.md](AGENTS.md).
+- **The TypeScript API** (`tests/vitest/` over `src/`): `ARControllerNFT` as consumers import
+  it. This covers marker loading, `process()`, two markers detected in a real photo and
+  marker-lost events, on the default, SIMD and threaded builds.
+- **Every browser build** (`legacy-*.test.ts`, `embed-es6.test.ts`, `module-surface.test.ts`):
+  each committed artifact in `build/` loads, detects the pinball print in
+  `examples/node/pinball-demo.jpg`, and exports what `src/` relies on (`HEAPU8`, `FS`,
+  `_malloc`).
+- **The published bundle** (`dist-bundle.test.ts`): `dist/ARToolkitNFT.js` loaded with a script
+  tag, the way a `<script>` consumer gets it.
+- **The Node build** (`tests/node/`), run with `node --test`.
+
+Tests run against the **committed** `build/` and `dist/` artifacts. If you change anything under
+`emscripten/` or `tools/makem.js`, rebuild before testing, or you will be testing stale
+WebAssembly. See [AGENTS.md](AGENTS.md).
 
 ## WebAssembly 👋
 

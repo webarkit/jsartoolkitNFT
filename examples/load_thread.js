@@ -49,7 +49,7 @@ function load_thread(msg) {
 
     ar.loadNFTMarker(msg.marker, function (id) {
       ar.trackNFTMarkerId(id);
-      let marker = ar.getNFTData(ar.id, 0);
+      let marker = ar.getNFTData(id);
       console.log("nftMarker data: ", marker);
       const markerInfos = new CustomEvent("markerInfos", {
         detail: { marker: marker },

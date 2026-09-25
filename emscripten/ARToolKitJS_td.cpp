@@ -273,18 +273,27 @@ int detectNFTMarker(int id) {
         arFilterTransMatInit(arc->filterSampleRate, arc->filterCutoffFrequency);
 #endif
 
+    // KPM reports one result per matched page: take the best match, the most
+    // inliers, then the lowest error.
+    int best = -1;
     for (int i = 0; i < kpmResultNum; i++) {
-      if (kpmResult[i].camPoseF == 0) {
-
-        float trans[3][4];
-        arc->detectedPage = kpmResult[i].pageNo;
-        for (int j = 0; j < 3; j++) {
-          for (int k = 0; k < 4; k++) {
-            trans[j][k] = kpmResult[i].camPose[j][k];
-          }
-        }
-        ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
+      if (kpmResult[i].camPoseF != 0) continue;
+      if (best < 0 ||
+          kpmResult[i].inlierNum > kpmResult[best].inlierNum ||
+          (kpmResult[i].inlierNum == kpmResult[best].inlierNum &&
+           kpmResult[i].error < kpmResult[best].error)) {
+        best = i;
       }
+    }
+    if (best >= 0) {
+      float trans[3][4];
+      arc->detectedPage = kpmResult[best].pageNo;
+      for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < 4; k++) {
+          trans[j][k] = kpmResult[best].camPose[j][k];
+        }
+      }
+      ar2SetInitTrans(arc->surfaceSet[arc->detectedPage], trans);
     }
   }*/
   return kpmResultNum;
@@ -398,10 +407,14 @@ int teardown(int id) {
 
   deleteHandle(arc);
 
-  // Add trackingInitQuit and delete arc
+  // Stop the detection worker while the KPM handle it uses is still alive:
+  // erase() below destroys the controller, and its kpmHandle with it.
   trackingInitQuit(&arc->threadHandle);
-  delete arc;
 
+  // `arc` points into arControllers, which holds the controller by value, so
+  // erase() is what destroys it. It must not also be deleted: that freed
+  // memory `new` never allocated and then ran the destructor a second time
+  // (#663).
   arControllers.erase(id);
 
   return 0;

@@ -47,6 +47,8 @@ export interface IARToolkitNFT {
   setDebugMode(mode: boolean): number;
   getDebugMode(): boolean;
   setFiltering(enableFiltering: boolean): void;
+  setContinuousDetection(enabled: boolean): void;
+  setDetectionInterval(ms: number): void;
   getProcessingImage(): number;
   setLogLevel(level: ARLogLevel | number): void;
   getLogLevel(): number;

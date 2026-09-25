@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <limits>
 #include <AR/config.h>
 #include <AR2/tracking.h>
 #include <AR/arFilterTransMat.h>
@@ -15,6 +16,8 @@
 #include <WebARKitVideoLuma.h>
 #include "trackingMod.h"
 #include "markerDecompress.h"
+#include "NFTMarkerState.h"
+#include <array>
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
 
@@ -77,12 +80,13 @@ public:
     int getImageProcMode();
     int setup(int width, int height, int cameraID);
     void setFiltering(bool enableFiltering);
+    void setContinuousDetection(bool enabled);
+    void setDetectionInterval(double ms);
 
 private:
     bool withFiltering; // New property
 
     // Filtering-related variables
-    ARFilterTransMatInfo *ftmi;
     double filterCutoffFrequency;
     double filterSampleRate;
 
@@ -107,10 +111,29 @@ private:
     std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;  // Changed from std::shared_ptr
     AR2HandleT *ar2Handle;
 
-    int detectedPage;
+    // One state per loadable page; index = page number = marker id.
+    std::array<NFTMarkerState, PAGES_MAX> markerStates;
+
+    // Detection policy. KPM runs on every frame while no marker is tracked.
+    // While some are tracked and some are not, it runs at most once every
+    // detectionIntervalMs, counted from the end of the previous pass, and not at
+    // all if continuousDetection is off. While every loaded marker is tracked
+    // it does not run.
+    bool continuousDetection = true;
+    double detectionIntervalMs = 300.0;
+    // When the last pass finished; -infinity so the first pass is never throttled.
+    double lastKpmEndMs = -std::numeric_limits<double>::infinity();
+
+    bool allMarkersTracked() const;
+    bool anyMarkerTracked() const;
+    void trackMarkers();
 
     int surfaceSetCount;
     AR2SurfaceSetT *surfaceSet[PAGES_MAX];
+    // KPM reference data of every marker loaded so far, across all
+    // addNFTMarkers() calls. kpmSetRefDataSet() rebuilds the matcher from
+    // scratch, so each call must hand it the whole set, not just the new batch.
+    KpmRefDataSet *refDataSetAll = nullptr;
     std::unordered_map<int, AR2SurfaceSetT *> surfaceSets;
     // nftMarker struct inside arController
     nftMarker nft;

@@ -171,6 +171,10 @@ export interface IARToolKitNFTInstance {
   // Filtering
   setFiltering(enableFiltering: boolean): void;
 
+  // Detection policy
+  setContinuousDetection(enabled: boolean): void;
+  setDetectionInterval(ms: number): void;
+
   // ZFT decompression
   _decompressZFT(prefix: string, prefixTemp: string): number;
 
@@ -221,4 +225,10 @@ export interface ARToolkitNFTModule {
   AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR: number;
   AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR_MULTI: number;
   AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
+}
+
+// The Node build also exports NODEFS, which ARToolkitNFT_node mounts to read
+// the camera and marker files from the working directory.
+export interface ARToolkitNFTNodeModule extends ARToolkitNFTModule {
+  NODEFS: any;
 }

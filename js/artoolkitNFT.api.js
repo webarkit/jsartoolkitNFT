@@ -63,7 +63,7 @@
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.12.0';
+        this.version = '1.13.0';
         console.info('JsartoolkitNFT ', this.version);
         console.warn("This library is deprecated, use the ES6 version instead!! It will be removed in a future release.")
 

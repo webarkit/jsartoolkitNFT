@@ -81,6 +81,8 @@ export interface IARToolKitNFTInstance {
     setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
     setFiltering(enableFiltering: boolean): void;
+    setContinuousDetection(enabled: boolean): void;
+    setDetectionInterval(ms: number): void;
     _decompressZFT(prefix: string, prefixTemp: string): number;
     [key: string]: any;
 }
@@ -125,4 +127,7 @@ export interface ARToolkitNFTModule {
     AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR: number;
     AR_MARKER_INFO_CUTOFF_PHASE_POSE_ERROR_MULTI: number;
     AR_MARKER_INFO_CUTOFF_PHASE_HEURISTIC_TROUBLESOME_MATRIX_CODES: number;
+}
+export interface ARToolkitNFTNodeModule extends ARToolkitNFTModule {
+    NODEFS: any;
 }

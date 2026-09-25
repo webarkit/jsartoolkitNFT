@@ -139,7 +139,10 @@ export default function start(
   let time = 0;
 
   const setCameraMatrix = function () {
-    const proj = camera_matrix;
+    // Scale a copy: this runs on every frame, so scaling camera_matrix itself
+    // would compound by ratioW/ratioH each frame whenever the camera frame is
+    // not 4:3 (typical on phones), until the model is projected out of view.
+    const proj = Array.from(camera_matrix);
     const ratioW = pw / w;
     const ratioH = ph / h;
     proj[0] *= ratioW;
@@ -168,7 +171,6 @@ export default function start(
       sphere.visible = false;
     } else {
       sphere.visible = true;
-      console.log(world);
       sphere.position.y = ((marker.height / marker.dpi) * 2.54 * 10) / 2.0;
       sphere.position.x = ((marker.width / marker.dpi) * 2.54 * 10) / 2.0;
       // set matrix of 'root' by detected 'world' matrix
