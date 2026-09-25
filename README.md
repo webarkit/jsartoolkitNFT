@@ -316,8 +316,8 @@ init();
 - [Multi-marker tracking](#multi-marker-tracking): load several markers with
   `loadNFTMarkers(['DataNFT/pinball', 'DataNFT/kuva'], onSuccess, onError)` and each one in view
   is tracked, with `setContinuousDetection()` / `setDetectionInterval()` as in the browser builds.
-  Load every marker in that one call: a second call is refused until
-  [#612](https://github.com/webarkit/jsartoolkitNFT/issues/612) lets the loader append markers.
+  Markers can also be added in later calls: ids continue from the markers already loaded, and a
+  call that fails leaves them in place.
 - Event listeners for `getNFTMarker` and `lostNFTMarker`
 - Decoding image input via [sharp](https://github.com/lovell/sharp) or the [canvas](https://github.com/Automattic/node-canvas) package (`process()` expects **RGBA** pixel data). Neither is a dependency of this package — install whichever you prefer.
 
