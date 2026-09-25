@@ -18815,7 +18815,6 @@ function asmFunc(imports) {
    std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 204 | 0);
    HEAP32[$0 + 200 >> 2] = 0;
    deleteHandle($0);
-   emscripten_builtin_free(arController___arController_28_29($0));
    $4 = std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(81244, $3);
    if ($4) {
     $10 = __stack_pointer - 16 | 0;
@@ -18920,31 +18919,6 @@ function asmFunc(imports) {
   }
   __stack_pointer = $6 + 16 | 0;
   return $0 | 0;
- }
- 
- function arController___arController_28_29($0) {
-  var $1 = 0, $2 = 0, $3 = 0;
-  std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 388 | 0);
-  $3 = $0 + 352 | 0;
-  $1 = HEAP32[$3 + 8 >> 2];
-  while (1) {
-   if ($1) {
-    $2 = HEAP32[$1 >> 2];
-    emscripten_builtin_free($1);
-    $1 = $2;
-    continue;
-   }
-   break;
-  };
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($3);
-  $2 = HEAP32[$0 + 224 >> 2];
-  HEAP32[$0 + 224 >> 2] = 0;
-  if ($2) {
-   FUNCTION_TABLE[HEAP32[$0 + 228 >> 2]]($2)
-  }
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 204 | 0);
-  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 196 | 0);
-  return $0;
  }
  
  function recalculateCameraLens($0) {
@@ -26528,6 +26502,30 @@ function asmFunc(imports) {
   $2 = $2 | 0;
   $3 = $3 | 0;
   return FUNCTION_TABLE[HEAP32[$0 >> 2]]($1, $2, $3) | 0;
+ }
+ 
+ function arController___arController_28_29($0) {
+  var $1 = 0, $2 = 0, $3 = 0;
+  std____2__vector_unsigned_20char_2c_20std____2__allocator_unsigned_20char_____vector_5babi_ne200100_5d_28_29($0 + 388 | 0);
+  $3 = $0 + 352 | 0;
+  $1 = HEAP32[$3 + 8 >> 2];
+  while (1) {
+   if ($1) {
+    $2 = HEAP32[$1 >> 2];
+    emscripten_builtin_free($1);
+    $1 = $2;
+    continue;
+   }
+   break;
+  };
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($3);
+  $2 = HEAP32[$0 + 224 >> 2];
+  HEAP32[$0 + 224 >> 2] = 0;
+  if ($2) {
+   FUNCTION_TABLE[HEAP32[$0 + 228 >> 2]]($2)
+  }
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 204 | 0);
+  std____2__unique_ptr_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void______20_5b_5d_2c_20std____2____bucket_list_deallocator_std____2__allocator_std____2____hash_node_base_std____2____hash_node_std____2____hash_value_type_int_2c_20std____2__vector_vision__Point3d_float__2c_20std____2__allocator_vision__Point3d_float_____2c_20void___________unique_ptr_5babi_ne200100_5d_28_29($0 + 196 | 0);
  }
  
  function std____2__unique_ptr_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void___2c_20std____2____hash_node_destructor_std____2__allocator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void________unique_ptr_5babi_ne200100_5d_28_29($0) {

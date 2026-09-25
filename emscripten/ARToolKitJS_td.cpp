@@ -407,10 +407,14 @@ int teardown(int id) {
 
   deleteHandle(arc);
 
-  // Add trackingInitQuit and delete arc
+  // Stop the detection worker while the KPM handle it uses is still alive:
+  // erase() below destroys the controller, and its kpmHandle with it.
   trackingInitQuit(&arc->threadHandle);
-  delete arc;
 
+  // `arc` points into arControllers, which holds the controller by value, so
+  // erase() is what destroys it. It must not also be deleted: that freed
+  // memory `new` never allocated and then ran the destructor a second time
+  // (#663).
   arControllers.erase(id);
 
   return 0;

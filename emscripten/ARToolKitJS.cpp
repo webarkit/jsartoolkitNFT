@@ -407,8 +407,10 @@ extern "C"
 
     deleteHandle(arc);
 
-    delete arc;
-
+    // `arc` points into arControllers, which holds the controller by value, so
+    // erase() is what destroys it. It must not also be deleted: that freed
+    // memory `new` never allocated and then ran the destructor a second time
+    // (#663).
     arControllers.erase(id);
 
     return 0;
