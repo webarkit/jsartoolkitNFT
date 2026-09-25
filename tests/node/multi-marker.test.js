@@ -121,16 +121,32 @@ describe("Node build, two markers in view", () => {
     }
   });
 
-  it("refuses a second load and keeps tracking the markers it has", async () => {
-    // addNFTMarkers cannot append yet (#612); a second call would overwrite
-    // the loaded markers, so the Node wrapper refuses it.
-    await assert.rejects(loadMarkers(ar, ["DataNFT/kuva"]));
+  it("reports missing marker files through onError", async () => {
+    await assert.rejects(loadMarkers(ar, ["DataNFT/does-not-exist"]));
+  });
+});
+
+describe("Node build, markers loaded in separate calls (#612)", () => {
+  let ar;
+  let frames;
+
+  before(async () => {
+    process.chdir(EXAMPLE_DIR);
+    frames = await loadFrames();
+    ar = await ARControllerNFT.initWithDimensions(WIDTH, HEIGHT, "camera_para.dat");
+  });
+
+  it("continues the ids and detects both markers", async () => {
+    assert.deepEqual(await loadMarkers(ar, ["DataNFT/pinball"]), [0]);
+    assert.deepEqual(await loadMarkers(ar, ["DataNFT/kuva"]), [1]);
+    ar.trackNFTMarkerId(0);
+    ar.trackNFTMarkerId(1);
     processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
   });
 
-  it("reports missing marker files through onError", async () => {
-    // A fresh controller, so the refusal of a second load does not answer first.
+  it("accepts a retry after a failed load", async () => {
     const fresh = await ARControllerNFT.initWithDimensions(WIDTH, HEIGHT, "camera_para.dat");
     await assert.rejects(loadMarkers(fresh, ["DataNFT/does-not-exist"]));
+    assert.deepEqual(await loadMarkers(fresh, ["DataNFT/pinball"]), [0]);
   });
 });

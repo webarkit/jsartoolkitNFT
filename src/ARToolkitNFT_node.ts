@@ -110,7 +110,6 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
   private module: ARToolkitNFTNodeModule;
   private cameraCount: number;
   private nodefsMounted: boolean;
-  private markersAdded: boolean;
   private version: string;
 
   public NFTMarkerInfo: {
@@ -152,7 +151,6 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     this.instance;
     this.cameraCount = 0;
     this.nodefsMounted = false;
-    this.markersAdded = false;
     this.version = version;
     console.info("ARToolkitNFT ", this.version);
   }
@@ -399,9 +397,9 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
    * the path of the descriptor files without the extension, relative to the
    * working directory. The files are read in place through NODEFS.
    *
-   * Load every marker in one call. The native loader cannot yet append to
-   * markers it already holds (#612): a second call would overwrite them, so it
-   * is refused through `onError2`.
+   * It can be called more than once: ids continue from the markers already
+   * loaded (#612). A call that fails reports through `onError2` and leaves the
+   * markers loaded by earlier calls in place, so it can be retried.
    * @param {Array<string>} urls array of paths of the descriptor files without ext
    * @param {function} callback the callback to retrieve the ids.
    * @param {function} onError2 the error callback.
@@ -412,14 +410,6 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     callback: (ids: number[]) => void,
     onError2: (errorNumber: number) => void,
   ): Array<number> {
-    if (this.markersAdded) {
-      console.error(
-        "addNFTMarkers can only be called once per controller: load every marker in one call (#612).",
-      );
-      if (onError2) onError2(-1);
-      return [];
-    }
-
     this.mountWorkingDirectory();
 
     const prefixes = urls.map((url) => NODEFS_MOUNT + "/" + url);
@@ -433,10 +423,6 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
         }
       }
     }
-
-    // Set before the native call: a failed load can leave partial native state
-    // behind, which a retry would build on.
-    this.markersAdded = true;
 
     const vec = new this.StringList();
     for (const prefix of prefixes) {
