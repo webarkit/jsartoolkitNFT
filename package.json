@@ -81,7 +81,7 @@
     "sharp": "^0.35.4",
     "ts-loader": "^9.6.2",
     "typedoc": "0.28.20",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vitest": "^5.0.1",
     "webpack": "5.111.1",
     "webpack-cli": "7.2.3"
