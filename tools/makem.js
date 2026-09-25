@@ -166,9 +166,14 @@ let ar_sources, ar_sources_threaded;
 
 const glob = require("glob");
 
+// glob returns files in filesystem order since v9, and that order sets the link
+// order of the library, so an unsorted list changes every artifact. Sort the way
+// glob 7 did (localeCompare with "en"), which keeps the build reproducible and
+// byte-identical to the artifacts built before the upgrade.
 function expandGlob(pattern) {
   return glob
     .sync(pattern, { cwd: path.resolve(WEBARKITLIB_ROOT, "lib/SRC") })
+    .sort((a, b) => a.localeCompare(b, "en"))
     .map((file) => path.resolve(WEBARKITLIB_ROOT, "lib/SRC", file));
 }
 
