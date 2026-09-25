@@ -51,7 +51,23 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        shell: bash
+        # Playwright's Chromium is the only browser the tests need. Its download,
+        # and the apt packages --with-deps pulls in, can hit a transient CDN or
+        # mirror failure (#602), so retry before failing the job.
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if npx playwright install --with-deps chromium; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Could not install Playwright Chromium after 3 attempts"
+              exit 1
+            fi
+            echo "::warning::Playwright install attempt $attempt failed; retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
 
       - name: Test
         run: npm test
