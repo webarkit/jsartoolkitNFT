@@ -75,7 +75,7 @@
     "@vitest/coverage-v8": "^5.0.1",
     "babel-loader": "10.1.1",
     "canvas": "^3.2.3",
-    "glob": "^7.2.3",
+    "glob": "^13.0.6",
     "playwright": "^1.63.0",
     "prettier": "^3.9.9",
     "sharp": "^0.35.4",
