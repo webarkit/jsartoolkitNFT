@@ -3468,7 +3468,7 @@ function asmFunc(imports) {
  }
  
  function ar2SelectTemplate($0, $1, $2, $3, $4, $5) {
-  var $6 = Math_fround(0), $7 = Math_fround(0), $8 = 0, $9 = 0, $10 = Math_fround(0), $11 = Math_fround(0), $12 = Math_fround(0), $13 = Math_fround(0), $14 = Math_fround(0), $15 = Math_fround(0), $16 = Math_fround(0), $17 = Math_fround(0), $18 = 0, $19 = 0, $20 = 0, $21 = 0, $22 = Math_fround(0), $23 = Math_fround(0), $24 = Math_fround(0), $25 = Math_fround(0), $26 = 0, wasm2js_i32$0 = 0, wasm2js_i32$1 = 0;
+  var $6 = Math_fround(0), $7 = Math_fround(0), $8 = 0, $9 = 0, $10 = Math_fround(0), $11 = Math_fround(0), $12 = Math_fround(0), $13 = Math_fround(0), $14 = Math_fround(0), $15 = Math_fround(0), $16 = Math_fround(0), $17 = Math_fround(0), $18 = 0, $19 = 0.0, $20 = 0, $21 = 0, $22 = 0, $23 = Math_fround(0), $24 = Math_fround(0), $25 = Math_fround(0), $26 = Math_fround(0), $27 = 0, wasm2js_i32$0 = 0, wasm2js_i32$1 = 0;
   $9 = __stack_pointer - 32 | 0;
   __stack_pointer = $9;
   block9 : {
@@ -3644,14 +3644,14 @@ function asmFunc(imports) {
       $12 = HEAPF32[$9 + 16 >> 2];
       $6 = Math_fround($14 * $12);
       $18 = Math_fround($10 - $6) >= Math_fround(0.0);
-      $19 = $18 ? 2 : 1;
-      $20 = $18 ? 1 : 2;
+      $20 = $18 ? 2 : 1;
+      $21 = $18 ? 1 : 2;
       $17 = Math_fround($6 - $10);
-      $21 = $3 + 24 | 0;
-      $22 = Math_fround(($5 | 0) / 8 | 0);
-      $23 = Math_fround(($4 | 0) / 8 | 0);
-      $24 = Math_fround((Math_imul($5, 7) | 0) / 8 | 0);
-      $25 = Math_fround((Math_imul($4, 7) | 0) / 8 | 0);
+      $22 = $3 + 24 | 0;
+      $23 = Math_fround(($5 | 0) / 8 | 0);
+      $24 = Math_fround(($4 | 0) / 8 | 0);
+      $25 = Math_fround((Math_imul($5, 7) | 0) / 8 | 0);
+      $26 = Math_fround((Math_imul($4, 7) | 0) / 8 | 0);
       $16 = Math_fround(-$13);
       $15 = Math_fround(-$14);
       $2 = -1;
@@ -3672,16 +3672,16 @@ function asmFunc(imports) {
           };
          }
          $6 = HEAPF32[$1 + 16 >> 2];
-         if ($6 < $23 | $6 > $25) {
+         if ($6 < $24 | $6 > $26) {
           break block18
          }
          $7 = HEAPF32[$1 + 20 >> 2];
-         if ($7 < $22 | $7 > $24) {
+         if ($7 < $23 | $7 > $25) {
           break block18
          }
          HEAPF32[$3 + 24 >> 2] = $6;
          HEAPF32[$3 + 28 >> 2] = HEAPF32[$1 + 20 >> 2];
-         ar2GetVectorAngle($3, $21, $9 + 12 | 0, $9 + 8 | 0);
+         ar2GetVectorAngle($3, $22, $9 + 12 | 0, $9 + 8 | 0);
          $6 = HEAPF32[$9 + 12 >> 2];
          $7 = HEAPF32[$9 + 8 >> 2];
          block19 : {
@@ -3703,15 +3703,15 @@ function asmFunc(imports) {
            break block18
           }
           $1 = 3;
-          $4 = $20;
-          $8 = $19;
+          $4 = $21;
+          $8 = $20;
           if (!(Math_fround(Math_fround($13 * $7) + Math_fround($12 * Math_fround(-$6))) >= Math_fround(0.0))) {
            break block18
           }
          }
-         $26 = ($1 << 3) + $3 | 0;
+         $27 = ($1 << 3) + $3 | 0;
          $1 = ($4 << 3) + $3 | 0;
-         $6 = Math_fround(ar2GetTriangleArea($3, $26, $1) + ar2GetTriangleArea($3, $1, ($8 << 3) + $3 | 0));
+         $6 = Math_fround(ar2GetTriangleArea($3, $27, $1) + ar2GetTriangleArea($3, $1, ($8 << 3) + $3 | 0));
          if (!($6 > $10)) {
           break block18
          }
@@ -3812,9 +3812,9 @@ function asmFunc(imports) {
      $1 = $2 ? $1 : $1 + 1 | 0;
      HEAP32[20508] = $2;
      HEAP32[20509] = $1;
-     $10 = Math_fround(Math_fround(Math_fround($5 | 0) * Math_fround($1 >>> 1 | 0)) * Math_fround(4.656612873077393e-10));
-     if (Math_fround(Math_abs($10)) < Math_fround(2147483648.0)) {
-      $1 = ~~$10
+     $19 = +($5 | 0) * +($1 >>> 1 | 0) * 4.656612873077393e-10;
+     if (Math_abs($19) < 2147483647.0) {
+      $1 = ~~$19
      } else {
       $1 = -2147483648
      }
