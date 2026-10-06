@@ -523,7 +523,8 @@ extern "C"
 
   int decompressZFT(std::string datasetPathname, std::string tempPathname){
     int response = decompressMarkers(datasetPathname.c_str(), tempPathname.c_str());
-    return 1;
+    // 1 on success, -1 if the archive is missing or malformed.
+    return response == 0 ? 1 : -1;
   }
 
   /*****************
