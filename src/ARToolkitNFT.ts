@@ -436,6 +436,10 @@ export class ARToolkitNFT implements IARToolkitNFT {
       const prefixTemp = "/tempMarkerNFT_" + marker_num;
 
       const response = this.instance._decompressZFT(prefix, prefixTemp);
+      // The archive is no longer needed once decompressed: free it from MEMFS.
+      try {
+        this.FS.unlink(prefix + ".zft");
+      } catch (e) {}
       if (response !== 1) {
         onError(prefix + ".zft");
         return;
