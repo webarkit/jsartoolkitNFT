@@ -10,7 +10,7 @@
    emscripten. This means we are dealing with 64bit float
 */
 
-#include "trackingSub.h"
+#include <WebARKitTrackers/WebARKitNFT/trackingSub.h>
 #include <AR/ar.h>
 #include <AR/arFilterTransMat.h>
 #include <AR/config.h>
@@ -25,7 +25,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "markerDecompress.h"
+#include <WebARKitTrackers/WebARKitNFT/markerDecompress.h>
 #include <memory> // Add for std::unique_ptr
 
 const int PAGES_MAX =
