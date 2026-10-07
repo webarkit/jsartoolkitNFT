@@ -110,31 +110,40 @@ const BUILD_SIMD_WASM_ES6_FILE = BUILD_BASE_FILENAME + "_ES6_wasm.simd.js";
 const BUILD_WASM_ES6_TD_FILE = BUILD_BASE_FILENAME + "_ES6_wasm_td.js";
 const BUILD_MIN_FILE = BUILD_BASE_FILENAME + ".min.js";
 
+// NFT helpers (trackingMod, trackingSub, markerDecompress) live in WebARKitLib.
+const WEBARKIT_NFT_PATH = path.resolve(
+  WEBARKITLIB_ROOT,
+  "WebARKit/WebARKitTrackers/WebARKitNFT",
+);
+function nft(src) {
+  return path.resolve(WEBARKIT_NFT_PATH, src);
+}
+
 let MAIN_SOURCES = [
   "ARToolKitJS.cpp",
-  "trackingMod.c",
-  "trackingMod2d.c",
-  "markerDecompress.c",
+  nft("trackingMod.c"),
+  nft("trackingMod2d.c"),
+  nft("markerDecompress.c"),
 ];
 
 // testing threaded version of the library.
 let MAIN_SOURCES_TD = [
   "ARToolKitJS_td.cpp",
-  "trackingSub.c",
-  "markerDecompress.c",
+  nft("trackingSub.c"),
+  nft("markerDecompress.c"),
 ];
 
 let MAIN_SOURCES_TD_ES6 = [
   "ARToolKitNFT_js_td.cpp",
-  "trackingSub.c",
-  "markerDecompress.c",
+  nft("trackingSub.c"),
+  nft("markerDecompress.c"),
 ];
 
 let MAIN_SOURCES_IMPROVED_ES6 = [
   "ARToolKitNFT_js.cpp",
-  "trackingMod.c",
-  "trackingMod2d.c",
-  "markerDecompress.c",
+  nft("trackingMod.c"),
+  nft("trackingMod2d.c"),
+  nft("markerDecompress.c"),
 ];
 
 if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
@@ -326,6 +335,7 @@ NO_WASM_FLAG += " -s WASM=0"; // Disable WASM for debugging
 const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/WebARKit/include"),
+  path.resolve(WEBARKIT_NFT_PATH, "include"),
   OUTPUT_PATH,
   SOURCE_PATH,
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),

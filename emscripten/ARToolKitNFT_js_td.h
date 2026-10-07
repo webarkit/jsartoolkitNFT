@@ -1,4 +1,4 @@
-#include "trackingSub.h"
+#include <WebARKitTrackers/WebARKitNFT/trackingSub.h>
 #include <stdio.h>
 #include <AR/ar.h>
 #include <emscripten.h>
@@ -15,8 +15,8 @@
 #include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
 #include <WebARKitVideoLuma.h>
-#include "markerDecompress.h"
-#include "NFTMarkerState.h"
+#include <WebARKitTrackers/WebARKitNFT/markerDecompress.h>
+#include <WebARKitTrackers/WebARKitNFT/NFTMarkerState.h>
 #include <array>
 
 const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
