@@ -1,4 +1,38 @@
 const path = require("path");
+const { ConstDependency } = require("webpack").dependencies;
+
+// The Emscripten ES6 glue reads import.meta.url to find its own directory. A UMD
+// bundle can't contain import.meta, so webpack replaces it with the file:// URL of
+// build/*.js on the machine running the build, and that path ships in dist/ (#684).
+// The glue never reads the directory it computes (SINGLE_FILE=1), so emit undefined
+// instead. Only the emitted code changes: webpack still evaluates import.meta.url to
+// the file:// URL internally, which is how it recognises
+// new Worker(new URL(..., import.meta.url)) and emits the pthread worker chunk
+// (a DefinePlugin would change that evaluation too, and lose the chunk).
+class OmitImportMetaUrlPlugin {
+  apply(compiler) {
+    const name = "OmitImportMetaUrlPlugin";
+    compiler.hooks.compilation.tap(
+      name,
+      (compilation, { normalModuleFactory }) => {
+        const handler = (parser) => {
+          // Runs before webpack's own ImportMetaPlugin, which would emit the file:// URL.
+          parser.hooks.expression
+            .for("import.meta.url")
+            .tap({ name, stage: -10 }, (expr) => {
+              const dep = new ConstDependency("undefined", expr.range);
+              dep.loc = parser.getLocation(expr);
+              parser.state.module.addPresentationalDependency(dep);
+              return true;
+            });
+        };
+        for (const type of ["javascript/auto", "javascript/esm"]) {
+          normalModuleFactory.hooks.parser.for(type).tap(name, handler);
+        }
+      },
+    );
+  }
+}
 
 module.exports = (env, argv) => {
   let devtool = false;
@@ -30,10 +64,13 @@ module.exports = (env, argv) => {
     ],
   };
 
+  const browserPlugins = [new OmitImportMetaUrlPlugin()];
+
   return [
     {
       name: "default",
       devtool,
+      plugins: browserPlugins,
       entry: "./src/index.ts",
       output: {
         //path: path.resolve('dist'),
@@ -60,6 +97,7 @@ module.exports = (env, argv) => {
     {
       name: "simd",
       devtool,
+      plugins: browserPlugins,
       entry: "./src/index_simd.ts",
       output: {
         //path: path.resolve('dist'),
@@ -86,6 +124,7 @@ module.exports = (env, argv) => {
     {
       name: "threaded",
       devtool,
+      plugins: browserPlugins,
       entry: "./src/index_td.ts",
       output: {
         //path: path.resolve('dist'),
