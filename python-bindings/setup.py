@@ -220,6 +220,7 @@ include_dirs = [
     pybind11.get_include(),
     '../emscripten',
     '../emscripten/WebARKitLib/include',
+    '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/include',
     '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher',
     '../emscripten/zlib'
 ]
@@ -264,8 +265,8 @@ ext_modules = [
         'artoolkitnft_core',
         sources=sorted_ar_files + sorted_ar2_files + sorted_arutil_files + sorted_arLabeling_files + sorted_aricp_files + [
             'ARToolKitNFT_py.cpp',
-            '../emscripten/trackingMod.c',
-            '../emscripten/trackingMod2d.c',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/trackingMod.c',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/trackingMod2d.c',
             '../emscripten/WebARKitLib/lib/SRC/KPM/kpmFopen.c',
             '../emscripten/WebARKitLib/lib/SRC/KPM/kpmHandle.cpp',
             '../emscripten/WebARKitLib/lib/SRC/KPM/kpmMatching.cpp',

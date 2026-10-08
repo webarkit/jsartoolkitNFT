@@ -14,8 +14,8 @@
 #include <AR/paramGL.h>
 #include <KPM/kpm.h>
 //#include <WebARKit/WebARKitLog.h>
-#include "trackingMod.h"
-//#include "markerDecompress.h"
+#include <WebARKitTrackers/WebARKitNFT/trackingMod.h>
+//#include <WebARKitTrackers/WebARKitNFT/markerDecompress.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
