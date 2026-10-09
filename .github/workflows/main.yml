@@ -89,7 +89,6 @@ jobs:
           build/artoolkitNFT_thread.worker.js
           build/artoolkitNFT_wasm.js
           build/artoolkitNFT_wasm.simd.js
-          dist/510.ARToolkitNFT_td.js
           dist/602.ARToolkitNFT_td.js
           dist/ARToolkitNFT.js
           dist/ARToolkitNFT_node.js
