@@ -11,34 +11,50 @@
  *
  *   node tools/compare-builds.js [--self-test] <oldNodeBundle> <newNodeBundle>
  *
- *   --self-test  runs the new side with filtering inverted in every run, to prove the
- *                tool reports a difference.
- *
  * Browser bundles, run in headless Chromium through tools/compare-builds/index.html:
  *
- *   node tools/compare-builds.js --browser [--threaded] <oldBundleUrl> <newBundleUrl>
+ *   node tools/compare-builds.js --browser [--threaded | --self-test] <oldBundleUrl> <newBundleUrl>
  *
  *   URLs are paths on python-server.py, which serves the repository root on port 8091,
- *   for example /dist/ARToolkitNFT.js. --threaded compares only the found set and the
- *   pose of the last frame of each scenario (see scenarios.js); use it for
- *   ARToolkitNFT_td.js, whose 602.ARToolkitNFT_td.js chunk must sit next to it. A Node or
- *   single-thread browser comparison takes a minute or two, a threaded one about five.
+ *   for example /dist/ARToolkitNFT.js; the file at the same path under the repository
+ *   is the one hashed and checked against what the server sends. --threaded compares only
+ *   the found set and the pose of the last frame of each scenario (see scenarios.js); use
+ *   it for ARToolkitNFT_td.js, whose 602.ARToolkitNFT_td.js chunk must sit next to it.
+ *   The browser builds also play an extra run with the controller's internalLuma option.
+ *
+ * --self-test runs the new side with filtering inverted in every run, to prove the tool
+ * reports a difference. It is refused with --threaded: the threaded build ignores
+ * filtering, so the self-test could not show a difference there.
  *
  * The reference builds come from git, kept in tools/compare-builds/ref/ (ignored by git and
  * served by python-server.py), one file at a time:
  *
  *   git show origin/dev:dist/ARToolkitNFT_node.js > tools/compare-builds/ref/ARToolkitNFT_node.js
  *
- * Prints "identical (<n> records)" and exits 0, or prints the first differing record
- * and exits 1. Exits 2 on a usage or run error.
+ * Output. First the sha256 of every file compared, and a WARNING when old and new are
+ * byte-identical: such a run checks the tool, not a rewrite. Then "identical (<n> records)"
+ * with the number of frames on which the old side found each marker, exit 0; or the first
+ * differing record, exit 1. Exit 2, with no verdict, when:
+ * - the arguments are wrong, or a bundle file is missing;
+ * - a marker does not load, or the old side's records do not show tracking at work (see
+ *   checkExercised in scenarios.js), since two builds that track nothing compare identical;
+ * - (browser) port 8091 already answers before the server starts, or the server sends a
+ *   bundle that differs from the file on disk;
+ * - the comparison takes longer than its deadline: 15 minutes for --threaded, 5 otherwise.
+ *   A Node or single-thread browser comparison takes a minute or two, a threaded one about
+ *   six.
  */
 "use strict";
 
+const crypto = require("node:crypto");
+const fs = require("node:fs");
+const net = require("node:net");
 const path = require("node:path");
 const { spawn } = require("node:child_process");
 const {
   runScenarios,
   compareRecords,
+  checkExercised,
   WIDTH,
   HEIGHT,
   KUVA_PRINT,
@@ -49,10 +65,86 @@ const {
 const REPO_ROOT = path.resolve(__dirname, "..");
 const EXAMPLE_DIR = path.join(REPO_ROOT, "examples", "node");
 const PORT = 8091;
+const MINUTE = 60 * 1000;
+const DEADLINE_MINUTES = 5;
+const THREADED_DEADLINE_MINUTES = 15;
 
 const USAGE =
   "usage: node tools/compare-builds.js [--self-test] <oldNodeBundle> <newNodeBundle>\n" +
-  "       node tools/compare-builds.js --browser [--threaded] <oldBundleUrl> <newBundleUrl>";
+  "       node tools/compare-builds.js --browser [--threaded | --self-test] <oldBundleUrl> <newBundleUrl>";
+
+/** An error whose message says it all: printed without a stack trace. */
+function failure(message) {
+  return Object.assign(new Error(message), { expected: true });
+}
+
+// --- the files compared ------------------------------------------------------------------
+
+/** The files of a Node bundle: just the bundle. */
+function nodeBundleFiles(bundle) {
+  const file = path.resolve(bundle);
+  if (!fs.existsSync(file)) throw failure(`${bundle}: no such file`);
+  return [{ name: bundle, file }];
+}
+
+/** The files of a browser bundle, by server path: the bundle and, threaded, its chunk. */
+function browserBundleFiles(url, threaded) {
+  const urls = [url];
+  if (threaded) {
+    urls.push(`${path.posix.dirname(url)}/602.${path.posix.basename(url)}`);
+  }
+  return urls.map((u) => {
+    const file = path.join(REPO_ROOT, ...decodeURIComponent(u).split("/"));
+    if (!file.startsWith(REPO_ROOT + path.sep)) {
+      throw failure(`${u}: outside the repository`);
+    }
+    if (!fs.existsSync(file)) {
+      throw failure(`${u}: no such file under the repository (${file})`);
+    }
+    return { name: u, url: u, file };
+  });
+}
+
+/** Prints the sha256 of every file, and a WARNING when old and new are byte-identical. */
+function describeBuilds(oldFiles, newFiles) {
+  const contents = (files) => files.map((f) => fs.readFileSync(f.file));
+  const oldBytes = contents(oldFiles);
+  const newBytes = contents(newFiles);
+  const sha256 = (bytes) =>
+    crypto.createHash("sha256").update(bytes).digest("hex");
+  oldFiles.forEach((f, i) =>
+    console.log(`old ${f.name} sha256 ${sha256(oldBytes[i])}`),
+  );
+  newFiles.forEach((f, i) =>
+    console.log(`new ${f.name} sha256 ${sha256(newBytes[i])}`),
+  );
+  if (oldBytes.every((bytes, i) => bytes.equals(newBytes[i]))) {
+    console.log(
+      "WARNING: old and new are byte-identical. This run checks the tool and the scenarios; " +
+        "it proves nothing about a rewrite.",
+    );
+  }
+}
+
+// --- deadline ----------------------------------------------------------------------------
+
+function deadlineFailure(minutes) {
+  return failure(`the comparison exceeded its deadline of ${minutes} minutes`);
+}
+
+/** `work`, or a rejection once `deadlineAt` (a performance.now() value) has passed. */
+function withDeadline(work, deadlineAt, minutes) {
+  let timer;
+  const expired = new Promise((resolve, reject) => {
+    timer = setTimeout(
+      () => reject(deadlineFailure(minutes)),
+      Math.max(0, deadlineAt - performance.now()),
+    );
+  });
+  return Promise.race([work, expired]).finally(() => clearTimeout(timer));
+}
+
+// --- Node bundles ------------------------------------------------------------------------
 
 /** The frames of tests/node/multi-marker.test.js, plus a flat grey one. */
 async function loadNodeFrames() {
@@ -81,9 +173,7 @@ async function loadNodeFrames() {
   };
 }
 
-async function compareNode(oldBundle, newBundle, selfTest) {
-  const oldPath = path.resolve(oldBundle);
-  const newPath = path.resolve(newBundle);
+async function compareNode(oldFile, newFile, selfTest, deadlineAt) {
   const frames = await loadNodeFrames();
 
   // The library resolves the camera and marker paths against the working directory.
@@ -91,18 +181,21 @@ async function compareNode(oldBundle, newBundle, selfTest) {
   const options = {
     cameraUrl: "camera_para.dat",
     markerUrls: ["DataNFT/pinball", "DataNFT/kuva"],
+    deadline: deadlineAt,
   };
 
   const oldRecords = await quietly(() =>
-    runScenarios(loadFresh(oldPath).ARControllerNFT, frames, options),
+    runScenarios(loadFresh(oldFile).ARControllerNFT, frames, options),
   );
   const newRecords = await quietly(() =>
-    runScenarios(loadFresh(newPath).ARControllerNFT, frames, {
+    runScenarios(loadFresh(newFile).ARControllerNFT, frames, {
       ...options,
       invertFiltering: selfTest,
     }),
   );
-  return compareRecords(oldRecords, newRecords);
+  const result = compareRecords(oldRecords, newRecords);
+  result.coverage = checkExercised(oldRecords);
+  return result;
 }
 
 /**
@@ -131,6 +224,22 @@ async function quietly(fn) {
   }
 }
 
+// --- browser bundles ---------------------------------------------------------------------
+
+/** Whether something already accepts TCP connections on host:port. */
+function accepts(host, port) {
+  return new Promise((resolve) => {
+    const socket = net.connect({ host, port });
+    const done = (value) => {
+      socket.destroy();
+      resolve(value);
+    };
+    socket.setTimeout(1000, () => done(false));
+    socket.once("connect", () => done(true));
+    socket.once("error", () => done(false));
+  });
+}
+
 function waitForServer(server) {
   return new Promise((resolve, reject) => {
     let output = "";
@@ -142,20 +251,55 @@ function waitForServer(server) {
     server.stderr.on("data", (chunk) => (output += chunk));
     server.on("error", reject);
     server.on("exit", (code) =>
-      reject(new Error(`python-server.py exited with ${code}:\n${output}`)),
+      reject(failure(`python-server.py exited with ${code}:\n${output}`)),
     );
   });
 }
 
-async function compareBrowser(oldUrl, newUrl, threaded) {
+/** Fails unless the server sends each file exactly as it is on disk. */
+async function checkServedBytes(files) {
+  for (const { url, file } of files) {
+    const response = await fetch(`http://localhost:${PORT}${url}`);
+    if (!response.ok) {
+      throw failure(`the server answered ${response.status} for ${url}`);
+    }
+    const served = Buffer.from(await response.arrayBuffer());
+    if (!served.equals(fs.readFileSync(file))) {
+      throw failure(
+        `the server sent a different ${url} from ${file}: is another server answering on port ${PORT}?`,
+      );
+    }
+  }
+}
+
+async function compareBrowser({
+  oldUrl,
+  newUrl,
+  files,
+  threaded,
+  selfTest,
+  deadlineAt,
+  minutes,
+}) {
+  // On Windows a second python-server.py can bind a port that is already in use, and the
+  // browser could then talk to the other one.
+  for (const host of ["127.0.0.1", "::1"]) {
+    if (await accepts(host, PORT)) {
+      throw failure(
+        `port ${PORT} already accepts connections on ${host}: stop that server first`,
+      );
+    }
+  }
+
   const { chromium } = require("playwright");
   // -u: unbuffered, so "Serving on port" reaches us as soon as the server listens.
   const server = spawn("python", ["-u", "python-server.py", String(PORT)], {
     cwd: REPO_ROOT,
   });
   let browser;
-  try {
+  const work = async () => {
     await waitForServer(server);
+    await checkServedBytes(files);
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
     page.on("pageerror", (error) =>
@@ -182,26 +326,53 @@ async function compareBrowser(oldUrl, newUrl, threaded) {
       old: oldUrl,
       new: newUrl,
       threaded: threaded ? "1" : "0",
+      selfTest: selfTest ? "1" : "0",
     });
     await page.goto(
       `http://localhost:${PORT}/tools/compare-builds/index.html?${query}`,
     );
-    await page.waitForFunction(() => window.result !== undefined, null, {
-      timeout: 0,
-      polling: 1000,
-    });
+    try {
+      await page.waitForFunction(() => window.result !== undefined, null, {
+        timeout: Math.max(1, deadlineAt - performance.now()),
+        polling: 1000,
+      });
+    } catch (error) {
+      throw error.name === "TimeoutError" ? deadlineFailure(minutes) : error;
+    }
     const result = await page.evaluate(() => window.result);
-    if (result.error) throw new Error(`the page failed: ${result.error}`);
+    if (result.error) throw failure(`the page failed: ${result.error}`);
     return result;
+  };
+  try {
+    return await withDeadline(work(), deadlineAt, minutes);
   } finally {
-    if (browser) await browser.close();
-    server.kill();
+    try {
+      if (browser) await browser.close();
+    } finally {
+      server.kill();
+    }
   }
 }
 
+// --- verdict -----------------------------------------------------------------------------
+
 function report(result) {
+  const { coverage } = result;
+  if (!coverage.ok) {
+    console.log(
+      "not exercised: the old side's records do not show tracking at work, so no verdict:",
+    );
+    for (const problem of coverage.problems.slice(0, 30))
+      console.log(`  ${problem}`);
+    return 2;
+  }
+  const found = coverage.found
+    .map((n, i) => `marker ${i} on ${n}/${coverage.frames} frames`)
+    .join(", ");
   if (result.identical) {
-    console.log(`identical (${result.compared} records)`);
+    console.log(
+      `identical (${result.compared} records); the old side found ${found}`,
+    );
     return 0;
   }
   const first = result.diffs[0];
@@ -221,22 +392,28 @@ function report(result) {
       `  #${diff.index} ${record.scenario} frame ${record.frame}: ${diff.field}`,
     );
   }
+  console.log(`the old side found ${found}`);
   return 1;
 }
 
 async function main(argv) {
+  const startedAt = performance.now();
   const flags = new Set(argv.filter((arg) => arg.startsWith("--")));
   const operands = argv.filter((arg) => !arg.startsWith("--"));
   const known = new Set(["--self-test", "--browser", "--threaded"]);
   const unknown = [...flags].filter((flag) => !known.has(flag));
   const browser = flags.has("--browser");
-  if (
-    operands.length !== 2 ||
-    unknown.length > 0 ||
-    (browser && flags.has("--self-test")) ||
-    (!browser && flags.has("--threaded"))
-  ) {
+  const threaded = flags.has("--threaded");
+  const selfTest = flags.has("--self-test");
+  if (operands.length !== 2 || unknown.length > 0 || (!browser && threaded)) {
     console.error(USAGE);
+    return 2;
+  }
+  if (threaded && selfTest) {
+    console.error(
+      "--self-test cannot show a difference on the threaded build, which ignores filtering; " +
+        "run it on ARToolkitNFT.js or ARToolkitNFT_simd.js",
+    );
     return 2;
   }
 
@@ -251,19 +428,50 @@ async function main(argv) {
       );
       return 2;
     }
+  }
+
+  const minutes = threaded ? THREADED_DEADLINE_MINUTES : DEADLINE_MINUTES;
+  const deadlineAt = startedAt + minutes * MINUTE;
+
+  if (browser) {
+    const oldFiles = browserBundleFiles(oldBuild, threaded);
+    const newFiles = browserBundleFiles(newBuild, threaded);
+    describeBuilds(oldFiles, newFiles);
+    const files = oldFiles.concat(newFiles);
     return report(
-      await compareBrowser(oldBuild, newBuild, flags.has("--threaded")),
+      await compareBrowser({
+        oldUrl: oldBuild,
+        newUrl: newBuild,
+        files,
+        threaded,
+        selfTest,
+        deadlineAt,
+        minutes,
+      }),
     );
   }
-  return report(
-    await compareNode(oldBuild, newBuild, flags.has("--self-test")),
-  );
+
+  const oldFiles = nodeBundleFiles(oldBuild);
+  const newFiles = nodeBundleFiles(newBuild);
+  describeBuilds(oldFiles, newFiles);
+  const work = compareNode(
+    oldFiles[0].file,
+    newFiles[0].file,
+    selfTest,
+    deadlineAt,
+  ).catch((error) => {
+    // runScenarios checks the deadline between frames, which run without yielding.
+    throw error && error.deadline ? deadlineFailure(minutes) : error;
+  });
+  return report(await withDeadline(work, deadlineAt, minutes));
 }
 
 main(process.argv.slice(2)).then(
   (code) => process.exit(code),
   (error) => {
-    console.error(error && error.stack ? error.stack : error);
+    const message =
+      error && error.expected ? error.message : (error && error.stack) || error;
+    console.error(`compare-builds: ${message}`);
     process.exit(2);
   },
 );

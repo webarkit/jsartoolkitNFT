@@ -6,12 +6,16 @@
   Serve the repository root with python-server.py (it sends the COOP/COEP headers the
   threaded build needs), then open
 
-    /tools/compare-builds/index.html?old=<bundle url>&new=<bundle url>&threaded=0|1
+    /tools/compare-builds/index.html?old=<bundle url>&new=<bundle url>&threaded=0|1&selfTest=0|1
 
-  `node tools/compare-builds.js --browser [--threaded] <old> <new>` does this in headless
-  Chromium. Each bundle runs in its own iframe, because a UMD bundle puts ARControllerNFT
-  on its global object and two of them would collide. The frames are built once, here, and
-  shared by both. The verdict goes to `window.result` and onto the page.
+  `node tools/compare-builds.js --browser [--threaded|--self-test] <old> <new>` does this in
+  headless Chromium. Each bundle runs in its own iframe, because a UMD bundle puts
+  ARControllerNFT on its global object and two of them would collide. The frames are built
+  once, here, and shared by both. Both builds also play the internal-luma run. `selfTest=1`
+  inverts filtering on the new side; it cannot show a difference on the threaded build,
+  which ignores filtering. The verdict goes to `window.result` (`{ identical, compared,
+  diffs, coverage }`, coverage being checkExercised of the old side's records) and onto the
+  page.
 
   The iframes load this same page with `?frame`, which does nothing but give the bundle a
   real document URL: the bundled axios resolves relative URLs against location.href, which
@@ -109,7 +113,7 @@
         });
       }
 
-      async function runBuild(label, url, frames, threaded) {
+      async function runBuild(label, url, frames, threaded, selfTest) {
         status(`${label}: loading ${url}`);
         const iframe = document.createElement("iframe");
         iframe.hidden = true;
@@ -132,6 +136,8 @@
             markerUrls: MARKER_URLS,
             settle: threaded ? THREADED_SETTLE_MS : 0,
             searchWait: threaded ? THREADED_SEARCH_WAIT_MS : 0,
+            invertFiltering: selfTest,
+            withInternalLuma: true,
             wallClock: win.Date,
           });
         } finally {
@@ -142,6 +148,9 @@
 
       function describe(result) {
         if (result.error) return `error: ${result.error}`;
+        if (!result.coverage.ok) {
+          return `not exercised: ${result.coverage.problems.join("; ")}`;
+        }
         if (result.identical) return `identical (${result.compared} records)`;
         const first = result.diffs[0];
         return [
@@ -157,6 +166,7 @@
         const oldUrl = params.get("old");
         const newUrl = params.get("new");
         const threaded = params.get("threaded") === "1";
+        const selfTest = params.get("selfTest") === "1";
         if (!oldUrl || !newUrl) {
           throw new Error("usage: index.html?old=<url>&new=<url>&threaded=0|1");
         }
@@ -168,13 +178,27 @@
 
         status("building frames");
         const frames = await buildFrames();
-        const oldRecords = await runBuild("old", oldUrl, frames, threaded);
-        const newRecords = await runBuild("new", newUrl, frames, threaded);
+        const oldRecords = await runBuild(
+          "old",
+          oldUrl,
+          frames,
+          threaded,
+          false,
+        );
+        const newRecords = await runBuild(
+          "new",
+          newUrl,
+          frames,
+          threaded,
+          selfTest,
+        );
         // Kept for investigating a difference from the browser console.
         window.records = { old: oldRecords, new: newRecords };
-        return CompareBuilds.compareRecords(oldRecords, newRecords, {
+        const result = CompareBuilds.compareRecords(oldRecords, newRecords, {
           threaded,
         });
+        result.coverage = CompareBuilds.checkExercised(oldRecords);
+        return result;
       }
 
       if (new URLSearchParams(location.search).has("frame")) {

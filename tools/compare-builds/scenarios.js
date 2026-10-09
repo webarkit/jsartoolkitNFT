@@ -21,7 +21,15 @@
  * all with interval 0, plus one with interval 60000 (filtering off, continuous on). Both
  * intervals make the result independent of the machine's speed: 0 detects whenever detection
  * is allowed, 60000 does not detect while a marker is tracked, as long as a run takes less
- * than a minute.
+ * than a minute. The browser builds play a sixth run, `withInternalLuma`: filtering on,
+ * continuous on, interval 0, with the controller's `internalLuma` option, so the luma is
+ * computed in C++ (with SIMD in the SIMD build) instead of in JS. The Node controller has no
+ * such option.
+ *
+ * Vacuous results. Two builds that both track nothing produce identical records, so
+ * runScenarios throws when the markers do not all load, and checkExercised tells whether
+ * one side's records show tracking at work. tools/compare-builds.js refuses to report
+ * "identical" unless the old side passes it.
  *
  * Record: `{ scenario, frame, ret, markers: [{ found, error, pose }] }`, one per frame, with
  * one marker entry per loaded marker in id order and `pose` the 12 values of
@@ -55,7 +63,8 @@
  * waiting 20 ms after every frame, 12 of the 20 scenarios differed in the last frame's pose
  * (every scenario in which a marker is tracked; the found sets always matched). With
  * `searchWait` (1000 ms in index.html), three runs were identical on all 20 scenarios, and a
- * frame-by-frame comparison of all 325 records matched too. No scenario is narrowed.
+ * frame-by-frame comparison of all 325 records matched too. No scenario is narrowed. (Those
+ * runs predate the internal-luma run; with it, the next run was identical on all 24.)
  */
 (function (root, factory) {
   const api = factory();
@@ -95,12 +104,32 @@
     { filtering: false, continuous: true, interval: 60000 },
   ];
 
+  /** Played after RUNS when `withInternalLuma` is set (browser builds only). */
+  const INTERNAL_LUMA_RUN = {
+    filtering: true,
+    continuous: true,
+    interval: 0,
+    internalLuma: true,
+  };
+
+  /** Phases in which every loaded marker must be found, by checkExercised. */
+  const MUST_FIND = ["both", "bothAgain"];
+
   function runLabel(run) {
     return (
       `filtering ${run.filtering ? "on" : "off"}, ` +
       `continuous ${run.continuous ? "on" : "off"}, ` +
-      `interval ${run.interval}`
+      `interval ${run.interval}` +
+      (run.internalLuma ? ", internal luma" : "")
     );
+  }
+
+  /** Splits a record's scenario back into its phase and run label. */
+  function parseScenario(scenario) {
+    const match = /^(\w+) \[(.*)\]$/.exec(scenario);
+    return match
+      ? { phase: match[1], run: match[2] }
+      : { phase: "", run: scenario };
   }
 
   function sleep(ms) {
@@ -142,14 +171,18 @@
    * @param frames `{ both, pinballOnly, blank }`, each a frame as that build's `process()`
    *   takes it: an RGBA Uint8Array of 2000 x 1500 for the Node build, an ImageData (or any
    *   `{ data }`) for the browser builds.
-   * @param options `{ cameraUrl, markerUrls, settle, searchWait, invertFiltering, wallClock }`.
+   * @param options `{ cameraUrl, markerUrls, settle, searchWait, invertFiltering,
+   *   withInternalLuma, wallClock, deadline }`.
    *   `settle` is the number of milliseconds to wait after a frame on which every marker is
    *   found, `searchWait` after a frame on which one is not (both default to 0; see the
    *   header for the threaded build). `invertFiltering` turns filtering off where a run asks
    *   for it on and the reverse, to prove the comparison sees a difference; the records keep
-   *   the run's nominal label. `wallClock` is the `Date` of the realm the build runs in
-   *   (default: this realm's), whose `now` is frozen during the run (see the header).
-   * @return a Promise of the records, in play order.
+   *   the run's nominal label. `withInternalLuma` adds the internal-luma run (browser builds).
+   *   `wallClock` is the `Date` of the realm the build runs in (default: this realm's), whose
+   *   `now` is frozen during the run (see the header). `deadline` is a `performance.now()`
+   *   value after which the run throws, checked after every frame: in Node the frames run
+   *   back to back without yielding, so a timer could not interrupt them.
+   * @return a Promise of the records, in play order. Rejects if a marker does not load.
    */
   async function runScenarios(ARControllerNFT, frames, options) {
     const wallClock = options.wallClock || Date;
@@ -169,16 +202,37 @@
       settle = 0,
       searchWait = 0,
       invertFiltering = false,
+      withInternalLuma = false,
+      deadline = Infinity,
     } = options;
+    const checkDeadline = () => {
+      if (performance.now() > deadline) {
+        throw Object.assign(new Error("the run exceeded its deadline"), {
+          deadline: true,
+        });
+      }
+    };
+    const runs = withInternalLuma ? RUNS.concat([INTERNAL_LUMA_RUN]) : RUNS;
     const records = [];
 
-    for (const run of RUNS) {
-      const ar = await ARControllerNFT.initWithDimensions(
-        WIDTH,
-        HEIGHT,
-        cameraUrl,
-      );
+    for (const run of runs) {
+      checkDeadline();
+      // The other runs keep the three-argument call of the Node test and the examples.
+      const ar = run.internalLuma
+        ? await ARControllerNFT.initWithDimensions(
+            WIDTH,
+            HEIGHT,
+            cameraUrl,
+            true,
+          )
+        : await ARControllerNFT.initWithDimensions(WIDTH, HEIGHT, cameraUrl);
       const ids = await loadMarkers(ar, markerUrls);
+      // The browser loaders report a native load failure as success with no ids.
+      if (!Array.isArray(ids) || ids.length !== markerUrls.length) {
+        throw new Error(
+          `loadNFTMarkers(${markerUrls}) gave ids ${JSON.stringify(ids)}, expected ${markerUrls.length}`,
+        );
+      }
       ids.forEach((id) => ar.trackNFTMarkerId(id));
 
       ar.setFiltering(invertFiltering ? !run.filtering : run.filtering);
@@ -201,6 +255,7 @@
           records.push({ scenario, frame, ret, markers });
           const wait = markers.every((m) => m.found) ? settle : searchWait;
           if (wait > 0) await sleep(wait);
+          checkDeadline();
         }
       }
     }
@@ -257,6 +312,62 @@
   }
 
   /**
+   * Whether one build's records show tracking at work, so that "identical" means
+   * something: in every run, each marker is found on at least one frame of each phase in
+   * MUST_FIND, and detectNFTMarker() was observed (`ret` not null) on at least one frame.
+   *
+   * @return `{ ok, problems, found, frames }`: `problems` lists what is missing, `found[i]`
+   *   is the number of frames on which marker i is found, out of `frames`.
+   */
+  function checkExercised(records) {
+    const problems = [];
+    const found = [];
+    const runs = new Map();
+    for (const record of records) {
+      const { phase, run } = parseScenario(record.scenario);
+      if (!runs.has(run)) {
+        runs.set(run, { markers: 0, retSeen: false, phases: new Map() });
+      }
+      const entry = runs.get(run);
+      entry.markers = Math.max(entry.markers, record.markers.length);
+      if (record.ret !== null) entry.retSeen = true;
+      if (!entry.phases.has(phase)) entry.phases.set(phase, []);
+      const phaseFound = entry.phases.get(phase);
+      record.markers.forEach((marker, i) => {
+        if (!marker.found) return;
+        found[i] = (found[i] || 0) + 1;
+        phaseFound[i] = true;
+      });
+    }
+    if (runs.size === 0) problems.push("no records");
+    for (const [run, entry] of runs) {
+      if (entry.markers === 0) problems.push(`[${run}]: no markers`);
+      if (!entry.retSeen) {
+        problems.push(`[${run}]: detectNFTMarker() never observed`);
+      }
+      for (const phase of MUST_FIND) {
+        const phaseFound = entry.phases.get(phase) || [];
+        for (let i = 0; i < entry.markers; i++) {
+          if (!phaseFound[i]) {
+            problems.push(`${phase} [${run}]: marker ${i} never found`);
+          }
+        }
+      }
+    }
+    const markerCount = records.reduce(
+      (n, r) => Math.max(n, r.markers.length),
+      0,
+    );
+    for (let i = 0; i < markerCount; i++) found[i] = found[i] || 0;
+    return {
+      ok: problems.length === 0,
+      problems,
+      found,
+      frames: records.length,
+    };
+  }
+
+  /**
    * Compares two builds' records.
    *
    * @return `{ identical, compared, diffs }`, with `compared` the number of records (or of
@@ -307,7 +418,9 @@
     BLANK_GREY,
     PHASES,
     RUNS,
+    INTERNAL_LUMA_RUN,
     runScenarios,
     compareRecords,
+    checkExercised,
   };
 });
