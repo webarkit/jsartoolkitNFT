@@ -1,0 +1,199 @@
+<!doctype html>
+<!--
+  Browser side of tools/compare-builds.js: plays the scenarios of scenarios.js through two
+  browser bundles and compares their output.
+
+  Serve the repository root with python-server.py (it sends the COOP/COEP headers the
+  threaded build needs), then open
+
+    /tools/compare-builds/index.html?old=<bundle url>&new=<bundle url>&threaded=0|1
+
+  `node tools/compare-builds.js --browser [--threaded] <old> <new>` does this in headless
+  Chromium. Each bundle runs in its own iframe, because a UMD bundle puts ARControllerNFT
+  on its global object and two of them would collide. The frames are built once, here, and
+  shared by both. The verdict goes to `window.result` and onto the page.
+
+  The iframes load this same page with `?frame`, which does nothing but give the bundle a
+  real document URL: the bundled axios resolves relative URLs against location.href, which
+  fails on an about:blank iframe.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Compare builds</title>
+    <style>
+      body {
+        font-family: monospace;
+        margin: 16px;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+    </style>
+    <script src="scenarios.js"></script>
+  </head>
+  <body>
+    <h1>Compare builds</h1>
+    <pre id="status">starting</pre>
+    <script>
+      const PHOTO = "/examples/node/pinball-demo.jpg";
+      const CAMERA_URL = "/examples/Data/camera_para.dat";
+      const MARKER_URLS = [
+        "/examples/DataNFT/pinball",
+        "/examples/DataNFT/kuva",
+      ];
+
+      // Threaded build only (see "Threaded builds" in scenarios.js). A detection search on a
+      // 2000 x 1500 frame took between 400 and 600 ms on the worker when this was written:
+      // waiting 400 ms after the frame that starts it was too short, 600 ms was enough.
+      // 1000 ms leaves a margin. Raise it on a slower machine if a comparison of a build
+      // against itself differs, but keep it under 2500 ms: the pinballOnly phase waits it
+      // 20 times, and the interval-60000 run must take less than a minute.
+      const THREADED_SETTLE_MS = 20;
+      const THREADED_SEARCH_WAIT_MS = 1000;
+
+      const statusElement = document.getElementById("status");
+      function status(text) {
+        statusElement.textContent = text;
+      }
+
+      async function buildFrames() {
+        const { WIDTH, HEIGHT, KUVA_PRINT, KUVA_FILL, BLANK_GREY } =
+          CompareBuilds;
+        const response = await fetch(PHOTO);
+        if (!response.ok) {
+          throw new Error(`could not fetch ${PHOTO}: ${response.status}`);
+        }
+        const photo = await createImageBitmap(await response.blob());
+        if (photo.width !== WIDTH || photo.height !== HEIGHT) {
+          throw new Error(
+            `${PHOTO} is ${photo.width}x${photo.height}, expected ${WIDTH}x${HEIGHT}`,
+          );
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+        ctx.drawImage(photo, 0, 0);
+        const both = ctx.getImageData(0, 0, WIDTH, HEIGHT);
+
+        // Paint the kuva print over, with the polygon of tests/node/multi-marker.test.js.
+        const corners = KUVA_PRINT.split(" ").map((point) =>
+          point.split(",").map(Number),
+        );
+        ctx.fillStyle = KUVA_FILL;
+        ctx.beginPath();
+        ctx.moveTo(corners[0][0], corners[0][1]);
+        for (const [x, y] of corners.slice(1)) ctx.lineTo(x, y);
+        ctx.closePath();
+        ctx.fill();
+        const pinballOnly = ctx.getImageData(0, 0, WIDTH, HEIGHT);
+
+        ctx.fillStyle = `rgb(${BLANK_GREY}, ${BLANK_GREY}, ${BLANK_GREY})`;
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        const blank = ctx.getImageData(0, 0, WIDTH, HEIGHT);
+
+        return { both, pinballOnly, blank };
+      }
+
+      function loadScript(doc, src) {
+        return new Promise((resolve, reject) => {
+          const script = doc.createElement("script");
+          script.src = src;
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error(`failed to load ${src}`));
+          doc.head.appendChild(script);
+        });
+      }
+
+      async function runBuild(label, url, frames, threaded) {
+        status(`${label}: loading ${url}`);
+        const iframe = document.createElement("iframe");
+        iframe.hidden = true;
+        try {
+          await new Promise((resolve, reject) => {
+            iframe.onload = () => resolve();
+            iframe.onerror = () =>
+              reject(new Error("the build frame did not load"));
+            iframe.src = "index.html?frame";
+            document.body.appendChild(iframe);
+          });
+          const win = iframe.contentWindow;
+          await loadScript(win.document, url);
+          if (typeof win.ARControllerNFT !== "function") {
+            throw new Error(`${url} did not define ARControllerNFT`);
+          }
+          status(`${label}: running ${url}`);
+          return await CompareBuilds.runScenarios(win.ARControllerNFT, frames, {
+            cameraUrl: CAMERA_URL,
+            markerUrls: MARKER_URLS,
+            settle: threaded ? THREADED_SETTLE_MS : 0,
+            searchWait: threaded ? THREADED_SEARCH_WAIT_MS : 0,
+            wallClock: win.Date,
+          });
+        } finally {
+          // Ends the build's workers too, before the other build runs.
+          iframe.remove();
+        }
+      }
+
+      function describe(result) {
+        if (result.error) return `error: ${result.error}`;
+        if (result.identical) return `identical (${result.compared} records)`;
+        const first = result.diffs[0];
+        return [
+          `different: ${result.diffs.length} of ${result.compared} records differ`,
+          `first difference at #${first.index}, field ${first.field}`,
+          `old: ${JSON.stringify(first.old)}`,
+          `new: ${JSON.stringify(first.new)}`,
+        ].join("\n");
+      }
+
+      async function main() {
+        const params = new URLSearchParams(location.search);
+        const oldUrl = params.get("old");
+        const newUrl = params.get("new");
+        const threaded = params.get("threaded") === "1";
+        if (!oldUrl || !newUrl) {
+          throw new Error("usage: index.html?old=<url>&new=<url>&threaded=0|1");
+        }
+        if (threaded && !crossOriginIsolated) {
+          throw new Error(
+            "the threaded build needs a cross-origin isolated page: serve it with python-server.py",
+          );
+        }
+
+        status("building frames");
+        const frames = await buildFrames();
+        const oldRecords = await runBuild("old", oldUrl, frames, threaded);
+        const newRecords = await runBuild("new", newUrl, frames, threaded);
+        // Kept for investigating a difference from the browser console.
+        window.records = { old: oldRecords, new: newRecords };
+        return CompareBuilds.compareRecords(oldRecords, newRecords, {
+          threaded,
+        });
+      }
+
+      if (new URLSearchParams(location.search).has("frame")) {
+        status("build frame");
+      } else {
+        main().then(
+          (result) => {
+            window.result = result;
+            status(describe(result));
+          },
+          (error) => {
+            window.result = {
+              identical: false,
+              error: String((error && error.stack) || error),
+            };
+            status(describe(window.result));
+          },
+        );
+      }
+    </script>
+  </body>
+</html>
