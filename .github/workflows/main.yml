@@ -76,6 +76,12 @@ jobs:
       uses: softprops/action-gh-release@v3
       if: startsWith(github.ref, 'refs/tags/')
       with:
+        # Fail instead of warning when an entry matches nothing, so the list can't
+        # silently drift from what the build emits.
+        fail_on_unmatched_files: true
+        # dist/*.ARToolkitNFT_td.js is the threaded build's pthread worker chunk. Its
+        # name carries a webpack chunk id that changes with the chunk; webpack.config.js
+        # deletes stale ones, so the glob matches only the current chunk.
         files: |
           build/artoolkitNFT.debug.js
           build/artoolkitNFT.min.js
@@ -83,13 +89,11 @@ jobs:
           build/artoolkitNFT_ES6_wasm.js
           build/artoolkitNFT_ES6_wasm.simd.js
           build/artoolkitNFT_ES6_wasm_td.js
-          build/artoolkitNFT_ES6_wasm_td.worker.mjs
           build/artoolkitNFT_node_wasm.js
           build/artoolkitNFT_thread.js
-          build/artoolkitNFT_thread.worker.js
           build/artoolkitNFT_wasm.js
           build/artoolkitNFT_wasm.simd.js
-          dist/602.ARToolkitNFT_td.js
+          dist/*.ARToolkitNFT_td.js
           dist/ARToolkitNFT.js
           dist/ARToolkitNFT_node.js
           dist/ARToolkitNFT_simd.js
