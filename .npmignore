@@ -10,6 +10,7 @@ build/*.a
 *.zip
 docs/**/*
 docs/
+specs/
 python-bindings/
 python-bindings/*
 .idea/
