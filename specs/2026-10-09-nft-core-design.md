@@ -105,9 +105,9 @@ Public API, all native types:
 - Policy: `setFiltering(bool)`, `setContinuousDetection(bool)`, `setDetectionInterval(double ms)`.
 - `teardown()`.
 
-The core does not use Embind or `emscripten::val`, and compiles with `-fno-rtti` and with
-`-fno-exceptions`. `<emscripten.h>` appears only in the core's `.cpp`, under
-`#ifdef __EMSCRIPTEN__`, for the default clock (`emscripten_get_now()`). Its public header
+The core does not use Embind or `emscripten::val`, is C++14 (the standard WebARKitLib's CMake
+sets), and compiles with `-fno-rtti` and with `-fno-exceptions`. `<emscripten.h>` appears only in the core's clock source (`NFTClock.cpp`),
+under `#ifdef __EMSCRIPTEN__`, for the default clock (`emscripten_get_now()`). Its public header
 includes no log header (see *Logging*).
 
 What today's binding header defines at file scope moves with the code that uses it:
@@ -167,6 +167,8 @@ the flow reduces to today's "decide, search, apply, track".
 
 ```cpp
 struct NFTTrackingConfig {
+  enum class Detector { Sync, Threaded };            // which NFTDetector the core creates
+  Detector detector;
   enum class AR2Variant { SingleThread, Threaded };  // ar2*Mod vs ar2* with AR2 threads
   AR2Variant ar2Variant;
   bool cpuDependentSearchSize;   // search size 12 instead of 6 when threadGetCPU() > 1
@@ -176,9 +178,16 @@ struct NFTTrackingConfig {
 };
 ```
 
-Two presets reproduce today's builds exactly: `singleThreadPreset()` (SingleThread, fixed
-settings, 300 ms, filtering supported) and `threadedPreset()` (Threaded, CPU-dependent search
-size, 0 ms, filtering not supported). The clock is injectable so tests can drive the detection
+Two presets reproduce today's builds exactly: `singleThreadPreset()` (Sync detector,
+SingleThread AR2, fixed settings, 300 ms, filtering supported) and `threadedPreset()` (Threaded
+detector, Threaded AR2, CPU-dependent search size, 0 ms, filtering not supported). The core
+creates the detector in one place; `Detector::Threaded` in a build without
+`WEBARKIT_NFT_THREADS` is reported as an error (`addNFTMarkers` returns an empty vector), not a
+link failure.
+
+The core references both AR2 variants, so every build that compiles it also compiles
+`trackingMod.c` and `trackingMod2d.c` (today the threaded build does not), and the threaded
+detector moves the `PAGES_MAX == TRACKING_INIT_MAX_RESULTS` `static_assert` with it. The clock is injectable so tests can drive the detection
 interval deterministically.
 
 `withFiltering` defaults to `false`, and the filter parameters are always cutoff 60.0 and
