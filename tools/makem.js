@@ -137,6 +137,15 @@ let MAIN_SOURCES_TD_ES6 = [
   "ARToolKitNFT_js_td.cpp",
   nft("trackingSub.c"),
   nft("markerDecompress.c"),
+  // The NFT core (not used by the bindings yet): the shared core, the sync
+  // and threaded detectors, the clock and the native logger.
+  nft("ARToolKitNFTCore.cpp"),
+  nft("SyncKpmDetector.cpp"),
+  nft("ThreadedKpmDetector.cpp"),
+  nft("NFTClock.cpp"),
+  nft("trackingMod.c"),
+  nft("trackingMod2d.c"),
+  path.resolve(WEBARKITLIB_ROOT, "WebARKit/WebARKitLog.cpp"),
 ];
 
 let MAIN_SOURCES_IMPROVED_ES6 = [
@@ -144,6 +153,12 @@ let MAIN_SOURCES_IMPROVED_ES6 = [
   nft("trackingMod.c"),
   nft("trackingMod2d.c"),
   nft("markerDecompress.c"),
+  // The NFT core (not used by the bindings yet): the shared core, the sync
+  // detector, the clock and the native logger.
+  nft("ARToolKitNFTCore.cpp"),
+  nft("SyncKpmDetector.cpp"),
+  nft("NFTClock.cpp"),
+  path.resolve(WEBARKITLIB_ROOT, "WebARKit/WebARKitLog.cpp"),
 ];
 
 if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
@@ -623,6 +638,7 @@ const compile_wasm_es6_thread = [
   "-pthread",
   ...WASM_FLAGS.split(" "),
   ...DEFINES.split(" "),
+  "-DWEBARKIT_NFT_THREADS",
   ...ES6_TD_FLAGS.split(" "),
   "--bind",
   "-o",

@@ -1,5 +1,5 @@
 #include "ARToolKitNFT_js.h"
-#include "KpmRefDataSetCopy.h"
+#include <WebARKitTrackers/WebARKitNFT/KpmRefDataSetCopy.h>
 
 ARToolKitNFT::ARToolKitNFT()
     : id(0), paramLT(nullptr), videoFrame(nullptr), videoFrameSize(0),
