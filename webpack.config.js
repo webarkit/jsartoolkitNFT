@@ -131,6 +131,12 @@ module.exports = (env, argv) => {
         path: path.resolve(__dirname, "dist"),
         filename: "ARToolkitNFT_td.js",
         chunkFilename: "[id].ARToolkitNFT_td.js", // Ensure pthread worker chunks are output
+        // The chunk id changes whenever the chunk does (510 -> 602), and the old file
+        // would linger in dist/ and ship with the release. Delete stale chunks, but
+        // nothing else: the other three configs write to dist/ too.
+        clean: {
+          keep: (asset) => !/^\d+\.ARToolkitNFT_td\.js$/.test(asset),
+        },
         //library: "ARToolkitNFT",
         libraryTarget: "umd",
         // @see: https://github.com/webpack/webpack/issues/3929
