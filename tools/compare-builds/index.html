@@ -6,14 +6,16 @@
   Serve the repository root with python-server.py (it sends the COOP/COEP headers the
   threaded build needs), then open
 
-    /tools/compare-builds/index.html?old=<bundle url>&new=<bundle url>&threaded=0|1&selfTest=0|1
+    /tools/compare-builds/index.html?old=<bundle url>&new=<bundle url>&threaded=0|1&strict=0|1&selfTest=0|1
 
-  `node tools/compare-builds.js --browser [--threaded|--self-test] <old> <new>` does this in
-  headless Chromium. Each bundle runs in its own iframe, because a UMD bundle puts
+  `node tools/compare-builds.js --browser [--threaded [--strict]|--self-test] <old> <new>` does
+  this in headless Chromium. Each bundle runs in its own iframe, because a UMD bundle puts
   ARControllerNFT on its global object and two of them would collide. The frames are built
-  once, here, and shared by both. Both builds also play the internal-luma run. `selfTest=1`
-  inverts filtering on the new side; it cannot show a difference on the threaded build,
-  which ignores filtering. The verdict goes to `window.result` (`{ identical, compared,
+  once, here, and shared by both. Both builds also play the internal-luma run. `threaded=1`
+  waits after each frame as the threaded build needs and compares the last frame of each
+  scenario; with `strict=1` as well it waits the same way but compares every record.
+  `selfTest=1` inverts filtering on the new side; it cannot show a difference on the threaded
+  build, which ignores filtering. The verdict goes to `window.result` (`{ identical, compared,
   diffs, coverage }`, coverage being checkExercised of the old side's records) and onto the
   page.
 
@@ -166,6 +168,8 @@
         const oldUrl = params.get("old");
         const newUrl = params.get("new");
         const threaded = params.get("threaded") === "1";
+        // Threaded only: compare every record instead of the last frame of each scenario.
+        const strict = params.get("strict") === "1";
         const selfTest = params.get("selfTest") === "1";
         if (!oldUrl || !newUrl) {
           throw new Error("usage: index.html?old=<url>&new=<url>&threaded=0|1");
@@ -195,7 +199,7 @@
         // Kept for investigating a difference from the browser console.
         window.records = { old: oldRecords, new: newRecords };
         const result = CompareBuilds.compareRecords(oldRecords, newRecords, {
-          threaded,
+          threaded: threaded && !strict,
         });
         result.coverage = CompareBuilds.checkExercised(oldRecords);
         return result;

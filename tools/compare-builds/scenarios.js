@@ -57,7 +57,8 @@
  *   so every search is collected on the very next frame, whatever the machine's speed.
  *   After a frame on which every marker is found, the run waits `settle` only.
  * - With `threaded: true`, compareRecords compares only the last frame of each scenario: the
- *   set of markers found and the 12 pose values of each marker.
+ *   set of markers found and the 12 pose values of each marker. `--threaded --strict` in
+ *   tools/compare-builds.js keeps `searchWait` but compares every record without this option.
  *
  * Stability, measured on ARToolkitNFT_td.js from origin/dev against itself (2026-10-09):
  * waiting 20 ms after every frame, 12 of the 20 scenarios differed in the last frame's pose

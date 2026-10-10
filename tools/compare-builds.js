@@ -13,13 +13,17 @@
  *
  * Browser bundles, run in headless Chromium through tools/compare-builds/index.html:
  *
- *   node tools/compare-builds.js --browser [--threaded | --self-test] <oldBundleUrl> <newBundleUrl>
+ *   node tools/compare-builds.js --browser [--threaded [--strict] | --self-test] <oldBundleUrl> <newBundleUrl>
  *
  *   URLs are paths on python-server.py, which serves the repository root on port 8091,
  *   for example /dist/ARToolkitNFT.js; the file at the same path under the repository
  *   is the one hashed and checked against what the server sends. --threaded compares only
  *   the found set and the pose of the last frame of each scenario (see scenarios.js); use
  *   it for ARToolkitNFT_td.js, whose 602.ARToolkitNFT_td.js chunk must sit next to it.
+ *   --threaded --strict plays the threaded runs the same way (same waits after each frame)
+ *   but compares every record, as the single-thread comparisons do. It only holds when the
+ *   threaded build repeats itself frame by frame, so check that first by comparing the old
+ *   bundle with itself.
  *   The browser builds also play an extra run with the controller's internalLuma option.
  *
  * --self-test runs the new side with filtering inverted in every run, to prove the tool
@@ -71,7 +75,7 @@ const THREADED_DEADLINE_MINUTES = 15;
 
 const USAGE =
   "usage: node tools/compare-builds.js [--self-test] <oldNodeBundle> <newNodeBundle>\n" +
-  "       node tools/compare-builds.js --browser [--threaded | --self-test] <oldBundleUrl> <newBundleUrl>";
+  "       node tools/compare-builds.js --browser [--threaded [--strict] | --self-test] <oldBundleUrl> <newBundleUrl>";
 
 /** An error whose message says it all: printed without a stack trace. */
 function failure(message) {
@@ -277,6 +281,7 @@ async function compareBrowser({
   newUrl,
   files,
   threaded,
+  strict,
   selfTest,
   deadlineAt,
   minutes,
@@ -326,6 +331,7 @@ async function compareBrowser({
       old: oldUrl,
       new: newUrl,
       threaded: threaded ? "1" : "0",
+      strict: strict ? "1" : "0",
       selfTest: selfTest ? "1" : "0",
     });
     await page.goto(
@@ -400,13 +406,20 @@ async function main(argv) {
   const startedAt = performance.now();
   const flags = new Set(argv.filter((arg) => arg.startsWith("--")));
   const operands = argv.filter((arg) => !arg.startsWith("--"));
-  const known = new Set(["--self-test", "--browser", "--threaded"]);
+  const known = new Set(["--self-test", "--browser", "--threaded", "--strict"]);
   const unknown = [...flags].filter((flag) => !known.has(flag));
   const browser = flags.has("--browser");
   const threaded = flags.has("--threaded");
+  const strict = flags.has("--strict");
   const selfTest = flags.has("--self-test");
   if (operands.length !== 2 || unknown.length > 0 || (!browser && threaded)) {
     console.error(USAGE);
+    return 2;
+  }
+  if (strict && !threaded) {
+    console.error(
+      "--strict only applies to --threaded: the other comparisons already compare every record",
+    );
     return 2;
   }
   if (threaded && selfTest) {
@@ -444,6 +457,7 @@ async function main(argv) {
         newUrl: newBuild,
         files,
         threaded,
+        strict,
         selfTest,
         deadlineAt,
         minutes,
