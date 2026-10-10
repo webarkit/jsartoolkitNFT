@@ -337,11 +337,103 @@ threaded build reuses it: it must show differences in the threaded build only.
 
 ## Risks
 
-- **Bit-identical single-thread output is an expectation, not a guarantee.** If the comparison
-  shows differences, the likeliest causes are a changed operation order in the refactor or a
-  different AR2 variant reaching a build by mistake. Either is a bug to fix, not a tolerance to
-  add.
+- **Bit-identical single-thread output is an expectation, not a guarantee**, and it holds only
+  under a frozen clock: `ar2SelectTemplate` reseeds `rand()` with `time(NULL)` every 128 calls,
+  so two runs of the same build differ unless `Date.now` is the same for both (see *Execution
+  notes*). If the comparison shows differences, the likeliest causes are a changed operation
+  order in the refactor or a different AR2 variant reaching a build by mistake. Either is a bug
+  to fix, not a tolerance to add.
 - **Header clash.** Because of the shared `WEBARKIT_LOG_H` guard, a log header included from a
   core public header would hide the adapters' logger. This fails at compile time, not silently:
   the adapters' `webarkitLOG*` calls become undeclared. The rule in *Logging* avoids it. If the
   guard is ever renamed in WebARKitLib, that is a separate change.
+
+## Execution notes (2026-10-09/10)
+
+Decisions taken while implementing, recorded as rulings in the execution ledger. Where they
+differ from the sections above, these notes win.
+
+**Core API and lifecycle**
+
+- **`setupAR2()` is part of the core's API** (Ruling 7): `int setupAR2()`, `0` or `-1`. The JS
+  calls `setup()` then `setupAR2()`, which creates the AR2 handle (variant from the config) and
+  the KPM handle from `paramLT`. The API list in *ARToolKitNFTCore* omitted it.
+- **`setup()` always returns the new id** (Ruling 8), ignoring `setCamera()`'s result, as the
+  bindings do. A native caller checks `cameraParamLT() != nullptr` to know the camera applied.
+- **Safety additions** on paths that are use-after-free today (Rulings 9 and 22): `setCamera()`
+  waits for a running threaded search and drops it, then frees the detector and the KPM handle
+  with the old `paramLT`; `setupAR2()` destroys the detector before replacing the KPM handle;
+  `setupAR2()` and `recalculateCameraLens()` do nothing without `paramLT`. Without a detector
+  or a KPM handle `detectNFTMarker()` detects nothing but still tracks (after `setCamera()`
+  there is no AR2 handle either, so tracked markers are lost), and `addNFTMarkers()` refuses
+  without a KPM handle, as the bindings fail in `kpmSetRefDataSet()`. The next
+  `addNFTMarkers()` recreates the detector; after a second `setupAR2()` the loaded markers are
+  not detected until then (`addNFTMarkers({})` re-arms them and returns `{}`). On the
+  normal JS flow (setup, setupAR2, markers) none of this triggers.
+- **`getNFTData()` after `teardown()`** (Ruling 10a): `teardown()` keeps the marker data, so
+  `getNFTData()` still answers, as in the bindings (clearing it would make `std::vector::at`
+  abort). The next successful `addNFTMarkers()` truncates it to the first new id, so after
+  teardown and reload `getNFTData(id)` is the new marker; the bindings returned the old one.
+- **Zeroed frame buffers** (Ruling 11): `setup()` zero-initialises the frame buffers (the
+  bindings leave them uninitialised). With them, a detect before any frame returns KPM's result
+  count in the single-thread preset (KPM runs on the zeroed buffer), as the bindings do
+  (Ruling 12).
+- **`NFTTrackingConfig`** has default member initialisers holding the single-thread settings,
+  and the core falls back to `nftDefaultClockMs` when `config.clock` is null.
+- **Threads:** `loadCamera()` and `setup()` use the process-wide camera registry and id
+  counters, which are not synchronised: cores on different threads must not call them
+  concurrently.
+
+**Threaded detector**
+
+- **`trackingInitDiscard()`** (Ruling 5), a second deliberate deviation from D2:
+  `ThreadedKpmDetector::waitIdle()` clears trackingSub's pending search. Today's threaded
+  binding `threadEndWait()`s in `addNFTMarkers`, leaves the search pending, has its next
+  `trackingInitStart()` refused and then waits forever: loading markers during a running search
+  stalled detection permanently. It no longer does.
+- **Re-initialisation hang** (Ruling 21), a known limitation: on the raw threaded binding, a
+  second `setup()` after markers were loaded hangs the page: stopping the detector makes the
+  main thread wait on the worker, a pthread that cannot start while the main thread blocks (no
+  `PTHREAD_POOL_SIZE`). The bindings terminated the runtime on a freed KPM handle instead. Since
+  Ruling 22 the hang is in `setup()` (through `setCamera()`), not in `setupAR2()`. The TS
+  controllers call `setup()` and `setupAR2()` once, before any marker is loaded, so they never
+  take this path. Follow-up: `PTHREAD_POOL_SIZE`, or a non-blocking detector stop.
+- **Log lines of the threaded build:** "Detected page %d." is no longer printed, and "Tracking
+  lost" is logged with `ARLOGi` (governed by `arLogLevel`, written by ARUtil's logger with
+  `console.warn`) instead of `webarkitLOGi`.
+
+**Build, logging, tests**
+
+- **CI** runs `webarkit_nft_core_test` in WebARKitLib's native job (Ruling 13).
+- **`-fno-rtti -fno-exceptions`** are set as a CMake source property (`COMPILE_OPTIONS`) on the
+  core's `.cpp` files, not through a dedicated test target, so every build of `WebARKitNFT`
+  enforces them. `WEBARKIT_NFT_THREADS` is a PUBLIC compile definition of the target (Ruling 1).
+- **`thread_sub.c`** is in jsartoolkitNFT's single-thread source list (Ruling 18), in
+  `MAIN_SOURCES_IMPROVED_ES6`, not in `libar.o`'s sources, so the legacy builds stay
+  byte-identical: the core calls `threadGetCPU` and `ar2CreateHandle` (AR2's `handle.c` calls
+  `threadGetCPU` too), which the single-thread `libar.o` lacks.
+- **`webarkitLogLevel`** (Ruling 19): the adapters declare `extern "C" int webarkitLogLevel;`
+  themselves instead of including the native `WebARKitLog.h`, which shares its include guard
+  with the Emscripten logger they use.
+- **Logger output** (Ruling 20): under Emscripten, `webarkitLogv` writes errors with
+  `console.error`, warnings with `console.warn` and the rest with `console.log` (it went to
+  `stderr`, which browsers show as `console.error`), and drops one trailing newline, which
+  printed a blank line after each message. `WebARKitLog.cpp` is also compiled into WebARKitLib's
+  optical library, whose Emscripten logs move the same way.
+
+**Equivalence comparison** (`tools/compare-builds.js`)
+
+- **Frozen clock** (Ruling 14): the comparison freezes `Date.now` in the build's realm.
+  `ar2SelectTemplate` reseeds `rand()` with `time(NULL)` every 128 calls, so two runs of the
+  same build differ; the seed is an input like the frames, and with the same seed a changed
+  operation order still shows. The bit-identical result holds under this freeze.
+- **Threaded runs** (Ruling 15): after a frame on which a marker is not found, the threaded run
+  waits 1000 ms for the worker (a search takes about 400 to 600 ms). The threaded reference
+  repeated itself frame by frame, so the threaded build is compared on every record
+  (`--threaded --strict`), not only on the last frame of each scenario.
+- **`internalLuma`** (Ruling 16): the browser comparisons add a run with the controller's
+  `internalLuma` option, which exercises the adapters' SIMD luma path.
+- **Tool safeguards** (Ruling 17): a global deadline (a deadlock fails instead of hanging), the
+  server always killed, refusal of vacuous results (markers that never track), a warning and a
+  verdict note for byte-identical inputs, and a browser self-test that inverts filtering on the
+  new side to prove the comparison can report a difference.
