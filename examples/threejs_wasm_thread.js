@@ -129,11 +129,27 @@ export default function start(
 
   let world;
 
-  const found = function () {
-    window.addEventListener("markerFound", function (ev) {
-      world = ev.detail.matrixGL_RH;
-    });
-  };
+  // Registered once: draw() runs every frame, so listeners added there pile up.
+  window.addEventListener("markerFound", function (ev) {
+    world = ev.detail.matrixGL_RH;
+  });
+  window.addEventListener("markerLost", function () {
+    world = null;
+  });
+  window.addEventListener("endLoading", function (ev) {
+    if (ev.detail.end === true) {
+      // removing loader page if present
+      const loader = document.getElementById("loading");
+      if (loader) {
+        loader.querySelector(".loading-text").innerText = "Start the tracking!";
+        setTimeout(function () {
+          loader.parentElement.removeChild(loader);
+        }, 2000);
+      } else {
+        console.log("No loader found");
+      }
+    }
+  });
 
   let lasttime = Date.now();
   let time = 0;
@@ -162,7 +178,6 @@ export default function start(
     const dt = now - lasttime;
     time += dt;
     lasttime = now;
-    found();
     if (camera_matrix) {
       setCameraMatrix();
     }
@@ -176,24 +191,6 @@ export default function start(
       // set matrix of 'root' by detected 'world' matrix
       setMatrix(root.matrix, world);
     }
-    window.addEventListener("endLoading", function (ev) {
-      if (ev.detail.end === true) {
-        // removing loader page if present
-        const loader = document.getElementById("loading");
-        if (loader) {
-          loader.querySelector(".loading-text").innerText =
-            "Start the tracking!";
-          setTimeout(function () {
-            if (loader) {
-              loader.querySelector(".loading-text").innerText = "";
-              loader.querySelector("img").src = "";
-            }
-          }, 2000);
-        } else {
-          console.log("No loader found");
-        }
-      }
-    });
     renderer.render(scene, camera);
   };
 
