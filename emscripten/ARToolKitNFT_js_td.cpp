@@ -1,34 +1,34 @@
 #include "ARToolKitNFT_js_td.h"
-#include <WebARKitTrackers/WebARKitNFT/KpmRefDataSetCopy.h>
+
+// Declared by the native logger the core logs with, WebARKit/include/WebARKitLog.h. That
+// header cannot be included here: it shares the include guard WEBARKIT_LOG_H with the
+// Emscripten logger <WebARKit/WebARKitLog.h> this file uses (webarkit/WebARKitLib#84).
+extern "C" int webarkitLogLevel;
 
 ARToolKitNFT::ARToolKitNFT()
-    : id(0), paramLT(nullptr), videoFrame(nullptr), videoFrameSize(0),
-      videoLuma(nullptr), width(0), height(0),
-      kpmSearchRunning(false),
-      surfaceSetCount(0), // Running NFT marker id
-      arhandle(nullptr), ar3DHandle(nullptr), 
-      kpmHandle(nullptr, [](KpmHandle*){/* empty deleter */}), // Fix: proper nullptr with deleter
-      ar2Handle(nullptr), threadHandle(nullptr),
-      nearPlane(0.0001), farPlane(1000.0),
-      patt_id(0) // Running pattern marker id
+    : core(threadedPreset(), false), width(0), height(0),
+      arhandle(nullptr), ar3DHandle(nullptr)
 {
   webarkitLOGi("init ARToolKitNFT constructor...");
 }
 
 ARToolKitNFT::ARToolKitNFT(bool withFiltering)
-    : ARToolKitNFT() // Call the default constructor
+    : core(threadedPreset(), withFiltering), width(0), height(0),
+      arhandle(nullptr), ar3DHandle(nullptr)
 {
-    this->withFiltering = withFiltering;
-
-    if (withFiltering) {
-        filterCutoffFrequency = 60.0;
-        filterSampleRate = 120.0;
-    }
+  // One line, as when this constructor delegated to the default one; unlike the
+  // single-thread binding, it never logged one of its own. The threaded preset does
+  // not filter poses, so withFiltering has no effect, as before.
+  webarkitLOGi("init ARToolKitNFT constructor...");
 }
 
 ARToolKitNFT::~ARToolKitNFT() {
   teardown();
 }
+
+/*********
+ * Frames *
+ *********/
 
 int ARToolKitNFT::passVideoData(uintptr_t videoFramePtr, uintptr_t videoLumaPtr, bool internalLuma) {
   uint8_t* vf = reinterpret_cast<uint8_t*>(videoFramePtr);
@@ -47,47 +47,46 @@ int ARToolKitNFT::passVideoData(uintptr_t videoFramePtr, uintptr_t videoLumaPtr,
       webarkit::webarkitVideoLumaFinal(&vli);
       return -1;
     }
-    if (this->videoLuma) {
-      webarkitLOGd("Copy videoLuma with simd !");
-      std::copy(out, out + this->width * this->height, this->videoLuma.get());
-      webarkit::webarkitVideoLumaFinal(&vli);
-    }
+    webarkitLOGd("Copy videoLuma with simd !");
+    // The core copies the frame and the luma computed from it.
+    this->core.setVideoFrame(vf, out);
+    webarkit::webarkitVideoLumaFinal(&vli);
+    return 0;
   }
 
-  // Copy data instead of just assigning pointers
-  if (this->videoFrame && vf) {
-    std::copy(vf, vf + this->videoFrameSize, this->videoFrame.get());
-  }
-
-  if (this->videoLuma && vl) {
-    if (!internalLuma) {
-      webarkitLOGd("Inside videoLuma no simd !");
-      std::copy(vl, vl + (this->width * this->height), this->videoLuma.get());
-    }
-  }
+  webarkitLOGd("Inside videoLuma no simd !");
+  this->core.setVideoFrame(vf, vl);
   return 0;
 }
 
+/*************************
+ * Detection and tracking *
+ *************************/
+
+int ARToolKitNFT::detectNFTMarker() {
+  return this->core.detectNFTMarker();
+}
+
 emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
-  if (markerIndex < 0 || markerIndex >= this->surfaceSetCount) {
+  const NFTMarkerState *state = this->core.markerState(markerIndex);
+  if (state == nullptr) {
     return emscripten::val(MARKER_INDEX_OUT_OF_BOUNDS);
   }
 
   // Tracking itself happens once per frame in detectNFTMarker(); this only
   // reports the result, so calling it more than once per frame is harmless.
-  const NFTMarkerState &state = markerStates[markerIndex];
   auto NFTMarkerInfo = emscripten::val::object();
   NFTMarkerInfo.set("id", markerIndex);
 
-  if (state.tracking) {
+  if (state->tracking) {
     auto pose = emscripten::val::array();
     int idx = 0;
     for (auto x = 0; x < 3; x++) {
       for (auto y = 0; y < 4; y++) {
-        pose.set(idx++, state.pose[x][y]);
+        pose.set(idx++, state->pose[x][y]);
       }
     }
-    NFTMarkerInfo.set("error", state.err);
+    NFTMarkerInfo.set("error", state->err);
     NFTMarkerInfo.set("found", 1);
     NFTMarkerInfo.set("pose", pose);
   } else {
@@ -99,191 +98,123 @@ emscripten::val ARToolKitNFT::getNFTMarkerInfo(int markerIndex) {
   return NFTMarkerInfo;
 }
 
-THREAD_HANDLE_T *ARToolKitNFT::trackingInit(KpmHandle *kpmHandle) {
-  // Start the KPM tracking thread.
-  THREAD_HANDLE_T *threadHandle;
-  threadHandle = trackingInitInit(kpmHandle);
-  if (!threadHandle)
-    exit(-1);
-  return threadHandle;
+void ARToolKitNFT::setFiltering(bool enableFiltering) {
+  this->core.setFiltering(enableFiltering);
 }
 
-bool ARToolKitNFT::allMarkersTracked() const {
-  for (int i = 0; i < this->surfaceSetCount; i++) {
-    if (!markerStates[i].tracking) return false;
-  }
-  return true;
+void ARToolKitNFT::setContinuousDetection(bool enabled) {
+  this->core.setContinuousDetection(enabled);
 }
 
-bool ARToolKitNFT::anyMarkerTracked() const {
-  for (int i = 0; i < this->surfaceSetCount; i++) {
-    if (markerStates[i].tracking) return true;
-  }
-  return false;
+void ARToolKitNFT::setDetectionInterval(double ms) {
+  this->core.setDetectionInterval(ms);
 }
 
-int ARToolKitNFT::detectNFTMarker() {
-  // No markers loaded yet: nothing to detect. addNFTMarkers() creates the
-  // worker, so its absence is only an error once markers are loaded.
-  if (this->surfaceSetCount == 0) {
-    return -1;
-  }
-  if (!this->threadHandle) {
-    webarkitLOGe("Error: threadHandle\n");
-    return -1;
-  }
+/******************
+ * Camera and setup *
+ ******************/
 
-  int resultNum = -1;
-
-  // Collect the previous search, if it has finished.
-  if (this->kpmSearchRunning) {
-    TrackingInitResult results[PAGES_MAX];
-    int n = 0;
-    const int ret = trackingInitGetResults(this->threadHandle, results, PAGES_MAX, &n);
-    if (ret != 0) {
-      // Finished (1) or failed (-1): either way the worker is free again.
-      this->kpmSearchRunning = false;
-      this->lastKpmEndMs = emscripten_get_now();
-    }
-    if (ret == 1) {
-      resultNum = n;
-      for (int i = 0; i < n; i++) {
-        const int page = results[i].page;
-        if (page < 0 || page >= this->surfaceSetCount) {
-          webarkitLOGe("Detected bad page %d.\n", page);
-          continue;
-        }
-        NFTMarkerState &state = markerStates[page];
-        if (state.tracking) continue;
-        webarkitLOGi("Detected page %d.\n", page);
-        ar2SetInitTrans(this->surfaceSet[page], results[i].trans);
-        state.tracking = true;
-        state.filterNeedsReset = true;
-      }
-    }
-  }
-
-  // Start a new search while any marker is untracked: on any frame while
-  // nothing is tracked, otherwise at most once per detectionIntervalMs counted
-  // from when the previous search finished, and never without continuous
-  // detection. The worker is idle here, so setting
-  // skip pages cannot race with it; kpmMatching() clears them.
-  const double now = emscripten_get_now();
-  const bool detectionDue =
-      !anyMarkerTracked() ||
-      (this->continuousDetection &&
-       now - this->lastKpmEndMs >= this->detectionIntervalMs);
-  if (!this->kpmSearchRunning && this->surfaceSetCount > 0 && !allMarkersTracked() &&
-      detectionDue) {
-    int skipPages[PAGES_MAX];
-    int skipNum = 0;
-    for (int i = 0; i < this->surfaceSetCount; i++) {
-      if (markerStates[i].tracking) skipPages[skipNum++] = i;
-    }
-    if (skipNum > 0) {
-      kpmSetMatchingSkipPage(this->kpmHandle.get(), skipPages, skipNum);
-    }
-    trackingInitStart(this->threadHandle, this->videoLuma.get());
-    this->kpmSearchRunning = true;
-  }
-
-  trackMarkers();
-  return resultNum;
+int ARToolKitNFT::loadCamera(std::string cparam_name) {
+  return ARToolKitNFTCore::loadCamera(cparam_name);
 }
 
-void ARToolKitNFT::trackMarkers() {
-  for (int page = 0; page < this->surfaceSetCount; page++) {
-    NFTMarkerState &state = markerStates[page];
-    if (!state.tracking) continue;
+int ARToolKitNFT::setup(int width, int height, int cameraID) {
+  this->width = width;
+  this->height = height;
 
-    float trans[3][4];
-    float err = -1.0f;
-    if (ar2Tracking(this->ar2Handle, this->surfaceSet[page], this->videoFrame.get(), trans, &err) < 0) {
-      webarkitLOGi("Tracking lost on page %d.\n", page);
-      state.tracking = false;
-      state.err = -1.0f;
-      continue;
-    }
-    for (int r = 0; r < 3; r++) {
-      for (int c = 0; c < 4; c++) {
-        state.pose[r][c] = trans[r][c];
-      }
-    }
-    state.err = err;
-    ARLOGi("Tracked page %d (max %d).\n", page, this->surfaceSetCount - 1);
+  // The core's setup() applies the camera, which frees and recreates paramLT.
+  deleteARHandles();
+  const int id = this->core.setup(width, height, cameraID);
+  // No paramLT when the camera could not be applied: no ARHandle either, as before.
+  // An unknown camera id leaves the earlier paramLT in place, and the handles are
+  // created again from it.
+  if (this->core.cameraParamLT() != nullptr) {
+    createARHandles();
   }
-}
 
-std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> ARToolKitNFT::createKpmHandle(ARParamLT *cparamLT) {
-  KpmHandle* handle = kpmCreateHandle(cparamLT);
-  if (!handle) {
-    webarkitLOGe("Error: kpmCreateHandle returned nullptr.");
-    // Return empty unique_ptr with proper deleter type
-    return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(nullptr, [](KpmHandle* p) {
-      if (p) kpmDeleteHandle(&p);
-    });
-  }
-  return std::unique_ptr<KpmHandle, void(*)(KpmHandle*)>(handle, [](KpmHandle* p) { 
-    if (p) kpmDeleteHandle(&p); 
-  });
-}
-
-int ARToolKitNFT::getKpmImageWidth(KpmHandle *kpmHandle) {
-  return kpmHandleGetXSize(kpmHandle);
-}
-
-int ARToolKitNFT::getKpmImageHeight(KpmHandle *kpmHandle) {
-  return kpmHandleGetYSize(kpmHandle);
+  return id;
 }
 
 int ARToolKitNFT::setupAR2() {
-  AR2HandleT* tempHandle = ar2CreateHandle(this->paramLT, this->pixFormat, AR2_TRACKING_DEFAULT_THREAD_NUM);
-  if (tempHandle == nullptr) {
-    webarkitLOGe("Error: ar2CreateHandle.");
-    return -1;  // Return error code if handle creation failed
-  }
-  
-  // Store the handle
-  this->ar2Handle = tempHandle;
+  return this->core.setupAR2();
+}
 
-  if (threadGetCPU() <= 1) {
-    webarkitLOGi("Using NFT tracking settings for a single CPU.");
-    ar2SetTrackingThresh(this->ar2Handle, 5.0);
-    ar2SetSimThresh(this->ar2Handle, 0.50);
-    ar2SetSearchFeatureNum(this->ar2Handle, 16);
-    ar2SetSearchSize(this->ar2Handle, 6);
-    ar2SetTemplateSize1(this->ar2Handle, 6);
-    ar2SetTemplateSize2(this->ar2Handle, 6);
-  } else {
-    webarkitLOGi("Using NFT tracking settings for more than one CPU.");
-    ar2SetTrackingThresh(this->ar2Handle, 5.0);
-    ar2SetSimThresh(this->ar2Handle, 0.50);
-    ar2SetSearchFeatureNum(this->ar2Handle, 16);
-    ar2SetSearchSize(this->ar2Handle, 12);
-    ar2SetTemplateSize1(this->ar2Handle, 6);
-    ar2SetTemplateSize2(this->ar2Handle, 6);
+emscripten::val ARToolKitNFT::getCameraLens() {
+  emscripten::val lens = emscripten::val::array();
+  const ARdouble *cameraLens = this->core.cameraLens();
+  for (int idx = 0; idx < 16; idx++) {
+    lens.set(idx, cameraLens[idx]);
   }
+  return lens;
+}
 
-  // Create KPM handle
-  this->kpmHandle = createKpmHandle(this->paramLT);
-  if (!this->kpmHandle) {
-    webarkitLOGe("Error creating KPM handle");
-    return -1;
-  }
+void ARToolKitNFT::recalculateCameraLens() {
+  this->core.recalculateCameraLens();
+}
 
-  return 0;
+void ARToolKitNFT::setProjectionNearPlane(const ARdouble projectionNearPlane) {
+  this->core.setProjectionNearPlane(projectionNearPlane);
+}
+
+ARdouble ARToolKitNFT::getProjectionNearPlane() { return this->core.getProjectionNearPlane(); }
+
+void ARToolKitNFT::setProjectionFarPlane(const ARdouble projectionFarPlane) {
+  this->core.setProjectionFarPlane(projectionFarPlane);
+}
+
+ARdouble ARToolKitNFT::getProjectionFarPlane() { return this->core.getProjectionFarPlane(); }
+
+/*****************
+ * Marker loading *
+ *****************/
+
+int ARToolKitNFT::decompressZFT(std::string datasetPathname, std::string tempPathname) {
+  return this->core.decompressZFT(datasetPathname, tempPathname);
+}
+
+std::vector<int>
+ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
+  // The first call starts the core's detection worker. If it cannot start, this
+  // returns an empty vector (it used to exit(-1)).
+  return this->core.addNFTMarkers(datasetPathnames);
 }
 
 nftMarker ARToolKitNFT::getNFTData(int index) {
-  // get marker(s) nft data.
-  return this->nftMarkers.at(index);
+  return this->core.getNFTData(index);
 }
 
 /***********
  * Teardown *
  ***********/
 
-void ARToolKitNFT::deleteHandle() {
+int ARToolKitNFT::teardown() {
+  // arhandle points to the core's paramLT, which the core's teardown() frees. The
+  // core stops the detection worker before it frees what the worker uses.
+  deleteARHandles();
+  return this->core.teardown();
+}
+
+/***************
+ * Set Log Level
+ ****************/
+void ARToolKitNFT::setLogLevel(int level) {
+  // Guard as ARToolKit5's arwSetLogLevel does: a negative level would make
+  // arLog's `logLevel < arLogLevel` test pass for every message, turning an
+  // apparent "off" into maximum verbosity. The core logs with the native
+  // WebARKit logger, which has the same levels, so one call sets both.
+  if (level >= 0) {
+    arLogLevel = level;
+    webarkitLogLevel = level;
+  }
+}
+
+int ARToolKitNFT::getLogLevel() { return arLogLevel; }
+
+/**********************************************************************
+ * ARHandle: not used by NFT, kept until #659 decides on its methods. *
+ **********************************************************************/
+
+void ARToolKitNFT::deleteARHandles() {
   if (this->arhandle != nullptr) {
     if (arPattDetach(this->arhandle) != 0) {
       webarkitLOGe("Error detaching pattern from arhandle.");
@@ -295,292 +226,24 @@ void ARToolKitNFT::deleteHandle() {
     ar3DDeleteHandle(&(this->ar3DHandle));
     this->ar3DHandle = nullptr;
   }
-  if (this->paramLT != nullptr) {
-    arParamLTFree(&(this->paramLT));
-    this->paramLT = nullptr;
-  }
-  if (this->ar2Handle != nullptr) {
-      ar2DeleteHandle(&(this->ar2Handle));
-      this->ar2Handle = nullptr;
-    }
 }
 
-int ARToolKitNFT::teardown() {
-  // Stop the detection worker before freeing what it uses: wait for a running
-  // search, then let the thread exit.
-  if (this->threadHandle) {
-    if (this->kpmSearchRunning) {
-      threadEndWait(this->threadHandle);
-      this->kpmSearchRunning = false;
-    }
-    trackingInitQuit(&this->threadHandle);
-  }
-
-  // Reset unique pointers instead of freeing memory
-  this->videoFrame.reset();
-  this->videoLuma.reset();
-  this->videoFrameSize = 0;
-
-  if (this->refDataSetAll) {
-    kpmDeleteRefDataSet(&this->refDataSetAll);
-  }
-
-  deleteHandle();
-
-  return 0;
-}
-
-int ARToolKitNFT::setCamera(int id, int cameraID) {
-
-  if (cameraParams.find(cameraID) == cameraParams.end()) {
-    return -1;
-  }
-
-  this->param = cameraParams[cameraID];
-
-  if (this->param.xsize != this->width || this->param.ysize != this->height) {
-    ARLOGw("*** Camera Parameter resized from %d, %d. ***\n", this->param.xsize,
-           this->param.ysize);
-    arParamChangeSize(&(this->param), this->width, this->height,
-                      &(this->param));
-  }
-
-  ARLOGi("*** Camera Parameter ***\n");
-  arParamDisp(&(this->param));
-
-  deleteHandle();
-  if (this->paramLT != nullptr) {
-    deleteHandle();
-  }
-
-  this->paramLT = arParamLTCreate(&(this->param), AR_PARAM_LT_DEFAULT_OFFSET);
-  if (!this->paramLT) {
-    webarkitLOGe("setCamera(): Error: arParamLTCreate for cameraID %d.", cameraID);
-    return -1;
-  }
-
-  ARLOGi("setCamera(): arParamLTCreated\n..%d, %d\n", (this->paramLT->param).xsize, (this->paramLT->param).ysize);
-
+int ARToolKitNFT::createARHandles() {
   // setup camera
-  if ((this->arhandle = arCreateHandle(this->paramLT)) == nullptr) {
+  if ((this->arhandle = arCreateHandle(this->core.cameraParamLT())) == nullptr) {
     webarkitLOGe("setCamera(): Error: arCreateHandle.");
     return -1;
   }
   // AR_DEFAULT_PIXEL_FORMAT
-  int set = arSetPixelFormat(this->arhandle, this->pixFormat);
+  arSetPixelFormat(this->arhandle, this->pixFormat);
 
-  this->ar3DHandle = ar3DCreateHandle(&(this->param));
+  this->ar3DHandle = ar3DCreateHandle(&(this->core.cameraParam()));
   if (this->ar3DHandle == nullptr) {
     webarkitLOGe("setCamera(): Error creating 3D handle");
     return -1;
   }
-
-  arglCameraFrustumRH(&((this->paramLT)->param), this->nearPlane,
-                      this->farPlane, this->cameraLens);
-
   return 0;
 }
-
-void ARToolKitNFT::recalculateCameraLens() {
-  arglCameraFrustumRH(&((this->paramLT)->param), this->nearPlane,
-                      this->farPlane, this->cameraLens);
-}
-
-int ARToolKitNFT::loadCamera(std::string cparam_name) {
-  ARParam param;
-  if (arParamLoad(cparam_name.c_str(), 1, &param) < 0) {
-    webarkitLOGe("loadCamera(): Error loading parameter file %s for camera.",
-                 cparam_name.c_str());
-    return -1;
-  }
-  int cameraID = gCameraID++;
-  cameraParams[cameraID] = param;
-
-  return cameraID;
-}
-
-emscripten::val ARToolKitNFT::getCameraLens() {
-  emscripten::val lens = emscripten::val::array();
-  int idx = 0;
-  for (const auto& value : this->cameraLens) {
-    lens.set(idx++, value);
-  }
-  return lens;
-}
-
-int ARToolKitNFT::decompressZFT(std::string datasetPathname, std::string tempPathname){
-  int response = decompressMarkers(datasetPathname.c_str(), tempPathname.c_str());
-
-  // 1 on success, -1 if the archive is missing or malformed.
-  return response == 0 ? 1 : -1;
-}
-
-/*****************
- * Marker loading *
- *****************/
-
-std::vector<int>
-ARToolKitNFT::addNFTMarkers(std::vector<std::string> &datasetPathnames) {
-
-  // Per-marker state lives in fixed arrays of PAGES_MAX entries (surfaceSet,
-  // markerStates) indexed up to surfaceSetCount, so the running total across
-  // every call must stay within PAGES_MAX. Refuse before any state changes.
-  if (datasetPathnames.size() >
-      static_cast<size_t>(PAGES_MAX - this->surfaceSetCount)) {
-    webarkitLOGe("Error: exceeded maximum pages (%d).", PAGES_MAX);
-    return {};
-  }
-
-  // One detection worker for the controller's lifetime, created by the first
-  // call. teardown() stops it.
-  if (!this->threadHandle) {
-    this->threadHandle = trackingInit(this->kpmHandle.get());
-    if (!this->threadHandle) {
-      webarkitLOGe("Error: could not start the detection worker.");
-      return {};
-    }
-  }
-
-  // Markers loaded by earlier calls keep their ids, so this batch continues
-  // the sequence: marker id = KPM page number = surfaceSet slot.
-  const int firstId = this->surfaceSetCount;
-  const int batchSize = static_cast<int>(datasetPathnames.size());
-
-  // Load the whole batch before changing any state, so a marker that fails to
-  // load leaves the markers from earlier calls untouched.
-  KpmRefDataSet *batchRefDataSet = nullptr;
-  auto discardBatch = [&](int loadedSurfaces) {
-    for (int j = 0; j < loadedSurfaces; j++) {
-      ar2FreeSurfaceSet(&this->surfaceSet[firstId + j]);
-    }
-    if (batchRefDataSet) {
-      kpmDeleteRefDataSet(&batchRefDataSet);
-    }
-  };
-
-  for (int i = 0; i < batchSize; i++) {
-    const char *datasetPathname = datasetPathnames[i].c_str();
-    const int id = firstId + i;
-    webarkitLOGi("add NFT marker-> '%s'", datasetPathname);
-
-    // Load KPM data.
-    KpmRefDataSet *refDataSet2;
-    webarkitLOGi("Reading %s.fset3", datasetPathname);
-    if (kpmLoadRefDataSet(datasetPathname, "fset3", &refDataSet2) < 0) {
-      webarkitLOGe("Error reading KPM data from %s.fset3", datasetPathname);
-      discardBatch(i);
-      return {};
-    }
-    webarkitLOGi("Assigned page no. %d.", id);
-    if (kpmChangePageNoOfRefDataSet(refDataSet2, KpmChangePageNoAllPages, id) < 0) {
-      webarkitLOGe("Error: kpmChangePageNoOfRefDataSet");
-      kpmDeleteRefDataSet(&refDataSet2);
-      discardBatch(i);
-      return {};
-    }
-    if (kpmMergeRefDataSet(&batchRefDataSet, &refDataSet2) < 0) {
-      webarkitLOGe("Error: kpmMergeRefDataSet");
-      discardBatch(i);
-      return {};
-    }
-
-    // Load AR2 data.
-    webarkitLOGi("Reading %s.fset", datasetPathname);
-    if ((this->surfaceSet[id] = ar2ReadSurfaceSet(datasetPathname, "fset", nullptr)) == nullptr) {
-      webarkitLOGe("Error reading data from %s.fset", datasetPathname);
-      discardBatch(i);
-      return {};
-    }
-  }
-
-  // Hand KPM every marker loaded so far: kpmSetRefDataSet() rebuilds the
-  // matcher from the set it is given, so the new batch alone would drop the
-  // markers from earlier calls. The batch is merged into a copy of the
-  // accumulated set, which replaces it only once KPM accepts it; a rejected
-  // batch (kpmSetRefDataSet() checks its image limit before changing
-  // anything) leaves the earlier markers loaded and detectable.
-  KpmRefDataSet *combined = nullptr;
-  if (this->refDataSetAll &&
-      (combined = kpmCopyRefDataSet(this->refDataSetAll)) == nullptr) {
-    webarkitLOGe("Error: out of memory copying the KPM reference data.");
-    discardBatch(batchSize);
-    return {};
-  }
-  if (kpmMergeRefDataSet(&combined, &batchRefDataSet) < 0) {
-    webarkitLOGe("Error: kpmMergeRefDataSet");
-    kpmDeleteRefDataSet(&combined);
-    discardBatch(batchSize);
-    return {};
-  }
-
-  // kpmSetRefDataSet() replaces the matcher the worker searches with. Wait for
-  // a running search to finish first; its result is for the old marker set,
-  // so it is dropped, and the next frame starts a search over the new one.
-  if (this->kpmSearchRunning) {
-    threadEndWait(this->threadHandle);
-    this->kpmSearchRunning = false;
-    this->lastKpmEndMs = emscripten_get_now();
-  }
-
-  if (kpmSetRefDataSet(this->kpmHandle.get(), combined) < 0) {
-    webarkitLOGe("Error: kpmSetRefDataSet");
-    kpmDeleteRefDataSet(&combined);
-    discardBatch(batchSize);
-    return {};
-  }
-  kpmDeleteRefDataSet(&this->refDataSetAll);
-  this->refDataSetAll = combined;
-
-  std::vector<int> markerIds;
-  for (int i = 0; i < batchSize; i++) {
-    const int id = firstId + i;
-    AR2SurfaceSetT *surface = this->surfaceSet[id];
-    this->nft.id_NFT = id;
-    this->nft.width_NFT = surface->surface[0].imageSet->scale[0]->xsize;
-    this->nft.height_NFT = surface->surface[0].imageSet->scale[0]->ysize;
-    this->nft.dpi_NFT = surface->surface[0].imageSet->scale[0]->dpi;
-    ARLOGi("NFT marker %d: %d x %d at %d dpi.\n", id, this->nft.width_NFT,
-           this->nft.height_NFT, this->nft.dpi_NFT);
-    this->nftMarkers.push_back(this->nft);
-    this->markerStates[id] = NFTMarkerState{};
-    markerIds.push_back(id);
-  }
-
-  this->surfaceSetCount += batchSize;
-  webarkitLOGi("Loading of NFT data complete.");
-
-  return markerIds;
-}
-
-/**********************
- * Setters and getters *
- **********************/
-
-/***************
- * Set Log Level
- ****************/
-void ARToolKitNFT::setLogLevel(int level) {
-  // Guard as ARToolKit5's arwSetLogLevel does: a negative level would make
-  // arLog's `logLevel < arLogLevel` test pass for every message, turning an
-  // apparent "off" into maximum verbosity.
-  if (level >= 0) {
-    arLogLevel = level;
-  }
-}
-
-int ARToolKitNFT::getLogLevel() { return arLogLevel; }
-
-void ARToolKitNFT::setProjectionNearPlane(const ARdouble projectionNearPlane) {
-  this->nearPlane = projectionNearPlane;
-}
-
-ARdouble ARToolKitNFT::getProjectionNearPlane() { return this->nearPlane; }
-
-void ARToolKitNFT::setProjectionFarPlane(const ARdouble projectionFarPlane) {
-  this->farPlane = projectionFarPlane;
-}
-
-ARdouble ARToolKitNFT::getProjectionFarPlane() { return this->farPlane; }
 
 void ARToolKitNFT::setThreshold(int threshold) {
   if (threshold < 0 || threshold > 255)
@@ -629,7 +292,7 @@ int ARToolKitNFT::setDebugMode(int enable) {
 }
 
 int ARToolKitNFT::getProcessingImage() {
-
+  // No null check, unlike the single-thread binding (drift, kept as it is; #659).
   return (int)this->arhandle->labelInfo.bwImage;
 }
 
@@ -655,40 +318,6 @@ int ARToolKitNFT::getImageProcMode() {
   }
 
   return -1;
-}
-
-int ARToolKitNFT::setup(int width, int height, int cameraID) {
-  int id = gARControllerID++;
-  this->id = id;
-
-  this->width = width;
-  this->height = height;
-
-  this->videoFrameSize = width * height * 4 * sizeof(ARUint8);
-  this->videoFrame = std::unique_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize]);
-  this->videoLuma = std::unique_ptr<ARUint8[]>(new ARUint8[this->videoFrameSize / 4]);
-
-  setCamera(id, cameraID);
-
-  webarkitLOGi("Allocated videoFrameSize %d", this->videoFrameSize);
-
-  return this->id;
-}
-
-void ARToolKitNFT::setFiltering(bool enableFiltering) {
-  this->withFiltering = enableFiltering;
-  webarkitLOGi("Filtering enabled with setFiltering: %s", enableFiltering ? "true" : "false");
-}
-
-void ARToolKitNFT::setContinuousDetection(bool enabled) {
-  this->continuousDetection = enabled;
-  webarkitLOGi("Continuous detection: %s", enabled ? "on" : "off");
-}
-
-void ARToolKitNFT::setDetectionInterval(double ms) {
-  // Negative (or NaN) means "every frame", as 0 does.
-  this->detectionIntervalMs = ms > 0.0 ? ms : 0.0;
-  webarkitLOGi("Detection interval: %f ms", this->detectionIntervalMs);
 }
 
 #include "ARToolKitNFT_js_bindings.cpp"

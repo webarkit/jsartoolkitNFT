@@ -137,8 +137,9 @@ let MAIN_SOURCES_TD_ES6 = [
   "ARToolKitNFT_js_td.cpp",
   nft("trackingSub.c"),
   nft("markerDecompress.c"),
-  // The NFT core (not used by the threaded binding yet): the shared core, the
-  // sync and threaded detectors, the clock and the native logger.
+  // The NFT core the binding is an adapter over: the shared core, the sync and
+  // threaded detectors, the clock and the native logger. The core references both
+  // AR2 variants, so trackingMod*.c are needed too; thread_sub.c is in libar_td.o.
   nft("ARToolKitNFTCore.cpp"),
   nft("SyncKpmDetector.cpp"),
   nft("ThreadedKpmDetector.cpp"),
