@@ -73,11 +73,14 @@ describe("Node build, the single-thread adapter", () => {
     // loads it.
     const toolkit = ar.artoolkitNFT;
     const inst = toolkit.instance;
+    // A threshold away from the default, so the default after setup() shows a new ARHandle.
+    inst.setThreshold(50);
+    assert.equal(inst.getThreshold(), 50);
     const cameraId = await toolkit.loadCamera("camera_para.dat");
     assert.ok(cameraId >= 0, `camera not loaded (${cameraId})`);
     assert.equal(inst.setup(WIDTH, HEIGHT, cameraId), ar.id + 1);
     assert.equal(inst.setupAR2(), 0);
-    // The ARHandle exists again, created from the new camera, with its default threshold.
+    // The ARHandle was created again from the new camera, with the default threshold.
     assert.equal(inst.getThreshold(), 100);
 
     assert.deepEqual(await loadMarkers(ar, ["DataNFT/pinball"]), [2]);
