@@ -359,7 +359,9 @@ differ from the sections above, these notes win.
   calls `setup()` then `setupAR2()`, which creates the AR2 handle (variant from the config) and
   the KPM handle from `paramLT`. The API list in *ARToolKitNFTCore* omitted it.
 - **`setup()` always returns the new id** (Ruling 8), ignoring `setCamera()`'s result, as the
-  bindings do. A native caller checks `cameraParamLT() != nullptr` to know the camera applied.
+  bindings do. On the first `setup()` a native caller checks `cameraParamLT() != nullptr` to
+  know the camera applied; on a later one a failed camera keeps the previous `paramLT`, so it
+  calls `setCamera()` and checks its return value instead.
 - **Safety additions** on paths that are use-after-free today (Rulings 9 and 22): `setCamera()`
   waits for a running threaded search and drops it, then frees the detector and the KPM handle
   with the old `paramLT`; `setupAR2()` destroys the detector before replacing the KPM handle;
@@ -380,9 +382,9 @@ differ from the sections above, these notes win.
   (Ruling 12).
 - **`NFTTrackingConfig`** has default member initialisers holding the single-thread settings,
   and the core falls back to `nftDefaultClockMs` when `config.clock` is null.
-- **Threads:** `loadCamera()` and `setup()` use the process-wide camera registry and id
-  counters, which are not synchronised: cores on different threads must not call them
-  concurrently.
+- **Threads:** `loadCamera()`, `setup()` and `setCamera()` use the process-wide camera
+  registry and id counters, which are not synchronised: cores on different threads must not
+  call them concurrently.
 
 **Threaded detector**
 
@@ -405,9 +407,10 @@ differ from the sections above, these notes win.
 **Build, logging, tests**
 
 - **CI** runs `webarkit_nft_core_test` in WebARKitLib's native job (Ruling 13).
-- **`-fno-rtti -fno-exceptions`** are set as a CMake source property (`COMPILE_OPTIONS`) on the
-  core's `.cpp` files, not through a dedicated test target, so every build of `WebARKitNFT`
-  enforces them. `WEBARKIT_NFT_THREADS` is a PUBLIC compile definition of the target (Ruling 1).
+- **`-fno-rtti -fno-exceptions`** are set as a CMake source property (`COMPILE_OPTIONS`) on
+  `ARToolKitNFTCore.cpp`, `SyncKpmDetector.cpp` and `ThreadedKpmDetector.cpp` (not on
+  `NFTClock.cpp`, which only reads a clock), not through a dedicated test target, so every build
+  of `WebARKitNFT` enforces them. `WEBARKIT_NFT_THREADS` is a PUBLIC compile definition of the target (Ruling 1).
 - **`thread_sub.c`** is in jsartoolkitNFT's single-thread source list (Ruling 18), in
   `MAIN_SOURCES_IMPROVED_ES6`, not in `libar.o`'s sources, so the legacy builds stay
   byte-identical: the core calls `threadGetCPU` and `ar2CreateHandle` (AR2's `handle.c` calls
@@ -433,7 +436,9 @@ differ from the sections above, these notes win.
   (`--threaded --strict`), not only on the last frame of each scenario.
 - **`internalLuma`** (Ruling 16): the browser comparisons add a run with the controller's
   `internalLuma` option, which exercises the adapters' SIMD luma path.
-- **Tool safeguards** (Ruling 17): a global deadline (a deadlock fails instead of hanging), the
-  server always killed, refusal of vacuous results (markers that never track), a warning and a
-  verdict note for byte-identical inputs, and a browser self-test that inverts filtering on the
-  new side to prove the comparison can report a difference.
+- **Tool safeguards:** from the tool's first review, refusal of vacuous results (markers that
+  never track), a check that the served bundles are the files on disk and that no other server
+  holds the port, and a warning for byte-identical inputs; from Ruling 17, a global deadline (a
+  deadlock fails instead of hanging), the server always killed, and a browser self-test that
+  inverts filtering on the new side to prove the comparison can report a difference; from the
+  final review, a verdict note for byte-identical inputs.
