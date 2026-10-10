@@ -31,14 +31,16 @@
  * filtering, so the self-test could not show a difference there.
  *
  * The reference builds come from git, kept in tools/compare-builds/ref/ (ignored by git and
- * served by python-server.py), one file at a time:
+ * served by python-server.py), one file at a time, from Git Bash (Windows PowerShell 5.1
+ * re-encodes what `>` writes, so the copy would not be the bundle git holds):
  *
  *   git show origin/dev:dist/ARToolkitNFT_node.js > tools/compare-builds/ref/ARToolkitNFT_node.js
  *
  * Output. First the sha256 of every file compared, and a WARNING when old and new are
  * byte-identical: such a run checks the tool, not a rewrite. Then "identical (<n> records)"
  * with the number of frames on which the old side found each marker, exit 0; or the first
- * differing record, exit 1. Exit 2, with no verdict, when:
+ * differing record, exit 1. With byte-identical inputs the verdict line ends with
+ * "(byte-identical inputs)" as well. Exit 2, with no verdict, when:
  * - the arguments are wrong, or a bundle file is missing;
  * - a marker does not load, or the old side's records do not show tracking at work (see
  *   checkExercised in scenarios.js), since two builds that track nothing compare identical;
@@ -109,7 +111,10 @@ function browserBundleFiles(url, threaded) {
   });
 }
 
-/** Prints the sha256 of every file, and a WARNING when old and new are byte-identical. */
+/**
+ * Prints the sha256 of every file, and a WARNING when old and new are byte-identical.
+ * Returns whether they are.
+ */
 function describeBuilds(oldFiles, newFiles) {
   const contents = (files) => files.map((f) => fs.readFileSync(f.file));
   const oldBytes = contents(oldFiles);
@@ -122,12 +127,14 @@ function describeBuilds(oldFiles, newFiles) {
   newFiles.forEach((f, i) =>
     console.log(`new ${f.name} sha256 ${sha256(newBytes[i])}`),
   );
-  if (oldBytes.every((bytes, i) => bytes.equals(newBytes[i]))) {
+  const byteIdentical = oldBytes.every((bytes, i) => bytes.equals(newBytes[i]));
+  if (byteIdentical) {
     console.log(
       "WARNING: old and new are byte-identical. This run checks the tool and the scenarios; " +
         "it proves nothing about a rewrite.",
     );
   }
+  return byteIdentical;
 }
 
 // --- deadline ----------------------------------------------------------------------------
@@ -362,8 +369,13 @@ async function compareBrowser({
 
 // --- verdict -----------------------------------------------------------------------------
 
-function report(result) {
+/**
+ * Prints the verdict and returns the exit code. `byteIdentical` repeats the WARNING of
+ * describeBuilds on the verdict line, where a reader of the last lines sees it.
+ */
+function report(result, byteIdentical) {
   const { coverage } = result;
+  const note = byteIdentical ? " (byte-identical inputs)" : "";
   if (!coverage.ok) {
     console.log(
       "not exercised: the old side's records do not show tracking at work, so no verdict:",
@@ -377,13 +389,13 @@ function report(result) {
     .join(", ");
   if (result.identical) {
     console.log(
-      `identical (${result.compared} records); the old side found ${found}`,
+      `identical (${result.compared} records); the old side found ${found}${note}`,
     );
     return 0;
   }
   const first = result.diffs[0];
   console.log(
-    `different: ${result.diffs.length} of ${result.compared} records differ`,
+    `different: ${result.diffs.length} of ${result.compared} records differ${note}`,
   );
   console.log(`first difference at #${first.index}, field ${first.field}`);
   console.log(`old: ${JSON.stringify(first.old)}`);
@@ -449,7 +461,7 @@ async function main(argv) {
   if (browser) {
     const oldFiles = browserBundleFiles(oldBuild, threaded);
     const newFiles = browserBundleFiles(newBuild, threaded);
-    describeBuilds(oldFiles, newFiles);
+    const byteIdentical = describeBuilds(oldFiles, newFiles);
     const files = oldFiles.concat(newFiles);
     return report(
       await compareBrowser({
@@ -462,12 +474,13 @@ async function main(argv) {
         deadlineAt,
         minutes,
       }),
+      byteIdentical,
     );
   }
 
   const oldFiles = nodeBundleFiles(oldBuild);
   const newFiles = nodeBundleFiles(newBuild);
-  describeBuilds(oldFiles, newFiles);
+  const byteIdentical = describeBuilds(oldFiles, newFiles);
   const work = compareNode(
     oldFiles[0].file,
     newFiles[0].file,
@@ -477,7 +490,7 @@ async function main(argv) {
     // runScenarios checks the deadline between frames, which run without yielding.
     throw error && error.deadline ? deadlineFailure(minutes) : error;
   });
-  return report(await withDeadline(work, deadlineAt, minutes));
+  return report(await withDeadline(work, deadlineAt, minutes), byteIdentical);
 }
 
 main(process.argv.slice(2)).then(

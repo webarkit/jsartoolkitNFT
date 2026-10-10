@@ -172,7 +172,9 @@
         const strict = params.get("strict") === "1";
         const selfTest = params.get("selfTest") === "1";
         if (!oldUrl || !newUrl) {
-          throw new Error("usage: index.html?old=<url>&new=<url>&threaded=0|1");
+          throw new Error(
+            "usage: index.html?old=<url>&new=<url>&threaded=0|1&strict=0|1&selfTest=0|1",
+          );
         }
         if (threaded && !crossOriginIsolated) {
           throw new Error(
