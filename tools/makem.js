@@ -137,6 +137,16 @@ let MAIN_SOURCES_TD_ES6 = [
   "ARToolKitNFT_js_td.cpp",
   nft("trackingSub.c"),
   nft("markerDecompress.c"),
+  // The NFT core the binding is an adapter over: the shared core, the sync and
+  // threaded detectors, the clock and the native logger. The core references both
+  // AR2 variants, so trackingMod*.c are needed too; thread_sub.c is in libar_td.o.
+  nft("ARToolKitNFTCore.cpp"),
+  nft("SyncKpmDetector.cpp"),
+  nft("ThreadedKpmDetector.cpp"),
+  nft("NFTClock.cpp"),
+  nft("trackingMod.c"),
+  nft("trackingMod2d.c"),
+  path.resolve(WEBARKITLIB_ROOT, "WebARKit/WebARKitLog.cpp"),
 ];
 
 let MAIN_SOURCES_IMPROVED_ES6 = [
@@ -144,6 +154,17 @@ let MAIN_SOURCES_IMPROVED_ES6 = [
   nft("trackingMod.c"),
   nft("trackingMod2d.c"),
   nft("markerDecompress.c"),
+  // The NFT core the binding is an adapter over: the shared core, the sync
+  // detector, the clock and the native logger.
+  nft("ARToolKitNFTCore.cpp"),
+  nft("SyncKpmDetector.cpp"),
+  nft("NFTClock.cpp"),
+  path.resolve(WEBARKITLIB_ROOT, "WebARKit/WebARKitLog.cpp"),
+  // The core also references the threaded AR2 variant (ar2CreateHandle), which
+  // needs threadGetCPU() and the other ARUtil thread functions. They are only in
+  // libar_td.o, so this build compiles them itself; libar.o stays as it is for
+  // the legacy builds.
+  path.resolve(WEBARKITLIB_ROOT, "lib/SRC/ARUtil/thread_sub.c"),
 ];
 
 if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
@@ -623,6 +644,7 @@ const compile_wasm_es6_thread = [
   "-pthread",
   ...WASM_FLAGS.split(" "),
   ...DEFINES.split(" "),
+  "-DWEBARKIT_NFT_THREADS",
   ...ES6_TD_FLAGS.split(" "),
   "--bind",
   "-o",
