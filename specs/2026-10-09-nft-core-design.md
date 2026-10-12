@@ -358,10 +358,12 @@ differ from the sections above, these notes win.
 - **`setupAR2()` is part of the core's API** (Ruling 7): `int setupAR2()`, `0` or `-1`. The JS
   calls `setup()` then `setupAR2()`, which creates the AR2 handle (variant from the config) and
   the KPM handle from `paramLT`. The API list in *ARToolKitNFTCore* omitted it.
-- **`setup()` always returns the new id** (Ruling 8), ignoring `setCamera()`'s result, as the
-  bindings do. On the first `setup()` a native caller checks `cameraParamLT() != nullptr` to
-  know the camera applied; on a later one a failed camera keeps the previous `paramLT`, so it
-  calls `setCamera()` and checks its return value instead.
+- **`setup()` returns the new id whether or not the camera applies** (Ruling 8), as the
+  bindings do; a native caller checks `cameraParamLT() != nullptr` to know the camera applied.
+  After the review of WebARKitLib#94, a failed camera frees `paramLT` and everything built on it
+  (the AR2 and KPM handles and the detector may be sized for an earlier frame, and would read past
+  the new buffers), and a frame size that is not positive or does not fit an `int` makes `setup()`
+  return `-1` before anything changes.
 - **Safety additions** on paths that are use-after-free today (Rulings 9 and 22): `setCamera()`
   waits for a running threaded search and drops it, then frees the detector and the KPM handle
   with the old `paramLT`; `setupAR2()` destroys the detector before replacing the KPM handle;
