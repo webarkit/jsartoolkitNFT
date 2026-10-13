@@ -20,3 +20,4 @@ coverage
 *.tsbuildinfo
 python-bindings/vcpkg
 .libar-build-mode
+tools/compare-builds/ref/

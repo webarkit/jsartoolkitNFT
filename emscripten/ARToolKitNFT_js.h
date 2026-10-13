@@ -1,55 +1,34 @@
-#include <stdio.h>
 #include <AR/ar.h>
 #include <emscripten.h>
 #include <emscripten/val.h>
+#include <array>
 #include <string>
 #include <vector>
-#include <unordered_map>
-#include <memory>
-#include <limits>
-#include <AR/config.h>
-#include <AR2/tracking.h>
-#include <AR/arFilterTransMat.h>
-#include <AR/paramGL.h>
-#include <KPM/kpm.h>
 #include <WebARKit/WebARKitLog.h>
 #include <WebARKitVideoLuma.h>
-#include <WebARKitTrackers/WebARKitNFT/trackingMod.h>
-#include <WebARKitTrackers/WebARKitNFT/markerDecompress.h>
-#include <WebARKitTrackers/WebARKitNFT/NFTMarkerState.h>
-#include <array>
-
-const int PAGES_MAX = 20; // Maximum number of pages expected. You can change this down (to save memory) or up (to accomodate more pages.)
-
-struct nftMarker
-{
-    int id_NFT;
-    int width_NFT;
-    int height_NFT;
-    int dpi_NFT;
-};
-
-static int gARControllerID = 0;
-static int gCameraID = 0;
+#include <WebARKitTrackers/WebARKitNFT/ARToolKitNFTCore.h>
 
 static int MARKER_INDEX_OUT_OF_BOUNDS = -3;
-
-std::unordered_map<int, ARParam> cameraParams;
 
 // Static array of zeros for initializing poses when markers aren't found
 static const std::array<int, 12> zeros = {0};
 
+/**
+ * The single-thread Embind binding: an adapter over ARToolKitNFTCore with the
+ * single-thread preset. The core does the NFT work; the adapter keeps what is JS
+ * (emscripten::val results, heap pointers, the internal SIMD luma) and the
+ * ARHandle part (arhandle, ar3DHandle and their threshold, debug and image
+ * processing methods), which NFT does not use.
+ */
 class ARToolKitNFT
 {
 public:
     ARToolKitNFT();
     ARToolKitNFT(bool withFiltering);
-    ~ARToolKitNFT(); 
+    ~ARToolKitNFT();
     int passVideoData(uintptr_t videoFrame, uintptr_t videoLuma, bool internalLuma);
     emscripten::val getNFTMarkerInfo(int markerIndex);
     int detectNFTMarker();
-    int getKpmImageWidth(KpmHandle *kpmHandle);
-    int getKpmImageHeight(KpmHandle *kpmHandle);
     int setupAR2();
     nftMarker getNFTData(int index);
 
@@ -58,7 +37,6 @@ public:
 
     int teardown();
     int loadCamera(std::string cparam_name);
-    int setCamera(int id, int cameraID);
     emscripten::val getCameraLens();
     int decompressZFT(std::string datasetPathname, std::string tempPathname);
     std::vector<int> addNFTMarkers(std::vector<std::string> &datasetPathnames);
@@ -84,66 +62,19 @@ public:
     void setDetectionInterval(double ms);
 
 private:
-    bool withFiltering; // New property
+    // arhandle keeps a pointer to the core's paramLT, so it is deleted before the
+    // core frees paramLT (setup(), teardown()) and created again from the new one.
+    void deleteARHandles();
+    // @return 0, or -1 when either handle cannot be created
+    int createARHandles();
 
-    // Filtering-related variables
-    double filterCutoffFrequency;
-    double filterSampleRate;
+    ARToolKitNFTCore core;
 
-    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> createKpmHandle(ARParamLT *cparamLT);
-    void deleteHandle();
-
-    int id;
-
-    ARParam param;
-    ARParamLT *paramLT;
-
-    std::unique_ptr<ARUint8[]> videoFrame;  // Changed from std::shared_ptr
-    int videoFrameSize;
-    std::unique_ptr<ARUint8[]> videoLuma;   // Changed from std::shared_ptr
-
+    // The frame size given to setup(), for the internal luma conversion.
     int width;
     int height;
 
     ARHandle *arhandle;
     AR3DHandle *ar3DHandle;
-
-    std::unique_ptr<KpmHandle, void(*)(KpmHandle*)> kpmHandle;  // Changed from std::shared_ptr
-    AR2HandleT *ar2Handle;
-
-    // One state per loadable page; index = page number = marker id.
-    std::array<NFTMarkerState, PAGES_MAX> markerStates;
-
-    // Detection policy. KPM runs on every frame while no marker is tracked.
-    // While some are tracked and some are not, it runs at most once every
-    // detectionIntervalMs, counted from the end of the previous pass, and not at
-    // all if continuousDetection is off. While every loaded marker is tracked
-    // it does not run.
-    bool continuousDetection = true;
-    double detectionIntervalMs = 300.0;
-    // When the last pass finished; -infinity so the first pass is never throttled.
-    double lastKpmEndMs = -std::numeric_limits<double>::infinity();
-
-    bool allMarkersTracked() const;
-    bool anyMarkerTracked() const;
-    void trackMarkers();
-
-    int surfaceSetCount;
-    AR2SurfaceSetT *surfaceSet[PAGES_MAX];
-    // KPM reference data of every marker loaded so far, across all
-    // addNFTMarkers() calls. kpmSetRefDataSet() rebuilds the matcher from
-    // scratch, so each call must hand it the whole set, not just the new batch.
-    KpmRefDataSet *refDataSetAll = nullptr;
-    std::unordered_map<int, AR2SurfaceSetT *> surfaceSets;
-    // nftMarker struct inside arController
-    nftMarker nft;
-    std::vector<nftMarker> nftMarkers;
-
-    ARdouble nearPlane;
-    ARdouble farPlane;
-
-    int patt_id;
-
-    ARdouble cameraLens[16];
     AR_PIXEL_FORMAT pixFormat = AR_PIXEL_FORMAT_RGBA;
 };
