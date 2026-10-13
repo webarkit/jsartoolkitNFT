@@ -28,7 +28,8 @@
  *
  * Vacuous results. Two builds that both track nothing produce identical records, so
  * runScenarios throws when the markers do not all load, and checkExercised tells whether
- * one side's records show tracking at work. tools/compare-builds.js refuses to report
+ * one side's records show tracking at work: the markers found, and lost where the frames
+ * hide them, so that bothAgain is a re-detection. tools/compare-builds.js refuses to report
  * "identical" unless the old side passes it.
  *
  * Record: `{ scenario, frame, ret, markers: [{ found, error, pose }] }`, one per frame, with
@@ -314,8 +315,15 @@
 
   /**
    * Whether one build's records show tracking at work, so that "identical" means
-   * something: in every run, each marker is found on at least one frame of each phase in
-   * MUST_FIND, and detectNFTMarker() was observed (`ret` not null) on at least one frame.
+   * something. In every run:
+   * - each marker is found on at least one frame of each phase in MUST_FIND;
+   * - in pinballOnly, at least one marker (kuva) is lost on some frame and at least one
+   *   (pinball) is found on some frame, so a marker is tracked while another is not;
+   * - in blank, each marker is lost on at least one frame;
+   * - detectNFTMarker() was observed (`ret` not null) on at least one frame.
+   *
+   * "Lost" means not found on that frame: every marker is found in both, so a marker not
+   * found later in the run has been lost, and bothAgain is a re-detection.
    *
    * @return `{ ok, problems, found, frames }`: `problems` lists what is missing, `found[i]`
    *   is the number of frames on which marker i is found, out of `frames`.
@@ -332,14 +340,21 @@
       const entry = runs.get(run);
       entry.markers = Math.max(entry.markers, record.markers.length);
       if (record.ret !== null) entry.retSeen = true;
-      if (!entry.phases.has(phase)) entry.phases.set(phase, []);
-      const phaseFound = entry.phases.get(phase);
+      if (!entry.phases.has(phase)) {
+        entry.phases.set(phase, { found: [], lost: [] });
+      }
+      const states = entry.phases.get(phase);
       record.markers.forEach((marker, i) => {
-        if (!marker.found) return;
+        if (!marker.found) {
+          states.lost[i] = true;
+          return;
+        }
         found[i] = (found[i] || 0) + 1;
-        phaseFound[i] = true;
+        states.found[i] = true;
       });
     }
+    const phaseStates = (entry, phase) =>
+      entry.phases.get(phase) || { found: [], lost: [] };
     if (runs.size === 0) problems.push("no records");
     for (const [run, entry] of runs) {
       if (entry.markers === 0) problems.push(`[${run}]: no markers`);
@@ -347,11 +362,24 @@
         problems.push(`[${run}]: detectNFTMarker() never observed`);
       }
       for (const phase of MUST_FIND) {
-        const phaseFound = entry.phases.get(phase) || [];
+        const states = phaseStates(entry, phase);
         for (let i = 0; i < entry.markers; i++) {
-          if (!phaseFound[i]) {
+          if (!states.found[i]) {
             problems.push(`${phase} [${run}]: marker ${i} never found`);
           }
+        }
+      }
+      const pinballOnly = phaseStates(entry, "pinballOnly");
+      if (!pinballOnly.lost.some(Boolean)) {
+        problems.push(`pinballOnly [${run}]: no marker lost`);
+      }
+      if (!pinballOnly.found.some(Boolean)) {
+        problems.push(`pinballOnly [${run}]: no marker found`);
+      }
+      const blank = phaseStates(entry, "blank");
+      for (let i = 0; i < entry.markers; i++) {
+        if (!blank.lost[i]) {
+          problems.push(`blank [${run}]: marker ${i} never lost`);
         }
       }
     }
