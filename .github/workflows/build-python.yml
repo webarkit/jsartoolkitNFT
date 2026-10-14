@@ -51,6 +51,9 @@ jobs:
     - name: Run unit tests
       run: npm run python-tests
 
+    - name: Test the wheel checks
+      run: python -m pytest .github/scripts/test_check_wheel.py
+
   build-macos:
     runs-on: macos-15
 
@@ -99,6 +102,20 @@ jobs:
 
     - name: Run unit tests
       run: npm run python-tests
+
+    # As publish-python.yml does: delocate bundles the libjpeg that setup.py
+    # built, then check_wheel.py requires every binary to have every
+    # architecture the tag claims. A universal extension with an arm64-only
+    # libjpeg fails here (#653).
+    - name: Check the repaired wheel's architectures
+      run: |
+        set -euo pipefail
+        python -m pip install delocate
+        cd python-bindings
+        delocate-wheel -w repaired/ -v dist/*.whl
+        for whl in repaired/*.whl; do
+          python "$GITHUB_WORKSPACE/.github/scripts/check_wheel.py" "$whl"
+        done
 
   build-windows:
     runs-on: windows-2022
