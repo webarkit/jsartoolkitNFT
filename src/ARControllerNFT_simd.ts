@@ -491,7 +491,11 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   //----------------------------------------------------------------------------
 
   /**
-   * Sets up for debugging AR detection.
+   * Sets up the square-marker detector's debug image: enables debug mode
+   * and keeps the image's address.
+   * @deprecated The image is never filled for NFT tracking: only the
+   * square-marker labeling writes it, and NFT tracking never runs it. Will be
+   * removed in the next major version (#659).
    */
   debugSetup(): void {
     this.setDebugMode(true);
@@ -618,28 +622,34 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   //----------------------------------------------------------------------------
 
   /**
-   * Enables or disables debug mode in the tracker. When enabled, a black and white debug
-   * image is generated during marker detection. The debug image is useful for visualising
-   * the binarization process and choosing a threshold value.
-   * @param {boolean} mode true to enable debug mode, false to disable debug mode
-   * @see getDebugMode()
+   * Enables or disables the square-marker detector's debug mode.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @param {boolean} mode true to enable debug mode, false to disable it
    */
   setDebugMode(mode: boolean): number {
     return this.artoolkitNFT.setDebugMode(mode);
   }
 
   /**
-   * Returns whether debug mode is currently enabled.
-   * @return {boolean} true when debug mode is enabled, false when debug mode is disabled
-   * @see  setDebugMode()
+   * Returns whether the square-marker detector's debug mode is enabled.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @return {boolean} true when debug mode is enabled
    */
   getDebugMode(): boolean {
     return this.artoolkitNFT.getDebugMode();
   }
 
   /**
-   * Returns the Emscripten HEAP offset to the debug processing image used by ARToolKit.
-   * @return {number} HEAP offset to the debug processing image.
+   * Returns the Emscripten HEAP offset of the square-marker detector's
+   * debug image.
+   * @deprecated The image is never filled for NFT tracking: only the
+   * square-marker labeling writes it, and NFT tracking never runs it. Will be
+   * removed in the next major version (#659).
+   * @return {number} HEAP offset of the debug image.
    */
   getProcessingImage(): number {
     return this.artoolkitNFT.getProcessingImage();
@@ -718,44 +728,32 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Set the labeling threshold mode (auto/manual).
-   * @param {number} mode An integer specifying the mode. One of:
-   * AR_LABELING_THRESH_MODE_MANUAL,
-   * AR_LABELING_THRESH_MODE_AUTO_MEDIAN,
-   * AR_LABELING_THRESH_MODE_AUTO_OTSU,
-   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE,
-   * AR_LABELING_THRESH_MODE_AUTO_BRACKETING
+   * Sets the square-marker labeling threshold mode (auto/manual).
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @param {number} mode One of the AR_LABELING_THRESH_MODE_* values.
    */
   setThresholdMode(mode: number): number {
     return this.artoolkitNFT.setThresholdMode(mode);
   }
 
   /**
-   * Gets the current threshold mode used for image binarization.
-   * @return {number} The current threshold mode
-   * @see getVideoThresholdMode()
+   * Returns the square-marker labeling threshold mode.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @return {number} The current threshold mode.
    */
   getThresholdMode(): number {
     return this.artoolkitNFT.getThresholdMode();
   }
 
   /**
-   * Set the labeling threshold.
-   * This function forces sets the threshold value.
-   * The default value is AR_DEFAULT_LABELING_THRESH which is 100.
-   * The current threshold mode is not affected by this call.
-   * Typically, this function is used when labeling threshold mode
-   * is AR_LABELING_THRESH_MODE_MANUAL.
-   * The threshold value is not relevant if threshold mode is
-   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
-   * Background: The labeling threshold is the value which
-   * the AR library uses to differentiate between black and white
-   * portions of an ARToolKit marker. Since the actual brightness,
-   * contrast, and gamma of incoming images can vary signficantly
-   * between different cameras and lighting conditions, this
-   * value typically needs to be adjusted dynamically to a
-   * suitable midpoint between the observed values for black
-   * and white portions of the markers in the image.
+   * Sets the square-marker labeling threshold.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
    * @param {number} threshold An integer in the range [0,255] (inclusive).
    */
   setThreshold(threshold: number): number {
@@ -763,14 +761,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Get the current labeling threshold.
-   * This function queries the current labeling threshold. For,
-   * AR_LABELING_THRESH_MODE_AUTO_MEDIAN, AR_LABELING_THRESH_MODE_AUTO_OTSU,
-   * and AR_LABELING_THRESH_MODE_AUTO_BRACKETING
-   * the threshold value is only valid until the next auto-update.
-   * The current threshold mode is not affected by this call.
-   * The threshold value is not relevant if threshold mode is
-   * AR_LABELING_THRESH_MODE_AUTO_ADAPTIVE.
+   * Returns the square-marker labeling threshold.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
    * @return {number} The current threshold value.
    */
   getThreshold(): number {
@@ -850,31 +844,22 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Set the image processing mode.
-   * When the image processing mode is AR_IMAGE_PROC_FRAME_IMAGE,
-   * ARToolKit processes all pixels in each incoming image
-   * to locate markers. When the mode is AR_IMAGE_PROC_FIELD_IMAGE,
-   * ARToolKit processes pixels in only every second pixel row and
-   * column. This is useful both for handling images from interlaced
-   * video sources (where alternate lines are assembled from alternate
-   * fields and thus have one field time-difference, resulting in a
-   * "comb" effect) such as Digital Video cameras.
-   * The effective reduction by 75% in the pixels processed also
-   * has utility in accelerating tracking by effectively reducing
-   * the image size to one quarter size, at the cost of pose accuraccy.
-   * @param {number} mode
-   * Options for this field are:
-   * AR_IMAGE_PROC_FRAME_IMAGE
-   * AR_IMAGE_PROC_FIELD_IMAGE
-   * The default mode is AR_IMAGE_PROC_FRAME_IMAGE.
+   * Sets the square-marker detector's image processing mode (frame or
+   * field).
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @param {number} mode AR_IMAGE_PROC_FRAME_IMAGE or AR_IMAGE_PROC_FIELD_IMAGE.
    */
   setImageProcMode(mode: number): number {
     return this.artoolkitNFT.setImageProcMode(mode);
   }
 
   /**
-   * Get the image processing mode.
-   * See arSetImageProcMode() for a complete description.
+   * Returns the square-marker detector's image processing mode.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
    * @return {number} The current image processing mode.
    */
   getImageProcMode(): number {

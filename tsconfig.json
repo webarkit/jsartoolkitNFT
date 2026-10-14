@@ -7,7 +7,7 @@
       "allowJs": true,                          /* Allow javascript files to be compiled. */
       "allowSyntheticDefaultImports": true,
       "sourceMap": true,
-      "removeComments": true,
+      "removeComments": false,
       "downlevelIteration": true,
       "declaration": true,                     /* Generates corresponding '.d.ts' file. */
       "declarationDir": "./types",

@@ -247,14 +247,36 @@ export class ARToolkitNFT implements IARToolkitNFT {
     this.instance.setupAR2();
   }
 
+  /**
+   * Enables or disables the square-marker detector's debug mode.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @param {boolean} mode true to enable debug mode, false to disable it
+   */
   public setDebugMode(mode: boolean): number {
     return this.instance.setDebugMode(mode);
   }
 
+  /**
+   * Returns whether the square-marker detector's debug mode is enabled.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @return {boolean} true when debug mode is enabled
+   */
   public getDebugMode(): boolean {
     return this.instance.getDebugMode();
   }
 
+  /**
+   * Returns the Emscripten HEAP offset of the square-marker detector's
+   * debug image.
+   * @deprecated The image is never filled for NFT tracking: only the
+   * square-marker labeling writes it, and NFT tracking never runs it. Will be
+   * removed in the next major version (#659).
+   * @return {number} HEAP offset of the debug image.
+   */
   public getProcessingImage(): number {
     return this.instance.getProcessingImage();
   }
@@ -306,26 +328,69 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getProjectionFarPlane();
   }
 
+  /**
+   * Sets the square-marker labeling threshold mode (auto/manual).
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @param {number} mode One of the AR_LABELING_THRESH_MODE_* values.
+   */
   public setThresholdMode(mode: number): number {
     return this.instance.setThresholdMode(mode);
   }
 
+  /**
+   * Returns the square-marker labeling threshold mode.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @return {number} The current threshold mode.
+   */
   public getThresholdMode(): number {
     return this.instance.getThresholdMode();
   }
 
+  /**
+   * Sets the square-marker labeling threshold.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @param {number} threshold An integer in the range [0,255] (inclusive).
+   */
   public setThreshold(threshold: number): number {
     return this.instance.setThreshold(threshold);
   }
 
+  /**
+   * Returns the square-marker labeling threshold.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @return {number} The current threshold value.
+   */
   public getThreshold(): number {
     return this.instance.getThreshold();
   }
 
+  /**
+   * Sets the square-marker detector's image processing mode (frame or
+   * field).
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @param {number} mode AR_IMAGE_PROC_FRAME_IMAGE or AR_IMAGE_PROC_FIELD_IMAGE.
+   */
   public setImageProcMode(mode: number): number {
     return this.instance.setImageProcMode(mode);
   }
 
+  /**
+   * Returns the square-marker detector's image processing mode.
+   * @deprecated Has no effect on NFT tracking: only the square-marker labeling
+   * reads it, and NFT tracking never runs it. Will be removed in the next major
+   * version (#659).
+   * @return {number} The current image processing mode.
+   */
   public getImageProcMode(): number {
     return this.instance.getImageProcMode();
   }
