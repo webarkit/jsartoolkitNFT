@@ -538,7 +538,11 @@ class ARControllerNFT {
      * @returns {number} 0 (void)
      */
     recalculateCameraLens() {
-        return artoolkitNFT.recalculateCameraLens(this.id);
+        const ret = artoolkitNFT.recalculateCameraLens(this.id);
+        // getCameraMatrix() returns this copy; refresh it, or it keeps the
+        // matrix from initialisation (#630).
+        this.camera_mat = artoolkitNFT.getCameraLens(this.id);
+        return ret;
     }
 
     /**

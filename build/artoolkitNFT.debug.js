@@ -532,7 +532,11 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
      * 
      * @return {number} 0 (void)
      */ ARControllerNFT.prototype.recalculateCameraLens = function() {
-    return artoolkitNFT.recalculateCameraLens(this.id);
+    var ret = artoolkitNFT.recalculateCameraLens(this.id);
+    // getCameraMatrix() returns this copy; refresh it, or it keeps the
+    // matrix from initialisation (#630).
+    this.camera_mat = artoolkitNFT.getCameraLens(this.id);
+    return ret;
   };
   /**
         Set the labeling threshold mode (auto/manual).
