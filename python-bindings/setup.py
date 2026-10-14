@@ -8,6 +8,7 @@ import subprocess
 import sys
 import time
 import platform
+import sysconfig
 
 
 class build_ext(_pybind11_build_ext):
@@ -167,9 +168,15 @@ if sys.platform.startswith('linux') or sys.platform == 'darwin':
 # actions/setup-python installs, otherwise builds it for x86_64 and arm64: the
 # 0.0.13 wheels were tagged for Intel Macs but bundled an arm64-only libjpeg, so
 # they installed there and failed to import (#653). ARCHFLAGS replaces the
-# interpreter's -arch flags; one already set in the environment wins.
+# interpreter's -arch flags, for the compiler. The wheel's platform tag comes from
+# sysconfig.get_platform(), which ignores ARCHFLAGS and would still say
+# universal2, so _PYTHON_HOST_PLATFORM sets it too, as cibuildwheel does. Values
+# already set in the environment win.
 if sys.platform == 'darwin':
-    os.environ.setdefault('ARCHFLAGS', f'-arch {platform.machine()}')
+    arch = platform.machine()
+    os.environ.setdefault('ARCHFLAGS', f'-arch {arch}')
+    os.environ.setdefault('_PYTHON_HOST_PLATFORM',
+                          sysconfig.get_platform().rsplit('-', 1)[0] + f'-{arch}')
 
 # Generate config.h from config.h.in
 generate_config_h()
