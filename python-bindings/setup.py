@@ -210,6 +210,22 @@ if sys.platform == 'darwin':
 # Generate config.h from config.h.in
 generate_config_h()
 
+def msvc_available():
+    """Whether Visual Studio with the C++ x86/x64 tools is installed.
+
+    vswhere.exe ships with the Visual Studio installer (2017 and later) at a
+    fixed path, whichever edition or version is installed.
+    """
+    vswhere = os.path.join(os.environ.get('ProgramFiles(x86)', r'C:\Program Files (x86)'),
+                           'Microsoft Visual Studio', 'Installer', 'vswhere.exe')
+    if not os.path.isfile(vswhere):
+        return False
+    result = subprocess.run([vswhere, '-latest', '-products', '*',
+                             '-requires', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64',
+                             '-property', 'installationPath'],
+                            capture_output=True, text=True)
+    return result.returncode == 0 and bool(result.stdout.strip())
+
 # Windows-specific step to install pthread static library using vcpkg
 if sys.platform == 'win32':
     print("Running Windows-specific setup step to install pthread static library")
@@ -218,11 +234,17 @@ if sys.platform == 'win32':
         subprocess.run(['git', 'clone', 'https://github.com/microsoft/vcpkg.git'], check=True)
         subprocess.run([os.path.join(vcpkg_path, 'bootstrap-vcpkg.bat')], check=True)
 
-    # Prefer Chocolatey, fall back to winget, otherwise instruct the user
+    # The build needs cmake and the MSVC C++ tools. Install them only when they
+    # are missing: GitHub's windows-2022 runners already have both, and
+    # reinstalling them made every Windows build depend on the Chocolatey feed,
+    # which failed CI twice on 2026-10-14 (406, then 503).
+    # Otherwise prefer Chocolatey, fall back to winget, or instruct the user.
     choco = shutil.which('choco')
     winget = shutil.which('winget')
 
-    if choco:
+    if shutil.which('cmake') and msvc_available():
+        print("cmake and the MSVC C++ tools are installed; not installing them")
+    elif choco:
         # Bounded retry. The Chocolatey community feed returns 503 often enough
         # to fail an otherwise healthy build -- the same class of problem as the
         # snap-backed Chromium package in CI (#602), and just as unrelated to
