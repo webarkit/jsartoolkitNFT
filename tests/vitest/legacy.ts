@@ -18,12 +18,17 @@ import { loadCompositeFrames } from "./frames";
  * per build.
  */
 
-/** What a suite needs from a build: the legacy controller class. */
+/** What a suite needs from a build: the legacy controller and camera classes. */
 export interface LegacyApi {
   ARControllerNFT: new (
     width: number,
     height: number,
     cameraParam: string,
+  ) => any;
+  ARCameraParamNFT: new (
+    src: string,
+    onload: () => void,
+    onerror: (err: unknown) => void,
   ) => any;
 }
 
@@ -72,7 +77,10 @@ export function injectLegacyBuild(buildFile: string): Promise<LegacyApi> {
       "artoolkitNFT-loaded",
       () => {
         clearTimeout(timer);
-        resolve({ ARControllerNFT: w.ARControllerNFT });
+        resolve({
+          ARControllerNFT: w.ARControllerNFT,
+          ARCameraParamNFT: w.ARCameraParamNFT,
+        });
       },
       { once: true },
     );
@@ -144,11 +152,12 @@ export function controllerDetectionSuite(
   const maxFrames = options.maxFrames ?? 200;
 
   describe(`legacy controller API (${label})`, () => {
+    let api: LegacyApi;
     let ar: any;
     let frame: ImageData;
 
     beforeAll(async () => {
-      const api = await loadApi();
+      api = await loadApi();
       const frames = await loadCompositeFrames(options.frameScale ?? 1);
       frame = frames.pinballOnly;
       ar = await createController(api, frames.width, frames.height);
@@ -208,6 +217,35 @@ export function controllerDetectionSuite(
       const after = Array.from(ar.getCameraMatrix() as ArrayLike<number>);
       expect(after).toHaveLength(16);
       expect(after).not.toEqual(before);
+    });
+
+    // dispose() called artoolkitNFT.deleteCamera(), which no binding defines, so
+    // it threw for every loaded camera (#277).
+    it("disposes a loaded camera parameter", async () => {
+      const camera = await new Promise<any>((resolve, reject) => {
+        const timer = setTimeout(
+          () =>
+            reject(
+              new Error(`camera never loaded within ${READY_TIMEOUT_MS} ms`),
+            ),
+          READY_TIMEOUT_MS,
+        );
+        const param = new api.ARCameraParamNFT(
+          CAMERA_PARAM,
+          () => {
+            clearTimeout(timer);
+            resolve(param);
+          },
+          (err) => {
+            clearTimeout(timer);
+            reject(new Error(`camera failed to load: ${err}`));
+          },
+        );
+      });
+      expect(camera.id).toBeGreaterThanOrEqual(0);
+      expect(() => camera.dispose()).not.toThrow();
+      expect(camera.id).toBe(-1);
+      expect(camera.complete).toBe(false);
     });
 
     // Last, because it tears the controller down. A test rather than an afterAll
