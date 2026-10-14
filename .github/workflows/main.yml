@@ -74,7 +74,10 @@ jobs:
 
     - name: Release
       uses: softprops/action-gh-release@v3
-      if: startsWith(github.ref, 'refs/tags/')
+      # npm release tags only. Python releases are tagged python/<version> and
+      # ship wheels to PyPI: this step gave python/0.0.13 and python/0.0.14 a
+      # release holding the npm build files, which GitHub then made Latest.
+      if: startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/python/')
       with:
         # Fail instead of warning when an entry matches nothing, so the list can't
         # silently drift from what the build emits.
