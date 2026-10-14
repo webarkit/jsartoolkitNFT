@@ -15,3 +15,9 @@ updates:
     # Open pull requests against `dev`. `master` is reserved for stable
     # releases, so dependency updates must not target it — see CONTRIBUTING.md.
     target-branch: "dev"
+    ignore:
+      # The project runs on Node 24 (.nvmrc and CI), so @types/node stays on
+      # 24.x: a newer major describes APIs that Node 24 does not have. Minor and
+      # patch updates still come through.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
