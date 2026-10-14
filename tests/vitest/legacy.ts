@@ -198,6 +198,18 @@ export function controllerDetectionSuite(
       expect(ar.getProjectionFarPlane()).toBeCloseTo(2000, 5);
     });
 
+    // The setters only store the planes; recalculateCameraLens() rebuilds the
+    // frustum, and getCameraMatrix() must return the rebuilt one (#630).
+    it("refreshes getCameraMatrix() on recalculateCameraLens()", () => {
+      const before = Array.from(ar.getCameraMatrix() as ArrayLike<number>);
+      ar.setProjectionNearPlane(0.5);
+      ar.setProjectionFarPlane(2500);
+      ar.recalculateCameraLens();
+      const after = Array.from(ar.getCameraMatrix() as ArrayLike<number>);
+      expect(after).toHaveLength(16);
+      expect(after).not.toEqual(before);
+    });
+
     // Last, because it tears the controller down. A test rather than an afterAll
     // hook, so a teardown failure is reported by name.
     it("disposes the controller", () => {

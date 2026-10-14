@@ -28,6 +28,7 @@ export declare abstract class AbstractARControllerNFT {
     getProjectionNearPlane: () => number;
     setProjectionFarPlane: (value: number) => void;
     getProjectionFarPlane: () => number;
+    recalculateCameraLens: () => void;
     setThresholdMode: (mode: number) => number;
     getThresholdMode: () => number;
     setThreshold: (threshold: number) => number;
