@@ -10,9 +10,17 @@ build/*.a
 *.zip
 docs/**/*
 docs/
+specs/
 python-bindings/
 python-bindings/*
 .idea/
 .idea/*
 .vscode/
 .vscode/*
+# Local and development-only: never part of the published package (#643).
+# coverage/ is untracked but would ship, because npm ignores .gitignore once
+# .npmignore exists.
+coverage/
+tests/
+.github/
+.devcontainer/

@@ -63,7 +63,7 @@
         this._bwpointer = undefined;
         this._lumaCtx = undefined;
 
-        this.version = '1.13.0';
+        this.version = '1.14.0';
         console.info('JsartoolkitNFT ', this.version);
         console.warn("This library is deprecated, use the ES6 version instead!! It will be removed in a future release.")
 
@@ -551,7 +551,11 @@
      * @return {number} 0 (void)
      */
     ARControllerNFT.prototype.recalculateCameraLens = function () {
-        return artoolkitNFT.recalculateCameraLens(this.id);
+        var ret = artoolkitNFT.recalculateCameraLens(this.id);
+        // getCameraMatrix() returns this copy; refresh it, or it keeps the
+        // matrix from initialisation (#630).
+        this.camera_mat = artoolkitNFT.getCameraLens(this.id);
+        return ret;
     }
 
     /**
@@ -962,6 +966,14 @@
             const prefixTemp = '/tempMarkerNFT_' + marker_num;
 
             const response = Module._decompressZFT(prefix, prefixTemp);
+            // The archive is no longer needed once decompressed: free it from MEMFS.
+            try {
+              FS.unlink(prefix + '.zft');
+            } catch (e) {}
+            if (response !== 1) {
+              onError(prefix + '.zft');
+              return;
+            }
 
             let contentIsetUint8 = FS.readFile(prefixTemp + '.iset');
             let contentFsetUint8 = FS.readFile(prefixTemp + '.fset');

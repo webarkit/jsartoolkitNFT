@@ -52,6 +52,7 @@ export abstract class AbstractARControllerNFT {
   addEventListener: (name: string, callback: object) => void;
   removeEventListener: (name: string, callback: object) => void;
   dispatchEvent: (event: { name: string; target: any; data?: object }) => void;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   debugSetup: () => void;
   transMatToGLMat: (
     transMat: Float64Array,
@@ -65,8 +66,11 @@ export abstract class AbstractARControllerNFT {
   ) => Float64Array;
   getTransformationMatrix: () => Float64Array;
   getCameraMatrix: () => Float64Array;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   setDebugMode: (mode: boolean) => number;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getDebugMode: () => boolean;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getProcessingImage: () => number;
   setLogLevel: (level: ARLogLevel | number) => void;
   getLogLevel: () => number;
@@ -74,9 +78,14 @@ export abstract class AbstractARControllerNFT {
   getProjectionNearPlane: () => number;
   setProjectionFarPlane: (value: number) => void;
   getProjectionFarPlane: () => number;
+  recalculateCameraLens: () => void;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   setThresholdMode: (mode: number) => number;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getThresholdMode: () => number;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   setThreshold: (threshold: number) => number;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getThreshold: () => number;
   loadNFTMarker: (
     urlOrData: string,
@@ -88,6 +97,8 @@ export abstract class AbstractARControllerNFT {
     onSuccess: (ids: number[]) => void,
     onError: (err: number) => void,
   ) => Promise<number[]>;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   setImageProcMode: (mode: number) => number;
+  /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getImageProcMode: () => number;
 }

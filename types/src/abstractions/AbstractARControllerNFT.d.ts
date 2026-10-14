@@ -14,13 +14,17 @@ export declare abstract class AbstractARControllerNFT {
         target: any;
         data?: object;
     }) => void;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     debugSetup: () => void;
     transMatToGLMat: (transMat: Float64Array, glMat: Float64Array, scale?: number) => Float64Array;
     arglCameraViewRHf: (glMatrix: Float64Array, glRhMatrix?: Float64Array, scale?: number) => Float64Array;
     getTransformationMatrix: () => Float64Array;
     getCameraMatrix: () => Float64Array;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     setDebugMode: (mode: boolean) => number;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     getDebugMode: () => boolean;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     getProcessingImage: () => number;
     setLogLevel: (level: ARLogLevel | number) => void;
     getLogLevel: () => number;
@@ -28,12 +32,19 @@ export declare abstract class AbstractARControllerNFT {
     getProjectionNearPlane: () => number;
     setProjectionFarPlane: (value: number) => void;
     getProjectionFarPlane: () => number;
+    recalculateCameraLens: () => void;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     setThresholdMode: (mode: number) => number;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     getThresholdMode: () => number;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     setThreshold: (threshold: number) => number;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     getThreshold: () => number;
     loadNFTMarker: (urlOrData: string, onSuccess: (ids: number) => void, onError: (err: number) => void) => Promise<number[]>;
     loadNFTMarkers: (urlOrData: Array<string>, onSuccess: (ids: number[]) => void, onError: (err: number) => void) => Promise<number[]>;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     setImageProcMode: (mode: number) => number;
+    /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     getImageProcMode: () => number;
 }

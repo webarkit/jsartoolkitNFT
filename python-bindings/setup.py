@@ -2,11 +2,14 @@ from glob import glob
 from setuptools import setup, find_packages
 from pybind11.setup_helpers import Pybind11Extension, build_ext as _pybind11_build_ext
 import pybind11
+import hashlib
 import os
 import shutil
 import subprocess
 import sys
 import time
+import platform
+import sysconfig
 
 
 class build_ext(_pybind11_build_ext):
@@ -51,17 +54,45 @@ class build_ext(_pybind11_build_ext):
             self.compiler._compile = original_compile
 
 LIBJPEG_VERSION = '9c'
-LIBJPEG_URL = f'http://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
+LIBJPEG_URL = f'https://www.ijg.org/files/jpegsrc.v{LIBJPEG_VERSION}.tar.gz'
+# SHA-256 of jpegsrc.v9c.tar.gz (992624 bytes) as ijg.org has served it since
+# IJG re-released it on 2022-01-04. HaikuPorts (media-libs/jpeg/jpeg-9c.recipe)
+# and xmake-repo (packages/l/libjpeg) pin the same digest; the original 2018
+# tarball, still pinned by Spack, is 650250979303...7122. A download that does
+# not match stops the build: it would be compiled into published wheels (#651).
+LIBJPEG_SHA256 = '682aee469c3ca857c4c38c37a6edadbfca4b04d42e56613b11590ec6aa4a278d'
 LIBJPEG_DIR = 'deps/libjpeg'
 ZLIB_DIR = '../emscripten/zlib'
 CONFIG_H_IN = os.path.join(os.path.dirname(__file__), '../emscripten/WebARKitLib/include/AR/config.h.in')
 CONFIG_H = os.path.join(os.path.dirname(__file__), '../emscripten/WebARKitLib/include/AR/config.h')
 
-def download_and_extract(url, dest):
-    subprocess.run(['curl', '-L', url, '-o', 'libjpeg.tar.gz'], check=True)
-    subprocess.run(['tar', 'xzf', 'libjpeg.tar.gz'], check=True)
+def download_and_extract(url, dest, sha256):
+    archive = 'libjpeg.tar.gz'
+    # Bounded retry, as for the Chocolatey install below: ijg.org is a single
+    # small host, and a transient 5xx should not fail a release build. -f makes
+    # an HTTP error a curl failure; --proto-redir keeps redirects on HTTPS.
+    curl_cmd = ['curl', '-fL', '--proto-redir', '=https', url, '-o', archive]
+    for attempt in range(1, 4):
+        if subprocess.run(curl_cmd).returncode == 0:
+            break
+        if attempt == 3:
+            print(f"Error: downloading {url} failed after 3 attempts")
+            sys.exit(1)
+        delay = attempt * 15
+        print(f"Download attempt {attempt} failed; retrying in {delay}s")
+        time.sleep(delay)
+
+    with open(archive, 'rb') as f:
+        digest = hashlib.sha256(f.read()).hexdigest()
+    if digest != sha256:
+        os.remove(archive)
+        print(f"Error: {url} has SHA-256 {digest}, expected {sha256}. "
+              "Refusing to build with it.")
+        sys.exit(1)
+
+    subprocess.run(['tar', 'xzf', archive], check=True)
     shutil.move(f'jpeg-{LIBJPEG_VERSION}', dest)
-    os.remove('libjpeg.tar.gz')
+    os.remove(archive)
 
 def build_zlib():
     build_dir = os.path.join(ZLIB_DIR, 'build')
@@ -155,11 +186,26 @@ build_zlib()
 
 # Check if the libjpeg directory exists, if not, download and extract it
 if not os.path.exists(LIBJPEG_DIR):
-    download_and_extract(LIBJPEG_URL, LIBJPEG_DIR)
+    download_and_extract(LIBJPEG_URL, LIBJPEG_DIR, LIBJPEG_SHA256)
 
 # Build libjpeg
 if sys.platform.startswith('linux') or sys.platform == 'darwin':
     build_libjpeg()
+
+# On macOS, build the extension for the native architecture only, like zlib
+# (CMake) and libjpeg (./configure) above. A universal2 CPython, which
+# actions/setup-python installs, otherwise builds it for x86_64 and arm64: the
+# 0.0.13 wheels were tagged for Intel Macs but bundled an arm64-only libjpeg, so
+# they installed there and failed to import (#653). ARCHFLAGS replaces the
+# interpreter's -arch flags, for the compiler. The wheel's platform tag comes from
+# sysconfig.get_platform(), which ignores ARCHFLAGS and would still say
+# universal2, so _PYTHON_HOST_PLATFORM sets it too, as cibuildwheel does. Values
+# already set in the environment win.
+if sys.platform == 'darwin':
+    arch = platform.machine()
+    os.environ.setdefault('ARCHFLAGS', f'-arch {arch}')
+    os.environ.setdefault('_PYTHON_HOST_PLATFORM',
+                          sysconfig.get_platform().rsplit('-', 1)[0] + f'-{arch}')
 
 # Generate config.h from config.h.in
 generate_config_h()
@@ -220,6 +266,7 @@ include_dirs = [
     pybind11.get_include(),
     '../emscripten',
     '../emscripten/WebARKitLib/include',
+    '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/include',
     '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher',
     '../emscripten/zlib'
 ]
@@ -264,8 +311,8 @@ ext_modules = [
         'artoolkitnft_core',
         sources=sorted_ar_files + sorted_ar2_files + sorted_arutil_files + sorted_arLabeling_files + sorted_aricp_files + [
             'ARToolKitNFT_py.cpp',
-            '../emscripten/trackingMod.c',
-            '../emscripten/trackingMod2d.c',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/trackingMod.c',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/trackingMod2d.c',
             '../emscripten/WebARKitLib/lib/SRC/KPM/kpmFopen.c',
             '../emscripten/WebARKitLib/lib/SRC/KPM/kpmHandle.cpp',
             '../emscripten/WebARKitLib/lib/SRC/KPM/kpmMatching.cpp',

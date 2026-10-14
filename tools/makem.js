@@ -110,31 +110,61 @@ const BUILD_SIMD_WASM_ES6_FILE = BUILD_BASE_FILENAME + "_ES6_wasm.simd.js";
 const BUILD_WASM_ES6_TD_FILE = BUILD_BASE_FILENAME + "_ES6_wasm_td.js";
 const BUILD_MIN_FILE = BUILD_BASE_FILENAME + ".min.js";
 
+// NFT helpers (trackingMod, trackingSub, markerDecompress) live in WebARKitLib.
+const WEBARKIT_NFT_PATH = path.resolve(
+  WEBARKITLIB_ROOT,
+  "WebARKit/WebARKitTrackers/WebARKitNFT",
+);
+function nft(src) {
+  return path.resolve(WEBARKIT_NFT_PATH, src);
+}
+
 let MAIN_SOURCES = [
   "ARToolKitJS.cpp",
-  "trackingMod.c",
-  "trackingMod2d.c",
-  "markerDecompress.c",
+  nft("trackingMod.c"),
+  nft("trackingMod2d.c"),
+  nft("markerDecompress.c"),
 ];
 
 // testing threaded version of the library.
 let MAIN_SOURCES_TD = [
   "ARToolKitJS_td.cpp",
-  "trackingSub.c",
-  "markerDecompress.c",
+  nft("trackingSub.c"),
+  nft("markerDecompress.c"),
 ];
 
 let MAIN_SOURCES_TD_ES6 = [
   "ARToolKitNFT_js_td.cpp",
-  "trackingSub.c",
-  "markerDecompress.c",
+  nft("trackingSub.c"),
+  nft("markerDecompress.c"),
+  // The NFT core the binding is an adapter over: the shared core, the sync and
+  // threaded detectors, the clock and the native logger. The core references both
+  // AR2 variants, so trackingMod*.c are needed too; thread_sub.c is in libar_td.o.
+  nft("ARToolKitNFTCore.cpp"),
+  nft("SyncKpmDetector.cpp"),
+  nft("ThreadedKpmDetector.cpp"),
+  nft("NFTClock.cpp"),
+  nft("trackingMod.c"),
+  nft("trackingMod2d.c"),
+  path.resolve(WEBARKITLIB_ROOT, "WebARKit/WebARKitLog.cpp"),
 ];
 
 let MAIN_SOURCES_IMPROVED_ES6 = [
   "ARToolKitNFT_js.cpp",
-  "trackingMod.c",
-  "trackingMod2d.c",
-  "markerDecompress.c",
+  nft("trackingMod.c"),
+  nft("trackingMod2d.c"),
+  nft("markerDecompress.c"),
+  // The NFT core the binding is an adapter over: the shared core, the sync
+  // detector, the clock and the native logger.
+  nft("ARToolKitNFTCore.cpp"),
+  nft("SyncKpmDetector.cpp"),
+  nft("NFTClock.cpp"),
+  path.resolve(WEBARKITLIB_ROOT, "WebARKit/WebARKitLog.cpp"),
+  // The core also references the threaded AR2 variant (ar2CreateHandle), which
+  // needs threadGetCPU() and the other ARUtil thread functions. They are only in
+  // libar_td.o, so this build compiles them itself; libar.o stays as it is for
+  // the legacy builds.
+  path.resolve(WEBARKITLIB_ROOT, "lib/SRC/ARUtil/thread_sub.c"),
 ];
 
 if (!fs.existsSync(path.resolve(WEBARKITLIB_ROOT, "include/AR/config.h"))) {
@@ -166,9 +196,14 @@ let ar_sources, ar_sources_threaded;
 
 const glob = require("glob");
 
+// glob returns files in filesystem order since v9, and that order sets the link
+// order of the library, so an unsorted list changes every artifact. Sort the way
+// glob 7 did (localeCompare with "en"), which keeps the build reproducible and
+// byte-identical to the artifacts built before the upgrade.
 function expandGlob(pattern) {
   return glob
     .sync(pattern, { cwd: path.resolve(WEBARKITLIB_ROOT, "lib/SRC") })
+    .sort((a, b) => a.localeCompare(b, "en"))
     .map((file) => path.resolve(WEBARKITLIB_ROOT, "lib/SRC", file));
 }
 
@@ -326,6 +361,7 @@ NO_WASM_FLAG += " -s WASM=0"; // Disable WASM for debugging
 const INCLUDES = [
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/include"),
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/WebARKit/include"),
+  path.resolve(WEBARKIT_NFT_PATH, "include"),
   OUTPUT_PATH,
   SOURCE_PATH,
   path.resolve(__dirname, WEBARKITLIB_ROOT + "/lib/SRC/KPM/FreakMatcher"),
@@ -608,6 +644,7 @@ const compile_wasm_es6_thread = [
   "-pthread",
   ...WASM_FLAGS.split(" "),
   ...DEFINES.split(" "),
+  "-DWEBARKIT_NFT_THREADS",
   ...ES6_TD_FLAGS.split(" "),
   "--bind",
   "-o",

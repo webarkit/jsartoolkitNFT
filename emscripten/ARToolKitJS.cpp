@@ -10,7 +10,7 @@
    emscripten. This means we are dealing with 64bit float
 */
 
-#include "trackingMod.h"
+#include <WebARKitTrackers/WebARKitNFT/trackingMod.h>
 #include <AR/ar.h>
 #include <AR/arFilterTransMat.h>
 #include <AR/config.h>
@@ -26,7 +26,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory> // Add for std::unique_ptr
-#include "markerDecompress.h"
+#include <WebARKitTrackers/WebARKitNFT/markerDecompress.h>
 
 const int PAGES_MAX = 20; // Maximum number of pages expected
 
@@ -523,7 +523,8 @@ extern "C"
 
   int decompressZFT(std::string datasetPathname, std::string tempPathname){
     int response = decompressMarkers(datasetPathname.c_str(), tempPathname.c_str());
-    return 1;
+    // 1 on success, -1 if the archive is missing or malformed.
+    return response == 0 ? 1 : -1;
   }
 
   /*****************

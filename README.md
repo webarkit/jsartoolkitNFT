@@ -415,7 +415,7 @@ Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructio
 
 ### 1. Natively on Host (Windows, macOS, Linux)
 To build natively, you must have the following tools installed and available in your environment's PATH:
-* **Node.js** (v18+)
+* **Node.js** (v22.18+ or v24.11+; [`.nvmrc`](.nvmrc) pins 24)
 * **Emscripten SDK** (v4.0.17+)
 
 Once set up, run:
