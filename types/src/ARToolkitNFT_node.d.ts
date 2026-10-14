@@ -78,6 +78,7 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
     setImageProcMode(mode: number): number;
     getImageProcMode(): number;
     getCameraLens(): any;
+    recalculateCameraLens(): void;
     passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
     loadCamera(pathOrData: Uint8Array | string): Promise<number>;
     addNFTMarkers(urls: Array<string>, callback: (ids: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;

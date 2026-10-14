@@ -606,7 +606,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
+   * Returns the projection matrix computed from camera parameters for the ARControllerNFT,
+   * as of initialisation or the last call to recalculateCameraLens().
    * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
    */
   getCameraMatrix(): Float64Array {
@@ -704,6 +705,16 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   getProjectionFarPlane(): number {
     return this.artoolkitNFT.getProjectionFarPlane();
+  }
+
+  /**
+   * Rebuilds the camera frustum from the near and far planes set with
+   * setProjectionNearPlane() and setProjectionFarPlane(), which only store them.
+   * getCameraMatrix() returns the rebuilt matrix afterwards.
+   */
+  recalculateCameraLens(): void {
+    this.artoolkitNFT.recalculateCameraLens();
+    this.camera_mat = this.artoolkitNFT.getCameraLens();
   }
 
   /**

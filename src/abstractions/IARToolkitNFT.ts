@@ -37,6 +37,7 @@
 import { INFTMarkerInfo, ARLogLevel } from "./CommonInterfaces";
 export interface IARToolkitNFT {
   getCameraLens(): any;
+  recalculateCameraLens(): void;
   passVideoData(
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,

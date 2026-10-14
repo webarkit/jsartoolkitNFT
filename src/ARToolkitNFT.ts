@@ -347,6 +347,14 @@ export class ARToolkitNFT implements IARToolkitNFT {
     return this.instance.getCameraLens();
   }
 
+  /**
+   * Rebuilds the camera frustum from the near and far planes. The projection setters
+   * only store the planes; they take effect on the next call to this method.
+   */
+  public recalculateCameraLens(): void {
+    this.instance.recalculateCameraLens();
+  }
+
   public passVideoData(
     videoFrame: Uint8ClampedArray,
     videoLuma: Uint8Array,
