@@ -211,6 +211,24 @@ class TestNFT:
         assert found == {0, 1}
 
     @pytest.mark.asyncio
+    async def test_two_marker_events_keep_their_own_matrix(self):
+        # Two markers found in one frame give two events; each must keep its own
+        # matrix, not a list the next marker's conversion overwrites.
+        await self.asyncSetUp()
+        await self.nft.loadNFTMarkers([PINBALL, KUVA])
+        for _ in range(10):
+            events = []
+            self.nft.add_event_listener("getNFTMarker", events.append)
+            self.nft.process(MockImage(frames()["both"]))
+            self.nft.remove_event_listener("getNFTMarker", events.append)
+            if {ev["index"] for ev in events} == {0, 1}:
+                break
+        assert {ev["index"] for ev in events} == {0, 1}
+        for ev in events:
+            assert ev["matrix"][:12] == ev["marker"]["pose"]
+        assert events[0]["matrix"] != events[1]["matrix"]
+
+    @pytest.mark.asyncio
     async def test_settings_forward_to_native(self):
         await self.asyncSetUp()
         calls = []

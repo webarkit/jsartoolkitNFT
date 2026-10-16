@@ -80,13 +80,17 @@ class ARControllerNFT(EventDispatcher):
                 visible = self.trackNFTMarkerId(i)
                 visible['matrix'] = nftMarkerInfo['pose']
                 visible['inCurrent'] = True
-                self.transMatToGLMat(visible['matrix'], self.transform_mat)
-                self.transformGL_RH = self.arglCameraViewRHf(self.transform_mat)
+                # A fresh matrix per event, as in JS: with several markers found in
+                # one frame, a shared list would be overwritten by the next marker
+                # while a listener still holds it.
+                matrix = self.transMatToGLMat(visible['matrix'], [0.0] * 16)
+                self.transform_mat = matrix
+                self.transformGL_RH = self.arglCameraViewRHf(matrix)
                 self.dispatch_event('getNFTMarker', {
                     'index': i,
                     'type': markerType,
                     'marker': nftMarkerInfo,
-                    'matrix': self.transform_mat,
+                    'matrix': matrix,
                     'matrixGL_RH': self.transformGL_RH,
                 })
             elif self.nftMarkerFound == i:
