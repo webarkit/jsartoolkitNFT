@@ -17,7 +17,10 @@ What it does:
 1. Builds the reference: python-bindings at tag python/0.0.14, with only its AR2 thresholds
    changed to the core's (2.0 -> 5.0, 0.3 -> 0.50; #693, D10). The tag pins the same
    WebARKitLib (c3ede5d), so the reference differs from the candidate only by the port.
-2. Builds the candidate: this checkout's python-bindings.
+2. Builds the candidate, this checkout's python-bindings, twice: with this container's
+   Python (-O2) and with CFLAGS=-O3, the level of the Pythons from actions/setup-python
+   that build the CI and PyPI wheels (an -O3 miscompile of paramFile.c lost every marker
+   on Linux up to 0.0.14).
 3. Downloads the 0.0.14 wheel from PyPI, unchanged.
 4. Records each with play.py under libfaketime with a frozen wall clock: ar2SelectTemplate
    reseeds rand() with time(NULL), so only a frozen clock makes two runs comparable. The
@@ -29,11 +32,14 @@ What it does:
    - candidate vs the PyPI wheel, single marker, found sets: informational, how the published
      0.0.14 behaves;
    - the Node build (export-node.js) vs the candidate, two markers, found sets: the same core
-     on another compiler must find the same markers on every frame.
-6. Prints the sha256 of the three extension modules.
+     on another compiler must find the same markers on every frame;
+   - the -O2 candidate vs the -O3 one, single marker, exact, and the Node build vs the -O3
+     candidate, two markers, found sets: the shipped optimisation level tracks the same.
+6. Prints the sha256 of the four extension modules.
 
-Exit 0 only when the reference/candidate comparison is identical and the self-test reports
-a difference. Outputs go to tools/compare-python/out/.
+Exit 0 only when the reference/candidate comparison is identical, the self-test reports a
+difference, the -O3 candidate is identical to the -O2 one, and both candidates find the
+same markers as the Node build on every frame. Outputs go to tools/compare-python/out/.
 """
 import glob
 import os
@@ -92,12 +98,14 @@ def copy_bindings(src, dest):
                     os.path.join(root, "emscripten", "zlib"), ignore=ignore)
 
 
-def build(bindings_dir):
+def build(bindings_dir, cflags=None):
     """Builds artoolkitnft_core in place; returns the directory that holds it.
 
     setup.py maps packages to src/ (package_dir), so --inplace puts the module there.
+    `cflags` is appended to the compiler flags (distutils reads CFLAGS).
     """
-    run([PY, "setup.py", "-q", "build_ext", "--inplace"], quiet=True, cwd=bindings_dir)
+    env = dict(os.environ, CFLAGS=cflags) if cflags else None
+    run([PY, "setup.py", "-q", "build_ext", "--inplace"], quiet=True, cwd=bindings_dir, env=env)
     built = [so for so in glob.glob(os.path.join(bindings_dir, "**", "artoolkitnft_core*.so"),
                                     recursive=True)
              if os.sep + "build" + os.sep not in so]
@@ -129,6 +137,9 @@ def main():
     ref_src = os.path.join(TOOLS, "ref", "python-bindings")
     if not os.path.isdir(ref_src):
         sys.exit(f"missing {ref_src}: extract python/0.0.14 first (see the docstring)")
+    if not os.path.exists(LIBFAKETIME):
+        # Without it the clock is not frozen and the exact comparisons mean nothing.
+        sys.exit(f"missing {LIBFAKETIME}: install faketime (x86_64 image)")
     os.makedirs(OUT, exist_ok=True)
 
     run(["python3", "-m", "venv", VENV])
@@ -152,6 +163,9 @@ def main():
     new = os.path.join(WORK, "new", "python-bindings")
     copy_bindings(os.path.join(SRC, "python-bindings"), new)
     new_core = build(new)
+    new_o3 = os.path.join(WORK, "new-o3", "python-bindings")
+    copy_bindings(os.path.join(SRC, "python-bindings"), new_o3)
+    new_o3_core = build(new_o3, cflags="-O3")
 
     # 3. The published 0.0.14 wheel.
     pypi = os.path.join(WORK, "pypi")
@@ -168,6 +182,8 @@ def main():
     inverted = play(new_core, "single", "new-single-inverted.json", "--invert-filtering")
     pypi_single = play(pypi_site, "single", "pypi-single.json")
     new_multi = play(new_core, "multi", "new-multi.json")
+    o3_single = play(new_o3_core, "single", "new-o3-single.json")
+    o3_multi = play(new_o3_core, "multi", "new-o3-multi.json")
 
     # 5. The comparisons.
     port = compare(ref_single, new_single, "exact",
@@ -176,18 +192,24 @@ def main():
                         "self-test: this binding vs itself with filtering inverted (must differ)")
     compare(new_single, pypi_single, "found",
             "informational: this binding vs the published 0.0.14 wheel (found sets)")
-    compare(os.path.join(FRAMES, "node-records.json"), new_multi, "found",
-            "the Node build vs this binding, two markers (found sets)")
+    node = compare(os.path.join(FRAMES, "node-records.json"), new_multi, "found",
+                   "the Node build vs this binding, two markers (found sets)")
+    o3 = compare(new_single, o3_single, "exact",
+                 "this binding at -O2 vs at -O3, single marker (exact)")
+    o3_node = compare(os.path.join(FRAMES, "node-records.json"), o3_multi, "found",
+                      "the Node build vs this binding at -O3, two markers (found sets)")
 
     # 6. What was compared.
     print()
-    for label, directory in (("reference", ref_core), ("candidate", new_core), ("pypi 0.0.14", pypi_site)):
+    for label, directory in (("reference", ref_core), ("candidate", new_core), ("candidate -O3", new_o3_core),
+                             ("pypi 0.0.14", pypi_site)):
         for so in glob.glob(os.path.join(directory, "artoolkitnft_core*.so")):
             digest = subprocess.run(["sha256sum", so], capture_output=True, text=True).stdout.split()[0]
             print(f"{label}: {os.path.basename(so)} sha256 {digest}")
 
-    ok = port == 0 and self_test == 1
-    print(f"\nverdict: {'PASS' if ok else 'FAIL'} (port exit {port}, self-test exit {self_test})")
+    ok = port == 0 and self_test == 1 and node == 0 and o3 == 0 and o3_node == 0
+    print(f"\nverdict: {'PASS' if ok else 'FAIL'} (port exit {port}, self-test exit {self_test}, "
+          f"node exit {node}, -O3 exit {o3}, -O3 node exit {o3_node})")
     return 0 if ok else 1
 
 
