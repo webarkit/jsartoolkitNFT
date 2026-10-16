@@ -59,36 +59,60 @@ THRESHOLDS = (
 )
 
 
-def run(cmd, **kwargs):
+def run(cmd, quiet=False, **kwargs):
+    """Runs a command; on failure, prints the tail of its stderr before raising."""
     print("+", " ".join(cmd), flush=True)
-    return subprocess.run(cmd, check=True, **kwargs)
+    result = subprocess.run(cmd, stdout=subprocess.DEVNULL if quiet else None,
+                            stderr=subprocess.PIPE, text=True, **kwargs)
+    if result.returncode != 0:
+        print(result.stderr[-4000:], file=sys.stderr)
+        raise subprocess.CalledProcessError(result.returncode, cmd)
+    return result
 
 
 def copy_bindings(src, dest):
-    """Copies a python-bindings directory without build outputs, next to /src/emscripten."""
+    """Copies a python-bindings directory without build outputs into its own tree.
+
+    setup.py reaches its sources as ../emscripten/WebARKitLib and builds zlib in
+    ../emscripten/zlib/build. WebARKitLib is shared through a symlink (its generated
+    config.h is the same for both sides); zlib is copied, because a CMake build
+    directory remembers the path it was configured from and refuses another.
+    """
     def ignore(directory, names):
-        skip = {"build", "dist", "__pycache__", ".pytest_cache"}
+        skip = {"build", "dist", "install", "__pycache__", ".pytest_cache", ".git"}
         if os.path.basename(directory) == "deps":
             skip.add("libjpeg")
         return [n for n in names if n in skip or n.endswith((".so", ".egg-info"))]
     root = os.path.dirname(dest)
-    os.makedirs(root, exist_ok=True)
+    os.makedirs(os.path.join(root, "emscripten"), exist_ok=True)
     shutil.copytree(src, dest, ignore=ignore)
-    os.symlink(os.path.join(SRC, "emscripten"), os.path.join(root, "emscripten"))
+    os.symlink(os.path.join(SRC, "emscripten", "WebARKitLib"),
+               os.path.join(root, "emscripten", "WebARKitLib"))
+    shutil.copytree(os.path.join(SRC, "emscripten", "zlib"),
+                    os.path.join(root, "emscripten", "zlib"), ignore=ignore)
 
 
 def build(bindings_dir):
-    run([PY, "setup.py", "-q", "build_ext", "--inplace"], cwd=bindings_dir,
-        stdout=subprocess.DEVNULL)
-    return bindings_dir
+    """Builds artoolkitnft_core in place; returns the directory that holds it.
+
+    setup.py maps packages to src/ (package_dir), so --inplace puts the module there.
+    """
+    run([PY, "setup.py", "-q", "build_ext", "--inplace"], quiet=True, cwd=bindings_dir)
+    built = [so for so in glob.glob(os.path.join(bindings_dir, "**", "artoolkitnft_core*.so"),
+                                    recursive=True)
+             if os.sep + "build" + os.sep not in so]
+    if len(built) != 1:
+        sys.exit(f"expected one artoolkitnft_core module in {bindings_dir}, found {built}")
+    return os.path.dirname(built[0])
 
 
 def play(core_dir, mode, out_name, *extra):
     env = dict(os.environ, LD_PRELOAD=LIBFAKETIME, FAKETIME=FROZEN,
                FAKETIME_DONT_FAKE_MONOTONIC="1")
     out = os.path.join(OUT, out_name)
+    # The library logs every frame to stdout.
     run([PY, "-I", os.path.join(TOOLS, "play.py"), "--core-dir", core_dir, "--frames", FRAMES,
-         "--mode", mode, "--out", out, *extra], env=env, stderr=subprocess.DEVNULL)
+         "--mode", mode, "--out", out, *extra], quiet=True, env=env)
     return out
 
 
@@ -122,12 +146,12 @@ def main():
         source = source.replace(old, new)
     with open(cpp, "w", encoding="utf-8") as f:
         f.write(source)
-    build(ref)
+    ref_core = build(ref)
 
     # 2. The candidate.
     new = os.path.join(WORK, "new", "python-bindings")
     copy_bindings(os.path.join(SRC, "python-bindings"), new)
-    build(new)
+    new_core = build(new)
 
     # 3. The published 0.0.14 wheel.
     pypi = os.path.join(WORK, "pypi")
@@ -139,11 +163,11 @@ def main():
             z.extractall(pypi_site)
 
     # 4. The records.
-    ref_single = play(ref, "single", "ref-single.json")
-    new_single = play(new, "single", "new-single.json")
-    inverted = play(new, "single", "new-single-inverted.json", "--invert-filtering")
+    ref_single = play(ref_core, "single", "ref-single.json")
+    new_single = play(new_core, "single", "new-single.json")
+    inverted = play(new_core, "single", "new-single-inverted.json", "--invert-filtering")
     pypi_single = play(pypi_site, "single", "pypi-single.json")
-    new_multi = play(new, "multi", "new-multi.json")
+    new_multi = play(new_core, "multi", "new-multi.json")
 
     # 5. The comparisons.
     port = compare(ref_single, new_single, "exact",
@@ -157,7 +181,7 @@ def main():
 
     # 6. What was compared.
     print()
-    for label, directory in (("reference", ref), ("candidate", new), ("pypi 0.0.14", pypi_site)):
+    for label, directory in (("reference", ref_core), ("candidate", new_core), ("pypi 0.0.14", pypi_site)):
         for so in glob.glob(os.path.join(directory, "artoolkitnft_core*.so")):
             digest = subprocess.run(["sha256sum", so], capture_output=True, text=True).stdout.split()[0]
             print(f"{label}: {os.path.basename(so)} sha256 {digest}")
