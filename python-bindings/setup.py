@@ -46,8 +46,9 @@ class build_ext(_pybind11_build_ext):
        finds it.  Every Linux CI build, and the 0.0.14 Linux wheels,
        were built this way.  At -O2 (Ubuntu's own Python) the values are
        right, and so they are with -fno-strict-aliasing at -O3.  The
-       source fix belongs in WebARKitLib; this flag can go once the
-       submodule has it.
+       source fix belongs in WebARKitLib
+       (https://github.com/webarkit/WebARKitLib/issues/101); this flag
+       can go once the submodule has it.
     """
     def build_extensions(self):
         original_compile = self.compiler._compile
@@ -346,7 +347,8 @@ if sys.platform == 'win32':
     # std::numeric_limits<int>::max() in ARToolKitNFTCore::setup() (MSVC error
     # C2589). NOMINMAX is set for the whole extension, not only the core's
     # sources: MSVCCompiler.compile() does not go through the _compile hook of
-    # build_ext above, and no source compiled here uses those macros.
+    # build_ext above, and no source compiled here uses those macros. The core
+    # can avoid the macro itself: https://github.com/webarkit/WebARKitLib/issues/101
     extra_compile_args.append('/DNOMINMAX')
 else:
     include_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'include'))
