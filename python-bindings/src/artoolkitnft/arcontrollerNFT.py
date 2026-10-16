@@ -234,6 +234,44 @@ class ARControllerNFT(EventDispatcher):
     def getImageProcMode(self):
         return self.artoolkitNFT.getImageProcMode()
 
+    def setFiltering(self, enable):
+        """Turn pose filtering on or off. Default: off.
+
+        The filter smooths each marker's pose from frame to frame, and restarts
+        when the marker is (re)acquired.
+        """
+        return self.artoolkitNFT.setFiltering(enable)
+
+    def setContinuousDetection(self, enabled):
+        """Turn continuous detection on or off. Default: on.
+
+        Detection (KPM) is the expensive step that finds a marker which is not yet
+        tracked; a pass costs far more than tracking an already-found marker. The
+        policy is:
+
+        - while no marker is tracked, detection runs on every frame;
+        - while at least one marker is tracked and at least one loaded marker is
+          not, detection runs at most once per detection interval (see
+          setDetectionInterval), so a marker that enters the view is still found;
+        - while every loaded marker is tracked, detection does not run.
+
+        With continuous detection off, no detection runs once any marker is
+        tracked, until tracking is lost. That is cheapest, but a second marker
+        entering the view is not found while the first one is held.
+        """
+        return self.artoolkitNFT.setContinuousDetection(enabled)
+
+    def setDetectionInterval(self, ms):
+        """Set the minimum time, in milliseconds, from the end of one detection pass
+        to the start of the next, while at least one marker is tracked and at least
+        one is not (see setContinuousDetection). Default: 300.
+
+        A longer interval spends less time detecting, at the cost of noticing a newly
+        visible marker later. 0 detects on every frame; negative values are treated
+        as 0.
+        """
+        return self.artoolkitNFT.setDetectionInterval(ms)
+
     def setGrayData(self, data):
         self.grayscaleEnabled = True
         self.grayscaleSource = data

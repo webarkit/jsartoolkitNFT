@@ -80,6 +80,13 @@ def play(core, rgba, n):
     return results
 
 
+class MockImage:
+    """What ARControllerNFT.process() takes: an object with an RGBA ndarray as `data`."""
+
+    def __init__(self, data):
+        self.data = data
+
+
 def assert_real_pose(pose):
     """A pose from a real detection: 12 finite values, not all zero, a non-zero translation."""
     assert len(pose) == 12
@@ -172,37 +179,55 @@ class TestNFT:
 
     @pytest.mark.asyncio
     async def test_process_image(self):
+        """process() reports pinball through a getNFTMarker event with a real pose.
+
+        Rewritten: the old version registered its listener after process(), and its
+        asserts read "id" and "found" at the top level of an event that carries
+        "index" and "marker", so it never asserted anything.
+        """
         await self.asyncSetUp()
-        await self.nft.loadNFTMarkers(['../examples/DataNFT/pinball'])
+        await self.nft.loadNFTMarkers([PINBALL])
+        events = []
+        self.nft.add_event_listener("getNFTMarker", events.append)
+        for _ in range(10):
+            if events:
+                break
+            self.nft.process(MockImage(frames()["pinballOnly"]))
+        assert events and events[0]["index"] == 0 and events[0]["marker"]["found"] == 1
+        assert_real_pose(events[0]["marker"]["pose"])
 
-        # Load the test image (dimensions must match the controller — see
-        # TEST_IMAGE_WIDTH / TEST_IMAGE_HEIGHT at module top).
-        image = Image.open(TEST_IMAGE_PATH).convert('RGBA')
-        image_data = np.array(image)
-        print('image_data:', image_data)
+    @pytest.mark.asyncio
+    async def test_two_loads_then_both_found(self):
+        await self.asyncSetUp()
+        assert await self.nft.loadNFTMarker(PINBALL) == [0]
+        assert await self.nft.loadNFTMarker(KUVA) == [1]
+        assert self.nft.nftMarkerCount == 2
+        found = set()
+        self.nft.add_event_listener("getNFTMarker", lambda ev: found.add(ev["index"]))
+        for _ in range(10):
+            if found == {0, 1}:
+                break
+            self.nft.process(MockImage(frames()["both"]))
+        assert found == {0, 1}
 
-        # Create a mock image object with the data attribute
-        class MockImage:
-            def __init__(self, data):
-                self.data = data
+    @pytest.mark.asyncio
+    async def test_settings_forward_to_native(self):
+        await self.asyncSetUp()
+        calls = []
 
-        mock_image = MockImage(image_data)
+        class Recorder:
+            def __getattr__(self, name):
+                return lambda *a: calls.append((name, a))
 
-        # Process the image
-        self.nft.process(mock_image)
-        info = None
-
-        # Check the results
-        # Assuming add_event_listener is a method that takes an event name and a callback function
-        def on_get_nft_marker(ev):
-            print("getNFTMarker", ev)
-            info = ev
-            print('info:', info)
-            assert "id" in info
-            assert info["id"] == 0
-            assert info["found"] == 1
-
-        self.nft.add_event_listener("getNFTMarker", on_get_nft_marker)
+        self.nft.artoolkitNFT = Recorder()
+        self.nft.setFiltering(True)
+        self.nft.setContinuousDetection(False)
+        self.nft.setDetectionInterval(250)
+        assert calls == [
+            ("setFiltering", (True,)),
+            ("setContinuousDetection", (False,)),
+            ("setDetectionInterval", (250,)),
+        ]
 
 
 class TestCoreAdapter:
