@@ -15,7 +15,8 @@ import sysconfig
 class build_ext(_pybind11_build_ext):
     """Per-file compile tweaks not expressible in Pybind11Extension flags.
 
-    Two adjustments live here:
+    Three adjustments live here (the GCC/Clang compilers only: MSVCCompiler
+    does not go through ``_compile``):
 
     1. Strip C++-only flags (``-std=c++17`` / ``/std:c++17``) when
        compiling ``.c`` sources.  Pybind11Extension adds them
@@ -33,6 +34,21 @@ class build_ext(_pybind11_build_ext):
        The ``-x objective-c`` flag must precede the source file, so
        it's prepended to ``cc_args`` rather than appended to
        ``extra_postargs``.
+
+    3. Compile ``paramFile.c`` with ``-fno-strict-aliasing``.  Its
+       byteSwapInt() / byteSwapDouble() write an int or a double through
+       a pointer to a union (SwapIntT / SwapDoubleT), which breaks C's
+       strict-aliasing rule.  GCC 13 at -O3, the level of the Pythons
+       that actions/setup-python installs, then vectorises the
+       dist_factor loop of byteswap() so that arParamLoad() returns
+       garbage distortion factors (around 1e-310); AR2 projects the
+       features with them and loses every NFT marker right after KPM
+       finds it.  Every Linux CI build, and the 0.0.14 Linux wheels,
+       were built this way.  At -O2 (Ubuntu's own Python) the values are
+       right, and so they are with -fno-strict-aliasing at -O3.  The
+       source fix belongs in WebARKitLib
+       (https://github.com/webarkit/WebARKitLib/issues/101); this flag
+       can go once the submodule has it.
     """
     def build_extensions(self):
         original_compile = self.compiler._compile
@@ -45,6 +61,8 @@ class build_ext(_pybind11_build_ext):
                 ]
             if sys.platform == 'darwin' and os.path.basename(src) == 'arUtil.c':
                 cc_args = ['-x', 'objective-c'] + list(cc_args)
+            if os.path.basename(src) == 'paramFile.c':
+                extra_postargs = list(extra_postargs) + ['-fno-strict-aliasing']
             return original_compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
 
         self.compiler._compile = patched_compile
@@ -290,7 +308,9 @@ include_dirs = [
     '../emscripten/WebARKitLib/include',
     '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/include',
     '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher',
-    '../emscripten/zlib'
+    '../emscripten/zlib',
+    # <WebARKitLog.h>, the native logger ARToolKitNFTCore logs with.
+    '../emscripten/WebARKitLib/WebARKit/include',
 ]
 
 library_dirs = []
@@ -323,6 +343,13 @@ if sys.platform == 'win32':
     ])
     libraries.extend(['zlib', 'libjpeg', 'Advapi32', 'Shell32', 'pthreadVC3', 'pthreadVC2static'])
     extra_compile_args.extend(['/std:c++17', '/Dcpu_set_t=struct{unsigned long __bits[1024 / (8 * sizeof(unsigned long))];}'])  # Set the C++ standard to C++17 and define cpu_set_t
+    # <AR/config.h> includes <windows.h>, whose min/max macros break
+    # std::numeric_limits<int>::max() in ARToolKitNFTCore::setup() (MSVC error
+    # C2589). NOMINMAX is set for the whole extension, not only the core's
+    # sources: MSVCCompiler.compile() does not go through the _compile hook of
+    # build_ext above, and no source compiled here uses those macros. The core
+    # can avoid the macro itself: https://github.com/webarkit/WebARKitLib/issues/101
+    extra_compile_args.append('/DNOMINMAX')
 else:
     include_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'include'))
     library_dirs.append(os.path.join(LIBJPEG_DIR, 'build', 'lib'))
@@ -353,6 +380,16 @@ ext_modules = [
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/image.cpp",
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/logger.cpp",
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/timers.cpp",
+            # ARToolKitNFTCore, the NFT engine shared with the JS bindings: the same
+            # set as MAIN_SOURCES_IMPROVED_ES6 in tools/makem.js, without the Embind
+            # file. Single-thread only: no ThreadedKpmDetector.cpp and no
+            # WEBARKIT_NFT_THREADS. The core's decompressZFT() needs markerDecompress.c,
+            # and thread_sub.c (threadGetCPU) is already in the ARUtil glob.
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/ARToolKitNFTCore.cpp',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/SyncKpmDetector.cpp',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/NFTClock.cpp',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/markerDecompress.c',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitLog.cpp',
         ],
         include_dirs=include_dirs,
         libraries=libraries,
