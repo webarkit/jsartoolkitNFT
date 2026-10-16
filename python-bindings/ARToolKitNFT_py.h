@@ -27,7 +27,10 @@ class ARToolKitNFT
 public:
     explicit ARToolKitNFT(bool withFiltering = false);
     ~ARToolKitNFT();
-    int passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uint8_t> videoLuma);
+    // c_style: pybind11 hands over a C-contiguous buffer, copying a strided view
+    // (a crop, a flip) first; the core copies the frame as width*height bytes.
+    using Frame = py::array_t<uint8_t, py::array::c_style | py::array::forcecast>;
+    int passVideoData(Frame videoFrame, Frame videoLuma);
     py::dict getNFTMarkerInfo(int markerIndex);
 
     int detectNFTMarker();

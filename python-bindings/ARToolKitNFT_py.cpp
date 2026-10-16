@@ -30,7 +30,7 @@ ARToolKitNFT::~ARToolKitNFT() {
  * Frames *
  *********/
 
-int ARToolKitNFT::passVideoData(py::array_t<uint8_t> videoFrame, py::array_t<uint8_t> videoLuma) {
+int ARToolKitNFT::passVideoData(Frame videoFrame, Frame videoLuma) {
     auto frame_info = videoFrame.request();
     auto luma_info = videoLuma.request();
 
@@ -125,9 +125,11 @@ int ARToolKitNFT::setup(int width, int height, int cameraID) {
     this->width = width;
     this->height = height;
   }
-  // No paramLT when the camera could not be applied: no ARHandle either. A
-  // rejected size or an unknown camera id leaves the earlier paramLT in place,
-  // and the handles are created again from it.
+  // No paramLT when the camera could not be applied (an unknown camera id: the
+  // core then frees paramLT), so no ARHandle either, and the ARHandle methods
+  // fall back to their error values. A rejected size changes nothing in the
+  // core, so the earlier paramLT is still there and the handles are created
+  // again from it.
   if (this->core.cameraParamLT() != nullptr) {
     createARHandles();
   }
@@ -287,12 +289,16 @@ int ARToolKitNFT::setDebugMode(int enable) {
 }
 
 int ARToolKitNFT::getProcessingImage() {
-
+  // No ARHandle without a camera (see setup()).
+  if (this->arhandle == nullptr) {
+    return 0;
+  }
   return reinterpret_cast<std::uintptr_t>(this->arhandle->labelInfo.bwImage);
 }
 
 int ARToolKitNFT::getDebugMode() {
-  int enable;
+  // Stays AR_DEBUG_DISABLE when arGetDebugMode() fails (no ARHandle).
+  int enable = AR_DEBUG_DISABLE;
 
   arGetDebugMode(this->arhandle, &enable);
   return enable;

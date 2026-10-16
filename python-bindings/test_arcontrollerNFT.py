@@ -313,6 +313,32 @@ class TestCoreAdapter:
         assert core.passVideoData(rgba.ravel()[:-4], luma(rgba).ravel()) == -1
         assert core.passVideoData(rgba.ravel(), luma(rgba).ravel()[:-1]) == -1
 
+    def test_non_contiguous_frame_is_copied(self):
+        # A cropped view (row stride wider than the frame) has the right size but not
+        # the right layout; the binding must copy it as rows, not as raw bytes.
+        core, _ = new_core([PINBALL])
+        rgba = frames()["pinballOnly"]
+        wide_rgba = np.zeros((TEST_IMAGE_HEIGHT, TEST_IMAGE_WIDTH + 1, 4), np.uint8)
+        wide_rgba[:, :TEST_IMAGE_WIDTH] = rgba
+        wide_luma = np.zeros((TEST_IMAGE_HEIGHT, TEST_IMAGE_WIDTH + 1), np.uint8)
+        wide_luma[:, :TEST_IMAGE_WIDTH] = luma(rgba)
+        view_rgba, view_luma = wide_rgba[:, :TEST_IMAGE_WIDTH], wide_luma[:, :TEST_IMAGE_WIDTH]
+        assert not view_rgba.flags.c_contiguous
+        found = False
+        for _ in range(10):
+            assert core.passVideoData(view_rgba, view_luma) == 0
+            core.detectNFTMarker()
+            found = found or core.getNFTMarker(0)["found"] == 1
+        assert found
+
+    def test_ar_handle_methods_without_camera(self):
+        # An unknown camera id leaves no ARHandle; its methods must not crash.
+        core = artoolkitnft_core.ARToolKitNFT()
+        core.setup(TEST_IMAGE_WIDTH, TEST_IMAGE_HEIGHT, -1)
+        assert core.getProcessingImage() == 0
+        assert core.getDebugMode() == 0
+        assert core.getThreshold() == -1
+
     def test_detect_before_markers_and_frames(self):
         core = artoolkitnft_core.ARToolKitNFT()
         core.setup(TEST_IMAGE_WIDTH, TEST_IMAGE_HEIGHT, core.loadCamera(CAMERA))
