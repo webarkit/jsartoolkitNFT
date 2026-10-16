@@ -15,7 +15,8 @@ import sysconfig
 class build_ext(_pybind11_build_ext):
     """Per-file compile tweaks not expressible in Pybind11Extension flags.
 
-    Two adjustments live here:
+    Three adjustments live here (the GCC/Clang compilers only: MSVCCompiler
+    does not go through ``_compile``):
 
     1. Strip C++-only flags (``-std=c++17`` / ``/std:c++17``) when
        compiling ``.c`` sources.  Pybind11Extension adds them
@@ -33,6 +34,20 @@ class build_ext(_pybind11_build_ext):
        The ``-x objective-c`` flag must precede the source file, so
        it's prepended to ``cc_args`` rather than appended to
        ``extra_postargs``.
+
+    3. Compile ``paramFile.c`` with ``-fno-strict-aliasing``.  Its
+       byteSwapInt() / byteSwapDouble() write an int or a double through
+       a pointer to a union (SwapIntT / SwapDoubleT), which breaks C's
+       strict-aliasing rule.  GCC 13 at -O3, the level of the Pythons
+       that actions/setup-python installs, then vectorises the
+       dist_factor loop of byteswap() so that arParamLoad() returns
+       garbage distortion factors (around 1e-310); AR2 projects the
+       features with them and loses every NFT marker right after KPM
+       finds it.  Every Linux CI build, and the 0.0.14 Linux wheels,
+       were built this way.  At -O2 (Ubuntu's own Python) the values are
+       right, and so they are with -fno-strict-aliasing at -O3.  The
+       source fix belongs in WebARKitLib; this flag can go once the
+       submodule has it.
     """
     def build_extensions(self):
         original_compile = self.compiler._compile
@@ -45,6 +60,8 @@ class build_ext(_pybind11_build_ext):
                 ]
             if sys.platform == 'darwin' and os.path.basename(src) == 'arUtil.c':
                 cc_args = ['-x', 'objective-c'] + list(cc_args)
+            if os.path.basename(src) == 'paramFile.c':
+                extra_postargs = list(extra_postargs) + ['-fno-strict-aliasing']
             return original_compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
 
         self.compiler._compile = patched_compile
