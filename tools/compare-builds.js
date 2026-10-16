@@ -61,12 +61,8 @@ const {
   runScenarios,
   compareRecords,
   checkExercised,
-  WIDTH,
-  HEIGHT,
-  KUVA_PRINT,
-  KUVA_FILL,
-  BLANK_GREY,
 } = require("./compare-builds/scenarios.js");
+const { loadNodeFrames } = require("./compare-builds/node-frames.js");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 const EXAMPLE_DIR = path.join(REPO_ROOT, "examples", "node");
@@ -156,33 +152,6 @@ function withDeadline(work, deadlineAt, minutes) {
 }
 
 // --- Node bundles ------------------------------------------------------------------------
-
-/** The frames of tests/node/multi-marker.test.js, plus a flat grey one. */
-async function loadNodeFrames() {
-  const sharp = require("sharp");
-  const photo = path.join(EXAMPLE_DIR, "pinball-demo.jpg");
-  const both = await sharp(photo).ensureAlpha().raw().toBuffer();
-  const mask = Buffer.from(
-    `<svg width="${WIDTH}" height="${HEIGHT}" xmlns="http://www.w3.org/2000/svg">` +
-      `<polygon points="${KUVA_PRINT}" fill="${KUVA_FILL}"/></svg>`,
-  );
-  const pinballOnly = await sharp(photo)
-    .composite([{ input: mask, top: 0, left: 0 }])
-    .ensureAlpha()
-    .raw()
-    .toBuffer();
-  const blank = new Uint8Array(WIDTH * HEIGHT * 4).fill(BLANK_GREY);
-  for (let i = 3; i < blank.length; i += 4) blank[i] = 255;
-  return {
-    both: new Uint8Array(both.buffer, both.byteOffset, both.length),
-    pinballOnly: new Uint8Array(
-      pinballOnly.buffer,
-      pinballOnly.byteOffset,
-      pinballOnly.length,
-    ),
-    blank,
-  };
-}
 
 async function compareNode(oldFile, newFile, selfTest, deadlineAt) {
   const frames = await loadNodeFrames();
