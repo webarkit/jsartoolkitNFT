@@ -290,7 +290,9 @@ include_dirs = [
     '../emscripten/WebARKitLib/include',
     '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/include',
     '../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher',
-    '../emscripten/zlib'
+    '../emscripten/zlib',
+    # <WebARKitLog.h>, the native logger ARToolKitNFTCore logs with.
+    '../emscripten/WebARKitLib/WebARKit/include',
 ]
 
 library_dirs = []
@@ -353,6 +355,16 @@ ext_modules = [
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/image.cpp",
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/logger.cpp",
             "../emscripten/WebARKitLib/lib/SRC/KPM/FreakMatcher/framework/timers.cpp",
+            # ARToolKitNFTCore, the NFT engine shared with the JS bindings: the same
+            # set as MAIN_SOURCES_IMPROVED_ES6 in tools/makem.js, without the Embind
+            # file. Single-thread only: no ThreadedKpmDetector.cpp and no
+            # WEBARKIT_NFT_THREADS. The core's decompressZFT() needs markerDecompress.c,
+            # and thread_sub.c (threadGetCPU) is already in the ARUtil glob.
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/ARToolKitNFTCore.cpp',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/SyncKpmDetector.cpp',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/NFTClock.cpp',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitTrackers/WebARKitNFT/markerDecompress.c',
+            '../emscripten/WebARKitLib/WebARKit/WebARKitLog.cpp',
         ],
         include_dirs=include_dirs,
         libraries=libraries,
