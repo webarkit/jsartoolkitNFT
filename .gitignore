@@ -21,3 +21,6 @@ coverage
 python-bindings/vcpkg
 .libar-build-mode
 tools/compare-builds/ref/
+tools/compare-python/frames/
+tools/compare-python/out/
+tools/compare-python/ref/

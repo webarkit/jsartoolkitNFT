@@ -36,6 +36,45 @@ workflow is triggered, not by the version number. To install a rehearsal build:
 pip install -i https://test.pypi.org/simple/ artoolkitnft
 ```
 
+## Using the API
+
+`ARControllerNFT` tracks several NFT markers at once. Load them in one call, or in several:
+the ids continue across calls, and every marker loaded stays detectable.
+
+```python
+import asyncio
+from artoolkitnft import arcontrollerNFT
+
+async def main():
+    nft = await arcontrollerNFT.ARControllerNFT(width, height, 'camera_para.dat')._initialize()
+    await nft.loadNFTMarkers(['DataNFT/pinball'])   # -> [0]
+    await nft.loadNFTMarker('DataNFT/kuva')         # -> [1]
+
+    def on_marker(ev):
+        print(ev['index'], ev['marker']['pose'])     # one event per marker found
+    nft.add_event_listener('getNFTMarker', on_marker)
+
+    nft.process(image)   # image.data: a (height, width, 4) uint8 RGBA numpy array
+
+asyncio.run(main())
+```
+
+Each frame given to `process()` sends one `getNFTMarker` event per marker found;
+`ev['index']` is the marker's id. A load that would pass 20 markers in total returns `[]`
+and loads nothing.
+
+Three settings tune the detection, the expensive step that finds a marker that is not yet
+tracked:
+
+| method | default | effect |
+|---|---|---|
+| `setFiltering(enable)` | off | smooths each marker's pose from frame to frame |
+| `setContinuousDetection(enabled)` | on | keeps looking for the other markers while some are tracked; off stops detection once any marker is tracked |
+| `setDetectionInterval(ms)` | 300 | the minimum time between two detection passes while some markers are tracked and some are not; 0 means every frame |
+
+While no marker is tracked, detection runs on every frame; while every loaded marker is
+tracked, it does not run.
+
 ## Local development (build and install from source)
 
 To build the bindings locally and test them without publishing to TestPyPI:
