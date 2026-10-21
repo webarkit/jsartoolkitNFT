@@ -125,9 +125,26 @@ There are **two parallel implementations of the same API**, and a fix often belo
 The legacy file is injected at link time via `--pre-js`, so changing it requires a WASM
 relink, not just `build-ts`.
 
-Variants of the TypeScript entry point (`ARToolkitNFT.ts`, `_simd`, `_td`, `_node`) are
-near-identical by design. A change to one usually needs applying to all four — keep them
-structurally aligned so diffs stay readable.
+The three browser builds (default, `_simd`, `_td`) share one implementation per class:
+
+| File | Holds |
+|---|---|
+| `src/ARToolkitNFTBase.ts` | the WASM wrapper's code, once |
+| `src/ARControllerNFTBase.ts` | the controller's code, once |
+| `src/ARToolkitNFT.ts`, `_simd`, `_td` | a subclass that names its build's module factory and the argument of its native constructor |
+| `src/ARControllerNFT.ts`, `_simd`, `_td` | a subclass that names its build's `ARToolkitNFT`, and declares the public constructor overloads and static factories (`initWithDimensions`, `initWithImage`, `customInit`), whose types name that class |
+
+A browser change therefore goes in the base class. A variant file may hold only those
+build-specific values, plus an override whose sole purpose is per-build JSDoc, as `_td` does
+for `setDetectionInterval`. Subclasses must declare no instance fields: with ESNext class
+fields, a field declared in a subclass is reset to `undefined` after the base constructor sets
+it. Each entry point reaches only its own factory, so each webpack bundle still contains only
+its own WASM build.
+
+The Node build is still a separate copy: `ARToolkitNFT_node.ts` and `ARControllerNFT_node.ts`
+differ in more than file access (EventEmitter events, no `internalLuma`, synchronous loading).
+A change to the browser classes may need applying there too. #734 stays open for folding them
+into the base classes.
 
 ---
 
