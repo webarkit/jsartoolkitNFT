@@ -43,6 +43,12 @@ export interface NftMarker {
     data?: any;
 }
 export type NftMarkers = NftMarker[];
+export interface NFTEvent {
+    name: string;
+    target: unknown;
+    data?: object;
+}
+export type NFTEventListener = (event: NFTEvent) => void;
 export interface EmscriptenFS {
     readFile(path: string, opts?: {
         encoding?: "binary" | "utf8";

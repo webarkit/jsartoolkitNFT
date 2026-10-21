@@ -232,5 +232,54 @@ describe("ARControllerNFT", () => {
       ar.dispatchEvent({ name: "testEvent", target: ar });
       expect(fired).toBe(1);
     });
+
+    it("still reaches later listeners when one removes itself during dispatch", () => {
+      // Regression for #686: dispatchEvent must iterate over a snapshot, or
+      // splicing A out of the live array skips B (the array shifts under the loop).
+      let firedA = 0;
+      let firedB = 0;
+      const listenerA = () => {
+        firedA += 1;
+        ar.removeEventListener("selfRemove", listenerA);
+      };
+      const listenerB = () => {
+        firedB += 1;
+      };
+
+      ar.addEventListener("selfRemove", listenerA);
+      ar.addEventListener("selfRemove", listenerB);
+      ar.dispatchEvent({ name: "selfRemove", target: ar });
+      expect(firedA).toBe(1);
+      expect(firedB).toBe(1);
+
+      // A is gone, B stays registered.
+      ar.dispatchEvent({ name: "selfRemove", target: ar });
+      expect(firedA).toBe(1);
+      expect(firedB).toBe(2);
+
+      ar.removeEventListener("selfRemove", listenerB);
+    });
+
+    it("fires a callback registered twice on the same event twice", () => {
+      // Listeners are an array, not a set: duplicate registrations are intentional.
+      let fired = 0;
+      const listener = () => {
+        fired += 1;
+      };
+
+      ar.addEventListener("twice", listener);
+      ar.addEventListener("twice", listener);
+      ar.dispatchEvent({ name: "twice", target: ar });
+      expect(fired).toBe(2);
+
+      // removeEventListener drops one registration per call.
+      ar.removeEventListener("twice", listener);
+      ar.dispatchEvent({ name: "twice", target: ar });
+      expect(fired).toBe(3);
+
+      ar.removeEventListener("twice", listener);
+      ar.dispatchEvent({ name: "twice", target: ar });
+      expect(fired).toBe(3);
+    });
   });
 });

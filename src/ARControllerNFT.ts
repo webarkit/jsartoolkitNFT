@@ -36,7 +36,11 @@
 import {
   INFTMarkerInfo,
   IImageObj,
-  INFTMarker, ARLogLevel } from "./abstractions/CommonInterfaces";
+  INFTMarker,
+  ARLogLevel,
+  NFTEventListener,
+  NFTEvent,
+} from "./abstractions/CommonInterfaces";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { ARToolkitNFT } from "./ARToolkitNFT";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
@@ -54,8 +58,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private FS: any;
   private StringList: any;
 
-  private listeners: object;
-  private nftMarkers: INFTMarker[];
+  private listeners: Record<string, NFTEventListener[]> = {};
+  private nftMarkers = new Map<number, INFTMarker>();
 
   private transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
@@ -137,11 +141,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     // toolkit instance
     this.artoolkitNFT;
-
-    // to register observers as event listeners
-    this.listeners = {};
-
-    this.nftMarkers = [];
 
     this.transform_mat = new Float64Array(16);
     this.transformGL_RH = new Float64Array(16);
@@ -316,11 +315,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   process(image: IImageObj): void {
     this._copyImageToHeap(image);
 
-    let k, o: INFTMarker;
-
     // get NFT markers
-    for (k in this.converter().nftMarkers) {
-      o = this.converter().nftMarkers[k];
+    for (const o of this.nftMarkers.values()) {
       o.inPrevious = o.inCurrent;
       o.inCurrent = false;
     }
@@ -398,15 +394,16 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @return {Object} The marker tracking object.
    */
   trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker {
-    let obj: INFTMarker = this.converter().nftMarkers[id];
+    let obj = this.nftMarkers.get(id);
     if (!obj) {
-      this.converter().nftMarkers[id] = obj = {
+      obj = {
         inPrevious: false,
         inCurrent: false,
         matrix: new Float64Array(12),
         matrixGL_RH: new Float64Array(12),
         markerWidth: markerWidth || this.defaultMarkerWidth,
       };
+      this.nftMarkers.set(id, obj);
     }
     if (markerWidth) {
       obj.markerWidth = markerWidth;
@@ -453,11 +450,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {string} name Name of the event to listen to.
    * @param {function} callback Callback function to call when an event with the given name is dispatched.
    */
-  addEventListener(name: string, callback: object): void {
-    if (!this.converter().listeners[name]) {
-      this.converter().listeners[name] = [];
-    }
-    this.converter().listeners[name].push(callback);
+  addEventListener(name: string, callback: NFTEventListener): void {
+    (this.listeners[name] ??= []).push(callback);
   }
 
   /**
@@ -465,26 +459,22 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {string} name Name of the event to stop listening to.
    * @param {function} callback Callback function to remove from the listeners of the named event.
    */
-  removeEventListener(name: string, callback: object): void {
-    if (this.converter().listeners[name]) {
-      let index = this.converter().listeners[name].indexOf(callback);
-      if (index > -1) {
-        this.converter().listeners[name].splice(index, 1);
-      }
-    }
+  removeEventListener(name: string, callback: NFTEventListener): void {
+    const list = this.listeners[name];
+    if (!list) return;
+    const i = list.indexOf(callback);
+    if (i > -1) list.splice(i, 1);
   }
 
   /**
    * Dispatches the given event to all registered listeners on event.name.
    * @param {Object} event Event to dispatch.
    */
-  dispatchEvent(event: { name: string; target: any; data?: object }): void {
-    let listeners = this.converter().listeners[event.name];
-    if (listeners) {
-      for (let i = 0; i < listeners.length; i++) {
-        listeners[i].call(this, event);
-      }
-    }
+  dispatchEvent(event: NFTEvent): void {
+    const list = this.listeners[event.name];
+    if (!list) return;
+    // Iterate over a snapshot: a listener may remove itself during dispatch.
+    for (const cb of list.slice()) cb.call(this, event);
   }
 
   // debug stuff
@@ -929,14 +919,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
   // private accessors
   // ----------------------------------------------------------------------------
-  /**
-   * Used internally by ARControllerNFT, it permit to add methods to this.
-   * @return {any} ARControllerNFT
-   */
-  private converter(): any {
-    return this;
-  }
-
   /**
    * This function init the ARControllerNFT with the necessary parmeters and variables.
    * Don't call directly this but instead instantiate a new ARControllerNFT.

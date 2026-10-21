@@ -86,6 +86,14 @@ export interface NftMarker {
 
 export type NftMarkers = NftMarker[];
 
+export interface NFTEvent {
+  name: string;
+  target: unknown; // or the controller type
+  data?: object;
+}
+
+export type NFTEventListener = (event: NFTEvent) => void;
+
 // Emscripten File System interface
 // Based on Emscripten's FS API: https://emscripten.org/docs/api_reference/Filesystem-API.html
 export interface EmscriptenFS {

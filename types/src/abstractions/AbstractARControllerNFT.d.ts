@@ -1,4 +1,4 @@
-import { IImageObj, ARLogLevel } from "./CommonInterfaces";
+import { IImageObj, ARLogLevel, NFTEventListener, NFTEvent } from "./CommonInterfaces";
 export declare abstract class AbstractARControllerNFT {
     static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<AbstractARControllerNFT>;
     static initWithImage: (image: IImageObj, cameraParam: string) => Promise<AbstractARControllerNFT>;
@@ -7,13 +7,9 @@ export declare abstract class AbstractARControllerNFT {
     trackNFTMarkerId: (id: number, markerWidth?: number) => object;
     getNFTMarker: (markerIndex: number) => object;
     getNFTData: (id: number, index: number) => object;
-    addEventListener: (name: string, callback: object) => void;
-    removeEventListener: (name: string, callback: object) => void;
-    dispatchEvent: (event: {
-        name: string;
-        target: any;
-        data?: object;
-    }) => void;
+    addEventListener: (name: string, callback: NFTEventListener) => void;
+    removeEventListener: (name: string, callback: NFTEventListener) => void;
+    dispatchEvent: (event: NFTEvent) => void;
     /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     debugSetup: () => void;
     transMatToGLMat: (transMat: Float64Array, glMat: Float64Array, scale?: number) => Float64Array;

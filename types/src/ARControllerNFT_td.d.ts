@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 export declare class ARControllerNFT implements AbstractARControllerNFT {
     private id;
@@ -188,22 +188,18 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param {string} name Name of the event to listen to.
      * @param {function} callback Callback function to call when an event with the given name is dispatched.
      */
-    addEventListener(name: string, callback: object): void;
+    addEventListener(name: string, callback: NFTEventListener): void;
     /**
      * Remove an event listener from the named event.
      * @param {string} name Name of the event to stop listening to.
      * @param {function} callback Callback function to remove from the listeners of the named event.
      */
-    removeEventListener(name: string, callback: object): void;
+    removeEventListener(name: string, callback: NFTEventListener): void;
     /**
      * Dispatches the given event to all registered listeners on event.name.
      * @param {Object} event Event to dispatch.
      */
-    dispatchEvent(event: {
-        name: string;
-        target: any;
-        data?: object;
-    }): void;
+    dispatchEvent(event: NFTEvent): void;
     /**
      * Sets up the square-marker detector's debug image: enables debug mode
      * and keeps the image's address.
@@ -460,11 +456,6 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param data Uint8Array
      */
     setGrayData(data: Uint8Array): void;
-    /**
-     * Used internally by ARControllerNFT, it permit to add methods to this.
-     * @return {any} ARControllerNFT
-     */
-    private converter;
     /**
      * This function init the ARControllerNFT with the necessary parmeters and variables.
      * Don't call directly this but instead instantiate a new ARControllerNFT.
