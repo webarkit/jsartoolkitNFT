@@ -845,13 +845,12 @@ class ARCameraParamNFT {
     }
 
     /**
-        Destroys the camera parameter and frees associated Emscripten resources.
- 
+        Resets this ARCameraParamNFT, so it can load another file.
+        The camera parameters stay in the native camera registry: no binding
+        removes them, and the call this made to one that does not exist threw
+        for every loaded camera (#277).
     */
     dispose() {
-        if (this.id !== -1) {
-            artoolkitNFT.deleteCamera(this.id);
-        }
         this.id = -1;
         this._src = '';
         this.complete = false;
