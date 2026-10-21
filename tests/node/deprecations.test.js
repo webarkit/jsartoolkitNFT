@@ -28,14 +28,13 @@ const METHODS = [
   "getImageProcMode",
 ];
 
+// The default, SIMD and threaded builds declare these methods once, in the shared
+// base classes their ARControllerNFT and ARToolkitNFT extend, and inherit the JSDoc
+// from there (#734). The Node build still has its own classes.
 const FILES = {
-  "ARControllerNFT.d.ts": [...METHODS, "debugSetup"],
-  "ARControllerNFT_simd.d.ts": [...METHODS, "debugSetup"],
-  "ARControllerNFT_td.d.ts": [...METHODS, "debugSetup"],
+  "ARControllerNFTBase.d.ts": [...METHODS, "debugSetup"],
   "ARControllerNFT_node.d.ts": [...METHODS, "debugSetup"],
-  "ARToolkitNFT.d.ts": METHODS,
-  "ARToolkitNFT_simd.d.ts": METHODS,
-  "ARToolkitNFT_td.d.ts": METHODS,
+  "ARToolkitNFTBase.d.ts": METHODS,
   "ARToolkitNFT_node.d.ts": METHODS,
   "abstractions/AbstractARControllerNFT.d.ts": [...METHODS, "debugSetup"],
   "abstractions/IARToolkitNFT.d.ts": METHODS,
