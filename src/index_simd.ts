@@ -44,7 +44,15 @@ import type {
   INFTMarker,
   INFTMarkerInfo,
   IImageObj,
+  NFTEvent,
+  NFTEventListener,
 } from "./abstractions/CommonInterfaces";
 
 export { ARToolkitNFT, ARControllerNFT, ARLogLevel };
-export type { INFTMarker, INFTMarkerInfo, IImageObj };
+export type {
+  INFTMarker,
+  INFTMarkerInfo,
+  IImageObj,
+  NFTEvent,
+  NFTEventListener,
+};

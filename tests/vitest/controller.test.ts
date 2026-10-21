@@ -260,6 +260,31 @@ describe("ARControllerNFT", () => {
       ar.removeEventListener("selfRemove", listenerB);
     });
 
+    it("treats Object.prototype property names as ordinary event names", () => {
+      // The listener registry has no prototype, so a name such as "toString" is not
+      // mistaken for a listener array inherited from Object.prototype (#731).
+      for (const name of [
+        "toString",
+        "constructor",
+        "hasOwnProperty",
+        "__proto__",
+      ]) {
+        expect(() => ar.dispatchEvent({ name, target: ar }), name).not.toThrow();
+
+        let fired = 0;
+        const listener = () => {
+          fired += 1;
+        };
+        ar.addEventListener(name, listener);
+        ar.dispatchEvent({ name, target: ar });
+        expect(fired, name).toBe(1);
+
+        ar.removeEventListener(name, listener);
+        ar.dispatchEvent({ name, target: ar });
+        expect(fired, name).toBe(1);
+      }
+    });
+
     it("fires a callback registered twice on the same event twice", () => {
       // Listeners are an array, not a set: duplicate registrations are intentional.
       let fired = 0;

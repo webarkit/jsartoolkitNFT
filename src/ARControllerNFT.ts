@@ -58,7 +58,9 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private FS: any;
   private StringList: any;
 
-  private listeners: Record<string, NFTEventListener[]> = {};
+  // No prototype: an event name such as "toString" must not find an inherited
+  // Object.prototype member instead of a listener array (#731).
+  private listeners: Record<string, NFTEventListener[]> = Object.create(null);
   private nftMarkers = new Map<number, INFTMarker>();
 
   private transform_mat: Float64Array;

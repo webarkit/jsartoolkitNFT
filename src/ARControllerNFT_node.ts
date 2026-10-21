@@ -59,7 +59,9 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private FS: any;
   private StringList: any;
 
-  private listeners: Record<string, NFTEventListener[]> = {};
+  // No prototype: an event name such as "toString" must not find an inherited
+  // Object.prototype member instead of a listener array (#731).
+  private listeners: Record<string, NFTEventListener[]> = Object.create(null);
   private em: any;
   private nftMarkers = new Map<number, INFTMarker>();
 
@@ -460,10 +462,12 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   dispatchEvent(event: NFTEvent): void {
     const list = this.listeners[event.name];
-    if (!list) return;
-    // Iterate over a snapshot: a listener may remove itself during dispatch.
-    for (const cb of list.slice()) cb.call(this, event);
-    // also notify EventEmitter listeners registered via on()
+    if (list) {
+      // Iterate over a snapshot: a listener may remove itself during dispatch.
+      for (const cb of list.slice()) cb.call(this, event);
+    }
+    // Always notify the EventEmitter listeners registered via on(), also when no
+    // addEventListener() listener exists for this name: examples/node uses on() (#731).
     this.em.emit(event.name, event);
   }
 
