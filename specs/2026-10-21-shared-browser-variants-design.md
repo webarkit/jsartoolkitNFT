@@ -192,16 +192,15 @@ whatever #734 uses for Node".
   (simd), `artoolkitNFT_ES6_wasm_td` (threaded), `artoolkitNFT_node_wasm` (node). The bundle
   sizes stay close to `origin/dev`'s.
 - **Public API and types per entry point unchanged (D3).** The one-off check is a scratch
-  TypeScript file, not committed. It imports the `origin/dev` declarations and the new ones for
-  `index`, `index_simd` and `index_td`. For each exported class it asserts type equality of
-  the public instance side (`Pick<T, keyof T>`) and of the public static side
-  (`Pick<typeof C, Exclude<keyof typeof C, "prototype">>`). Classes with private members are
-  nominal in TypeScript, so the whole types cannot be compared directly; for the same reason
-  `prototype`, whose type is the nominal instance type, is left out of the static side (my
-  call, noted in the PR body). The constructor overloads, which `Pick`
-  drops, are compared by diffing their declaration text between the old and new `.d.ts`. The
-  result goes in the PR body. `index_node` declarations must come out byte-identical apart
-  from rebuild line-ending noise.
+  script, not committed. It uses the TypeScript compiler API to write an API report for the
+  `origin/dev` declarations and one for the new ones, covering `index`, `index_simd`,
+  `index_td` and `index_node`. The report lists every export and, for each class, every
+  constructor signature and every public static and instance member, inherited ones
+  included, with its type as text and its JSDoc. The two reports must be identical, and the
+  result goes in the PR body. Comparing the types themselves (for example with `Pick`) does
+  not work: classes with private members are nominal in TypeScript, so a method returning
+  the old `ARControllerNFT` never equals one returning the new one, although both print as
+  `ARControllerNFT` (my call, replacing an earlier `Pick`-based check during planning).
 - **Per-variant JSDoc.** `types/src/ARControllerNFT_td.d.ts` carries the threaded
   `setDetectionInterval` text and "Default: `0`"; the default and `_simd` entry points resolve
   to the base text with "Default: `300`".
