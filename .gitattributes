@@ -16,7 +16,6 @@
 *.gif binary
 *.ico binary
 *.glb binary
-*.gltf binary
 *.bin binary
 *.mp4 binary
 *.woff binary

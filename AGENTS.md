@@ -208,10 +208,12 @@ bundles (webpack is not byte-reproducible here) and produces line-ending churn i
 Revert those rather than committing them; `main.yml` regenerates both on merge.
 
 **Line endings.** `.gitattributes` forces LF for every text file, regardless of `core.autocrlf`,
-so a Windows checkout matches prettier's default and CI. If you cloned before it landed, your
-working tree is probably still CRLF and `git status` may list files (typically `types/*.d.ts`)
-as modified with an empty diff. Run `git add --renormalize .` once, or re-checkout the files, to
-clear it. Do not fix it by running `prettier --write` over the tree.
+so a Windows checkout matches prettier's default and CI. A clone made before it landed keeps its
+CRLF files until git rewrites them: `git status` stays clean, but `prettier --check` still flags
+them. `git add --renormalize .` does not help here, because it only refreshes the index, which is
+already LF. To rewrite the working tree once, start from a clean tree (commit or stash first) and
+run `git rm -r --cached -q . && git reset --hard`. Do not fix it by running `prettier --write`
+over the tree.
 
 **`npm run format-check` currently fails** on roughly 247 files, on `master`, with the
 project's own prettier version. It is not wired into CI. Do not interpret it as a regression
