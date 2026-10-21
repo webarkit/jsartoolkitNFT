@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 export declare class ARControllerNFT implements AbstractARControllerNFT {
     private id;
@@ -132,10 +132,13 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     set cameraParam(cameraParam: string);
     get cameraParam(): string;
     /**
-     * This is one of the most important method inside ARControllerNFT. It detect the marker
-     * and dispatch internally with the getNFTMarker event listener the NFTMarkerInfo
-     * struct object of the tracked NFT Markers.
-     * @param {image} image data
+     * Runs one tracking step on the given frame: copies the image to the WASM heap,
+     * detects the loaded NFT markers and updates the state of every marker registered
+     * with trackNFTMarkerId(). For each marker found it dispatches a "getNFTMarker"
+     * event carrying the NFTMarkerInfo and the pose; for a tracked marker that has
+     * not been seen for longer than the lost threshold it dispatches "lostNFTMarker"
+     * once, with the last known pose (see MarkerLostTracker).
+     * @param {IImageObj} image The frame to process (video, canvas, image or raw pixel data).
      * @return {void}
      */
     process(image: IImageObj): void;
@@ -146,14 +149,14 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     detectNFTMarker(): number;
     /**
-     * Adds the given NFT marker ID to the index of tracked IDs.
-     * Sets the markerWidth for the pattern marker to markerWidth.
-     * Used by process() to implement continuous tracking,
-     * keeping track of the marker's transformation matrix
-     * and customizable marker widths.
+     * Adds the given NFT marker ID to the set of tracked IDs, or returns the existing
+     * entry if the ID is already tracked. Used by process() to implement continuous
+     * tracking: the entry keeps the marker's transformation matrices and its
+     * visibility in the current and previous frame.
      * @param {number} id ID of the NFT marker to track.
-     * @param {number} markerWidth The width of the marker to track.
-     * @return {Object} The marker tracking object.
+     * @param {number} [markerWidth] Width of the marker; overrides the width of an
+     *   already tracked entry, and falls back to defaultMarkerWidth for a new one.
+     * @return {INFTMarker} The marker tracking object (the same object on every call for a given ID).
      */
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
     /**
@@ -177,28 +180,39 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * Add an event listener on this ARControllerNFT for the named event, calling the callback function
      * whenever that event is dispatched.
      * Possible events are:
-     * - getNFTMarker - dispatched whenever process() finds a NFT marker
-     * - lostNFTMarker - dispatched whenever process() lost a visible NFT marker
+     * - getNFTMarker - dispatched by process() for every NFT marker found in the frame
+     * - lostNFTMarker - dispatched by process() once a tracked NFT marker has been out of
+     *   view for longer than the lost threshold (a single missed frame is not a loss)
      * - load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
+     *
+     * Listeners are kept in an array, not a set: registering the same callback twice
+     * makes it fire twice per event, and each removeEventListener() call drops one
+     * registration.
+     * Listeners added through on() (EventEmitter) are notified too, after these.
      * @param {string} name Name of the event to listen to.
-     * @param {function} callback Callback function to call when an event with the given name is dispatched.
+     * @param {NFTEventListener} callback Callback function to call when an event with the given name is dispatched.
      */
-    addEventListener(name: string, callback: object): void;
+    addEventListener(name: string, callback: NFTEventListener): void;
     /**
-     * Remove an event listener from the named event.
+     * Remove an event listener from the named event. Only the first registration of
+     * the callback is removed; a callback registered twice needs two calls. Safe to
+     * call from inside a listener while the event is being dispatched: the current
+     * dispatch still reaches every listener that was registered when it started.
      * @param {string} name Name of the event to stop listening to.
-     * @param {function} callback Callback function to remove from the listeners of the named event.
+     * @param {NFTEventListener} callback Callback function to remove from the listeners of the named event.
      */
-    removeEventListener(name: string, callback: object): void;
+    removeEventListener(name: string, callback: NFTEventListener): void;
     /**
-     * Dispatches the given event to all registered listeners on event.name.
-     * @param {Object} event Event to dispatch.
+     * Dispatches the given event to all listeners registered on event.name, in
+     * registration order, with `this` bound to the controller. The listener list is
+     * snapshotted before the loop, so a listener that removes itself (or adds or
+     * removes other listeners) during dispatch does not change which listeners the
+     * current dispatch reaches; such changes apply from the next dispatch.
+     * The event is then re-emitted on the internal EventEmitter for listeners
+     * registered through on().
+     * @param {NFTEvent} event Event to dispatch.
      */
-    dispatchEvent(event: {
-        name: string;
-        target: any;
-        data?: object;
-    }): void;
+    dispatchEvent(event: NFTEvent): void;
     /**
      * Sets up the square-marker detector's debug image: enables debug mode
      * and keeps the image's address.
@@ -422,11 +436,6 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param data Uint8Array
      */
     setGrayData(data: Uint8Array): void;
-    /**
-     * Used internally by ARControllerNFT, it permit to add methods to this.
-     * @return {any} ARControllerNFT
-     */
-    private converter;
     /**
      * This function init the ARControllerNFT with the necessary parmeters and variables.
      * Don't call directly this but instead instantiate a new ARControllerNFT.

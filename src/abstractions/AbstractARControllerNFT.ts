@@ -33,7 +33,12 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import { IImageObj, ARLogLevel } from "./CommonInterfaces";
+import {
+  IImageObj,
+  ARLogLevel,
+  NFTEventListener,
+  NFTEvent,
+} from "./CommonInterfaces";
 export abstract class AbstractARControllerNFT {
   static initWithDimensions: (
     width: number,
@@ -49,9 +54,9 @@ export abstract class AbstractARControllerNFT {
   trackNFTMarkerId: (id: number, markerWidth?: number) => object;
   getNFTMarker: (markerIndex: number) => object;
   getNFTData: (id: number, index: number) => object;
-  addEventListener: (name: string, callback: object) => void;
-  removeEventListener: (name: string, callback: object) => void;
-  dispatchEvent: (event: { name: string; target: any; data?: object }) => void;
+  addEventListener: (name: string, callback: NFTEventListener) => void;
+  removeEventListener: (name: string, callback: NFTEventListener) => void;
+  dispatchEvent: (event: NFTEvent) => void;
   /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   debugSetup: () => void;
   transMatToGLMat: (

@@ -86,6 +86,26 @@ export interface NftMarker {
 
 export type NftMarkers = NftMarker[];
 
+/**
+ * Event passed to listeners registered with ARControllerNFT.addEventListener().
+ *
+ * `name` is one of "getNFTMarker", "lostNFTMarker" or "load"; `target` is the
+ * ARControllerNFT that dispatched it (typed as unknown because the four controller
+ * classes share no common base type yet). `data` is absent for "load"; for
+ * "getNFTMarker" and "lostNFTMarker" it holds `index` (marker index), `type`
+ * (ARToolkitNFT.NFT_MARKER), `marker` (the NFTMarkerInfo struct), `matrix` and
+ * `matrixGL_RH` (the pose, for "lostNFTMarker" the last one seen). Typing `data`
+ * per event name is tracked in #730.
+ */
+export interface NFTEvent {
+  name: string;
+  target: unknown;
+  data?: object;
+}
+
+/** Callback accepted by ARControllerNFT.addEventListener() and removeEventListener(). */
+export type NFTEventListener = (event: NFTEvent) => void;
+
 // Emscripten File System interface
 // Based on Emscripten's FS API: https://emscripten.org/docs/api_reference/Filesystem-API.html
 export interface EmscriptenFS {

@@ -36,7 +36,11 @@
 import {
   INFTMarkerInfo,
   IImageObj,
-  INFTMarker, ARLogLevel } from "./abstractions/CommonInterfaces";
+  INFTMarker,
+  ARLogLevel,
+  NFTEventListener,
+  NFTEvent,
+} from "./abstractions/CommonInterfaces";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { ARToolkitNFT } from "./ARToolkitNFT_td";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
@@ -54,8 +58,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   private FS: any;
   private StringList: any;
 
-  private listeners: object;
-  private nftMarkers: INFTMarker[];
+  // No prototype: an event name such as "toString" must not find an inherited
+  // Object.prototype member instead of a listener array (#731).
+  private listeners: Record<string, NFTEventListener[]> = Object.create(null);
+  private nftMarkers = new Map<number, INFTMarker>();
 
   private transform_mat: Float64Array;
   private transformGL_RH: Float64Array;
@@ -137,11 +143,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     // toolkit instance
     this.artoolkitNFT;
-
-    // to register observers as event listeners
-    this.listeners = {};
-
-    this.nftMarkers = [];
 
     this.transform_mat = new Float64Array(16);
     this.transformGL_RH = new Float64Array(16);
@@ -307,20 +308,20 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * This is one of the most important method inside ARControllerNFT. It detect the marker
-   * and dispatch internally with the getNFTMarker event listener the NFTMarkerInfo
-   * struct object of the tracked NFT Markers.
-   * @param {image} image data
+   * Runs one tracking step on the given frame: copies the image to the WASM heap,
+   * detects the loaded NFT markers and updates the state of every marker registered
+   * with trackNFTMarkerId(). For each marker found it dispatches a "getNFTMarker"
+   * event carrying the NFTMarkerInfo and the pose; for a tracked marker that has
+   * not been seen for longer than the lost threshold it dispatches "lostNFTMarker"
+   * once, with the last known pose (see MarkerLostTracker).
+   * @param {IImageObj} image The frame to process (video, canvas, image or raw pixel data).
    * @return {void}
    */
   process(image: IImageObj): void {
     this._copyImageToHeap(image);
 
-    let k, o: INFTMarker;
-
     // get NFT markers
-    for (k in this.converter().nftMarkers) {
-      o = this.converter().nftMarkers[k];
+    for (const o of this.nftMarkers.values()) {
       o.inPrevious = o.inCurrent;
       o.inCurrent = false;
     }
@@ -388,25 +389,26 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Adds the given NFT marker ID to the index of tracked IDs.
-   * Sets the markerWidth for the pattern marker to markerWidth.
-   * Used by process() to implement continuous tracking,
-   * keeping track of the marker's transformation matrix
-   * and customizable marker widths.
+   * Adds the given NFT marker ID to the set of tracked IDs, or returns the existing
+   * entry if the ID is already tracked. Used by process() to implement continuous
+   * tracking: the entry keeps the marker's transformation matrices and its
+   * visibility in the current and previous frame.
    * @param {number} id ID of the NFT marker to track.
-   * @param {number} markerWidth The width of the marker to track.
-   * @return {Object} The marker tracking object.
+   * @param {number} [markerWidth] Width of the marker; overrides the width of an
+   *   already tracked entry, and falls back to defaultMarkerWidth for a new one.
+   * @return {INFTMarker} The marker tracking object (the same object on every call for a given ID).
    */
   trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker {
-    let obj: INFTMarker = this.converter().nftMarkers[id];
+    let obj = this.nftMarkers.get(id);
     if (!obj) {
-      this.converter().nftMarkers[id] = obj = {
+      obj = {
         inPrevious: false,
         inCurrent: false,
         matrix: new Float64Array(12),
         matrixGL_RH: new Float64Array(12),
         markerWidth: markerWidth || this.defaultMarkerWidth,
       };
+      this.nftMarkers.set(id, obj);
     }
     if (markerWidth) {
       obj.markerWidth = markerWidth;
@@ -447,44 +449,49 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * Add an event listener on this ARControllerNFT for the named event, calling the callback function
    * whenever that event is dispatched.
    * Possible events are:
-   * - getNFTMarker - dispatched whenever process() finds a NFT marker
-   * - lostNFTMarker - dispatched whenever process() lost a visible NFT marker
+   * - getNFTMarker - dispatched by process() for every NFT marker found in the frame
+   * - lostNFTMarker - dispatched by process() once a tracked NFT marker has been out of
+   *   view for longer than the lost threshold (a single missed frame is not a loss)
    * - load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
+   *
+   * Listeners are kept in an array, not a set: registering the same callback twice
+   * makes it fire twice per event, and each removeEventListener() call drops one
+   * registration.
    * @param {string} name Name of the event to listen to.
-   * @param {function} callback Callback function to call when an event with the given name is dispatched.
+   * @param {NFTEventListener} callback Callback function to call when an event with the given name is dispatched.
    */
-  addEventListener(name: string, callback: object): void {
-    if (!this.converter().listeners[name]) {
-      this.converter().listeners[name] = [];
-    }
-    this.converter().listeners[name].push(callback);
+  addEventListener(name: string, callback: NFTEventListener): void {
+    (this.listeners[name] ??= []).push(callback);
   }
 
   /**
-   * Remove an event listener from the named event.
+   * Remove an event listener from the named event. Only the first registration of
+   * the callback is removed; a callback registered twice needs two calls. Safe to
+   * call from inside a listener while the event is being dispatched: the current
+   * dispatch still reaches every listener that was registered when it started.
    * @param {string} name Name of the event to stop listening to.
-   * @param {function} callback Callback function to remove from the listeners of the named event.
+   * @param {NFTEventListener} callback Callback function to remove from the listeners of the named event.
    */
-  removeEventListener(name: string, callback: object): void {
-    if (this.converter().listeners[name]) {
-      let index = this.converter().listeners[name].indexOf(callback);
-      if (index > -1) {
-        this.converter().listeners[name].splice(index, 1);
-      }
-    }
+  removeEventListener(name: string, callback: NFTEventListener): void {
+    const list = this.listeners[name];
+    if (!list) return;
+    const i = list.indexOf(callback);
+    if (i > -1) list.splice(i, 1);
   }
 
   /**
-   * Dispatches the given event to all registered listeners on event.name.
-   * @param {Object} event Event to dispatch.
+   * Dispatches the given event to all listeners registered on event.name, in
+   * registration order, with `this` bound to the controller. The listener list is
+   * snapshotted before the loop, so a listener that removes itself (or adds or
+   * removes other listeners) during dispatch does not change which listeners the
+   * current dispatch reaches; such changes apply from the next dispatch.
+   * @param {NFTEvent} event Event to dispatch.
    */
-  dispatchEvent(event: { name: string; target: any; data?: object }): void {
-    let listeners = this.converter().listeners[event.name];
-    if (listeners) {
-      for (let i = 0; i < listeners.length; i++) {
-        listeners[i].call(this, event);
-      }
-    }
+  dispatchEvent(event: NFTEvent): void {
+    const list = this.listeners[event.name];
+    if (!list) return;
+    // Iterate over a snapshot: a listener may remove itself during dispatch.
+    for (const cb of list.slice()) cb.call(this, event);
   }
 
   // debug stuff
@@ -930,14 +937,6 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
   // private accessors
   // ----------------------------------------------------------------------------
-  /**
-   * Used internally by ARControllerNFT, it permit to add methods to this.
-   * @return {any} ARControllerNFT
-   */
-  private converter(): any {
-    return this;
-  }
-
   /**
    * This function init the ARControllerNFT with the necessary parmeters and variables.
    * Don't call directly this but instead instantiate a new ARControllerNFT.
