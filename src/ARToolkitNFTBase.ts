@@ -649,11 +649,8 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
   ): Promise<string> {
     // Taken before any request, so prefixes stay unique across concurrent
     // calls and are never reused (Review Focus 2).
+    // Empty URLs were refused by runBatch before any prefix was taken.
     const prefix = "/markerNFT_" + this.markerNFTCount++;
-
-    if (isEmptySource(source)) {
-      throw new NFTLoadError("argument", "Empty marker URL");
-    }
 
     if (Array.isArray(source)) {
       // A list missing one of the three files fails at registration, as
@@ -689,7 +686,7 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
       if (res.ok) {
         // The probe's own bytes are used: one request, not a probe and then
         // a second download of the same archive.
-        const bytes = new Uint8Array(await res.arrayBuffer());
+        const bytes = await Utils.readBody(res, zftUrl, signal);
         this.storeZFT(bytes, prefix, zftUrl, written);
         return prefix;
       }
@@ -802,9 +799,11 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
   }
 }
 
+// Array.from visits the holes of a sparse list (`[, "/a.fset"]`), which
+// Array.prototype.some skips.
 const isEmptySource = (source: string | string[]): boolean =>
   Array.isArray(source)
-    ? source.length === 0 || source.some((url) => !url)
+    ? source.length === 0 || Array.from(source).some((url) => !url)
     : !source;
 
 /**
@@ -812,7 +811,17 @@ const isEmptySource = (source: string | string[]): boolean =>
  * part of it (`/x/pinball.fset?v=2` gives `fset`, Review Focus 1).
  */
 function extensionOf(url: string): string {
-  const path = new URL(url, globalThis.location?.href).pathname;
+  let path: string;
+  try {
+    path = new URL(url, globalThis.location?.href).pathname;
+  } catch (cause) {
+    // A URL that cannot be parsed is the caller's mistake, not a download
+    // failure: "argument", like an empty URL.
+    throw new NFTLoadError("argument", `Invalid marker URL: ${url}`, {
+      url,
+      cause,
+    });
+  }
   const name = path.substring(path.lastIndexOf("/") + 1);
   const dot = name.lastIndexOf(".");
   return dot < 0 ? "" : name.substring(dot + 1);

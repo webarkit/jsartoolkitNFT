@@ -60,7 +60,29 @@ export default class Utils {
         { url, status: response.status },
       );
     }
-    return new Uint8Array(await response.arrayBuffer());
+    return Utils.readBody(response, url, signal);
+  }
+
+  /**
+   * Reads a response body as bytes. The connection can still fail after the
+   * headers arrived (a reset mid-download); that is a "network" NFTLoadError
+   * too, so a Promise-style failure is always an NFTLoadError or the abort
+   * reason, as documented. An abort propagates unchanged.
+   */
+  static async readBody(
+    response: Response,
+    url: string,
+    signal?: AbortSignal,
+  ): Promise<Uint8Array> {
+    try {
+      return new Uint8Array(await response.arrayBuffer());
+    } catch (cause) {
+      if (signal?.aborted) throw cause;
+      throw new NFTLoadError("network", `Network error reading ${url}`, {
+        url,
+        cause,
+      });
+    }
   }
 
   /**

@@ -47,6 +47,25 @@ describe("Utils.fetchBinary", () => {
     expect(err.cause).toBe(cause);
   });
 
+  it("maps a body that fails mid-download to network", async () => {
+    const reset = new TypeError("reset");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          new ReadableStream({
+            start(c) {
+              c.error(reset);
+            },
+          }),
+        ),
+      ),
+    );
+    const err: any = await Utils.fetchBinary("/x").catch((e) => e);
+    expect(err).toMatchObject({ name: "NFTLoadError", kind: "network", url: "/x" });
+    expect(err.cause).toBeDefined();
+  });
+
   it("passes an abort through", async () => {
     const ac = new AbortController();
     ac.abort();

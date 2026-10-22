@@ -262,6 +262,60 @@ describe(`addNFTMarkers outcomes (#685, ${VARIANTS[0].name})`, () => {
     });
   });
 
+  it("a .zft probe body that fails mid-download is network", async () => {
+    stubFetch((url) =>
+      url.endsWith(".zft")
+        ? Promise.resolve(
+            new Response(
+              new ReadableStream({
+                start(c) {
+                  c.error(new TypeError("reset"));
+                },
+              }),
+            ),
+          )
+        : undefined,
+    );
+    await expect(tk.addNFTMarkers([MARKER_PINBALL])).rejects.toMatchObject({
+      name: "NFTLoadError",
+      kind: "network",
+      url: MARKER_PINBALL + ".zft",
+    });
+  });
+
+  it("an unparsable URL is argument", async () => {
+    const spy = spyFetch();
+    await expect(
+      tk.addNFTMarkers([["http://[bad/a.fset", "/a.iset", "/a.fset3"]]),
+    ).rejects.toMatchObject({ name: "NFTLoadError", kind: "argument" });
+    await expect(tk.addNFTMarkers(["http://[bad/a.zft"])).rejects.toMatchObject(
+      {
+        name: "NFTLoadError",
+        kind: "argument",
+      },
+    );
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it("a throw from _addNFTMarkers is rejected with its cause (D16)", async () => {
+    const before = markerEntries(tk);
+    const boom = new Error("native boom");
+    const stub = vi
+      .spyOn(tk.instance, "_addNFTMarkers")
+      .mockImplementation(() => {
+        throw boom;
+      });
+    const err: any = await tk
+      .addNFTMarkers([MARKER_PINBALL], undefined, undefined, {
+        probeZFT: false,
+      })
+      .catch((e: unknown) => e);
+    expect(stub).toHaveBeenCalledTimes(1);
+    expect(err).toMatchObject({ name: "NFTLoadError", kind: "rejected" });
+    expect(err.cause).toBe(boom);
+    expect(markerEntries(tk)).toEqual(before);
+  }, 120_000);
+
   it("already-aborted signal", async () => {
     const spy = spyFetch();
     await expect(
@@ -367,6 +421,16 @@ describe(`addNFTMarkers outcomes (#685, ${VARIANTS[0].name})`, () => {
       kind: "argument",
     });
     await expect(tk.addNFTMarkers([""])).rejects.toMatchObject({
+      name: "NFTLoadError",
+      kind: "argument",
+    });
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it("a hole in a file list is argument", async () => {
+    const spy = spyFetch();
+    // eslint-disable-next-line no-sparse-arrays
+    await expect(tk.addNFTMarkers([[, "/a.fset"]])).rejects.toMatchObject({
       name: "NFTLoadError",
       kind: "argument",
     });
