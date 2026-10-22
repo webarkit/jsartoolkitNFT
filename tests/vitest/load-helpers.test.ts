@@ -104,6 +104,29 @@ describe("withCallbacks", () => {
     expect(onSuccess).not.toHaveBeenCalled();
   });
 
+  it("calls onSuccess with the value and resolves it", async () => {
+    const onSuccess = vi.fn();
+    await expect(
+      withCallbacks(Promise.resolve([7]), onSuccess, undefined, [] as number[]),
+    ).resolves.toEqual([7]);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(onSuccess).toHaveBeenCalledWith([7]);
+  });
+
+  it("rejects when onError itself throws", async () => {
+    const boom = new Error("boom");
+    await expect(
+      withCallbacks(
+        Promise.reject(new Error("x")),
+        undefined,
+        () => {
+          throw boom;
+        },
+        [],
+      ),
+    ).rejects.toBe(boom);
+  });
+
   it("rejects with a throw from onSuccess and never calls onError", async () => {
     const onError = vi.fn();
     const boom = new Error("boom");

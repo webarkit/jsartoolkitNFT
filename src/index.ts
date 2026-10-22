@@ -46,13 +46,17 @@ import type {
   IImageObj,
   NFTEvent,
   NFTEventListener,
+  NFTLoadOptions,
 } from "./abstractions/CommonInterfaces";
 
-export { ARToolkitNFT, ARControllerNFT, ARLogLevel };
+import { NFTLoadError } from "./NFTLoadError";
+
+export { ARToolkitNFT, ARControllerNFT, ARLogLevel, NFTLoadError };
 export type {
   INFTMarker,
   INFTMarkerInfo,
   IImageObj,
   NFTEvent,
   NFTEventListener,
+  NFTLoadOptions,
 };

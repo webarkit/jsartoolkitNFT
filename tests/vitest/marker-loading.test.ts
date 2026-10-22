@@ -13,6 +13,7 @@ import {
   MARKER_KUVA,
   VIDEO_WIDTH,
   VIDEO_HEIGHT,
+  blankFrame,
 } from "./helpers";
 import { VARIANTS } from "./variants";
 
@@ -482,5 +483,115 @@ describe(`addNFTMarkers outcomes (#685, ${VARIANTS[0].name})`, () => {
       name: "NFTLoadError",
       kind: "http",
     });
+  });
+});
+
+/**
+ * Controller part: `ARControllerNFT.loadNFTMarker(s)` resolves after loading.
+ * `nftMarkerCount` is private, so it is read through a cast.
+ */
+for (const variant of VARIANTS) {
+  describe(`loadNFTMarker(s) Promise loading (#685, ${variant.name})`, () => {
+    const fresh: any[] = [];
+    afterAll(() => {
+      for (const c of fresh) c?.dispose?.();
+    });
+
+    it("loadNFTMarkers resolves the real ids and counts them", async () => {
+      const { ar } = await freshController(variant);
+      fresh.push(ar);
+      expect(await ar.loadNFTMarkers([MARKER_PINBALL])).toEqual([0]);
+      const onSuccess = vi.fn();
+      expect(await ar.loadNFTMarker(MARKER_KUVA, onSuccess)).toEqual([1]);
+      expect(onSuccess).toHaveBeenCalledWith(1);
+      expect((ar as any).nftMarkerCount).toBe(2);
+      expect(() => ar.process(blankFrame())).not.toThrow();
+    }, 150_000);
+  });
+}
+
+describe(`loadNFTMarker(s) outcomes (#685, ${VARIANTS[0].name})`, () => {
+  const variant = VARIANTS[0];
+  const fresh: any[] = [];
+  const MISSING = "/examples/DataNFT/missing";
+  const opts = { probeZFT: false };
+
+  afterAll(() => {
+    for (const c of fresh) c?.dispose?.();
+  });
+
+  async function fc() {
+    const c = await freshController(variant);
+    fresh.push(c.ar);
+    return c.ar as any;
+  }
+
+  it("no callbacks rejects with NFTLoadError", async () => {
+    const ar = await fc();
+    await expect(ar.loadNFTMarkers([MISSING], undefined, undefined, opts))
+      .rejects.toMatchObject({ name: "NFTLoadError", kind: "http" });
+  }, 150_000);
+
+  it("onSuccess only resolves [] and logs", async () => {
+    const ar = await fc();
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const onSuccess = vi.fn();
+    expect(
+      await ar.loadNFTMarkers([MISSING], onSuccess, undefined, opts),
+    ).toEqual([]);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(onSuccess).not.toHaveBeenCalled();
+  }, 150_000);
+
+  it("a failed load does not count", async () => {
+    const ar = await fc();
+    await ar.loadNFTMarkers([MARKER_PINBALL]);
+    await expect(
+      ar.loadNFTMarkers([MISSING], undefined, undefined, opts),
+    ).rejects.toBeDefined();
+    expect(ar.nftMarkerCount).toBe(1);
+  }, 150_000);
+
+  it("takes a string[] for loadNFTMarker", async () => {
+    const ar = await fc();
+    const onSuccess = vi.fn();
+    expect(await ar.loadNFTMarker(PINBALL_FILES, onSuccess)).toEqual([0]);
+    expect(onSuccess).toHaveBeenCalledWith(0);
+  }, 150_000);
+
+  it("a throwing callback rejects", async () => {
+    const ar = await fc();
+    const onError = vi.fn();
+    await expect(
+      ar.loadNFTMarker(
+        MARKER_PINBALL,
+        () => {
+          throw new Error("boom");
+        },
+        onError,
+      ),
+    ).rejects.toThrow("boom");
+    expect(onError).not.toHaveBeenCalled();
+  }, 150_000);
+
+  it("opts reach the toolkit", async () => {
+    const ar = await fc();
+    const ctrl = new AbortController();
+    ctrl.abort();
+    await expect(
+      ar.loadNFTMarkers([MARKER_PINBALL], undefined, undefined, {
+        signal: ctrl.signal,
+      }),
+    ).rejects.toMatchObject({ name: "AbortError" });
+  }, 150_000);
+
+  it("entry points export NFTLoadError", async () => {
+    for (const mod of [
+      await import("../../src/index"),
+      await import("../../src/index_simd"),
+      await import("../../src/index_td"),
+    ]) {
+      expect(typeof (mod as any).NFTLoadError).toBe("function");
+    }
   });
 });
