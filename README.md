@@ -84,15 +84,13 @@ const ids = await arController.loadNFTMarkers(['path/to/a', 'path/to/b'])
 
 A failure rejects with an `NFTLoadError`. Its `kind` is one of `http`, `network`, `missing`, `format`,
 `rejected` or `argument`, and it carries the `url`, the HTTP `status` and the `cause` when there are any.
-`NFTLoadError` is exported from every entry point.
+`NFTLoadError` is exported from every entry point. Test `err.name === 'NFTLoadError'` rather than `instanceof`, because each bundle carries its own copy of the class.
 
 ```javascript
-import { NFTLoadError } from '@webarkit/jsartoolkit-nft'
-
 try {
   await arController.loadNFTMarker('path/to/marker')
 } catch (err) {
-  if (err instanceof NFTLoadError && err.kind === 'http') {
+  if (err.name === 'NFTLoadError' && err.kind === 'http') {
     console.error('Not found:', err.url, err.status)
   }
 }

@@ -255,7 +255,11 @@ export interface ARToolkitNFTNodeModule extends ARToolkitNFTModule {
 
 /** Options for the Promise-based NFT marker loaders. */
 export interface NFTLoadOptions {
-  /** Cancels the in-flight fetches; the load rejects with an AbortError. */
+  /**
+   * Cancels the in-flight fetches. The load rejects with `signal.reason`,
+   * unwrapped: an `AbortError` by default, or a `TimeoutError` for
+   * `AbortSignal.timeout()`.
+   */
   signal?: AbortSignal;
   /** Probe for the optional .zft file before loading it. */
   probeZFT?: boolean;
