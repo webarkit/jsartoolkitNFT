@@ -45,6 +45,7 @@ import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
 import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 import { MarkerLostTracker } from "./MarkerLostTracker";
+import { errorCode } from "./NFTLoadError";
 const emitter = require('events').EventEmitter;
 
 export class ARControllerNFT implements AbstractARControllerNFT {
@@ -756,72 +757,71 @@ export class ARControllerNFT implements AbstractARControllerNFT {
   }
 
   /**
-   * Loads an NFT marker from the given URL or data string
-   * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
+   * Loads one NFT marker. See {@link loadNFTMarkers} for the callback rule.
+   * @param {string} markerURL - Path of the descriptor files without extension,
+   * relative to the working directory.
+   * @param {function} onSuccess - Called with the marker id.
+   * @param {function} onError - Called with -1 on failure.
+   * @return {Promise<number[]>} The ids, in a settled Promise.
    */
-  /*async loadNFTMarker(
-    urlOrData: string,
-    onSuccess: (ids: number) => void,
-    onError: (err: number) => void,
+  loadNFTMarker(
+    markerURL: string,
+    onSuccess?: (id: number) => void,
+    onError?: (code: number) => void,
   ): Promise<number[]> {
-    let nft = await this.artoolkitNFT.addNFTMarkers(
-      [urlOrData],
-      (ids: number[]) => {
-        this.nftMarkerCount += ids.length;
-        onSuccess(ids[0]);
-      },
+    return this.loadNFTMarkers(
+      [markerURL],
+      onSuccess ? (ids: number[]) => onSuccess(ids[0]) : undefined,
       onError,
     );
-    return nft;
-  }*/
-  //@ts-ignore
-  loadNFTMarker(markerURL: string, onSuccess: (ids: number) => void, onError: (err: any) => void) {
-    if (markerURL) {
-      
-      this.loadNFTMarkers([markerURL], function (ids: number[]) {
-        onSuccess(ids[0]);
-      }, onError);
-    } else {
-      if (onError) {
-        onError("Marker URL needs to be defined and not equal empty string!");
-      }
-      else {
-        console.error("Marker URL needs to be defined and not equal empty string!");
-      }
-    }
-
-  };
+  }
 
   /**
-   * Loads an array of NFT markers from the given URLs or data string
-   * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
+   * Loads an array of NFT markers.
+   *
+   * The callback rule (#685, D8): a call that passes a callback never rejects
+   * because of a load failure. `onError` gets the code (-1), or `console.error`
+   * is used when there is none, and the Promise resolves `[]`. A call with no
+   * callbacks rejects with an NFTLoadError. A throw from the caller's own
+   * callback rejects the Promise and does not reach `onError`.
+   *
+   * D9: this is deliberately not `async`. Node reads the files in place, so
+   * the work is synchronous, and the callbacks fire before the method returns,
+   * as before. A script that calls `process()` right after `loadNFTMarker()`
+   * keeps working. The returned Promise is already settled. `withCallbacks` is
+   * not used, because it would defer the callbacks to a microtask.
+   * @param {Array<string>} markerURLs - Paths without extension, relative to the
+   * working directory.
+   * @param {function} onSuccess - Called with the ids.
+   * @param {function} onError - Called with -1 on failure.
+   * @return {Promise<number[]>} The ids, in a settled Promise.
    */
-  /*async loadNFTMarkers(
-    urlOrData: Array<string>,
-    onSuccess: (ids: number[]) => void,
-    onError: (err: number) => void,
+  loadNFTMarkers(
+    markerURLs: Array<string>,
+    onSuccess?: (ids: number[]) => void,
+    onError?: (code: number) => void,
   ): Promise<number[]> {
-    let nft = await this.artoolkitNFT.addNFTMarkers(
-      urlOrData,
-      (ids: number[]) => {
-        this.nftMarkerCount += ids.length;
-        onSuccess(ids);
-      },
-      onError,
-    );
-    return nft;
-  }*/
-  //@ts-ignore
-  loadNFTMarkers(markerURLs: any, onSuccess: any, onError: any) {
-    const self = this;
-    
-    this.artoolkitNFT.addNFTMarkers(markerURLs, function (ids) {
-      
-      self.nftMarkerCount += ids.length;
-      onSuccess(ids);
-      
-    }, onError);
-  };
+    let ids: number[];
+    try {
+      ids = this.artoolkitNFT.tryAddNFTMarkers(markerURLs);
+    } catch (e) {
+      if (!onSuccess && !onError) return Promise.reject(e);
+      try {
+        if (onError) onError(errorCode(e));
+        else console.error(e);
+      } catch (cbErr) {
+        return Promise.reject(cbErr);
+      }
+      return Promise.resolve([]);
+    }
+    this.nftMarkerCount += ids.length;
+    try {
+      onSuccess?.(ids);
+    } catch (cbErr) {
+      return Promise.reject(cbErr);
+    }
+    return Promise.resolve(ids);
+  }
 
   /**
    * Sets the square-marker detector's image processing mode (frame or

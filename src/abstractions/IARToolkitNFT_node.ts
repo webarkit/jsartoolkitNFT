@@ -51,7 +51,12 @@ export interface IARToolkitNFT_node
    */
   addNFTMarkers(
     urls: Array<string>,
-    callback: (ids: number[]) => void,
-    onError2: (errorNumber: number) => void,
+    callback?: (ids: number[]) => void,
+    onError2?: (errorNumber: number) => void,
   ): Array<number>;
+  /**
+   * The throwing core of addNFTMarkers; throws NFTLoadError.
+   * @internal
+   */
+  tryAddNFTMarkers(urls: Array<string>): Array<number>;
 }
