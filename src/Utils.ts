@@ -33,7 +33,6 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import axios, { AxiosResponse } from "axios";
 import { NFTLoadError } from "./NFTLoadError";
 
 export default class Utils {
@@ -86,34 +85,6 @@ export default class Utils {
     return out;
   }
 
-  static async fetchRemoteData(url: string): Promise<Uint8Array> {
-    try {
-      const response: AxiosResponse<any> = await axios.get(url, {
-        responseType: "arraybuffer",
-      });
-      return new Uint8Array(response.data);
-    } catch (error) {
-      throw new Error("Error in Utils.fetchRemoteData: ", error);
-    }
-  }
-
-  static async fetchRemoteDataCallback(
-    url: string,
-    callback: any,
-  ): Promise<any> {
-    try {
-      const response: any = await axios
-        .get(url, { responseType: "arraybuffer" })
-        .then((response: any) => {
-          const data = new Uint8Array(response.data);
-          callback(response);
-        });
-      return response;
-    } catch (error) {
-      throw new Error("Error in Utils.fetchRemoteDataCallback: ", error);
-    }
-  }
-
   static string2Uint8Data(string: string): Uint8Array {
     const data = new Uint8Array(string.length);
     for (let i = 0; i < data.length; i++) {
@@ -122,59 +93,6 @@ export default class Utils {
     return data;
   }
 
-  static Uint8ArrayToStr(array: any): string {
-    let out, i, len, c;
-    let char2, char3;
-
-    out = "";
-    len = array.length;
-    i = 0;
-    while (i < len) {
-      c = array[i++];
-      switch (c >> 4) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-          // 0xxxxxxx
-          out += String.fromCharCode(c);
-          break;
-        case 12:
-        case 13:
-          // 110x xxxx   10xx xxxx
-          char2 = array[i++];
-          out += String.fromCharCode(((c & 0x1f) << 6) | (char2 & 0x3f));
-          break;
-        case 14:
-          // 1110 xxxx  10xx xxxx  10xx xxxx
-          char2 = array[i++];
-          char3 = array[i++];
-          out += String.fromCharCode(
-            ((c & 0x0f) << 12) | ((char2 & 0x3f) << 6) | ((char3 & 0x3f) << 0),
-          );
-          break;
-      }
-    }
-
-    return out;
-  }
-
-  static checkZFT(url: string): boolean {
-    const request = new XMLHttpRequest();
-    request.open("GET", url, false); // `false` makes the request synchronous
-    request.send(null);
-
-    if (request.status === 200) {
-      return true;
-    } else if (request.status === 404) {
-      return false;
-    }
-    return false;
-  }
   /**
    * Stores data in the Emscripten filesystem.
    * Note: FS is provided by emscripten and valid data must be in binary format encoded as Uint8Array

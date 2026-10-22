@@ -38,8 +38,10 @@ import {
   INFTMarkerInfo,
   ARLogLevel,
   ARToolkitNFTModule,
+  NFTLoadOptions,
 } from "./abstractions/CommonInterfaces";
 import Utils from "./Utils";
+import { NFTLoadError, withCallbacks } from "./NFTLoadError";
 import packageJson from "../package.json";
 const { version } = packageJson;
 
@@ -474,23 +476,20 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
    * the ARParam struct.
    * @param {Uint8Array|string} urlOrData: the camera parameter, usually a path to a .dat file
    * @return {Promise<number>} a promise that resolves to a number, the internal id.
+   * A download failure rejects with the `NFTLoadError` from the fetch (kind
+   * `http` or `network`), which names the URL.
    */
   public async loadCamera(urlOrData: Uint8Array | string): Promise<number> {
     const target = "/camera_param_" + this.cameraCount++;
 
-    let data: Uint8Array;
-
-    if (urlOrData instanceof Uint8Array) {
-      // assume preloaded camera params
-      data = urlOrData;
-    } else {
-      // fetch data via HTTP
-      try {
-        data = await Utils.fetchRemoteData(urlOrData);
-      } catch (error) {
-        throw new Error("Error in loadCamera function: ", error);
-      }
-    }
+    // A Uint8Array is preloaded camera params. A URL is fetched; its
+    // NFTLoadError is passed on as is, not wrapped: the old
+    // `new Error(msg, error)` dropped the cause, since Error's second argument
+    // is an options object, and with it the URL and the status.
+    const data =
+      urlOrData instanceof Uint8Array
+        ? urlOrData
+        : await Utils.fetchBinary(urlOrData);
 
     Utils._storeDataFile(data, target, this);
 
@@ -499,157 +498,41 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
   }
 
   /**
-   * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
-   * the url of the file without the extension. If fails to load it raise an error.
-   * @param {Array<string>} urls  array of urls of the descriptors files without ext
-   * @param {function} callback the callback to retrieve the ids.
-   * @param {function} onError2 the error callback.
-   * @return {Array<number>} an array of ids.
+   * Loads NFT markers and registers them as one batch.
+   *
+   * Each entry is either a URL without extension (`.zft` is probed first,
+   * then `.fset`, `.iset` and `.fset3`), a URL ending in `.zft`, or an explicit
+   * list of file URLs for one marker.
+   *
+   * All or nothing: if any marker fails, none of this call's markers is
+   * registered and its files are removed. Markers loaded by earlier calls stay.
+   *
+   * - **Promise style** (no callbacks): resolves to the marker ids, or rejects
+   *   with an `NFTLoadError`, or with `signal.reason` (`AbortError`,
+   *   `TimeoutError`) when `opts.signal` aborts.
+   * - **Callback style** (`callback` and/or `onError`): never rejects for a load
+   *   failure. `onError(code)` is called once, with the HTTP status or -1
+   *   (or `console.error` when there is no `onError`), and the Promise resolves
+   *   to `[]`.
+   *
+   * Errors from different bundles are different classes, so test
+   * `err.name === "NFTLoadError"` and `err.kind` rather than `instanceof`.
+   * @param urls the markers to load, one entry per marker.
+   * @param callback deprecated: receives the ids on success.
+   * @param onError deprecated: receives the error code on failure.
+   * @param opts `signal` cancels the downloads; `probeZFT` (default true)
+   * probes for a `.zft` before the three files.
+   * @return the ids the native core assigned, in the order of `urls`.
    */
   public addNFTMarkers(
-    urls: Array<string | Array<string>>,
-    callback: (filename: number[]) => void,
-    onError2: (errorNumber: number) => void,
-  ): Array<number> {
-    const prefixes: any = [];
-    let pending = urls.length * 3;
-    const onSuccess = (filename: Uint8Array) => {
-      pending -= 1;
-      if (pending === 0) {
-        const vec = new this.StringList();
-        const markerIds = [];
-        for (let i = 0; i < prefixes.length; i++) {
-          vec.push_back(prefixes[i]);
-        }
-        const ret = this.instance._addNFTMarkers(vec);
-        for (let i = 0; i < ret.size(); i++) {
-          markerIds.push(ret.get(i));
-        }
-
-        console.log("add nft marker ids: ", markerIds);
-        if (callback) callback(markerIds);
-      }
-    };
-
-    const onError = (filename: string, errorNumber?: number) => {
-      console.log("failed to load: ", filename);
-      onError2(errorNumber);
-    };
-
-    const loadZFT = (prefix: any) => {
-      const marker_num = prefix.substring(11);
-      const prefixTemp = "/tempMarkerNFT_" + marker_num;
-
-      const response = this.instance._decompressZFT(prefix, prefixTemp);
-      // The archive is no longer needed once decompressed: free it from MEMFS.
-      try {
-        this.FS.unlink(prefix + ".zft");
-      } catch (e) {}
-      if (response !== 1) {
-        onError(prefix + ".zft");
-        return;
-      }
-
-      let contentIsetUint8 = this.FS.readFile(prefixTemp + ".iset");
-      let contentFsetUint8 = this.FS.readFile(prefixTemp + ".fset");
-      let contentFset3Uint8 = this.FS.readFile(prefixTemp + ".fset3");
-
-      this.FS.unlink(prefixTemp + ".iset");
-      this.FS.unlink(prefixTemp + ".fset");
-      this.FS.unlink(prefixTemp + ".fset3");
-
-      let hexStrIset = Utils.Uint8ArrayToStr(contentIsetUint8);
-      let hexStrFset = Utils.Uint8ArrayToStr(contentFsetUint8);
-      let hexStrFset3 = Utils.Uint8ArrayToStr(contentFset3Uint8);
-
-      let contentIset = new Uint8Array(
-        hexStrIset.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
-      );
-      let contentFset = new Uint8Array(
-        hexStrFset.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
-      );
-      let contentFset3 = new Uint8Array(
-        hexStrFset3.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)),
-      );
-
-      Utils._storeDataFile(contentFset, prefix + ".fset", this);
-      Utils._storeDataFile(contentIset, prefix + ".iset", this);
-      Utils._storeDataFile(contentFset3, prefix + ".fset3", this);
-      onSuccess(contentFset);
-    };
-
-    const onSuccessZFT = function () {
-      loadZFT(arguments[1]);
-      //onSuccess(contentFset);
-    };
-
-    let Ids: Array<number> = [];
-
-    urls.forEach((element, index) => {
-      const prefix = "/markerNFT_" + this.markerNFTCount;
-      prefixes.push(prefix);
-
-      if (Array.isArray(element)) {
-        element.forEach((url) => {
-          const filename = prefix + "." + url.split(".").pop();
-
-          this.ajax(
-            url,
-            filename,
-            onSuccess.bind(filename),
-            onError.bind(filename),
-            prefix,
-          );
-        });
-
-        this.markerNFTCount += 1;
-      } else {
-        const filename1 = prefix + ".fset";
-        const filename2 = prefix + ".iset";
-        const filename3 = prefix + ".fset3";
-        const filename4 = prefix + ".zft";
-
-        let type = Utils.checkZFT(element + ".zft");
-        if (type) {
-          pending -= 2;
-          this.ajax(
-            element + ".zft",
-            filename4,
-            onSuccessZFT.bind(filename4),
-            onError.bind(filename4),
-            prefix,
-          );
-        } else {
-          this.ajax(
-            element + ".fset",
-            filename1,
-            onSuccess.bind(filename1),
-            onError.bind(filename1),
-            prefix,
-          );
-          this.ajax(
-            element + ".iset",
-            filename2,
-            onSuccess.bind(filename2),
-            onError.bind(filename2),
-            prefix,
-          );
-          this.ajax(
-            element + ".fset3",
-            filename3,
-            onSuccess.bind(filename3),
-            onError.bind(filename3),
-            prefix,
-          );
-        }
-
-        this.markerNFTCount += 1;
-      }
-
-      Ids.push(index);
-    });
-
-    return Ids;
+    urls: Array<string | string[]>,
+    callback?: (ids: number[]) => void,
+    onError?: (code: number) => void,
+    opts?: NFTLoadOptions,
+  ): Promise<number[]> {
+    // The callback rule (D8) lives in withCallbacks, so the batch below is
+    // written once, Promise style.
+    return withCallbacks(this.runBatch(urls, opts), callback, onError, []);
   }
 
   // ---------------------------------------------------------------------------
@@ -657,44 +540,328 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
   // implementation
 
   /**
-   * Used internally by the addNFTMarkers method
-   * @param {string} url url of the marker.
-   * @param {string} target the target of the marker.
-   * @param {function} callback callback to get the binary data.
-   * @param {function} errorCallback the error callback.
-   * @param {string} prefix the prefix for the marker.
-   * @return {void}
+   * The batch behind addNFTMarkers: load every marker concurrently, then
+   * register them in one `_addNFTMarkers`, or clean up and report one error.
    */
-  private ajax(
-    url: string,
-    target: string,
-    callback: (byteArray: Uint8Array) => void,
-    errorCallback: (url: string, message: number) => void,
-    prefix: string,
-  ) {
-    const oReq = new XMLHttpRequest();
-    oReq.open("GET", url, true);
-    oReq.responseType = "arraybuffer"; // blob arraybuffer
-    const writeByteArrayToFS = (
-      target: string,
-      byteArray: Uint8Array,
-      callback: (byteArray: Uint8Array, prefix: string) => void,
-      prefix: string,
-    ) => {
-      Utils._storeDataFile(byteArray, target, this);
-      callback(byteArray, prefix);
-    };
-
-    oReq.onload = function () {
-      if (this.status == 200) {
-        const arrayBuffer = oReq.response;
-        const byteArray = new Uint8Array(arrayBuffer);
-        writeByteArrayToFS(target, byteArray, callback, prefix);
-      } else {
-        errorCallback(url, this.status);
+  private async runBatch(
+    urls: Array<string | string[]>,
+    opts: NFTLoadOptions = {},
+  ): Promise<number[]> {
+    // An empty list or an empty URL is refused before any request (D15):
+    // otherwise an empty URL would probe the page itself, and the other
+    // markers of the call would start downloading for nothing.
+    if (!Array.isArray(urls) || urls.length === 0) {
+      throw new NFTLoadError("argument", "addNFTMarkers: no marker URLs given");
+    }
+    for (const source of urls) {
+      if (isEmptySource(source)) {
+        throw new NFTLoadError("argument", "addNFTMarkers: empty marker URL");
       }
-    };
+    }
+    const signal = opts.signal;
+    if (signal?.aborted) throw signal.reason;
+    const probe = opts.probeZFT ?? true;
 
-    oReq.send();
+    // The call's own controller: it stops this call's other downloads on the
+    // first failure, and follows the caller's signal.
+    const link = linkedController(signal);
+    const written: string[] = [];
+    let ok = false;
+    try {
+      const prefixes = await settleAll(
+        urls.map((source) =>
+          this.loadMarkerSource(source, link.signal, probe, written),
+        ),
+        () => link.abort(),
+      ).catch((failure) => {
+        // Report the caller's abort as such, not the failures it caused.
+        throw signal?.aborted ? signal.reason : failure;
+      });
+      // Every load succeeded, but the caller aborted before registration:
+      // cancelling still means nothing is registered.
+      if (signal?.aborted) throw signal.reason;
+
+      const ids = this.registerMarkers(prefixes);
+      if (ids.length < prefixes.length) {
+        throw new NFTLoadError(
+          "rejected",
+          `The native core registered ${ids.length} of ${prefixes.length} ` +
+            "markers: a dataset may be unreadable, or the 20-marker limit " +
+            "reached. The core's log says which.",
+        );
+      }
+      ok = true;
+      return ids;
+    } finally {
+      // Removed when the call ends (D12), so a late abort of the caller's
+      // signal does nothing (Review Focus 5).
+      link.release();
+      // All or nothing: a failed call leaves no file behind. Safe here because
+      // settleAll waited for every download (D11).
+      if (!ok) this.unlinkAll(written);
+    }
   }
+
+  /**
+   * Registers the prefixes in one native call and reads back the ids. `vec`
+   * and `ret` are Embind objects, freed in `finally`: the old loader leaked
+   * both on every call.
+   */
+  private registerMarkers(prefixes: string[]): number[] {
+    const vec = new this.StringList();
+    let ret: any;
+    try {
+      for (const prefix of prefixes) vec.push_back(prefix);
+      try {
+        ret = this.instance._addNFTMarkers(vec);
+      } catch (cause) {
+        // D16: a throw from the native side (an abort, an Emscripten
+        // ExitStatus) is a refusal like any other, reported once as
+        // "rejected" with the thrown value kept as the cause.
+        throw new NFTLoadError(
+          "rejected",
+          "The native core threw while registering the markers",
+          { cause },
+        );
+      }
+      const ids: number[] = [];
+      for (let i = 0; i < ret.size(); i++) ids.push(ret.get(i));
+      return ids;
+    } finally {
+      vec.delete();
+      ret?.delete?.();
+    }
+  }
+
+  /**
+   * Loads one marker into the FS and returns its prefix. It holds no batch
+   * policy: it knows nothing of the other markers and aborts none of them.
+   * @param source a URL without extension, a `.zft` URL, or a file list.
+   * @param signal aborts this marker's downloads.
+   * @param probeZFT probe for `<url>.zft` before the three files.
+   * @param written receives every FS path written, for the batch's cleanup.
+   */
+  private async loadMarkerSource(
+    source: string | string[],
+    signal: AbortSignal,
+    probeZFT: boolean,
+    written: string[],
+  ): Promise<string> {
+    // Taken before any request, so prefixes stay unique across concurrent
+    // calls and are never reused (Review Focus 2).
+    const prefix = "/markerNFT_" + this.markerNFTCount++;
+
+    if (isEmptySource(source)) {
+      throw new NFTLoadError("argument", "Empty marker URL");
+    }
+
+    if (Array.isArray(source)) {
+      // A list missing one of the three files fails at registration, as
+      // "rejected", as it does natively.
+      await this.loadFiles(
+        source.map((url) => ({ url, path: prefix + "." + extensionOf(url) })),
+        signal,
+        written,
+      );
+      return prefix;
+    }
+
+    if (extensionOf(source) === "zft") {
+      const bytes = await Utils.fetchBinary(source, signal);
+      this.storeZFT(bytes, prefix, source, written);
+      return prefix;
+    }
+
+    if (probeZFT) {
+      const zftUrl = source + ".zft";
+      let res: Response;
+      try {
+        res = await fetch(zftUrl, { signal });
+      } catch (cause) {
+        // An abort propagates unwrapped, as fetch's own; anything else is a
+        // network failure the three-file requests would hit as well.
+        if (signal.aborted) throw cause;
+        throw new NFTLoadError("network", `Network error fetching ${zftUrl}`, {
+          url: zftUrl,
+          cause,
+        });
+      }
+      if (res.ok) {
+        // The probe's own bytes are used: one request, not a probe and then
+        // a second download of the same archive.
+        const bytes = new Uint8Array(await res.arrayBuffer());
+        this.storeZFT(bytes, prefix, zftUrl, written);
+        return prefix;
+      }
+      // D6: any HTTP error status means "no .zft" and falls back to the three
+      // files, not only 404. S3 and GCS answer 403 for a missing object when
+      // listing is not allowed, and those markers load through this fallback.
+      res.body?.cancel().catch(() => {});
+    }
+
+    await this.loadFiles(
+      ["fset", "iset", "fset3"].map((ext) => ({
+        url: source + "." + ext,
+        path: prefix + "." + ext,
+      })),
+      signal,
+      written,
+    );
+    return prefix;
+  }
+
+  /**
+   * Downloads files concurrently and stores each at its path. On the first
+   * failure the others are aborted, and it still waits for all of them (D11)
+   * before rethrowing, so no download writes after its marker has failed.
+   */
+  private async loadFiles(
+    files: { url: string; path: string }[],
+    signal: AbortSignal,
+    written: string[],
+  ): Promise<void> {
+    const link = linkedController(signal);
+    try {
+      await settleAll(
+        files.map(async ({ url, path }) => {
+          const bytes = await Utils.fetchBinary(url, link.signal);
+          this.storeFile(bytes, path, written);
+        }),
+        () => link.abort(),
+      );
+    } finally {
+      link.release();
+    }
+  }
+
+  /**
+   * Decompresses a `.zft` archive and writes the marker's `.fset`, `.iset`
+   * and `.fset3` under `prefix`. Any failure is an NFTLoadError "format".
+   * @param url the archive's URL, for the error.
+   */
+  private storeZFT(
+    bytes: Uint8Array,
+    prefix: string,
+    url: string,
+    written: string[],
+  ): void {
+    const archive = prefix + ".zft";
+    const temp = "/tempMarkerNFT_" + prefix.substring("/markerNFT_".length);
+    const extensions = ["fset", "iset", "fset3"];
+    this.storeFile(bytes, archive, written);
+    // Recorded before decompressing: a failed decompression may leave some of
+    // them behind, and the batch's cleanup removes them.
+    for (const ext of extensions) written.push(temp + "." + ext);
+
+    let result: number;
+    try {
+      // The core takes the archive's path without ".zft" and appends it.
+      result = this.instance._decompressZFT(prefix, temp);
+    } catch (cause) {
+      throw new NFTLoadError("format", `Could not decompress ${url}`, {
+        url,
+        cause,
+      });
+    } finally {
+      // The archive is no longer needed once decompressed: free it from MEMFS.
+      this.unlinkAll([archive]);
+    }
+    if (result !== 1) {
+      throw new NFTLoadError("format", `Could not decompress ${url}`, { url });
+    }
+
+    try {
+      for (const ext of extensions) {
+        const hex = this.FS.readFile(temp + "." + ext);
+        this.unlinkAll([temp + "." + ext]);
+        // The decompressed files are ASCII hex; odd length or a non-hex
+        // character throws a RangeError.
+        this.storeFile(Utils.hexToBytes(hex), prefix + "." + ext, written);
+      }
+    } catch (cause) {
+      throw new NFTLoadError("format", `Could not decode ${url}`, {
+        url,
+        cause,
+      });
+    }
+  }
+
+  /** Writes one file to the FS, recording its path first for the cleanup. */
+  private storeFile(bytes: Uint8Array, path: string, written: string[]): void {
+    written.push(path);
+    Utils._storeDataFile(bytes, path, this);
+  }
+
+  /** Unlinks FS files, ignoring the ones that are already gone. */
+  private unlinkAll(paths: string[]): void {
+    for (const path of paths) {
+      try {
+        this.FS.unlink(path);
+      } catch (e) {}
+    }
+  }
+}
+
+const isEmptySource = (source: string | string[]): boolean =>
+  Array.isArray(source)
+    ? source.length === 0 || source.some((url) => !url)
+    : !source;
+
+/**
+ * The extension of a URL's path, without the dot: a query or a hash is not
+ * part of it (`/x/pinball.fset?v=2` gives `fset`, Review Focus 1).
+ */
+function extensionOf(url: string): string {
+  const path = new URL(url, globalThis.location?.href).pathname;
+  const name = path.substring(path.lastIndexOf("/") + 1);
+  const dot = name.lastIndexOf(".");
+  return dot < 0 ? "" : name.substring(dot + 1);
+}
+
+/**
+ * An AbortController that also aborts when `parent` does. D12: the link is
+ * an `abort` listener, removed by `release()`, rather than `AbortSignal.any()`,
+ * which needs Safari 17.4; iOS users on older versions are a real part of the
+ * WebAR audience.
+ */
+function linkedController(parent?: AbortSignal) {
+  const controller = new AbortController();
+  const onAbort = () => controller.abort(parent!.reason);
+  if (parent?.aborted) onAbort();
+  else parent?.addEventListener("abort", onAbort);
+  return {
+    signal: controller.signal,
+    abort: () => controller.abort(),
+    release: () => parent?.removeEventListener("abort", onAbort),
+  };
+}
+
+/**
+ * Settles every task, calling `onFirstFailure` as soon as one fails, and then
+ * resolves to all the values or rejects with the first failure.
+ *
+ * D11: it waits for every task, aborted or not, before deciding. Rejecting on
+ * the first failure, as Promise.all does, would let a download that finishes
+ * late write its file after the caller has cleaned up.
+ */
+async function settleAll<T>(
+  tasks: Promise<T>[],
+  onFirstFailure: () => void,
+): Promise<T[]> {
+  let failed = false;
+  let failure: unknown;
+  const results = await Promise.allSettled(
+    tasks.map((task) =>
+      task.catch((e) => {
+        if (!failed) {
+          failed = true;
+          failure = e;
+          onFirstFailure();
+        }
+        throw e;
+      }),
+    ),
+  );
+  if (failed) throw failure;
+  return results.map((r) => (r as PromiseFulfilledResult<T>).value);
 }
