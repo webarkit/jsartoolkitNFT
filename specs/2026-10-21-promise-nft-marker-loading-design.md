@@ -3,9 +3,11 @@
 **Date:** 2026-10-21
 **Issue:** #685 (includes #676)
 **Related:** #720 (data-oriented tracker API, to be built after this; not implemented here)
-**Depends on:** #734 (one shared `ARControllerNFT` / `ARToolkitNFT` implementation), which
-lands first (D19)
-**Status:** design agreed in discussion; this document is the written spec, awaiting approval
+**Depends on:** #734's browser part, merged into `dev` as PR #735 (`cb1494e`, 2026-10-22).
+The three browser builds now share `ARToolkitNFTBase` and `ARControllerNFTBase`. #734 stays
+open for the Node classes (D19, D20).
+**Status:** design agreed in discussion; updated on 2026-10-22 for the code as #735 left it,
+awaiting approval
 
 ## Summary
 
@@ -102,7 +104,10 @@ The defects:
   includes a Node script that passes only `onSuccess` (D8).
 - A marker that loads today stops loading. The probe must not turn a server's "not found"
   answer into an error (D6).
-- The four TypeScript variants drift apart in structure.
+- The browser builds stop sharing one implementation. No loading code, override or instance
+  field goes into a variant subclass (D20).
+- The Node controller's contract drifts from the browser one: the callback rule, the
+  `NFTLoadError` kinds and the real ids must match, even though the code is a separate copy.
 - A behaviour changes without its reason being recorded (see "Recording the reasons").
 
 ## Decisions
@@ -207,19 +212,54 @@ means it is this document's call, open to review.
   of `ARControllerNFT` and `ARToolkitNFT` into one shared implementation, with no behaviour
   change. After it, the browser loader and controller methods in this design are written once,
   not three times.
-  - Where this document says "three copies" or "`_simd`, `_td`", read "the shared browser
-    implementation". The behaviour, the decisions and the contract do not change.
-  - Before planning, re-read the code as #734 left it. Place the per-marker loader and the
-    batch in the shared browser class, and the Node behaviour in whatever #734 uses for Node.
+  - **Done.** #734's browser part merged as PR #735. This document was re-read against that
+    code on 2026-10-22, and its browser sections now name the base classes. The behaviour, the
+    decisions and the contract did not change.
+  - #734 left Node as a separate copy, so the Node behaviour goes into
+    `ARToolkitNFT_node.ts` and `ARControllerNFT_node.ts` (D20).
+- **D20 (design). Where the code goes after #735.**
+  - **Browser:** the per-marker loader, the batch and `loadCamera` go in
+    `src/ARToolkitNFTBase.ts`. The controller methods go in `src/ARControllerNFTBase.ts`.
+  - **Variant subclasses are not edited.** The six files `src/ARToolkitNFT*.ts` and
+    `src/ARControllerNFT*.ts` (default, `_simd`, `_td`) get no loading code, no override and
+    no instance field.
+    - Instance fields: `tsconfig.json` targets ESNext, with define semantics for class
+      fields. A field declared in a subclass is reset to `undefined` after the base
+      constructor has set it.
+    - Overrides: loading has no per-build behaviour or documentation, so the base's JSDoc is
+      what every entry point publishes. An override would have to repeat it, as `_td` does for
+      `setDetectionInterval` (#735 D5).
+  - **New per-instance state** goes in the base as a private field, initialised in the base
+    constructor. One example is the list of FS files written by a call, if the builder tracks
+    it on the instance.
+  - **Module constants:** loading adds none. `init()` keeps copying the module constants onto
+    each build's own `ARToolkitNFT` (#735 D6), and `tests/vitest/variant-constants.test.ts`
+    keeps passing unchanged. `NFTLoadError` is a module-level class, not a static on
+    `ARToolkitNFT`.
+  - **Shared interfaces.** `AbstractARControllerNFT` is implemented by both
+    `ARControllerNFTBase` and the Node controller. It declares the common subset: a `string`
+    URL, optional callbacks, `Promise<number[]>`. The browser base widens the URL to
+    `string | string[]` and adds `opts`, which `strictFunctionTypes` allows for a wider
+    parameter. With that, Node needs no `//@ts-ignore`. `IARToolkitNFT` is now used only by
+    the browser base, so it takes the new `addNFTMarkers` signature. `IARToolkitNFT_node`
+    keeps the synchronous one (D9).
+  - **Node is not folded into the base here.** That is #734's open part. Mixing it into this
+    PR would add a structural refactor to a behavioural change. After this work, both Node
+    loaders have the browser's contract, which leaves less to reconcile when #734 folds Node in.
 - **D18 (user). The ES6 legacy `loadNFTMarkerNew` is removed**, in favour of the existing
   `loadNFTMarker`. It calls a function that does not exist, so it has always returned a
   rejected Promise.
 
 ## Current state
 
-### Browser variants (`src/ARToolkitNFT.ts`, `_simd`, `_td`, identical)
+Line numbers are as of `dev` at `cb1494e` (#735).
 
-- **`addNFTMarkers(urls, callback, onError2): Array<number>`** (line 477):
+### Browser builds (`src/ARToolkitNFTBase.ts`, shared by default, `_simd` and `_td`)
+
+Since #735, `src/ARToolkitNFT.ts`, `_simd` and `_td` are thin subclasses that name their
+module factory and native constructor arguments. All the loading code below is in the base.
+
+- **`addNFTMarkers(urls, callback, onError2): Array<number>`** (line 509):
   - starts every download, with `pending = urls.length * 3`;
   - returns `[0, 1, …]` at once.
 - **Per URL string:**
@@ -240,22 +280,29 @@ means it is this document's call, open to review.
 - **When `pending` reaches 0,** a single `_addNFTMarkers(vec)` call registers the batch.
   - `vec` and `ret` are not deleted.
   - An empty result, which is the native refusal, goes to `callback([])`.
-- **`ajax`** (line 636) handles only `onload`, and on a status other than 200 calls
-  `errorCallback(url, status)`.
-- **`loadCamera`** uses `Utils.fetchRemoteData`, which is axios. It throws
+- **`ajax`** (line 668) handles only `onload`, and on a status other than 200 calls
+  `errorCallback(url, status)`. It is private to the base.
+- **`loadCamera`** (line 478) uses `Utils.fetchRemoteData`, which is axios. It throws
   `new Error("…", error)`, which drops the cause.
+- **`IARToolkitNFT.addNFTMarkers`** is typed `urls: Array<string>` returning `Array<number>`,
+  narrower than the base, which accepts `Array<string | string[]>`. Since #735 only the
+  browser base implements `IARToolkitNFT`; Node has `IARToolkitNFT_node`.
 
-### `ARControllerNFT` (browser, three copies)
+### `ARControllerNFTBase` (browser, shared by default, `_simd` and `_td`)
 
-- `loadNFTMarker(s)` are `async` and `await` the synchronous `addNFTMarkers`.
+- `loadNFTMarker(s)` (lines 660 and 696) are `async` and `await` the synchronous
+  `addNFTMarkers`. The variant subclasses do not override them.
 - `nftMarkerCount` is increased inside the success callback.
 - `onSuccess` is called without a check, so leaving it out throws.
 - `loadNFTMarkers` is typed `Array<string>`, while `addNFTMarkers` accepts
   `Array<string | string[]>`.
+- `AbstractARControllerNFT`, which both this base and the Node controller implement,
+  declares `loadNFTMarker(s)` with an `Array<string>` / `string` URL, required callbacks and
+  `Promise<number[]>`.
 
-### Node variant
+### Node variant (still a separate copy; #734's Node part is open)
 
-- **`ARToolkitNFT_node.addNFTMarkers`** mounts the working directory on NODEFS and checks
+- **`ARToolkitNFT_node.addNFTMarkers`** (line 481) mounts the working directory on NODEFS and checks
   that each file exists. Then it:
   - calls `_addNFTMarkers` and deletes `vec` and `ret`;
   - treats `markerIds.length !== urls.length` as a failure (`onError2(-1)`);
@@ -265,7 +312,8 @@ means it is this document's call, open to review.
 - **`ARControllerNFT_node.loadNFTMarker(s)`** (lines 778 and 815) are not async:
   - they carry `//@ts-ignore` and loose types;
   - they keep the old async versions as commented-out code;
-  - they return nothing;
+  - they return nothing, which is why they need `//@ts-ignore` against
+    `AbstractARControllerNFT`'s `Promise<number[]>`;
   - on an empty URL, `onError` gets a **string**.
 
 ### Legacy APIs (`js/artoolkitNFT.api.js`, `js/artoolkitNFT_ES6.api.js`, same loader)
@@ -364,7 +412,10 @@ class NFTLoadError extends Error {
 Each dist bundle carries its own copy of the class, so `instanceof` fails across bundles.
 The JSDoc says to test `err.name === "NFTLoadError"` and `err.kind`.
 
-### Browser variants (`ARToolkitNFT.ts`, `_simd`, `_td`)
+### Browser builds: `ARToolkitNFTBase`
+
+Everything in this section is written once, in `src/ARToolkitNFTBase.ts`, and reaches the
+default, `_simd` and `_td` builds by inheritance (D20).
 
 ```ts
 interface NFTLoadOptions {
@@ -386,13 +437,14 @@ addNFTMarkers(
    - It checks `res.ok`, then throws `NFTLoadError` `http` (non-OK status) or `network`
      (`fetch` rejected).
    - An abort propagates unwrapped.
-   - It is variant-independent, so it lives in `Utils`.
-2. **Loading one marker:** a private method that takes one `string | string[]` and returns
-   its FS prefix, or throws.
+   - It needs no WASM module, so it lives in `Utils`. There it can be unit-tested on its
+     own, and #720 can reuse it.
+2. **Loading one marker:** a private method of `ARToolkitNFTBase` that takes one
+   `string | string[]` and returns its FS prefix, or throws.
    - It holds no batch policy: no knowledge of the other markers, and no aborting of them.
    - Storing and decoding take bytes, so a later caller can hand it bytes it already holds.
-3. **The batch:** `addNFTMarkers`. It applies all-or-nothing, the internal abort, the cleanup,
-   registration and the callback rule.
+3. **The batch:** `ARToolkitNFTBase.addNFTMarkers`. It applies all-or-nothing, the internal
+   abort, the cleanup, registration and the callback rule. It replaces the private `ajax`.
 
 **Loading one marker:**
 
@@ -453,9 +505,13 @@ addNFTMarkers(
 - Remove the `axios` dependency from `package.json` and the lockfile.
 - `Utils` is not exported from any entry point, so this changes no public API.
 
-**`IARToolkitNFT`.** `addNFTMarkers` is typed as above.
+**`IARToolkitNFT`.** `addNFTMarkers` is typed as above. Only the browser base implements this
+interface since #735, so the change does not reach Node.
 
-### `ARControllerNFT` (browser, three copies)
+### Browser controller: `ARControllerNFTBase`
+
+Written once, in `src/ARControllerNFTBase.ts`. The variant controllers inherit it and are not
+edited (D20).
 
 ```ts
 loadNFTMarkers(
@@ -479,7 +535,30 @@ loadNFTMarker(
   - Promise style: `await` plus `try` / `catch`, then `err.kind`;
   - callback style.
 
+  It lives on the base methods. The variant `.d.ts` files inherit it, as they do every other
+  base method's JSDoc since #735.
+- **`AbstractARControllerNFT`** declares the subset that both the browser base and the Node
+  controller implement (D20):
+
+  ```ts
+  loadNFTMarkers: (
+    urls: Array<string>,
+    onSuccess?: (ids: number[]) => void,
+    onError?: (code: number) => void,
+  ) => Promise<number[]>;
+  loadNFTMarker: (
+    url: string,
+    onSuccess?: (id: number) => void,
+    onError?: (code: number) => void,
+  ) => Promise<number[]>;
+  ```
+
+  The browser base's wider URL type and its `opts` parameter remain assignable to these.
+
 ### Node variant
+
+Still the separate files `src/ARToolkitNFT_node.ts` and `src/ARControllerNFT_node.ts`
+(D20). They are edited in place.
 
 - **`ARToolkitNFT_node.addNFTMarkers`** stays synchronous and returns `number[]` (D9):
   - it rejects an empty URL with `argument`;
@@ -536,11 +615,14 @@ loadNFTMarker(
 
 ### Exports and types
 
-- **Default, `_simd` and `_td` entry points:** export `NFTLoadError` (runtime) and
-  `NFTLoadOptions` (type).
-- **The Node entry point:** exports `NFTLoadError`.
-- **Location:** the class lives in its own module under `src/`, shared by every variant.
-  `NFTLoadOptions` goes in `src/abstractions/CommonInterfaces.ts`.
+- **Default, `_simd` and `_td` entry points** (`src/index.ts`, `index_simd.ts`,
+  `index_td.ts`): export `NFTLoadError` (runtime) and `NFTLoadOptions` (type).
+- **The Node entry point** (`src/index_node.ts`): exports `NFTLoadError`.
+- **Location:** the class lives in its own module under `src/`, imported by
+  the files that create it: `ARToolkitNFTBase` and the Node files. `NFTLoadOptions` goes in
+  `src/abstractions/CommonInterfaces.ts`.
+- **Documentation:** add the new module to `typedocOptions.entryPoints` in `tsconfig.json`,
+  next to the base classes.
 
 ## Compatibility with #720
 
@@ -626,7 +708,15 @@ These go into the release notes:
 This follows AGENTS.md: every new or changed behaviour has a test that exercises it. Where
 possible, break the implementation once and watch the test fail.
 
-**Browser variants: `tests/vitest/marker-loading.test.ts`, looping over `VARIANTS`.**
+**Browser variants: `tests/vitest/marker-loading.test.ts`.**
+
+Since #735 the loading logic is one implementation, but each build has its own module, FS
+and native loader.
+
+- Loop over `VARIANTS` for the tests that reach the module: real ids, settling after
+  loading, `.zft` and the fallback.
+- The tests of pure JavaScript paths may run on one build: stubbed `fetch`, abort, once
+  only, inputs and FS cleanup. Looping them too is allowed when it costs little.
 
 - **Real ids.** Load pinball, then kuva in a separate Promise-style call. The second call
   resolves to `[1]`; the old code gave `[0]`.
@@ -674,8 +764,17 @@ failure. The two loaded markers must stay addressable.
 - Promise style rejects with `kind: "missing"`;
 - an empty URL is `argument`.
 
+**`Utils`.** `fetchBinary` and the hex decoder get unit tests that need no WASM module:
+OK, non-OK status and rejected `fetch` for the first; valid input, odd length and a non-hex
+character for the second.
+
 **Existing suites** keep passing unchanged. `tests/vitest/helpers.ts` uses callback style,
-which covers G5.
+which covers G5. Two guards from #735 must stay green without edits, which confirms D20:
+
+- `tests/vitest/variant-constants.test.ts`: the module constants stay on each build's own
+  `ARToolkitNFT`;
+- `tests/node/deprecations.test.js`: it reads `types/`, and the variant `.d.ts` files gain
+  no override that would need its own `@deprecated`.
 
 **Manual:**
 
@@ -711,12 +810,15 @@ The comments that must exist:
 
 ## Delivery
 
-- **Branch:** `feat/promise-nft-marker-loading` from `dev`, rebased after #734 is merged
-  (D19).
+- **Branch:** `feat/685-promise-nft-marker-loading`, cut from `dev` after #735 (D19). It
+  carries this design and the plan. The name differs from the first draft's
+  `feat/promise-nft-marker-loading`, which is still a local branch in the main checkout.
 - **One PR to `dev`**, titled `feat: make NFT marker loading Promise-based with fetch (#685)`.
+  The body notes that the Node classes are edited in place and stay separate copies, which
+  is #734's open part (D20).
 - **Commits by area:**
-  1. `Utils` and the browser loaders;
-  2. the browser controllers;
+  1. `Utils`, `NFTLoadError` and `ARToolkitNFTBase`;
+  2. `ARControllerNFTBase` and `AbstractARControllerNFT`;
   3. Node;
   4. the legacy APIs and the relink;
   5. tests;
@@ -740,16 +842,19 @@ The comments that must exist:
   - The risk is accepted, and noted in the release notes.
 - **Relinking the legacy builds** regenerates other `build/` artifacts. Rebuild in the
   pinned container, and check that the non-legacy artifacts still pass the suite.
-- **The `markerNFTCount` naming** (prefixes in `ARToolkitNFT`) sits next to `nftMarkerCount`
-  (loaded markers in the controller). They count different things. Leave them, but do not
-  confuse them in the new code.
+- **The `markerNFTCount` naming** (prefixes in `ARToolkitNFTBase`) sits next to
+  `nftMarkerCount` (loaded markers in `ARControllerNFTBase`). They count different things.
+  Leave them, but do not confuse them in the new code.
+- **A field in a variant subclass** would type-check and still be reset to `undefined` at
+  runtime (D20). The guard is review, plus the browser tests that loop over `VARIANTS`: a
+  reset field breaks loading on every build.
 
 ## Left to the builder
 
 - The exact names of the `kind` values, and the file name of the `NFTLoadError` module.
-- Whether the variant-independent pieces of the per-marker loader also move to a shared
-  module. The pieces are the hex decoder, the probe decision and the cleanup list. Only
-  `fetchBinary` and the decoder are required to be shared.
+- Whether the probe decision and the cleanup list are private methods of `ARToolkitNFTBase`
+  or helpers in `Utils`. After #735 they exist once either way. `fetchBinary` and the hex
+  decoder go in `Utils`, so they can be unit-tested without a module.
 - How Node's public synchronous `addNFTMarkers` and the controller's need for an
   `NFTLoadError` are factored.
 - How FS writes are tracked for cleanup.
