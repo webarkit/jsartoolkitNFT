@@ -362,15 +362,35 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     getThreshold(): number;
     /**
-     * Loads an NFT marker from the given URL or data string
-     * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
+     * Loads one NFT marker. See {@link loadNFTMarkers} for the callback rule.
+     * @param {string} markerURL - Path of the descriptor files without extension,
+     * relative to the working directory.
+     * @param {function} onSuccess - Called with the marker id.
+     * @param {function} onError - Called with -1 on failure.
+     * @return {Promise<number[]>} The ids, in a settled Promise.
      */
-    loadNFTMarker(markerURL: string, onSuccess: (ids: number) => void, onError: (err: any) => void): void;
+    loadNFTMarker(markerURL: string, onSuccess?: (id: number) => void, onError?: (code: number) => void): Promise<number[]>;
     /**
-     * Loads an array of NFT markers from the given URLs or data string
-     * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
+     * Loads an array of NFT markers.
+     *
+     * The callback rule (#685, D8): a call that passes a callback never rejects
+     * because of a load failure. `onError` gets the code (-1), or `console.error`
+     * is used when there is none, and the Promise resolves `[]`. A call with no
+     * callbacks rejects with an NFTLoadError. A throw from the caller's own
+     * callback rejects the Promise and does not reach `onError`.
+     *
+     * D9: this is deliberately not `async`. Node reads the files in place, so
+     * the work is synchronous, and the callbacks fire before the method returns,
+     * as before. A script that calls `process()` right after `loadNFTMarker()`
+     * keeps working. The returned Promise is already settled. `withCallbacks` is
+     * not used, because it would defer the callbacks to a microtask.
+     * @param {Array<string>} markerURLs - Paths without extension, relative to the
+     * working directory.
+     * @param {function} onSuccess - Called with the ids.
+     * @param {function} onError - Called with -1 on failure.
+     * @return {Promise<number[]>} The ids, in a settled Promise.
      */
-    loadNFTMarkers(markerURLs: any, onSuccess: any, onError: any): void;
+    loadNFTMarkers(markerURLs: Array<string>, onSuccess?: (ids: number[]) => void, onError?: (code: number) => void): Promise<number[]>;
     /**
      * Sets the square-marker detector's image processing mode (frame or
      * field).

@@ -205,7 +205,18 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
      * @param {function} onError2 the error callback.
      * @return {Array<number>} an array of ids.
      */
-    addNFTMarkers(urls: Array<string>, callback: (ids: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
+    addNFTMarkers(urls: Array<string>, callback?: (ids: number[]) => void, onError2?: (errorNumber: number) => void): Array<number>;
+    /**
+     * The throwing core of {@link addNFTMarkers}. Synchronous like it (#685, D9):
+     * Node reads the files in place, so there is nothing to await.
+     * @internal Used by ARControllerNFT_node, which needs the NFTLoadError.
+     * @param {Array<string>} urls paths of the descriptor files without ext
+     * @return {Array<number>} the real marker ids.
+     * @throws {NFTLoadError} `argument` for an empty list or URL, `missing` for a
+     * file that does not exist, `rejected` when the native loader refuses the
+     * markers or throws.
+     */
+    tryAddNFTMarkers(urls: Array<string>): Array<number>;
     /**
      * Mount the working directory on NODEFS_MOUNT, once per module.
      * @return {void}

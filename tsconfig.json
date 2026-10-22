@@ -54,6 +54,7 @@
       "src/ARToolkitNFT_simd.ts",
       "src/ARToolkitNFT_td.ts",
       "src/ARToolkitNFT.ts",
+      "src/NFTLoadError.ts",
       "src/Utils.ts"
     ],
     "out": "docs"

@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent, NFTLoadOptions } from "./abstractions/CommonInterfaces";
 import { ARToolkitNFTBase } from "./ARToolkitNFTBase";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 /**
@@ -274,47 +274,67 @@ export declare abstract class ARControllerNFTBase implements AbstractARControlle
      */
     getThreshold(): number;
     /**
-     * Loads an NFT marker from the given URL or data string.
-     * This method is asynchronous and returns a Promise that resolves to an array of marker IDs.
+     * Loads one NFT marker and resolves once it is registered, so tracking can
+     * start right after the `await`.
      *
-     * Example usage:
+     * Promise style (preferred): it rejects with an `NFTLoadError`, whose `kind`
+     * tells a missing file ("http") from a bad one ("format"), or with the abort
+     * reason when `opts.signal` fires.
      * ```typescript
-     * import ARControllerNFT from '@webarkit/jsartoolkit-nft';
+     * try {
+     *   const [id] = await arController.loadNFTMarker("path/to/marker");
+     * } catch (err) {
+     *   if (err.kind === "http") console.error("Not found:", err.url, err.status);
+     * }
+     * ```
      *
-     * const arController = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
-     * arController.loadNFTMarker("path/to/marker.dat", (id) => {
+     * Callback style (deprecated, kept for existing callers): it never rejects
+     * for a load failure; the failure goes to `onError`, or to `console.error`
+     * when there is no `onError`, and the Promise resolves `[]`.
+     * ```typescript
+     * arController.loadNFTMarker("path/to/marker", (id) => {
      *   console.log("Marker loaded with ID:", id);
-     * }, (err) => {
-     *   console.error("Failed to load marker:", err);
+     * }, (code) => {
+     *   console.error("Failed to load marker:", code);
      * });
      * ```
-     * @param {string} urlOrData - The URL or data string of the NFT marker to load.
-     * @param {function} onSuccess - Callback function to call when the marker is successfully loaded. Receives the marker ID as an argument.
-     * @param {function} onError - Callback function to call when there is an error loading the marker. Receives the error code as an argument.
-     * @return {Promise<number[]>} A Promise that resolves to an array of marker IDs.
+     * @param {string | string[]} url - The marker's base URL, or the list of its file URLs.
+     * @param {function} [onSuccess] - Deprecated. Called with the marker ID.
+     * @param {function} [onError] - Deprecated. Called with the HTTP status, or -1.
+     * @param {NFTLoadOptions} [opts] - Loading options, such as an abort `signal`.
+     * @return {Promise<number[]>} A Promise that resolves to `[id]`.
      */
-    loadNFTMarker(urlOrData: string, onSuccess: (ids: number) => void, onError: (err: number) => void): Promise<number[]>;
+    loadNFTMarker(url: string | string[], onSuccess?: (id: number) => void, onError?: (code: number) => void, opts?: NFTLoadOptions): Promise<number[]>;
     /**
-     * Loads an array of NFT markers from the given URLs or data strings.
-     * This method is asynchronous and returns a Promise that resolves to an array of marker IDs.
+     * Loads several NFT markers and resolves once they are all registered.
      *
-     * Example usage:
+     * Promise style (preferred): it rejects with an `NFTLoadError`, or with the
+     * abort reason when `opts.signal` fires. Nothing is registered on failure.
      * ```typescript
-     * import ARControllerNFT from '@webarkit/jsartoolkit-nft';
+     * try {
+     *   const ids = await arController.loadNFTMarkers(["path/to/a", "path/to/b"]);
+     * } catch (err) {
+     *   if (err.kind === "http") console.error("Not found:", err.url, err.status);
+     * }
+     * ```
      *
-     * const arController = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
-     * arController.loadNFTMarkers(["path/to/marker1.dat", "path/to/marker2.dat"], (ids) => {
+     * Callback style (deprecated, kept for existing callers): it never rejects
+     * for a load failure; the failure goes to `onError`, or to `console.error`
+     * when there is no `onError`, and the Promise resolves `[]`.
+     * ```typescript
+     * arController.loadNFTMarkers(["path/to/a", "path/to/b"], (ids) => {
      *   console.log("Markers loaded with IDs:", ids);
-     * }, (err) => {
-     *   console.error("Failed to load markers:", err);
+     * }, (code) => {
+     *   console.error("Failed to load markers:", code);
      * });
      * ```
-     * @param {Array<string>} urlOrData - The array of URLs or data strings of the NFT markers to load.
-     * @param {function} onSuccess - Callback function to call when the markers are successfully loaded. Receives an array of marker IDs as an argument.
-     * @param {function} onError - Callback function to call when there is an error loading the markers. Receives the error code as an argument.
-     * @return {Promise<number[]>} A Promise that resolves to an array of marker IDs.
+     * @param {Array<string | string[]>} urls - One entry per marker: its base URL, or the list of its file URLs.
+     * @param {function} [onSuccess] - Deprecated. Called with the marker IDs.
+     * @param {function} [onError] - Deprecated. Called with the HTTP status, or -1.
+     * @param {NFTLoadOptions} [opts] - Loading options, such as an abort `signal`.
+     * @return {Promise<number[]>} A Promise that resolves to the marker IDs.
      */
-    loadNFTMarkers(urlOrData: Array<string>, onSuccess: (ids: number[]) => void, onError: (err: number) => void): Promise<number[]>;
+    loadNFTMarkers(urls: Array<string | string[]>, onSuccess?: (ids: number[]) => void, onError?: (code: number) => void, opts?: NFTLoadOptions): Promise<number[]>;
     /**
      * Sets the square-marker detector's image processing mode (frame or
      * field).
