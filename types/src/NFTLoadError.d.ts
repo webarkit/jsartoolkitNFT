@@ -16,6 +16,13 @@ export declare class NFTLoadError extends Error {
     });
 }
 /**
+ * The reason to reject with when a signal aborted. Older iOS (Safari 15.0 to
+ * 15.3) has AbortController but no `AbortSignal.reason`, so `signal.reason`
+ * is `undefined` there and `throw signal.reason` would throw `undefined`.
+ * Fall back to the AbortError an abort carries everywhere else.
+ */
+export declare function abortReason(signal: AbortSignal): unknown;
+/**
  * The legacy numeric error code: the HTTP status for an "http" failure, -1 for
  * anything else. Matches on `name` rather than `instanceof` so it still works
  * when two bundles each carry their own copy of the class.

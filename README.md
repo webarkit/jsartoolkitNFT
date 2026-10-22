@@ -96,7 +96,7 @@ try {
 }
 ```
 
-The callbacks still work but are deprecated. A call that passes a callback never rejects: a failure goes to
+The callbacks still work but are deprecated. A call that passes a callback never rejects for a load failure (a throw from your own callback still rejects): a failure goes to
 `onError` once (or to `console.error` when there is no `onError`) and the Promise resolves `[]`.
 
 ```javascript

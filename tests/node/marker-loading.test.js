@@ -45,6 +45,51 @@ describe("Node marker loading", () => {
     assert.deepEqual(codes, [-1]);
   });
 
+  it("logs the failure with console.error when onError is given", async () => {
+    const logged = [];
+    const orig = console.error;
+    console.error = (...a) => logged.push(a);
+    try {
+      await ar.loadNFTMarkers(["DataNFT/nope"], undefined, () => {});
+    } finally {
+      console.error = orig;
+    }
+    assert.equal(logged.length, 1);
+    assert.equal(logged[0][0].name, "NFTLoadError");
+    assert.equal(logged[0][0].kind, "missing");
+  });
+
+  it("a short id vector from the native loader is rejected", async () => {
+    const inst = ar.artoolkitNFT.instance;
+    const orig = inst._addNFTMarkers;
+    inst._addNFTMarkers = () => ({ size: () => 0, get: () => 0, delete() {} });
+    try {
+      await assert.rejects(ar.loadNFTMarkers(["DataNFT/pinball"]), {
+        name: "NFTLoadError",
+        kind: "rejected",
+      });
+    } finally {
+      inst._addNFTMarkers = orig;
+    }
+  });
+
+  it("a throw from the native loader is rejected with its cause", async () => {
+    const inst = ar.artoolkitNFT.instance;
+    const orig = inst._addNFTMarkers;
+    const boom = new Error("native boom");
+    inst._addNFTMarkers = () => {
+      throw boom;
+    };
+    try {
+      const err = await ar.loadNFTMarkers(["DataNFT/pinball"]).catch((e) => e);
+      assert.equal(err.name, "NFTLoadError");
+      assert.equal(err.kind, "rejected");
+      assert.equal(err.cause, boom);
+    } finally {
+      inst._addNFTMarkers = orig;
+    }
+  });
+
   it("Promise style rejects with kind missing", async () => {
     await assert.rejects(ar.loadNFTMarkers(["DataNFT/nope"]), {
       name: "NFTLoadError",

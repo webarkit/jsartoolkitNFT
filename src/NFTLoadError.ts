@@ -17,11 +17,23 @@ export class NFTLoadError extends Error {
     message: string,
     opts?: { url?: string; status?: number; cause?: unknown },
   ) {
-    super(message, { cause: opts?.cause });
+    // Pass `cause` only when given: `{ cause: undefined }` would create an own
+    // `cause` property on every error that has none.
+    super(message, opts && "cause" in opts ? { cause: opts.cause } : undefined);
     this.kind = kind;
     this.url = opts?.url;
     this.status = opts?.status;
   }
+}
+
+/**
+ * The reason to reject with when a signal aborted. Older iOS (Safari 15.0 to
+ * 15.3) has AbortController but no `AbortSignal.reason`, so `signal.reason`
+ * is `undefined` there and `throw signal.reason` would throw `undefined`.
+ * Fall back to the AbortError an abort carries everywhere else.
+ */
+export function abortReason(signal: AbortSignal): unknown {
+  return signal.reason ?? new DOMException("Aborted", "AbortError");
 }
 
 /**

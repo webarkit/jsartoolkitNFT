@@ -807,8 +807,11 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     } catch (e) {
       if (!onSuccess && !onError) return Promise.reject(e);
       try {
+        // Log even when onError is given (spec, Node variant): the old toolkit
+        // logged which file was missing, and the numeric code alone (-1)
+        // cannot tell a Node script what failed.
+        console.error(e);
         if (onError) onError(errorCode(e));
-        else console.error(e);
       } catch (cbErr) {
         return Promise.reject(cbErr);
       }

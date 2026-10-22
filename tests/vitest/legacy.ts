@@ -400,7 +400,7 @@ export function controllerLoadingSuite(
           10_000,
         );
         expect(outcome.ok).toEqual([]);
-        expect(outcome.err).toHaveLength(1);
+        expect(outcome.err).toEqual([-1]);
       } finally {
         spy.mockRestore();
       }

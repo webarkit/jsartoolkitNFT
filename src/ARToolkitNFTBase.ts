@@ -41,7 +41,7 @@ import {
   NFTLoadOptions,
 } from "./abstractions/CommonInterfaces";
 import Utils from "./Utils";
-import { NFTLoadError, withCallbacks } from "./NFTLoadError";
+import { NFTLoadError, abortReason, withCallbacks } from "./NFTLoadError";
 import packageJson from "../package.json";
 const { version } = packageJson;
 
@@ -559,7 +559,7 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
       }
     }
     const signal = opts.signal;
-    if (signal?.aborted) throw signal.reason;
+    if (signal?.aborted) throw abortReason(signal);
     const probe = opts.probeZFT ?? true;
 
     // The call's own controller: it stops this call's other downloads on the
@@ -575,11 +575,11 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
         () => link.abort(),
       ).catch((failure) => {
         // Report the caller's abort as such, not the failures it caused.
-        throw signal?.aborted ? signal.reason : failure;
+        throw signal?.aborted ? abortReason(signal) : failure;
       });
       // Every load succeeded, but the caller aborted before registration:
       // cancelling still means nothing is registered.
-      if (signal?.aborted) throw signal.reason;
+      if (signal?.aborted) throw abortReason(signal);
 
       const ids = this.registerMarkers(prefixes);
       if (ids.length < prefixes.length) {
