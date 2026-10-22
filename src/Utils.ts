@@ -34,8 +34,58 @@
  *
  */
 import axios, { AxiosResponse } from "axios";
+import { NFTLoadError } from "./NFTLoadError";
 
 export default class Utils {
+  /**
+   * Fetches a file as bytes. Uses fetch alone (no module needed) so it can be
+   * unit-tested and reused. A non-OK response is an "http" NFTLoadError; a
+   * rejected fetch is "network", except an abort, which propagates unchanged so
+   * callers can tell cancellation from failure.
+   */
+  static async fetchBinary(url: string, signal?: AbortSignal): Promise<Uint8Array> {
+    let response: Response;
+    try {
+      response = await fetch(url, { signal });
+    } catch (cause) {
+      if (signal?.aborted) throw cause;
+      throw new NFTLoadError("network", `Network error fetching ${url}`, {
+        url,
+        cause,
+      });
+    }
+    if (!response.ok) {
+      throw new NFTLoadError(
+        "http",
+        `HTTP ${response.status} fetching ${url}`,
+        { url, status: response.status },
+      );
+    }
+    return new Uint8Array(await response.arrayBuffer());
+  }
+
+  /**
+   * Decodes ASCII hex (two digits per byte, either case) straight to bytes.
+   * Replaces Uint8ArrayToStr + match(/.{1,2}/g) + parseInt, which built two
+   * intermediate strings and an array of pair strings per descriptor file.
+   */
+  static hexToBytes(hex: Uint8Array): Uint8Array {
+    if (hex.length % 2 !== 0) {
+      throw new RangeError("hexToBytes: odd number of hex digits");
+    }
+    const nibble = (c: number): number => {
+      if (c >= 48 && c <= 57) return c - 48; // 0-9
+      if (c >= 97 && c <= 102) return c - 87; // a-f
+      if (c >= 65 && c <= 70) return c - 55; // A-F
+      throw new RangeError(`hexToBytes: invalid hex digit (byte ${c})`);
+    };
+    const out = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < out.length; i++) {
+      out[i] = (nibble(hex[2 * i]) << 4) | nibble(hex[2 * i + 1]);
+    }
+    return out;
+  }
+
   static async fetchRemoteData(url: string): Promise<Uint8Array> {
     try {
       const response: AxiosResponse<any> = await axios.get(url, {
