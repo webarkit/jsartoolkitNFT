@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import { CAMERA_PARAM, MARKER_PINBALL, loadMarker } from "./helpers";
 import { loadCompositeFrames } from "./frames";
 
@@ -18,8 +18,12 @@ import { loadCompositeFrames } from "./frames";
  * per build.
  */
 
-/** What a suite needs from a build: the legacy controller and camera classes. */
+/**
+ * What a suite needs from a build: the legacy controller and camera classes,
+ * and the `artoolkitNFT` object that holds the loaders.
+ */
 export interface LegacyApi {
+  artoolkitNFT: any;
   ARControllerNFT: new (
     width: number,
     height: number,
@@ -50,8 +54,23 @@ const DETECT_TIMEOUT_MS = 120_000;
 
 const IDENTITY = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
+/**
+ * One load per build and page: the detection and the loading suites of a file
+ * share it, since a second script tag would redefine the page globals.
+ */
+const injected = new Map<string, Promise<LegacyApi>>();
+
 /** Load a global build from `build/` and resolve once its runtime is ready. */
 export function injectLegacyBuild(buildFile: string): Promise<LegacyApi> {
+  let api = injected.get(buildFile);
+  if (!api) {
+    api = injectOnce(buildFile);
+    injected.set(buildFile, api);
+  }
+  return api;
+}
+
+function injectOnce(buildFile: string): Promise<LegacyApi> {
   const w = window as any;
   if (w.artoolkitNFT || w.ARControllerNFT) {
     return Promise.reject(
@@ -78,6 +97,7 @@ export function injectLegacyBuild(buildFile: string): Promise<LegacyApi> {
       () => {
         clearTimeout(timer);
         resolve({
+          artoolkitNFT: w.artoolkitNFT,
           ARControllerNFT: w.ARControllerNFT,
           ARCameraParamNFT: w.ARCameraParamNFT,
         });
@@ -266,4 +286,176 @@ export function legacyDetectionSuite(
     () => injectLegacyBuild(buildFile),
     options,
   );
+}
+
+/** What a legacy load called back with, collected over a settle window. */
+interface Outcome {
+  ok: unknown[];
+  err: unknown[];
+}
+
+/**
+ * Runs a callback-style legacy load and collects its callbacks. It resolves a
+ * short while after the first one, so a second call (the old loader called
+ * `onerror` once per failed file) is seen, and rejects if none comes in time.
+ */
+function collectOutcome(
+  start: (ok: (v: unknown) => void, err: (e: unknown) => void) => void,
+  timeoutMs = 60_000,
+  settleMs = 1_000,
+): Promise<Outcome> {
+  return new Promise<Outcome>((resolve, reject) => {
+    const outcome: Outcome = { ok: [], err: [] };
+    let settling = false;
+    const timer = setTimeout(
+      () => reject(new Error(`no callback within ${timeoutMs} ms`)),
+      timeoutMs,
+    );
+    const record = (list: unknown[]) => (value: unknown) => {
+      list.push(value);
+      if (settling) return;
+      settling = true;
+      clearTimeout(timer);
+      setTimeout(() => resolve(outcome), settleMs);
+    };
+    start(record(outcome.ok), record(outcome.err));
+  });
+}
+
+/** The path a `fetch` call asked for, whatever form its input took. */
+function requestPath(input: RequestInfo | URL): string {
+  const url =
+    typeof input === "string"
+      ? input
+      : input instanceof URL
+        ? input.href
+        : input.url;
+  return new URL(url, location.href).pathname;
+}
+
+export interface LoadingSuiteOptions {
+  /**
+   * The build carries `js/artoolkitNFT_ES6.api.js`, whose controller had a
+   * `loadNFTMarkerNew` that could never succeed (D18).
+   */
+  es6?: boolean;
+}
+
+/**
+ * The legacy loaders' contract (#685): one outcome per call, the HTTP status or
+ * -1 in `onerror`, a native refusal reported instead of `callback([])`, and the
+ * legacy native 20-marker limit refused before any request (D17).
+ *
+ * The legacy native loader gives ids per call and replaces the earlier markers
+ * (D17), so every successful load here gets id 0.
+ */
+export function controllerLoadingSuite(
+  label: string,
+  loadApi: () => Promise<LegacyApi>,
+  options: LoadingSuiteOptions = {},
+): void {
+  describe(`legacy NFT loading (${label})`, () => {
+    let api: LegacyApi;
+    let ar: any;
+
+    beforeAll(async () => {
+      api = await loadApi();
+      ar = await createController(api, 640, 480);
+    }, 90_000);
+
+    // The old loader passed the status as the first argument of a
+    // (filename, errorNumber) handler, so onerror got undefined, once per file.
+    it("a 404 calls onError once with 404", async () => {
+      const outcome = await collectOutcome((ok, err) =>
+        ar.loadNFTMarker("/examples/DataNFT/missing", ok, err),
+      );
+      expect(outcome.ok).toEqual([]);
+      expect(outcome.err).toEqual([404]);
+    });
+
+    it("an explicit .zft loads", async () => {
+      const outcome = await collectOutcome((ok, err) =>
+        ar.loadNFTMarker("/examples/DataNFT/zft/pinball.zft", ok, err),
+      );
+      expect(outcome.err).toEqual([]);
+      expect(outcome.ok).toEqual([0]);
+    });
+
+    // An unreadable .fset makes the legacy native loader return no id: that
+    // used to reach callback([]), and the controller's onSuccess(undefined).
+    // The file is empty, not 16 zero bytes: ar2ReadFeatureSet accepts zeros
+    // as a set of 0 features, so the legacy core registered it as id 0.
+    it("a native refusal calls onError once", async () => {
+      const realFetch = globalThis.fetch.bind(globalThis);
+      const spy = vi
+        .spyOn(globalThis, "fetch")
+        .mockImplementation((input, init) =>
+          requestPath(input).endsWith(".fset")
+            ? Promise.resolve(new Response(new Uint8Array(0)))
+            : realFetch(input, init),
+        );
+      try {
+        const outcome = await collectOutcome(
+          (ok, err) => ar.loadNFTMarker(MARKER_PINBALL, ok, err),
+          10_000,
+        );
+        expect(outcome.ok).toEqual([]);
+        expect(outcome.err).toHaveLength(1);
+      } finally {
+        spy.mockRestore();
+      }
+    });
+
+    // The legacy native loader runs exit(-1) at 20 markers (D17), so the JS
+    // refuses the call before downloading anything.
+    it("20 URLs are refused up front", async () => {
+      const spy = vi.spyOn(globalThis, "fetch");
+      try {
+        const outcome = await collectOutcome((ok, err) =>
+          api.artoolkitNFT.addNFTMarkers(
+            ar.id,
+            Array(20).fill(MARKER_PINBALL),
+            ok,
+            err,
+          ),
+        );
+        expect(outcome.ok).toEqual([]);
+        expect(outcome.err).toEqual([-1]);
+        expect(spy).toHaveBeenCalledTimes(0);
+      } finally {
+        spy.mockRestore();
+      }
+      // The module is still usable: nothing reached the native exit(-1).
+      const after = await collectOutcome((ok, err) =>
+        ar.loadNFTMarker(MARKER_PINBALL, ok, err),
+      );
+      expect(after.err).toEqual([]);
+      expect(after.ok).toEqual([0]);
+    });
+
+    // addNFTMarker called Module._addNFTMarker, which no binding defines.
+    it("addNFTMarker works", async () => {
+      const outcome = await collectOutcome((ok, err) =>
+        api.artoolkitNFT.addNFTMarker(ar.id, MARKER_PINBALL, ok, err),
+      );
+      expect(outcome.err).toEqual([]);
+      expect(outcome.ok).toHaveLength(1);
+      expect(typeof outcome.ok[0]).toBe("number");
+    });
+
+    if (options.es6) {
+      it("has no loadNFTMarkerNew (D18)", () => {
+        expect(typeof ar.loadNFTMarkerNew).toBe("undefined");
+      });
+    }
+
+    it("disposes the controller", () => {
+      ar.dispose();
+    });
+  });
+}
+
+/** The loading suite for one global build in `build/`. */
+export function legacyLoadingSuite(buildFile: string): void {
+  controllerLoadingSuite(buildFile, () => injectLegacyBuild(buildFile));
 }
