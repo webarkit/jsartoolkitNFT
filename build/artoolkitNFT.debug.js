@@ -872,6 +872,14 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     if (!Array.isArray(urls) || urls.length === 0) {
       throw loadError(-1, "addNFTMarkers: no marker URLs given");
     }
+    // Compatibility: the old loader built every file name as `url + '.fset'`,
+    // which coerced a one-element array such as ['…/pinball'] to its string,
+    // so that form loaded. Callers that pass the marker that way are
+    // unwrapped, not refused. The legacy APIs take URL prefixes only: longer
+    // arrays never loaded.
+    urls = urls.map(function(url) {
+      return Array.isArray(url) && url.length === 1 ? url[0] : url;
+    });
     for (let i = 0; i < urls.length; i++) {
       // An empty URL would probe the page itself (D15).
       if (typeof urls[i] !== "string" || urls[i] === "") {

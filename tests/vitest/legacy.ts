@@ -381,6 +381,17 @@ export function controllerLoadingSuite(
       expect(outcome.ok).toEqual([0]);
     });
 
+    // The embed ES6 examples pass the marker as ["…/pinball"]. The old loader
+    // built `url + ".fset"`, which coerced a one-element array to its string,
+    // so that form loaded and must keep loading.
+    it("a one-element array is loaded as its URL", async () => {
+      const outcome = await collectOutcome((ok, err) =>
+        ar.loadNFTMarker(["/examples/DataNFT/zft/pinball"], ok, err),
+      );
+      expect(outcome.err).toEqual([]);
+      expect(outcome.ok).toEqual([0]);
+    });
+
     // An unreadable .fset makes the legacy native loader return no id: that
     // used to reach callback([]), and the controller's onSuccess(undefined).
     // The file is empty, not 16 zero bytes: ar2ReadFeatureSet accepts zeros
