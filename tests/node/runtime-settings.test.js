@@ -204,6 +204,8 @@ describe("Node build, start-up log level", () => {
     //   (ARToolKitJS.cpp calls it right after the level-gated "*** Camera Parameter ***",
     //   from WebARKitLib's ARToolKitNFTCore::loadCamera).
     //   KNOWN NATIVE GAP: delete the CAMERA_DUMP filter once arParamDisp is gated natively.
+    //   Tracked in webarkit/WebARKitLib#113, still open: whether the table should be
+    //   silenced at all is undecided, so this PR leaves it as it is.
     //   The test must not require the dump, only tolerate it until then.
     const calls = callsOf(spies)
       .filter((a) => !(a[0] === "ARToolkitNFT " && a[1] === version))
