@@ -38,9 +38,12 @@ import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
 import {
   INFTMarkerInfo,
   ARLogLevel,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
   ARToolkitNFTNodeModule,
   IARToolKitNFTInstance,
 } from "./abstractions/CommonInterfaces";
+import { applyRuntimeSettingsPatch } from "./RuntimeSettings";
 import packageJson from "../package.json";
 import { NFTLoadError, errorCode } from "./NFTLoadError";
 const { version } = packageJson;
@@ -293,6 +296,33 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
   }
 
   /**
+   * Changes several runtime settings at once (#720). The patch is deep-merged into
+   * {@link getRuntimeSettings} (`ar2` field by field) and applied in one native call, which
+   * validates everything first and changes nothing on failure.
+   *
+   * `logLevel` is per controller: the level lives in the WASM module's globals, and each
+   * init() creates its own module.
+   * @param patch any subset of the settings.
+   * @throws {TypeError} on an unknown key (including the deprecated square-marker keys
+   * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`) or a value of the wrong
+   * type; nothing is changed.
+   * @throws {RangeError} when the values are out of range; nothing is changed.
+   */
+  public configure(patch: NFTRuntimeSettingsPatch): void {
+    applyRuntimeSettingsPatch(this.instance, patch);
+  }
+
+  /**
+   * The current runtime settings (#720), with the effective values: `detectionInterval`
+   * and `ar2.searchSize` are the build's resolved defaults when they were not set, and
+   * `logLevel` is the module's current level.
+   * @return a fresh object; changing it changes nothing until passed to configure().
+   */
+  public getRuntimeSettings(): NFTRuntimeSettings {
+    return this.instance.getRuntimeSettings();
+  }
+
+  /**
    * Returns the Emscripten HEAP offset of the square-marker detector's
    * debug image.
    * @deprecated The image is never filled for NFT tracking: only the
@@ -335,6 +365,11 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     return this.instance.getLogLevel();
   }
 
+  /**
+   * Sets the near plane of the projection. Once a camera is loaded the camera lens is
+   * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+   * @param value the near plane, > 0.
+   */
   public setProjectionNearPlane(value: number): void {
     this.instance.setProjectionNearPlane(value);
   }
@@ -343,6 +378,11 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     return this.instance.getProjectionNearPlane();
   }
 
+  /**
+   * Sets the far plane of the projection. Once a camera is loaded the camera lens is
+   * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+   * @param value the far plane, > the near plane.
+   */
   public setProjectionFarPlane(value: number): void {
     this.instance.setProjectionFarPlane(value);
   }
@@ -423,8 +463,9 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
   }
 
   /**
-   * Rebuilds the camera frustum from the near and far planes. The projection setters
-   * only store the planes; they take effect on the next call to this method.
+   * Rebuilds the camera frustum from the near and far planes. Kept for compatibility:
+   * since WebARKitLib 0.12.0 the lens follows the planes, as the projection setters and
+   * configure() rebuild it themselves, so calling this changes nothing.
    */
   public recalculateCameraLens(): void {
     this.instance.recalculateCameraLens();

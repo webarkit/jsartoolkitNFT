@@ -47,6 +47,9 @@ import type {
   NFTEvent,
   NFTEventListener,
   NFTLoadOptions,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
+  NFTAR2Settings,
 } from "./abstractions/CommonInterfaces";
 
 import { NFTLoadError } from "./NFTLoadError";
@@ -59,4 +62,7 @@ export type {
   NFTEvent,
   NFTEventListener,
   NFTLoadOptions,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
+  NFTAR2Settings,
 };

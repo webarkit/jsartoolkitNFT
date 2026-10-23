@@ -53,9 +53,10 @@ export class ARToolkitNFT extends ARToolkitNFTBase {
    * "ARToolkitNFT 1.5.0"
    */
   constructor() {
-    // No withFiltering argument, as this build has always constructed it: the
-    // threaded binding does not filter poses, so the argument would have no
-    // effect (ARToolKitNFT_js_td.cpp), but changing it is not part of #734 (D7).
-    super(ARToolkitNFT, initARToolkitNFT);
+    // withFiltering true, like the other builds. Since WebARKitLib 0.12.0 the
+    // threaded preset filters poses (#692, #720 D13), so this build's poses are
+    // filtered by default too. It used to pass nothing, which left the native
+    // flag uninitialised; it had no effect then, as the preset did not filter.
+    super(ARToolkitNFT, initARToolkitNFT, true);
   }
 }

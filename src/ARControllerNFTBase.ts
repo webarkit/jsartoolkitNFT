@@ -40,6 +40,8 @@ import {
   ARLogLevel,
   NFTEventListener,
   NFTEvent,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
   NFTLoadOptions,
 } from "./abstractions/CommonInterfaces";
 import { withCallbacks } from "./NFTLoadError";
@@ -478,8 +480,9 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
   }
 
   /**
-   * Returns the projection matrix computed from camera parameters for the ARControllerNFT,
-   * as of initialisation or the last call to recalculateCameraLens().
+   * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
+   * It follows the near and far planes: it is built with them from initialisation on, and
+   * rebuilt by setProjectionNearPlane(), setProjectionFarPlane() and configure().
    * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
    */
   getCameraMatrix(): Float64Array {
@@ -552,12 +555,14 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
   }
 
   /**
-   * Sets the value of the near plane of the camera.
-   * @param {number} value the value of the near plane
+   * Sets the value of the near plane of the camera. The camera lens follows at once, and
+   * getCameraMatrix() returns the rebuilt matrix (WebARKitLib 0.12.0).
+   * @param {number} value the value of the near plane, > 0
    * @return {number} 0 (void)
    */
   setProjectionNearPlane(value: number): void {
-    return this.artoolkitNFT.setProjectionNearPlane(value);
+    this.artoolkitNFT.setProjectionNearPlane(value);
+    this.refreshCameraMatrix();
   }
 
   /**
@@ -569,12 +574,14 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
   }
 
   /**
-   * Sets the value of the far plane of the camera.
-   * @param {number} value the value of the far plane
+   * Sets the value of the far plane of the camera. The camera lens follows at once, and
+   * getCameraMatrix() returns the rebuilt matrix (WebARKitLib 0.12.0).
+   * @param {number} value the value of the far plane, > the near plane
    * @return {number} 0 (void)
    */
   setProjectionFarPlane(value: number): void {
-    return this.artoolkitNFT.setProjectionFarPlane(value);
+    this.artoolkitNFT.setProjectionFarPlane(value);
+    this.refreshCameraMatrix();
   }
 
   /**
@@ -586,12 +593,53 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
   }
 
   /**
-   * Rebuilds the camera frustum from the near and far planes set with
-   * setProjectionNearPlane() and setProjectionFarPlane(), which only store them.
-   * getCameraMatrix() returns the rebuilt matrix afterwards.
+   * Rebuilds the camera frustum from the near and far planes. Kept for compatibility:
+   * since WebARKitLib 0.12.0 the lens follows the planes, as setProjectionNearPlane(),
+   * setProjectionFarPlane() and configure() rebuild it themselves, so calling this
+   * changes nothing.
    */
   recalculateCameraLens(): void {
     this.artoolkitNFT.recalculateCameraLens();
+    this.refreshCameraMatrix();
+  }
+
+  /**
+   * Changes several runtime settings at once (#720): the planes, the detection policy,
+   * filtering, the log level and the AR2 tracking parameters. The patch is deep-merged into
+   * {@link getRuntimeSettings} (`ar2` field by field) and applied in one native call, which
+   * validates everything first and changes nothing on failure. getCameraMatrix() reflects
+   * new planes at once.
+   *
+   * `logLevel` is per controller: the level lives in the WASM module's globals, and each
+   * controller's init() creates its own module.
+   * @example
+   * ar.configure({ near: 1, far: 5000, ar2: { simThresh: 0.6 } });
+   * @param patch any subset of the settings.
+   * @throws {TypeError} on an unknown key (including the deprecated square-marker keys
+   * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`) or a value of the wrong
+   * type; nothing is changed.
+   * @throws {RangeError} when the values are out of range; nothing is changed.
+   */
+  configure(patch: NFTRuntimeSettingsPatch): void {
+    this.artoolkitNFT.configure(patch);
+    this.refreshCameraMatrix();
+  }
+
+  /**
+   * The current runtime settings (#720), with the effective values: `detectionInterval`
+   * and `ar2.searchSize` are the build's resolved defaults when they were not set, and
+   * `logLevel` is this controller's current level.
+   * @return a fresh object; changing it changes nothing until passed to configure().
+   */
+  getRuntimeSettings(): NFTRuntimeSettings {
+    return this.artoolkitNFT.getRuntimeSettings();
+  }
+
+  // getCameraMatrix() returns a cached copy of the core's lens, refreshed after every
+  // change to the planes, rather than reading the lens on each call: callers read it per
+  // frame, and a read would build a new array through Embind every time. Every path that
+  // changes the planes goes through this controller, so the copy cannot go stale.
+  private refreshCameraMatrix(): void {
     this.camera_mat = this.artoolkitNFT.getCameraLens();
   }
 
@@ -862,10 +910,13 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
 
     this.videoLuma = new Uint8Array(this.framesize);
 
-    this.camera_mat = this.artoolkitNFT.getCameraLens();
-
+    // The planes first, then the first lens (#720 phase 1): the matrix cached at init is
+    // then built with the planes the getters report. The core's defaults are already 0.1
+    // and 1000 since WebARKitLib 0.12.0 (D4); setting them keeps that true whatever the
+    // core's defaults, and the setters refresh the cached matrix themselves.
     this.setProjectionNearPlane(0.1);
     this.setProjectionFarPlane(1000);
+    this.refreshCameraMatrix();
 
     setTimeout(() => {
       this.dispatchEvent({

@@ -3,15 +3,14 @@ import { VARIANTS } from "./variants";
 import { CAMERA_PARAM, VIDEO_WIDTH, VIDEO_HEIGHT } from "./helpers";
 
 /**
- * recalculateCameraLens() on the public API (#630).
+ * The camera lens follows the projection planes (#630, #720).
  *
- * The projection setters only store the planes; recalculateCameraLens() rebuilds the
- * frustum from them. It was reachable only through the private `instance` of
- * ARToolkitNFT, and getCameraMatrix() kept returning the matrix cached at
- * initialisation. Both ARControllerNFT and ARToolkitNFT now proxy it, and the
- * controller's getCameraMatrix() returns the rebuilt matrix after it.
+ * Since WebARKitLib 0.12.0 the plane setters rebuild the frustum themselves once a
+ * camera is loaded (D5), and the controller's getCameraMatrix() follows them at once.
+ * recalculateCameraLens() is kept for compatibility on both ARControllerNFT and
+ * ARToolkitNFT; it rebuilds the same matrix, so calling it changes nothing.
  */
-describe.each(VARIANTS)("recalculateCameraLens ($name)", (variant) => {
+describe.each(VARIANTS)("camera lens ($name)", (variant) => {
   let ar: any;
 
   beforeAll(async () => {
@@ -32,23 +31,26 @@ describe.each(VARIANTS)("recalculateCameraLens ($name)", (variant) => {
   const cameraMatrix = () =>
     Array.from(ar.getCameraMatrix() as ArrayLike<number>);
 
-  it("rebuilds the frustum on the controller and refreshes getCameraMatrix()", () => {
+  it("the controller's setters rebuild the frustum and getCameraMatrix() follows", () => {
     const initial = cameraMatrix();
 
     ar.setProjectionNearPlane(0.5);
     ar.setProjectionFarPlane(2000);
-    expect(cameraMatrix()).toEqual(initial);
-
-    ar.recalculateCameraLens();
     expect(lens()).not.toEqual(initial);
     expect(cameraMatrix()).toEqual(lens());
+
+    const rebuilt = cameraMatrix();
+    ar.recalculateCameraLens();
+    expect(cameraMatrix()).toEqual(rebuilt);
   });
 
-  it("rebuilds the frustum on ARToolkitNFT", () => {
+  it("the ARToolkitNFT setters rebuild the frustum", () => {
     const before = lens();
 
-    ar.setProjectionNearPlane(0.25);
+    ar.artoolkitNFT.setProjectionNearPlane(0.25);
+    const after = lens();
+    expect(after).not.toEqual(before);
     ar.artoolkitNFT.recalculateCameraLens();
-    expect(lens()).not.toEqual(before);
+    expect(lens()).toEqual(after);
   });
 });

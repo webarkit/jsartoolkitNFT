@@ -38,6 +38,8 @@ import {
   ARLogLevel,
   NFTEventListener,
   NFTEvent,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
 } from "./CommonInterfaces";
 export abstract class AbstractARControllerNFT {
   static initWithDimensions: (
@@ -84,6 +86,8 @@ export abstract class AbstractARControllerNFT {
   setProjectionFarPlane: (value: number) => void;
   getProjectionFarPlane: () => number;
   recalculateCameraLens: () => void;
+  configure: (patch: NFTRuntimeSettingsPatch) => void;
+  getRuntimeSettings: () => NFTRuntimeSettings;
   /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   setThresholdMode: (mode: number) => number;
   /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
