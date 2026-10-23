@@ -49,6 +49,7 @@ import type {
   NFTLoadOptions,
   NFTRuntimeSettings,
   NFTRuntimeSettingsPatch,
+  ARInitOptions,
   NFTAR2Settings,
 } from "./abstractions/CommonInterfaces";
 
@@ -64,5 +65,6 @@ export type {
   NFTLoadOptions,
   NFTRuntimeSettings,
   NFTRuntimeSettingsPatch,
+  ARInitOptions,
   NFTAR2Settings,
 };

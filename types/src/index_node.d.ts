@@ -2,6 +2,6 @@ import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { ARControllerNFT } from "./ARControllerNFT_node";
 import { NFTLoadError } from "./NFTLoadError";
 import { ARLogLevel } from "./abstractions/CommonInterfaces";
-import type { INFTMarker, INFTMarkerInfo, IImageObj, NFTEvent, NFTEventListener, NFTRuntimeSettings, NFTRuntimeSettingsPatch, NFTAR2Settings } from "./abstractions/CommonInterfaces";
+import type { INFTMarker, INFTMarkerInfo, IImageObj, NFTEvent, NFTEventListener, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARInitOptions, NFTAR2Settings } from "./abstractions/CommonInterfaces";
 export { ARToolkitNFT, ARControllerNFT, ARLogLevel, NFTLoadError };
-export type { INFTMarker, INFTMarkerInfo, IImageObj, NFTEvent, NFTEventListener, NFTRuntimeSettings, NFTRuntimeSettingsPatch, NFTAR2Settings, };
+export type { INFTMarker, INFTMarkerInfo, IImageObj, NFTEvent, NFTEventListener, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARInitOptions, NFTAR2Settings, };

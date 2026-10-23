@@ -239,10 +239,13 @@ describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
     // - the version line is a RelInfo line (#677), the quietest level, so it survives Error;
     // - the camera parameter table of arParamDisp(), which prints with the unlevelled ARLOG
     //   (a plain printf) in the core, so no level reaches it. Gating it needs a native change
-    //   (ARToolKitJS.cpp calls it right after the level-gated "*** Camera Parameter ***").
+    //   (ARToolKitJS.cpp calls it right after the level-gated "*** Camera Parameter ***",
+    //   from WebARKitLib's ARToolKitNFTCore::loadCamera).
+    //   KNOWN NATIVE GAP: delete the CAMERA_DUMP filter once arParamDisp is gated natively.
+    //   The test must not require the dump, only tolerate it until then.
     const calls = spies
       .flatMap((s) => s.mock.calls)
-      .filter((c) => !String(c[0]).startsWith("ARToolkitNFT"))
+      .filter((c) => !(c[0] === "ARToolkitNFT " && c[1] === version))
       .filter((c) => !CAMERA_DUMP.test(String(c[0])));
     expect(calls).toEqual([]);
     expect(ar.getRuntimeSettings().logLevel).toBe(3);
@@ -263,7 +266,7 @@ describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
       true,
     );
     const info = spies[1].mock.calls.filter((c) =>
-      String(c[0]).startsWith("ARToolkitNFT"),
+      c[0] === "ARToolkitNFT " && c[1] === version,
     );
     expect(info).toHaveLength(1);
     expect(info[0].join(" ")).toContain(version);
@@ -281,7 +284,7 @@ describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
       { logLevel: 4 },
     );
     expect(
-      spies[1].mock.calls.filter((c) => String(c[0]).startsWith("ARToolkitNFT")),
+      spies[1].mock.calls.filter((c) => c[0] === "ARToolkitNFT " && c[1] === version),
     ).toHaveLength(1);
     const controllerLines = spies[0].mock.calls.filter(
       (c) => c[0] === "[ARControllerNFT]",

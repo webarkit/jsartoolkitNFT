@@ -201,9 +201,12 @@ describe("Node build, start-up log level", () => {
     // - the version line is a RelInfo line (#677), the quietest level, so it survives Error;
     // - the camera parameter table of arParamDisp(), which prints with the unlevelled ARLOG
     //   (a plain printf) in the core, so no level reaches it. Gating it needs a native change
-    //   (ARToolKitJS.cpp calls it right after the level-gated "*** Camera Parameter ***").
+    //   (ARToolKitJS.cpp calls it right after the level-gated "*** Camera Parameter ***",
+    //   from WebARKitLib's ARToolKitNFTCore::loadCamera).
+    //   KNOWN NATIVE GAP: delete the CAMERA_DUMP filter once arParamDisp is gated natively.
+    //   The test must not require the dump, only tolerate it until then.
     const calls = callsOf(spies)
-      .filter((a) => !String(a[0]).startsWith("ARToolkitNFT"))
+      .filter((a) => !(a[0] === "ARToolkitNFT " && a[1] === version))
       .filter((a) => !CAMERA_DUMP.test(String(a[0])));
     mock.restoreAll();
     assert.deepEqual(calls, []);
@@ -218,7 +221,7 @@ describe("Node build, start-up log level", () => {
     await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
     const info = spies[1].mock.calls
       .map((c) => c.arguments)
-      .filter((a) => String(a[0]).startsWith("ARToolkitNFT"));
+      .filter((a) => a[0] === "ARToolkitNFT " && a[1] === version);
     mock.restoreAll();
     assert.equal(info.length, 1);
     assert.ok(info[0].join(" ").includes(version));

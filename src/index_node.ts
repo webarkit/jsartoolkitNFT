@@ -49,6 +49,7 @@ import type {
   NFTEventListener,
   NFTRuntimeSettings,
   NFTRuntimeSettingsPatch,
+  ARInitOptions,
   NFTAR2Settings,
 } from "./abstractions/CommonInterfaces";
 
@@ -61,5 +62,6 @@ export type {
   NFTEventListener,
   NFTRuntimeSettings,
   NFTRuntimeSettingsPatch,
+  ARInitOptions,
   NFTAR2Settings,
 };
