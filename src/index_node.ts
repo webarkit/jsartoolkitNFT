@@ -35,6 +35,7 @@
  */
 import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { ARControllerNFT } from "./ARControllerNFT_node";
+import { NFTLoadError } from "./NFTLoadError";
 
 // ARLogLevel is a runtime value, so it must be exported here to be reachable:
 // setLogLevel() advertises it in its signature, but there is no ./abstractions
@@ -48,7 +49,7 @@ import type {
   NFTEventListener,
 } from "./abstractions/CommonInterfaces";
 
-export { ARToolkitNFT, ARControllerNFT, ARLogLevel };
+export { ARToolkitNFT, ARControllerNFT, ARLogLevel, NFTLoadError };
 export type {
   INFTMarker,
   INFTMarkerInfo,

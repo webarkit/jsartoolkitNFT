@@ -42,6 +42,7 @@ import {
   IARToolKitNFTInstance,
 } from "./abstractions/CommonInterfaces";
 import packageJson from "../package.json";
+import { NFTLoadError, errorCode } from "./NFTLoadError";
 const { version } = packageJson;
 
 const UNKNOWN_MARKER = -1;
@@ -480,9 +481,41 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
    */
   public addNFTMarkers(
     urls: Array<string>,
-    callback: (ids: number[]) => void,
-    onError2: (errorNumber: number) => void,
+    callback?: (ids: number[]) => void,
+    onError2?: (errorNumber: number) => void,
   ): Array<number> {
+    // Never throws (D16): a direct caller with no callbacks gets [] and a log,
+    // as before. The controller uses tryAddNFTMarkers to see the real error.
+    let markerIds: number[];
+    try {
+      markerIds = this.tryAddNFTMarkers(urls);
+    } catch (e) {
+      console.error(e);
+      if (onError2) onError2(errorCode(e));
+      return [];
+    }
+    console.log("add nft marker ids: ", markerIds);
+    if (callback) callback(markerIds);
+    return markerIds;
+  }
+
+  /**
+   * The throwing core of {@link addNFTMarkers}. Synchronous like it (#685, D9):
+   * Node reads the files in place, so there is nothing to await.
+   * @internal Used by ARControllerNFT_node, which needs the NFTLoadError.
+   * @param {Array<string>} urls paths of the descriptor files without ext
+   * @return {Array<number>} the real marker ids.
+   * @throws {NFTLoadError} `argument` for an empty list or URL, `missing` for a
+   * file that does not exist, `rejected` when the native loader refuses the
+   * markers or throws.
+   */
+  public tryAddNFTMarkers(urls: Array<string>): Array<number> {
+    if (!urls || urls.length === 0 || urls.some((u) => !u)) {
+      throw new NFTLoadError(
+        "argument",
+        "Marker URL needs to be defined and not equal empty string!",
+      );
+    }
     this.mountWorkingDirectory();
 
     const prefixes = urls.map((url) => NODEFS_MOUNT + "/" + url);
@@ -490,9 +523,9 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     for (const prefix of prefixes) {
       for (const ext of [".fset", ".iset", ".fset3"]) {
         if (!this.FS.analyzePath(prefix + ext).exists) {
-          console.log("failed to load: ", prefix + ext);
-          if (onError2) onError2(-1);
-          return [];
+          throw new NFTLoadError("missing", "failed to load: " + prefix + ext, {
+            url: prefix + ext,
+          });
         }
       }
     }
@@ -501,10 +534,18 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     for (const prefix of prefixes) {
       vec.push_back(prefix);
     }
-    // The binding returns a std::vector<int>; the instance interface types it
-    // loosely, so read it through `any`.
-    const ret: any = this.instance._addNFTMarkers(vec);
-    vec.delete();
+    let ret: any;
+    try {
+      // The binding returns a std::vector<int>; the instance interface types it
+      // loosely, so read it through `any`.
+      ret = this.instance._addNFTMarkers(vec);
+    } catch (e) {
+      throw new NFTLoadError("rejected", "the native loader threw: " + urls, {
+        cause: e,
+      });
+    } finally {
+      vec.delete();
+    }
 
     const markerIds: number[] = [];
     for (let i = 0; i < ret.size(); i++) {
@@ -515,13 +556,8 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     // The native loader returns no ids when any dataset fails to parse or the
     // marker limit would be exceeded.
     if (markerIds.length !== urls.length) {
-      console.log("failed to add NFT markers: ", urls);
-      if (onError2) onError2(-1);
-      return [];
+      throw new NFTLoadError("rejected", "failed to add NFT markers: " + urls);
     }
-
-    console.log("add nft marker ids: ", markerIds);
-    if (callback) callback(markerIds);
     return markerIds;
   }
 

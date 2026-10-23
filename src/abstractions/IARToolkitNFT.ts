@@ -34,7 +34,7 @@
  *
  */
 
-import { INFTMarkerInfo, ARLogLevel } from "./CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel, NFTLoadOptions } from "./CommonInterfaces";
 export interface IARToolkitNFT {
   getCameraLens(): any;
   recalculateCameraLens(): void;
@@ -57,7 +57,7 @@ export interface IARToolkitNFT {
   setLogLevel(level: ARLogLevel | number): void;
   getLogLevel(): number;
   NFTMarkerInfo: INFTMarkerInfo;
-  loadCamera(cameraParam: string): Promise<number>;
+  loadCamera(urlOrData: Uint8Array | string): Promise<number>;
   setProjectionNearPlane(value: number): void;
   getProjectionNearPlane(): number;
   setProjectionFarPlane(value: number): void;
@@ -71,10 +71,11 @@ export interface IARToolkitNFT {
   /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getThreshold(): number;
   addNFTMarkers(
-    urls: Array<string>,
-    callback: (ids: number[]) => void,
-    onError2: (errorNumber: number) => void,
-  ): Array<number>;
+    urls: Array<string | string[]>,
+    callback?: (ids: number[]) => void,
+    onError?: (code: number) => void,
+    opts?: NFTLoadOptions,
+  ): Promise<number[]>;
   detectNFTMarker(): number;
   getNFTMarker(markerIndex: number): INFTMarkerInfo;
   getNFTData(index: number): object;

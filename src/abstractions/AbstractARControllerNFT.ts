@@ -93,14 +93,14 @@ export abstract class AbstractARControllerNFT {
   /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getThreshold: () => number;
   loadNFTMarker: (
-    urlOrData: string,
-    onSuccess: (ids: number) => void,
-    onError: (err: number) => void,
+    url: string,
+    onSuccess?: (id: number) => void,
+    onError?: (code: number) => void,
   ) => Promise<number[]>;
   loadNFTMarkers: (
-    urlOrData: Array<string>,
-    onSuccess: (ids: number[]) => void,
-    onError: (err: number) => void,
+    urls: Array<string>,
+    onSuccess?: (ids: number[]) => void,
+    onError?: (code: number) => void,
   ) => Promise<number[]>;
   /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   setImageProcMode: (mode: number) => number;

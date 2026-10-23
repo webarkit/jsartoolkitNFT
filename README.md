@@ -66,6 +66,59 @@ has **WASM** embedded in a single file!
 
 **JSARToolKitNFT** now supports loading NFT markers from `.zft` compressed files. This allows for faster loading times and reduced file sizes.
 
+A URL that ends in `.zft` is downloaded directly, once. A URL without an extension (`path/to/marker`) is
+checked for a `.zft` with one asynchronous request, and falls back to the `.iset`, `.fset` and `.fset3`
+files when there is none. Any HTTP error status on that check means "no `.zft`", so storage services that
+answer 403 for a missing object still work. A marker without a `.zft` logs one 404 in the console; pass
+`probeZFT: false` to skip the check (see below).
+
+## Loading NFT markers
+
+`loadNFTMarker` and `loadNFTMarkers` return a Promise that resolves with the marker ids **once the files are
+downloaded and registered**, so tracking can start right after the `await`:
+
+```javascript
+const [id] = await arController.loadNFTMarker('path/to/marker')
+const ids = await arController.loadNFTMarkers(['path/to/a', 'path/to/b'])
+```
+
+A failure rejects with an `NFTLoadError`. Its `kind` is one of `http`, `network`, `missing`, `format`,
+`rejected` or `argument`, and it carries the `url`, the HTTP `status` and the `cause` when there are any.
+`NFTLoadError` is exported from every entry point. Test `err.name === 'NFTLoadError'` rather than `instanceof`, because each bundle carries its own copy of the class.
+
+```javascript
+try {
+  await arController.loadNFTMarker('path/to/marker')
+} catch (err) {
+  if (err.name === 'NFTLoadError' && err.kind === 'http') {
+    console.error('Not found:', err.url, err.status)
+  }
+}
+```
+
+The callbacks still work but are deprecated. A call that passes a callback never rejects for a load failure (a throw from your own callback still rejects): a failure goes to
+`onError` once (or to `console.error` when there is no `onError`) and the Promise resolves `[]`.
+
+```javascript
+arController.loadNFTMarker('path/to/marker', (id) => { /* loaded */ }, (code) => { /* HTTP status, or -1 */ })
+```
+
+In the browser builds (default, `simd`, `td`) a fourth argument takes options. `signal` cancels the load, and
+`AbortSignal.timeout()` gives a timeout; an aborted load rejects with the signal's reason. `probeZFT: false`
+skips the `.zft` check for markers that have none.
+
+```javascript
+await arController.loadNFTMarker('path/to/marker', undefined, undefined, {
+  signal: AbortSignal.timeout(10000),
+  probeZFT: false,
+})
+```
+
+`fetch` replaces `XMLHttpRequest` and `axios`, so a `file://` URL no longer loads. WebAR needs a secure
+context anyway, and Cordova and Capacitor serve over a custom scheme. The Node build reads local files and has
+no `signal` or `probeZFT`; its `loadNFTMarker(s)` return an already-settled Promise. The deprecated legacy
+APIs in `build/` keep their callback-only signatures.
+
 
 ## ES6
 

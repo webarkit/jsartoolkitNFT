@@ -1,5 +1,5 @@
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
-import { INFTMarkerInfo, ARLogLevel, ARToolkitNFTModule } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel, ARToolkitNFTModule, NFTLoadOptions } from "./abstractions/CommonInterfaces";
 /**
  * The WASM wrapper shared by the browser builds (default, SIMD, threaded). Each
  * build's `ARToolkitNFT` subclass only names its module factory and the argument
@@ -201,25 +201,72 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
      * the ARParam struct.
      * @param {Uint8Array|string} urlOrData: the camera parameter, usually a path to a .dat file
      * @return {Promise<number>} a promise that resolves to a number, the internal id.
+     * A download failure rejects with the `NFTLoadError` from the fetch (kind
+     * `http` or `network`), which names the URL.
      */
     loadCamera(urlOrData: Uint8Array | string): Promise<number>;
     /**
-     * Load the NFT Markers (.fset, .iset and .fset3) in the code, Must be provided
-     * the url of the file without the extension. If fails to load it raise an error.
-     * @param {Array<string>} urls  array of urls of the descriptors files without ext
-     * @param {function} callback the callback to retrieve the ids.
-     * @param {function} onError2 the error callback.
-     * @return {Array<number>} an array of ids.
+     * Loads NFT markers and registers them as one batch.
+     *
+     * Each entry is either a URL without extension (`.zft` is probed first,
+     * then `.fset`, `.iset` and `.fset3`), a URL ending in `.zft`, or an explicit
+     * list of file URLs for one marker.
+     *
+     * All or nothing: if any marker fails, none of this call's markers is
+     * registered and its files are removed. Markers loaded by earlier calls stay.
+     *
+     * - **Promise style** (no callbacks): resolves to the marker ids, or rejects
+     *   with an `NFTLoadError`, or with `signal.reason` (`AbortError`,
+     *   `TimeoutError`) when `opts.signal` aborts.
+     * - **Callback style** (`callback` and/or `onError`): never rejects for a load
+     *   failure. `onError(code)` is called once, with the HTTP status or -1
+     *   (or `console.error` when there is no `onError`), and the Promise resolves
+     *   to `[]`.
+     *
+     * Errors from different bundles are different classes, so test
+     * `err.name === "NFTLoadError"` and `err.kind` rather than `instanceof`.
+     * @param urls the markers to load, one entry per marker.
+     * @param callback deprecated: receives the ids on success.
+     * @param onError deprecated: receives the error code on failure.
+     * @param opts `signal` cancels the downloads; `probeZFT` (default true)
+     * probes for a `.zft` before the three files.
+     * @return the ids the native core assigned, in the order of `urls`.
      */
-    addNFTMarkers(urls: Array<string | Array<string>>, callback: (filename: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
+    addNFTMarkers(urls: Array<string | string[]>, callback?: (ids: number[]) => void, onError?: (code: number) => void, opts?: NFTLoadOptions): Promise<number[]>;
     /**
-     * Used internally by the addNFTMarkers method
-     * @param {string} url url of the marker.
-     * @param {string} target the target of the marker.
-     * @param {function} callback callback to get the binary data.
-     * @param {function} errorCallback the error callback.
-     * @param {string} prefix the prefix for the marker.
-     * @return {void}
+     * The batch behind addNFTMarkers: load every marker concurrently, then
+     * register them in one `_addNFTMarkers`, or clean up and report one error.
      */
-    private ajax;
+    private runBatch;
+    /**
+     * Registers the prefixes in one native call and reads back the ids. `vec`
+     * and `ret` are Embind objects, freed in `finally`: the old loader leaked
+     * both on every call.
+     */
+    private registerMarkers;
+    /**
+     * Loads one marker into the FS and returns its prefix. It holds no batch
+     * policy: it knows nothing of the other markers and aborts none of them.
+     * @param source a URL without extension, a `.zft` URL, or a file list.
+     * @param signal aborts this marker's downloads.
+     * @param probeZFT probe for `<url>.zft` before the three files.
+     * @param written receives every FS path written, for the batch's cleanup.
+     */
+    private loadMarkerSource;
+    /**
+     * Downloads files concurrently and stores each at its path. On the first
+     * failure the others are aborted, and it still waits for all of them (D11)
+     * before rethrowing, so no download writes after its marker has failed.
+     */
+    private loadFiles;
+    /**
+     * Decompresses a `.zft` archive and writes the marker's `.fset`, `.iset`
+     * and `.fset3` under `prefix`. Any failure is an NFTLoadError "format".
+     * @param url the archive's URL, for the error.
+     */
+    private storeZFT;
+    /** Writes one file to the FS, recording its path first for the cleanup. */
+    private storeFile;
+    /** Unlinks FS files, ignoring the ones that are already gone. */
+    private unlinkAll;
 }

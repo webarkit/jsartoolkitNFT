@@ -303,14 +303,14 @@
         const self = this;
         artoolkitNFT.addNFTMarkers(this.id, markerURLs, function (ids) {
             self.nftMarkerCount += ids.length;
-            onSuccess(ids);
+            if (onSuccess) onSuccess(ids);
         }, onError);
     };
 
     ARControllerNFT.prototype.loadNFTMarker = function (markerURL, onSuccess, onError) {
         if (markerURL) {
             this.loadNFTMarkers([markerURL], function (ids) {
-                onSuccess(ids[0]);
+                if (onSuccess) onSuccess(ids[0]);
             }, onError);
         } else {
             if (onError) {
@@ -919,157 +919,380 @@
 
     let marker_count = 0;
 
+    /**
+        Loads one NFT marker and calls `callback` with its id: addNFTMarkers with a
+        single URL, with the same outcome rules.
+
+        @param {number} arId The id of the ARControllerNFT.
+        @param {string} url A URL prefix without extension, or a URL ending in `.zft`.
+        @param {function} callback Called with the marker id on success.
+        @param {function} onError Called once with the HTTP status or -1 on failure.
+    */
     function addNFTMarker(arId, url, callback, onError) {
-        const mId = marker_count++;
-        const prefix = '/markerNFT_' + mId;
-        const filename1 = prefix + '.fset';
-        const filename2 = prefix + '.iset';
-        const filename3 = prefix + '.fset3';
-        ajax(url + '.fset', filename1, function () {
-            ajax(url + '.iset', filename2, function () {
-                ajax(url + '.fset3', filename3, function () {
-                    var nftMarker = Module._addNFTMarker(arId, prefix);
-                    if (callback) callback(nftMarker);
-                }, function (errorNumber) { if (onError) onError(errorNumber); });
-            }, function (errorNumber) { if (onError) onError(errorNumber); });
-        }, function (errorNumber) { if (onError) onError(errorNumber); });
+        // It called Module._addNFTMarker, which no binding defines, so it threw
+        // after its downloads and could never succeed. It now goes through the batch
+        // loader (#685, D13).
+        addNFTMarkers(arId, [url], function (ids) {
+            if (callback) callback(ids[0]);
+        }, onError);
     }
 
+    /**
+        Loads NFT markers and registers them in one native call.
+
+        Each URL is either a prefix without extension, for which `<url>.zft` is
+        probed first and `.fset`, `.iset` and `.fset3` are loaded when there is no
+        archive, or a URL ending in `.zft`, which is loaded directly.
+
+        Each call has exactly one outcome: `callback(ids)` on success, or
+        `onerror(code)` once on failure, with the HTTP status of the failed
+        download, or -1 for anything else (a network failure, a `.zft` that cannot be
+        decompressed, a native refusal such as an unreadable dataset). Without
+        `onerror` the failure goes to `console.error`. A failed call registers none
+        of its markers and leaves none of its files in the Emscripten FS.
+
+        Known limitation of the legacy native loader (#685, D17): each call replaces
+        the markers loaded by earlier calls, and the ids restart at 0 on every call.
+        All or nothing holds within one call only. A call with 20 or more URLs is
+        refused with `onerror(-1)` before any request.
+
+        @param {number} arId The id of the ARControllerNFT.
+        @param {string[]} urls The markers to load, one URL per marker.
+        @param {function} callback Called with the array of marker ids on success.
+        @param {function} onerror Called once with the HTTP status or -1 on failure.
+    */
     function addNFTMarkers(arId, urls, callback, onerror) {
-        const prefixes = [];
-        let pending = urls.length * 3;
-        const onSuccess = (filename) => {
-            pending -= 1;
-            if (pending === 0) {
-                const vec = new Module.StringList();
-                const markerIds = [];
-                for (let i = 0; i < prefixes.length; i++) {
-                    vec.push_back(prefixes[i]);
-                }
-                const ret = Module._addNFTMarkers(arId, vec);
-                for (let i = 0; i < ret.size(); i++) {
-                    markerIds.push(ret.get(i));
-                }
+        runMarkerBatch(arId, urls).then(function (ids) {
+            if (callback) callback(ids);
+        }, function (e) {
+            // The old loader called `onerror` from an `(filename, errorNumber)`
+            // handler that `ajax` invoked as `errorCallback(status)`: the status
+            // landed in `filename`, so `onerror` always got undefined, once per
+            // failed file, and it was called without a check. It is now called
+            // once, with the HTTP status or -1.
+            if (onerror) onerror(errorCode(e));
+            else console.error(e);
+        });
+    }
 
-                console.log("add nft marker ids: ", markerIds);
-                if (callback) callback(markerIds);
-            }
+    // The legacy native loader's PAGES_MAX (emscripten/ARToolKitJS.cpp).
+    const LEGACY_MAX_MARKERS = 20;
+
+    /**
+        The batch behind addNFTMarkers, with the algorithm of the TypeScript loader
+        (src/ARToolkitNFTBase.ts) minus its options: load every marker
+        concurrently, then register them in one `_addNFTMarkers`, or clean up and
+        throw one error.
+    */
+    async function runMarkerBatch(arId, urls) {
+        if (!Array.isArray(urls) || urls.length === 0) {
+            throw loadError(-1, 'addNFTMarkers: no marker URLs given');
         }
-        const onError = (filename, errorNumber) => {
-            console.log("failed to load: ", filename);
-            onerror(errorNumber);
-        }
-
-        const loadZFT = (prefix) => {
-            const marker_num = prefix.substring(11);
-            const prefixTemp = '/tempMarkerNFT_' + marker_num;
-
-            const response = Module._decompressZFT(prefix, prefixTemp);
-            // The archive is no longer needed once decompressed: free it from MEMFS.
-            try {
-              FS.unlink(prefix + '.zft');
-            } catch (e) {}
-            if (response !== 1) {
-              onError(prefix + '.zft');
-              return;
-            }
-
-            let contentIsetUint8 = FS.readFile(prefixTemp + '.iset');
-            let contentFsetUint8 = FS.readFile(prefixTemp + '.fset');
-            let contentFset3Uint8 = FS.readFile(prefixTemp + '.fset3');
-
-            FS.unlink(prefixTemp + '.iset');
-            FS.unlink(prefixTemp + '.fset');
-            FS.unlink(prefixTemp + '.fset3');
-
-            let hexStrIset = Uint8ArrayToStr(contentIsetUint8);
-            let hexStrFset = Uint8ArrayToStr(contentFsetUint8);
-            let hexStrFset3 = Uint8ArrayToStr(contentFset3Uint8);
-
-            let contentIset = new Uint8Array(hexStrIset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-            let contentFset = new Uint8Array(hexStrFset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-            let contentFset3 = new Uint8Array(hexStrFset3.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-
-            writeByteArrayToFS(prefix + '.fset', contentFset, function () { });
-            writeByteArrayToFS(prefix + '.iset', contentIset, function () { });
-            writeByteArrayToFS(prefix + '.fset3', contentFset3, function () { });
-
-        }
-
-        const onSuccessZFT = function () {
-            loadZFT(arguments[1]);
-            onSuccess();
-        }
-
+        // Compatibility: the old loader built every file name as `url + '.fset'`,
+        // which coerced a one-element array such as ['…/pinball'] to its string,
+        // so that form loaded. Callers that pass the marker that way are
+        // unwrapped, not refused. The legacy APIs take URL prefixes only: longer
+        // arrays never loaded.
+        urls = urls.map(function (url) {
+            return Array.isArray(url) && url.length === 1 ? url[0] : url;
+        });
         for (let i = 0; i < urls.length; i++) {
-            const url = urls[i];
-            const prefix = '/markerNFT_' + marker_count;
-            prefixes.push(prefix);
-            const filename1 = prefix + '.fset';
-            const filename2 = prefix + '.iset';
-            const filename3 = prefix + '.fset3';
-            const filename4 = prefix + '.zft';
-
-            let type = checkZFT(url + '.zft');
-            if (type) {
-                pending -= 2;
-                ajax(url + '.zft', filename4, onSuccessZFT, onError.bind(filename4), prefix);
-            } else {
-                ajax(url + '.fset', filename1, onSuccess.bind(filename1), onError.bind(filename1), prefix);
-                ajax(url + '.iset', filename2, onSuccess.bind(filename2), onError.bind(filename2), prefix);
-                ajax(url + '.fset3', filename3, onSuccess.bind(filename3), onError.bind(filename3), prefix);
+            // An empty URL would probe the page itself (D15).
+            if (typeof urls[i] !== 'string' || urls[i] === '') {
+                throw loadError(-1, 'addNFTMarkers: empty marker URL');
             }
-            marker_count += 1;
+        }
+        // D17: the legacy native loader runs exit(-1) at 20 markers per call,
+        // which terminates the module. The call is refused before any request.
+        if (urls.length >= LEGACY_MAX_MARKERS) {
+            throw loadError(-1, 'addNFTMarkers: the legacy API loads at most ' +
+                (LEGACY_MAX_MARKERS - 1) + ' markers per call, got ' + urls.length);
+        }
+
+        // The call's own controller: it stops the other downloads on the first
+        // failure.
+        const controller = new AbortController();
+        const written = [];
+        let ok = false;
+        try {
+            const prefixes = await settleAll(urls.map(function (url) {
+                return loadMarkerSource(url, controller.signal, written);
+            }), function () {
+                controller.abort();
+            });
+            const ids = registerMarkers(arId, prefixes);
+            if (ids.length < prefixes.length) {
+                throw loadError(-1, 'The native core registered ' + ids.length +
+                    ' of ' + prefixes.length + ' markers: a dataset may be ' +
+                    'unreadable. The core\'s log says which.');
+            }
+            ok = true;
+            return ids;
+        } finally {
+            // All or nothing: a failed call leaves no file behind. Safe here
+            // because settleAll waited for every download (D11).
+            if (!ok) unlinkAll(written);
         }
     }
 
-    function checkZFT(url) {
-        let isZFT = null;
-
-        let request = new XMLHttpRequest();
-        request.open('GET', url, false);  // `false` makes the request synchronous
-        request.send(null);
-
-        if (request.status === 200) {
-            isZFT = true;
-        } else if (request.status === 404) {
-            isZFT = false;
+    /**
+        Registers the prefixes in one native call and reads back the ids. `vec` and
+        `ret` are Embind objects, deleted here: the old loader leaked both.
+    */
+    function registerMarkers(arId, prefixes) {
+        const vec = new Module.StringList();
+        let ret;
+        try {
+            for (let i = 0; i < prefixes.length; i++) {
+                vec.push_back(prefixes[i]);
+            }
+            try {
+                ret = Module._addNFTMarkers(arId, vec);
+            } catch (cause) {
+                // D16: a throw from the native side (an abort, an Emscripten
+                // ExitStatus) is a refusal like any other.
+                throw loadError(-1, 'The native core threw while registering the markers', cause);
+            }
+            const ids = [];
+            for (let i = 0; i < ret.size(); i++) {
+                ids.push(ret.get(i));
+            }
+            return ids;
+        } finally {
+            vec.delete();
+            if (ret && ret.delete) ret.delete();
         }
-
-        return isZFT;
     }
 
-    function Uint8ArrayToStr(array) {
-        let out, i, len, c;
-        let char2, char3;
+    /**
+        Loads one marker into the FS and returns its prefix. It knows nothing of
+        the other markers of the call and aborts none of them.
+    */
+    async function loadMarkerSource(url, signal, written) {
+        // Taken before any request, so prefixes stay unique across concurrent
+        // calls and are never reused.
+        const prefix = '/markerNFT_' + marker_count++;
 
-        out = "";
-        len = array.length;
-        i = 0;
-        while (i < len) {
-            c = array[i++];
-            switch (c >> 4) {
-                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                    // 0xxxxxxx
-                    out += String.fromCharCode(c);
-                    break;
-                case 12: case 13:
-                    // 110x xxxx   10xx xxxx
-                    char2 = array[i++];
-                    out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
-                    break;
-                case 14:
-                    // 1110 xxxx  10xx xxxx  10xx xxxx
-                    char2 = array[i++];
-                    char3 = array[i++];
-                    out += String.fromCharCode(((c & 0x0F) << 12) |
-                        ((char2 & 0x3F) << 6) |
-                        ((char3 & 0x3F) << 0));
-                    break;
-            }
+        if (extensionOf(url) === 'zft') {
+            const bytes = await fetchBinary(url, signal);
+            storeZFT(bytes, prefix, url, written);
+            return prefix;
         }
 
+        const zftUrl = url + '.zft';
+        let res;
+        try {
+            res = await fetch(zftUrl, { signal: signal });
+        } catch (cause) {
+            if (signal.aborted) throw cause;
+            throw loadError(-1, 'Network error fetching ' + zftUrl, cause);
+        }
+        if (res.ok) {
+            // The probe's own bytes are used: one request, not a probe and then a
+            // second download of the same archive.
+            const bytes = await readBody(res, zftUrl, signal);
+            storeZFT(bytes, prefix, zftUrl, written);
+            return prefix;
+        }
+        // D6: any HTTP error status means "no .zft" and falls back to the three
+        // files, not only 404. S3 and GCS answer 403 for a missing object when
+        // listing is not allowed, and those markers load through this fallback.
+        if (res.body) res.body.cancel().catch(function () { });
+
+        await loadFiles(['fset', 'iset', 'fset3'].map(function (ext) {
+            return { url: url + '.' + ext, path: prefix + '.' + ext };
+        }), signal, written);
+        return prefix;
+    }
+
+    /**
+        Downloads files concurrently and stores each at its path. On the first
+        failure the others are aborted, and it still waits for all of them (D11).
+    */
+    async function loadFiles(files, signal, written) {
+        const controller = new AbortController();
+        const onAbort = function () {
+            controller.abort();
+        };
+        if (signal.aborted) onAbort();
+        else signal.addEventListener('abort', onAbort);
+        try {
+            await settleAll(files.map(async function (file) {
+                const bytes = await fetchBinary(file.url, controller.signal);
+                storeFile(bytes, file.path, written);
+            }), onAbort);
+        } finally {
+            signal.removeEventListener('abort', onAbort);
+        }
+    }
+
+    /**
+        Decompresses a `.zft` archive and writes the marker's `.fset`, `.iset` and
+        `.fset3` under `prefix`. Any failure throws, so nothing is registered: the
+        old loader reported a failed decompression and then registered anyway.
+    */
+    function storeZFT(bytes, prefix, url, written) {
+        const archive = prefix + '.zft';
+        const temp = '/tempMarkerNFT_' + prefix.substring('/markerNFT_'.length);
+        const extensions = ['fset', 'iset', 'fset3'];
+        storeFile(bytes, archive, written);
+        // Recorded before decompressing: a failed decompression may leave some of
+        // them behind, and the batch's cleanup removes them.
+        for (let i = 0; i < extensions.length; i++) {
+            written.push(temp + '.' + extensions[i]);
+        }
+
+        let result;
+        try {
+            // The core takes the archive's path without ".zft" and appends it.
+            result = Module._decompressZFT(prefix, temp);
+        } catch (cause) {
+            throw loadError(-1, 'Could not decompress ' + url, cause);
+        } finally {
+            // The archive is no longer needed once decompressed: free it from MEMFS.
+            unlinkAll([archive]);
+        }
+        if (result !== 1) {
+            throw loadError(-1, 'Could not decompress ' + url);
+        }
+
+        try {
+            for (let i = 0; i < extensions.length; i++) {
+                const hex = FS.readFile(temp + '.' + extensions[i]);
+                unlinkAll([temp + '.' + extensions[i]]);
+                storeFile(hexToBytes(hex), prefix + '.' + extensions[i], written);
+            }
+        } catch (cause) {
+            throw loadError(-1, 'Could not decode ' + url, cause);
+        }
+    }
+
+    /** Writes one file to the FS, recording its path first for the cleanup. */
+    function storeFile(bytes, path, written) {
+        written.push(path);
+        FS.writeFile(path, bytes, { encoding: 'binary' });
+    }
+
+    /** Unlinks FS files, ignoring the ones that are already gone. */
+    function unlinkAll(paths) {
+        for (let i = 0; i < paths.length; i++) {
+            try {
+                FS.unlink(paths[i]);
+            } catch (e) { }
+        }
+    }
+
+    /**
+        An Error carrying the code `onerror` receives: the HTTP status, or -1.
+        The legacy API has no NFTLoadError class; the code is all it reports.
+    */
+    function loadError(code, message, cause) {
+        const error = new Error(message);
+        error.code = code;
+        if (cause !== undefined) error.cause = cause;
+        return error;
+    }
+
+    /** The code for `onerror`: the HTTP status of a failed download, or -1. */
+    function errorCode(e) {
+        return e && typeof e.code === 'number' ? e.code : -1;
+    }
+
+    /**
+        Fetches a file as bytes. A non-OK response throws with the HTTP status as
+        its code; a rejected fetch throws -1, except an abort, which propagates
+        unchanged.
+    */
+    async function fetchBinary(url, signal) {
+        let response;
+        try {
+            response = await fetch(url, { signal: signal });
+        } catch (cause) {
+            if (signal && signal.aborted) throw cause;
+            throw loadError(-1, 'Network error fetching ' + url, cause);
+        }
+        if (!response.ok) {
+            throw loadError(response.status, 'HTTP ' + response.status + ' fetching ' + url);
+        }
+        return readBody(response, url, signal);
+    }
+
+    /**
+        Reads a response body as bytes. The connection can still fail after the
+        headers arrived; that is a network failure too (-1).
+    */
+    async function readBody(response, url, signal) {
+        try {
+            return new Uint8Array(await response.arrayBuffer());
+        } catch (cause) {
+            if (signal && signal.aborted) throw cause;
+            throw loadError(-1, 'Network error reading ' + url, cause);
+        }
+    }
+
+    /**
+        Decodes ASCII hex (two digits per byte, either case) straight to bytes.
+        Replaces Uint8ArrayToStr + match(/.{1,2}/g) + parseInt, which built two
+        intermediate strings and an array of pair strings per descriptor file.
+    */
+    function hexToBytes(hex) {
+        if (hex.length % 2 !== 0) {
+            throw new RangeError('hexToBytes: odd number of hex digits');
+        }
+        const nibble = function (c) {
+            if (c >= 48 && c <= 57) return c - 48; // 0-9
+            if (c >= 97 && c <= 102) return c - 87; // a-f
+            if (c >= 65 && c <= 70) return c - 55; // A-F
+            throw new RangeError('hexToBytes: invalid hex digit (byte ' + c + ')');
+        };
+        const out = new Uint8Array(hex.length / 2);
+        for (let i = 0; i < out.length; i++) {
+            out[i] = (nibble(hex[2 * i]) << 4) | nibble(hex[2 * i + 1]);
+        }
         return out;
+    }
+
+    /**
+        The extension of a marker URL, without the dot: a query or a hash is not
+        part of it (`/x/pinball.zft?v=2` gives `zft`), and a dot in a directory
+        name is ignored. Read from the string, not by resolving the URL: in an
+        about:blank or about:srcdoc frame `new URL(relative, location.href)`
+        throws, while fetch resolves the same URL against the document base
+        (#736 review). Same rule as Utils.extensionOf in src/.
+    */
+    function extensionOf(url) {
+        const end = url.search(/[?#]/);
+        const path = end < 0 ? url : url.substring(0, end);
+        const name = path.substring(path.lastIndexOf('/') + 1);
+        const dot = name.lastIndexOf('.');
+        return dot < 0 ? '' : name.substring(dot + 1);
+    }
+
+    /**
+        Settles every task, calling `onFirstFailure` as soon as one fails, and then
+        resolves to all the values or rejects with the first failure.
+
+        D11: it waits for every task, aborted or not, before deciding. Rejecting on
+        the first failure, as Promise.all does, would let a download that finishes
+        late write its file after the caller has cleaned up.
+    */
+    async function settleAll(tasks, onFirstFailure) {
+        let failed = false;
+        let failure;
+        const results = await Promise.allSettled(tasks.map(function (task) {
+            return task.catch(function (e) {
+                if (!failed) {
+                    failed = true;
+                    failure = e;
+                    onFirstFailure();
+                }
+                throw e;
+            });
+        }));
+        if (failed) throw failure;
+        return results.map(function (r) {
+            return r.value;
+        });
     }
 
     function bytesToString(array) {
@@ -1093,7 +1316,16 @@
         } else if (url.indexOf("\n") > -1) { // Or a string with the camera param
             writeStringToFS(filename, url, writeCallback);
         } else {
-            ajax(url, filename, writeCallback, errorCallback);
+            // fetch replaces the XHR `ajax`, which handled only onload: a
+            // network failure never called back. errorCallback keeps its
+            // numeric payload (D16): the HTTP status, or -1 for a network
+            // failure.
+            fetchBinary(url).then(function (bytes) {
+                writeByteArrayToFS(filename, bytes, writeCallback);
+            }, function (e) {
+                if (errorCallback) errorCallback(errorCode(e));
+                else console.error(e);
+            });
         }
     }
 
@@ -1112,30 +1344,6 @@
         // console.log('FS written', target);
 
         callback(byteArray, prefix);
-    }
-
-    // Eg.
-    //	ajax('../bin/Data2/markers.dat', '/Data2/markers.dat', callback);
-    //	ajax('../bin/Data/patt.hiro', '/patt.hiro', callback);
-
-    function ajax(url, target, callback, errorCallback, prefix) {
-        const oReq = new XMLHttpRequest();
-        oReq.open('GET', url, true);
-        oReq.responseType = 'arraybuffer'; // blob arraybuffer
-
-        oReq.onload = function () {
-            if (this.status == 200) {
-                // console.log('ajax done for ', url);
-                const arrayBuffer = oReq.response;
-                const byteArray = new Uint8Array(arrayBuffer);
-                writeByteArrayToFS(target, byteArray, callback, prefix);
-            }
-            else {
-                errorCallback(this.status);
-            }
-        };
-
-        oReq.send();
     }
 
     /* Exports */
