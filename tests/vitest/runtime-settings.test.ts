@@ -1,7 +1,14 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
 import { VARIANTS } from "./variants";
 import { version } from "../../package.json";
-import { CAMERA_PARAM, VIDEO_WIDTH, VIDEO_HEIGHT } from "./helpers";
+import {
+  CAMERA_PARAM,
+  MARKER_PINBALL,
+  VIDEO_WIDTH,
+  VIDEO_HEIGHT,
+  loadMarkers,
+} from "./helpers";
+import { loadCompositeFrames, isFound, processUntil } from "./frames";
 
 /**
  * configure() and getRuntimeSettings() on ARControllerNFT (#720), on every browser build.
@@ -294,4 +301,63 @@ describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
     expect(controllerLines).toEqual([]);
     ar.dispose?.();
   });
+});
+
+/**
+ * The AR2 values reach the live tracking handle (#720, D6).
+ *
+ * trackingThresh is the largest template-matching error AR2 accepts for a tracked frame
+ * (ar2Tracking fails above it). On the pinball photo the error is a few pixels: the default 5
+ * tracks it, and 0.01 rejects every frame. Measured while writing this test, over 60 frames
+ * of pinballOnly: 0.01 and 0.1 found the marker on 0 frames on every build, the default on
+ * 60/60 (wasm, simd) and 19/60 (threaded, which waits for its detection worker first);
+ * 1.0 already tracked only some frames, so 0.01 is far from the edge.
+ *
+ * One controller, so configure() is shown to change the handle that is already tracking,
+ * not only the one a new session creates.
+ */
+describe.each(VARIANTS)("AR2 settings reach the handle ($name)", (variant) => {
+  let ar: any;
+  let frame: ImageData;
+
+  beforeAll(async () => {
+    const { ARControllerNFT } = await variant.load();
+    const frames = await loadCompositeFrames();
+    frame = frames.pinballOnly;
+    ar = await ARControllerNFT.initWithDimensions(
+      frames.width,
+      frames.height,
+      CAMERA_PARAM,
+      true,
+      { logLevel: 3 },
+    );
+    const [id] = await loadMarkers(ar, [MARKER_PINBALL]);
+    ar.trackNFTMarkerId(id);
+  }, 150_000);
+
+  afterAll(() => {
+    ar?.dispose?.();
+  });
+
+  it("trackingThresh 0.01 stops tracking, the default tracks again", async () => {
+    const defaults = ar.getRuntimeSettings().ar2;
+    expect(defaults.trackingThresh).toBe(5);
+
+    // The defaults track the photo.
+    await processUntil(ar, frame, () => isFound(ar, 0), 300);
+
+    // 0.01 loses it on the live handle and never finds it again: detection still runs and
+    // succeeds, but every pose it hands to AR2 fails the threshold.
+    ar.configure({ ar2: { trackingThresh: 0.01 } });
+    await processUntil(ar, frame, () => !isFound(ar, 0), 20);
+    for (let i = 0; i < 150; i++) {
+      ar.process(frame);
+      expect(isFound(ar, 0)).toBe(false);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+    }
+
+    // Back to the default, the same controller tracks again.
+    ar.configure({ ar2: { trackingThresh: defaults.trackingThresh } });
+    await processUntil(ar, frame, () => isFound(ar, 0), 300);
+  }, 120_000);
 });
