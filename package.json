@@ -109,6 +109,6 @@
   },
   "license": "LGPL-3.0",
   "dependencies": {
-    "@babel/runtime": "8.0.5"
+    "@babel/runtime": "8.0.7"
   }
 }
