@@ -20,29 +20,39 @@ import {
 // deprecated (`threshold`, `thresholdMode`, `imageProcMode`, `debugMode`), would otherwise
 // be dropped without a word, and #720's rule is that a request that cannot be honoured
 // fails rather than being silently ignored.
-const TOP_LEVEL_KEYS: Record<string, "number" | "boolean"> = {
+// "integer" marks the fields that are int in the core (NFTRuntimeSettings.h).
+type ValueKind = "number" | "integer" | "boolean";
+const TOP_LEVEL_KEYS: Record<string, ValueKind> = {
   near: "number",
   far: "number",
   continuousDetection: "boolean",
   detectionInterval: "number",
   filtering: "boolean",
-  logLevel: "number",
+  logLevel: "integer",
 };
-const AR2_KEYS: Record<string, "number"> = {
+const AR2_KEYS: Record<string, ValueKind> = {
   trackingThresh: "number",
   simThresh: "number",
-  searchFeatureNum: "number",
-  templateSize1: "number",
-  templateSize2: "number",
-  searchSize: "number",
+  searchFeatureNum: "integer",
+  templateSize1: "integer",
+  templateSize2: "integer",
+  searchSize: "integer",
 };
 
-function checkValue(key: string, value: unknown, type: string): void {
+function checkValue(key: string, value: unknown, kind: ValueKind): void {
   // Embind would coerce a wrong type (a string to NaN, 1 to true) instead of failing,
   // so the type is checked here, where the key can still be named.
+  const type = kind === "integer" ? "number" : kind;
   if (typeof value !== type) {
     throw new TypeError(
-      `configure(): "${key}" must be a ${type}, got ${typeof value}`,
+      `configure(): "${key}" must be a ${kind}, got ${typeof value}`,
+    );
+  }
+  // For an int field Embind truncates (3.5 becomes 3) instead of failing: the same silent
+  // substitution as above, so a non-integer, NaN included, is refused here too.
+  if (kind === "integer" && !Number.isInteger(value)) {
+    throw new TypeError(
+      `configure(): "${key}" must be an integer, got ${String(value)}`,
     );
   }
 }
@@ -50,8 +60,9 @@ function checkValue(key: string, value: unknown, type: string): void {
 /**
  * Applies a runtime-settings patch to a native ARToolKitNFT instance (D8), for the
  * browser and Node wrappers alike:
- * 1. rejects unknown top-level and `ar2` keys, and values of the wrong type, with a
- *    TypeError naming the key;
+ * 1. rejects unknown top-level and `ar2` keys, values of the wrong type, and
+ *    non-integers for the fields that are int in the core, with a TypeError naming the
+ *    key;
  * 2. deep-merges the patch into `getRuntimeSettings()`, `ar2` field by field (undefined
  *    values count as absent);
  * 3. calls the native `configure()` once, which validates everything and changes nothing

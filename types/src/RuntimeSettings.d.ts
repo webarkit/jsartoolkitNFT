@@ -2,8 +2,9 @@ import { IARToolKitNFTInstance, NFTRuntimeSettingsPatch } from "./abstractions/C
 /**
  * Applies a runtime-settings patch to a native ARToolKitNFT instance (D8), for the
  * browser and Node wrappers alike:
- * 1. rejects unknown top-level and `ar2` keys, and values of the wrong type, with a
- *    TypeError naming the key;
+ * 1. rejects unknown top-level and `ar2` keys, values of the wrong type, and
+ *    non-integers for the fields that are int in the core, with a TypeError naming the
+ *    key;
  * 2. deep-merges the patch into `getRuntimeSettings()`, `ar2` field by field (undefined
  *    values count as absent);
  * 3. calls the native `configure()` once, which validates everything and changes nothing

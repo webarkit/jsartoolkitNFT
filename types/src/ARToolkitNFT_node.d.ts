@@ -107,8 +107,9 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
      * init() creates its own module.
      * @param patch any subset of the settings.
      * @throws {TypeError} on an unknown key (including the deprecated square-marker keys
-     * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`) or a value of the wrong
-     * type; nothing is changed.
+     * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`), a value of the wrong
+     * type, or a non-integer for an integer field (`logLevel`, `ar2.searchFeatureNum`,
+     * `ar2.templateSize1/2`, `ar2.searchSize`); nothing is changed.
      * @throws {RangeError} when the values are out of range; nothing is changed.
      */
     configure(patch: NFTRuntimeSettingsPatch): void;

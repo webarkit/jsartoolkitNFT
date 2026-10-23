@@ -117,6 +117,24 @@ describe("Node build, runtime settings", () => {
     assert.deepEqual(cameraMatrix(), matrix);
   });
 
+  it("non-integer values for integer settings throw TypeError", () => {
+    // These are int in the core, and Embind would truncate 3.5 to 3 instead of failing.
+    const matrix = cameraMatrix();
+    assert.throws(() => ar.configure({ ar2: { searchFeatureNum: 3.5 } }), TypeError);
+    assert.throws(
+      () => ar.configure({ ar2: { searchFeatureNum: 3.5 } }),
+      /ar2\.searchFeatureNum/,
+    );
+    assert.throws(() => ar.configure({ ar2: { templateSize1: 6.2 } }), TypeError);
+    assert.throws(() => ar.configure({ ar2: { templateSize2: NaN } }), TypeError);
+    assert.throws(() => ar.configure({ ar2: { searchSize: 1.5 } }), TypeError);
+    assert.throws(() => ar.configure({ logLevel: 1.5 }), /logLevel/);
+    // Nothing is applied, not even the valid keys of the same patch.
+    assert.throws(() => ar.configure({ near: 2, ar2: { searchFeatureNum: 3.5 } }), TypeError);
+    assert.deepEqual(ar.getRuntimeSettings(), initial);
+    assert.deepEqual(cameraMatrix(), matrix);
+  });
+
   it("invalid values throw RangeError", () => {
     const matrix = cameraMatrix();
     assert.throws(() => ar.configure({ near: 0 }), RangeError);

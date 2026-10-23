@@ -129,6 +129,31 @@ describe.each(VARIANTS)("runtime settings ($name)", (variant) => {
     expect(cameraMatrix()).toEqual(matrix);
   });
 
+  it("non-integer values for integer settings throw TypeError", () => {
+    // These are int in the core, and Embind would truncate 3.5 to 3 instead of failing.
+    const matrix = cameraMatrix();
+    expect(() => ar.configure({ ar2: { searchFeatureNum: 3.5 } })).toThrow(
+      /ar2\.searchFeatureNum/,
+    );
+    expect(() => ar.configure({ ar2: { searchFeatureNum: 3.5 } })).toThrow(
+      TypeError,
+    );
+    expect(() => ar.configure({ ar2: { templateSize1: 6.2 } })).toThrow(
+      TypeError,
+    );
+    expect(() => ar.configure({ ar2: { templateSize2: NaN } })).toThrow(
+      TypeError,
+    );
+    expect(() => ar.configure({ ar2: { searchSize: 1.5 } })).toThrow(TypeError);
+    expect(() => ar.configure({ logLevel: 1.5 })).toThrow(/logLevel/);
+    // Nothing is applied, not even the valid keys of the same patch.
+    expect(() =>
+      ar.configure({ near: 2, ar2: { searchFeatureNum: 3.5 } }),
+    ).toThrow(TypeError);
+    expect(ar.getRuntimeSettings()).toEqual(initial);
+    expect(cameraMatrix()).toEqual(matrix);
+  });
+
   it("invalid values throw RangeError", () => {
     const matrix = cameraMatrix();
     expect(() => ar.configure({ near: 0 })).toThrow(RangeError);
