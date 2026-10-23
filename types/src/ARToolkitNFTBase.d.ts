@@ -1,5 +1,5 @@
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
-import { INFTMarkerInfo, ARLogLevel, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARToolkitNFTModule, NFTLoadOptions } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARToolkitNFTModule, NFTLoadOptions, ARInitOptions } from "./abstractions/CommonInterfaces";
 /**
  * The WASM wrapper shared by the browser builds (default, SIMD, threaded). Each
  * build's `ARToolkitNFT` subclass only names its module factory and the argument
@@ -78,16 +78,18 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
      * - markerNFTCount
      * - cameraCount
      * - version
-     * A message is displayed in the browser console during the intitialization, for example:
-     * "ARToolkitNFT 1.5.0"
+     * A message is displayed in the browser console during init(), for example:
+     * "ARToolkitNFT 1.5.0" (it moved there from the constructor, #677).
      */
     protected constructor(variantClass: typeof ARToolkitNFTBase, initModule: () => Promise<ARToolkitNFTModule>, ...instanceArgs: [] | [withFiltering: boolean]);
     /**
      * Init the class injecting the Wasm Module, link the instanced methods and
      * create a global artoolkitNFT variable.
+     * @param options `logLevel` is applied to the fresh module before the core is
+     * constructed (#677, D10), so the start-up lines follow it.
      * @return {object} the this object
      */
-    init(): Promise<this>;
+    init(options?: ARInitOptions): Promise<this>;
     setup(width: number, height: number, cameraId: number): number;
     teardown(): void;
     setupAR2(): void;

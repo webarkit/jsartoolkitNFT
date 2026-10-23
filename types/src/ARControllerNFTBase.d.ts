@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch, NFTLoadOptions } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch, NFTLoadOptions, ARInitOptions } from "./abstractions/CommonInterfaces";
 import { ARToolkitNFTBase } from "./ARToolkitNFTBase";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 /**
@@ -436,7 +436,7 @@ export declare abstract class ARControllerNFTBase implements AbstractARControlle
      * Don't call directly this but instead instantiate a new ARControllerNFT.
      * @return {ARControllerNFT} The initialized ARControllerNFT instance
      */
-    protected _initialize(): Promise<this>;
+    protected _initialize(options?: ARInitOptions): Promise<this>;
     /**
      * Init the necessary kpm handle for NFT and the settings for the CPU.
      * @return {number} 0 (void)

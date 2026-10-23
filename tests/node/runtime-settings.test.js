@@ -9,9 +9,10 @@
  *
  * Run with `npm run test:node`, from examples/node as the Node examples are.
  */
-const { describe, it, before, afterEach } = require("node:test");
+const { describe, it, before, afterEach, mock } = require("node:test");
 const assert = require("node:assert/strict");
 const path = require("node:path");
+const { version } = require("../../package.json");
 
 const EXAMPLE_DIR = path.resolve(__dirname, "../../examples/node");
 const { ARControllerNFT } = require("../../dist/ARToolkitNFT_node.js");
@@ -173,5 +174,53 @@ describe("Node build, runtime settings", () => {
     assert.equal(s.detectionInterval, 50);
     assert.throws(() => toolkit.configure({ bogus: 1 }), TypeError);
     assert.throws(() => toolkit.configure({ far: -1 }), RangeError);
+  });
+});
+
+// #677, D10: a log level at initialisation, and JS console lines that follow it. The level
+// is applied inside init(), before the core is constructed, so the native start-up lines
+// obey it too. Every console method is spied on: a native logger may use any of them.
+/** The lines of arParamDisp(): the rules, SIZE, the distortion factors and the matrix rows. */
+const CAMERA_DUMP = /^(-{10,}|SIZE = |Distortion factor|\s+fx=|(-?\d+\.\d+ ){4}$)/;
+
+describe("Node build, start-up log level", () => {
+  const spyConsole = () =>
+    ["log", "info", "warn", "error", "debug"].map((m) =>
+      mock.method(console, m, () => {}),
+    );
+  const callsOf = (spies) => spies.flatMap((s) => s.mock.calls.map((c) => c.arguments));
+  afterEach(() => mock.restoreAll());
+  before(() => process.chdir(EXAMPLE_DIR));
+
+  it("init-time logLevel silences start-up output", async () => {
+    const spies = spyConsole();
+    const ar = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat", {
+      logLevel: 3,
+    });
+    // Two things still print, and are filtered out here:
+    // - the version line is a RelInfo line (#677), the quietest level, so it survives Error;
+    // - the camera parameter table of arParamDisp(), which prints with the unlevelled ARLOG
+    //   (a plain printf) in the core, so no level reaches it. Gating it needs a native change
+    //   (ARToolKitJS.cpp calls it right after the level-gated "*** Camera Parameter ***").
+    const calls = callsOf(spies)
+      .filter((a) => !String(a[0]).startsWith("ARToolkitNFT"))
+      .filter((a) => !CAMERA_DUMP.test(String(a[0])));
+    mock.restoreAll();
+    assert.deepEqual(calls, []);
+    assert.equal(ar.getRuntimeSettings().logLevel, 3);
+    // configure() must not write the core's own level back over the init-time one (D9).
+    ar.configure({ near: 1 });
+    assert.equal(ar.getRuntimeSettings().logLevel, 3);
+  });
+
+  it("default init still logs the version", async () => {
+    const spies = spyConsole();
+    await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
+    const info = spies[1].mock.calls
+      .map((c) => c.arguments)
+      .filter((a) => String(a[0]).startsWith("ARToolkitNFT"));
+    mock.restoreAll();
+    assert.equal(info.length, 1);
+    assert.ok(info[0].join(" ").includes(version));
   });
 });

@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARInitOptions } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 export declare class ARControllerNFT implements AbstractARControllerNFT {
     private id;
@@ -74,9 +74,11 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param {number} width
      * @param {number} height
      * @param {string} cameraParam
+     * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+     * so the start-up output follows it (#677). Per controller in JS.
      * @return {Promise<ARControllerNFT>} this
      */
-    static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
+    static initWithDimensions(width: number, height: number, cameraParam: string, options?: ARInitOptions): Promise<ARControllerNFT>;
     /** The static method **initWithImage** is the start of your app.
      *  Define it with an HTML element like a video or a static Image
      *  and the camera parameter file path. As with **initWithDimensions** it return a Promise
@@ -94,9 +96,11 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      *  ```
      * @param {image} image
      * @param {string} cameraParam
+     * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+     * so the start-up output follows it (#677). Per controller in JS.
      * @return {Promise<ARControllerNFT>} this
      */
-    static initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT>;
+    static initWithImage(image: IImageObj, cameraParam: string, options?: ARInitOptions): Promise<ARControllerNFT>;
     /** The static method **customInit** is the start of your app.
      *  This method is only for advanced users.
      *  Define it with the width and height of the video stream,
@@ -122,9 +126,11 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param {number} height
      * @param {string} cameraParam
      * @param {function} callback
+     * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+     * so the start-up output follows it (#677). Per controller in JS.
      * @return {Promise<ARControllerNFT>} this
      */
-    static customInit(width: number, height: number, cameraParam: string, callback: () => void): Promise<ARControllerNFT>;
+    static customInit(width: number, height: number, cameraParam: string, callback: () => void, options?: ARInitOptions): Promise<ARControllerNFT>;
     set width(width: number);
     get width(): number;
     set height(height: number);

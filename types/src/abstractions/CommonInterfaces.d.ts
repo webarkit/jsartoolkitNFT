@@ -18,6 +18,21 @@ export declare enum ARLogLevel {
     RelInfo = 4
 }
 /**
+ * The options `init()`, `initWithDimensions()`, `initWithImage()` and `customInit()` accept
+ * (#677).
+ */
+export interface ARInitOptions {
+    /**
+     * The log level, applied to the fresh module before the core is constructed, so the native
+     * start-up lines (the constructor, the camera dump) obey it too. Per controller in JS, as
+     * every init builds its own module; `configure({ logLevel })` changes it later.
+     *
+     * The version line is logged at {@link ARLogLevel.RelInfo}, the quietest level, so it
+     * still prints at `Error`. Only a level above `RelInfo` removes it.
+     */
+    logLevel?: ARLogLevel | number;
+}
+/**
  * The AR2 tracking parameters of {@link NFTRuntimeSettings}. Before runtime settings they
  * were constants of the native setupAR2(); the defaults are those constants.
  */

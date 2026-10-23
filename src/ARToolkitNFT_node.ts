@@ -42,7 +42,9 @@ import {
   NFTRuntimeSettingsPatch,
   ARToolkitNFTNodeModule,
   IARToolKitNFTInstance,
+  ARInitOptions,
 } from "./abstractions/CommonInterfaces";
+import { logAt } from "./logger";
 import { applyRuntimeSettingsPatch } from "./RuntimeSettings";
 import packageJson from "../package.json";
 import { NFTLoadError, errorCode } from "./NFTLoadError";
@@ -147,8 +149,8 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
    * - instance
    * - cameraCount
    * - version
-   * A message is displayed in the console during the intitialization, for example:
-   * "ARToolkitNFT 1.5.0"
+   * A message is displayed in the console during init(), for example:
+   * "ARToolkitNFT 1.5.0" (it moved there from the constructor, #677).
    */
   constructor() {
     // reference to WASM module
@@ -156,7 +158,7 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     this.cameraCount = 0;
     this.nodefsMounted = false;
     this.version = version;
-    console.info("ARToolkitNFT ", this.version);
+    // The version line is logged by init(), after the log level is applied (#677).
   }
 
   // ---------------------------------------------------------------------------
@@ -166,10 +168,19 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
    * Init the class injecting the Wasm Module and link the instanced methods.
    * Every call builds its own module, so each ARToolkitNFT has its own heap
    * and filesystem.
+   * @param options `logLevel` is applied to the fresh module before the core is
+   * constructed (#677, D10), so the start-up lines follow it.
    * @return {object} the this object
    */
-  public async init() {
+  public async init(options?: ARInitOptions) {
     const instance = await initARToolkitNFT();
+    // Between the factory and the core's constructor, through the module-level binding:
+    // the constructor and the camera dump print as soon as they run (#677, D10).
+    const level = options?.logLevel;
+    if (level !== undefined) instance.setLogLevel(level);
+    // The version line moved here from the constructor so that it can follow the level. It
+    // is a RelInfo line, so it can still be kept at any level up to RelInfo (#677).
+    logAt(ARLogLevel.RelInfo, level ?? ARLogLevel.Info, "ARToolkitNFT ", this.version);
     this.instance = new instance.ARToolKitNFT(true);
 
     this.module = instance;
@@ -536,7 +547,8 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
       if (onError2) onError2(errorCode(e));
       return [];
     }
-    console.log("add nft marker ids: ", markerIds);
+    // Follows the log level like the other JS console lines (#677).
+    logAt(ARLogLevel.Info, this.getLogLevel(), "add nft marker ids: ", markerIds);
     if (callback) callback(markerIds);
     return markerIds;
   }

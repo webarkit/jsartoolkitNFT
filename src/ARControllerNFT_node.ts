@@ -42,7 +42,9 @@ import {
   NFTEvent,
   NFTRuntimeSettings,
   NFTRuntimeSettingsPatch,
+  ARInitOptions,
 } from "./abstractions/CommonInterfaces";
+import { logAt } from "./logger";
 import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
 import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
@@ -175,16 +177,19 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} width
    * @param {number} height
    * @param {string} cameraParam
+   * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+   * so the start-up output follows it (#677). Per controller in JS.
    * @return {Promise<ARControllerNFT>} this
    */
   static async initWithDimensions(
     width: number,
     height: number,
     cameraParam: string,
+    options?: ARInitOptions,
   ): Promise<ARControllerNFT> {
     // directly init with given width / height
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
-    return await arControllerNFT._initialize();
+    return await arControllerNFT._initialize(options);
   }
 
   /** The static method **initWithImage** is the start of your app.
@@ -204,16 +209,19 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    *  ```
    * @param {image} image
    * @param {string} cameraParam
+   * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+   * so the start-up output follows it (#677). Per controller in JS.
    * @return {Promise<ARControllerNFT>} this
    */
   static async initWithImage(
     image: IImageObj,
     cameraParam: string,
+    options?: ARInitOptions,
   ): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
-    return await arControllerNFT._initialize();
+    return await arControllerNFT._initialize(options);
   }
 
   /** The static method **customInit** is the start of your app.
@@ -241,6 +249,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * @param {number} height
    * @param {string} cameraParam
    * @param {function} callback
+   * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+   * so the start-up output follows it (#677). Per controller in JS.
    * @return {Promise<ARControllerNFT>} this
    */
   static async customInit(
@@ -248,10 +258,11 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     height: number,
     cameraParam: string,
     callback: () => void,
+    options?: ARInitOptions,
   ): Promise<ARControllerNFT> {
     const arControllerNFT = new ARControllerNFT(width, height, cameraParam);
     callback();
-    return await arControllerNFT._initialize();
+    return await arControllerNFT._initialize(options);
   }
 
   // getters and setters
@@ -966,21 +977,26 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    * Don't call directly this but instead instantiate a new ARControllerNFT.
    * @return {ARControllerNFT} The initialized ARControllerNFT instance
    */
-  private async _initialize() {
+  private async _initialize(options?: ARInitOptions) {
     // initialize the toolkit
     
-    this.artoolkitNFT = await new ARToolkitNFT().init();
+    this.artoolkitNFT = await new ARToolkitNFT().init(options);
 
 
     this.FS = this.artoolkitNFT.FS;
     this.StringList = this.artoolkitNFT.StringList;
 
-    console.log("[ARControllerNFT]", "ARToolkitNFT initialized");
+    // These lines follow the log level (#677), read back from the module so that the level
+    // given at init and one set later are both honoured.
+    const level = this.artoolkitNFT.getLogLevel();
+    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "ARToolkitNFT initialized");
 
     // load the camera
     
     this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
-    console.log(
+    logAt(
+      ARLogLevel.Info,
+      level,
       "[ARControllerNFT]",
       "Camera params loaded with ID",
       this.cameraId,
@@ -988,7 +1004,7 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
-    console.log("[ARControllerNFT]", "Got ID from setup", this.id);
+    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "Got ID from setup", this.id);
 
     this._initNFT();
 

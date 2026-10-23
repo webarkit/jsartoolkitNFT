@@ -1,5 +1,5 @@
 import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
-import { INFTMarkerInfo, ARLogLevel, NFTRuntimeSettings, NFTRuntimeSettingsPatch } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARInitOptions } from "./abstractions/CommonInterfaces";
 export declare class ARToolkitNFT implements IARToolkitNFT_node {
     /**
      * static properties
@@ -65,17 +65,19 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
      * - instance
      * - cameraCount
      * - version
-     * A message is displayed in the console during the intitialization, for example:
-     * "ARToolkitNFT 1.5.0"
+     * A message is displayed in the console during init(), for example:
+     * "ARToolkitNFT 1.5.0" (it moved there from the constructor, #677).
      */
     constructor();
     /**
      * Init the class injecting the Wasm Module and link the instanced methods.
      * Every call builds its own module, so each ARToolkitNFT has its own heap
      * and filesystem.
+     * @param options `logLevel` is applied to the fresh module before the core is
+     * constructed (#677, D10), so the start-up lines follow it.
      * @return {object} the this object
      */
-    init(): Promise<this>;
+    init(options?: ARInitOptions): Promise<this>;
     setup(width: number, height: number, cameraId: number): number;
     teardown(): void;
     setupAR2(): void;

@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
 import { VARIANTS } from "./variants";
+import { version } from "../../package.json";
 import { CAMERA_PARAM, VIDEO_WIDTH, VIDEO_HEIGHT } from "./helpers";
 
 /**
@@ -199,5 +200,93 @@ describe.each(VARIANTS)("runtime settings ($name)", (variant) => {
     expect(s.detectionInterval).toBe(50);
     expect(() => toolkit.configure({ bogus: 1 })).toThrow(TypeError);
     expect(() => toolkit.configure({ far: -1 })).toThrow(RangeError);
+  });
+});
+
+/**
+ * A log level at initialisation, and JS console lines that follow it (#677, D10).
+ *
+ * The level is applied inside init(), on the fresh module and before the core is
+ * constructed, so the native start-up lines (the constructor, the camera dump) obey it too.
+ * Every console method is spied on: a native logger may print through any of them.
+ */
+/** The lines of arParamDisp(): the rules, SIZE, the distortion factors and the matrix rows. */
+const CAMERA_DUMP =
+  /^(-{10,}|SIZE = |Distortion factor|\s+fx=|(-?\d+\.\d+ ){4}$)/;
+
+describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
+  const spyConsole = () =>
+    (["log", "info", "warn", "error", "debug"] as const).map((m) =>
+      vi.spyOn(console, m).mockImplementation(() => {}),
+    );
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("init-time logLevel silences start-up output", async () => {
+    const { ARControllerNFT } = await variant.load();
+    const spies = spyConsole();
+    // Error is 3, above everything the start-up prints.
+    const ar = await ARControllerNFT.initWithDimensions(
+      VIDEO_WIDTH,
+      VIDEO_HEIGHT,
+      CAMERA_PARAM,
+      true,
+      { logLevel: 3 },
+    );
+    // Two things still print, and are filtered out here:
+    // - the version line is a RelInfo line (#677), the quietest level, so it survives Error;
+    // - the camera parameter table of arParamDisp(), which prints with the unlevelled ARLOG
+    //   (a plain printf) in the core, so no level reaches it. Gating it needs a native change
+    //   (ARToolKitJS.cpp calls it right after the level-gated "*** Camera Parameter ***").
+    const calls = spies
+      .flatMap((s) => s.mock.calls)
+      .filter((c) => !String(c[0]).startsWith("ARToolkitNFT"))
+      .filter((c) => !CAMERA_DUMP.test(String(c[0])));
+    expect(calls).toEqual([]);
+    expect(ar.getRuntimeSettings().logLevel).toBe(3);
+
+    // configure() must not write the core's own level back over the init-time one (D9).
+    ar.configure({ near: 1 });
+    expect(ar.getRuntimeSettings().logLevel).toBe(3);
+    ar.dispose?.();
+  });
+
+  it("default init still logs the version", async () => {
+    const { ARControllerNFT } = await variant.load();
+    const spies = spyConsole();
+    const ar = await ARControllerNFT.initWithDimensions(
+      VIDEO_WIDTH,
+      VIDEO_HEIGHT,
+      CAMERA_PARAM,
+      true,
+    );
+    const info = spies[1].mock.calls.filter((c) =>
+      String(c[0]).startsWith("ARToolkitNFT"),
+    );
+    expect(info).toHaveLength(1);
+    expect(info[0].join(" ")).toContain(version);
+    ar.dispose?.();
+  });
+
+  it("RelInfo still logs the version, the other JS lines are gated", async () => {
+    const { ARControllerNFT } = await variant.load();
+    const spies = spyConsole();
+    const ar = await ARControllerNFT.initWithDimensions(
+      VIDEO_WIDTH,
+      VIDEO_HEIGHT,
+      CAMERA_PARAM,
+      true,
+      { logLevel: 4 },
+    );
+    expect(
+      spies[1].mock.calls.filter((c) => String(c[0]).startsWith("ARToolkitNFT")),
+    ).toHaveLength(1);
+    const controllerLines = spies[0].mock.calls.filter(
+      (c) => c[0] === "[ARControllerNFT]",
+    );
+    expect(controllerLines).toEqual([]);
+    ar.dispose?.();
   });
 });

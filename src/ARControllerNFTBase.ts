@@ -43,7 +43,9 @@ import {
   NFTRuntimeSettings,
   NFTRuntimeSettingsPatch,
   NFTLoadOptions,
+  ARInitOptions,
 } from "./abstractions/CommonInterfaces";
+import { logAt } from "./logger";
 import { withCallbacks } from "./NFTLoadError";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { ARToolkitNFTBase } from "./ARToolkitNFTBase";
@@ -884,18 +886,23 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
    */
   // Protected, not private, only because each build's static factories, which
   // live in its own subclass (#734, D4), call it.
-  protected async _initialize(): Promise<this> {
+  protected async _initialize(options?: ARInitOptions): Promise<this> {
     // initialize the toolkit
-    this.artoolkitNFT = await new this.toolkitClass().init();
+    this.artoolkitNFT = await new this.toolkitClass().init(options);
 
     this.FS = this.artoolkitNFT.FS;
     this.StringList = this.artoolkitNFT.StringList;
 
-    console.log("[ARControllerNFT]", "ARToolkitNFT initialized");
+    // These lines follow the log level (#677), read back from the module so that the level
+    // given at init and one set later are both honoured.
+    const level = this.artoolkitNFT.getLogLevel();
+    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "ARToolkitNFT initialized");
 
     // load the camera
     this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
-    console.log(
+    logAt(
+      ARLogLevel.Info,
+      level,
       "[ARControllerNFT]",
       "Camera params loaded with ID",
       this.cameraId,
@@ -903,7 +910,7 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
 
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
-    console.log("[ARControllerNFT]", "Got ID from setup", this.id);
+    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "Got ID from setup", this.id);
 
     this._initNFT();
 

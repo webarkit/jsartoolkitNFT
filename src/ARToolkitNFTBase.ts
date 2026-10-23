@@ -41,7 +41,9 @@ import {
   NFTRuntimeSettingsPatch,
   ARToolkitNFTModule,
   NFTLoadOptions,
+  ARInitOptions,
 } from "./abstractions/CommonInterfaces";
+import { logAt } from "./logger";
 import Utils from "./Utils";
 import { NFTLoadError, abortReason, withCallbacks } from "./NFTLoadError";
 import { applyRuntimeSettingsPatch } from "./RuntimeSettings";
@@ -155,8 +157,8 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
    * - markerNFTCount
    * - cameraCount
    * - version
-   * A message is displayed in the browser console during the intitialization, for example:
-   * "ARToolkitNFT 1.5.0"
+   * A message is displayed in the browser console during init(), for example:
+   * "ARToolkitNFT 1.5.0" (it moved there from the constructor, #677).
    */
   protected constructor(
     variantClass: typeof ARToolkitNFTBase,
@@ -171,7 +173,7 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
     this.markerNFTCount = 0;
     this.cameraCount = 0;
     this.version = version;
-    console.info("ARToolkitNFT ", this.version);
+    // The version line is logged by init(), after the log level is applied (#677).
   }
 
   // ---------------------------------------------------------------------------
@@ -180,10 +182,19 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
   /**
    * Init the class injecting the Wasm Module, link the instanced methods and
    * create a global artoolkitNFT variable.
+   * @param options `logLevel` is applied to the fresh module before the core is
+   * constructed (#677, D10), so the start-up lines follow it.
    * @return {object} the this object
    */
-  public async init() {
+  public async init(options?: ARInitOptions) {
     const instance = await this.initModule();
+    // Between the factory and the core's constructor, through the module-level binding:
+    // the constructor and the camera dump print as soon as they run (#677, D10).
+    const level = options?.logLevel;
+    if (level !== undefined) instance.setLogLevel(level);
+    // The version line moved here from the constructor so that it can follow the level. It
+    // is a RelInfo line, so it can still be kept at any level up to RelInfo (#677).
+    logAt(ARLogLevel.RelInfo, level ?? ARLogLevel.Info, "ARToolkitNFT ", this.version);
     // Called with exactly the arguments the build passes, none or one, as each
     // build's own copy of this file did (#734, D7).
     this.instance =
