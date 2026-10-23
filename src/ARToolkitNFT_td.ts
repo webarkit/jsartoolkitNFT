@@ -53,10 +53,11 @@ export class ARToolkitNFT extends ARToolkitNFTBase {
    * "ARToolkitNFT 1.5.0"
    */
   constructor() {
-    // withFiltering true, like the other builds. Since WebARKitLib 0.12.0 the
-    // threaded preset filters poses (#692, #720 D13), so this build's poses are
-    // filtered by default too. It used to pass nothing, which left the native
-    // flag uninitialised; it had no effect then, as the preset did not filter.
+    // withFiltering true, so the threaded build filters poses by default like the
+    // other builds (#692, #720 D13; the user's choice A). It used to pass nothing:
+    // the native no-argument constructor builds its core with filtering off, which
+    // made no difference then, as the threaded preset did not filter. Since
+    // WebARKitLib 0.12.0 it does.
     super(ARToolkitNFT, initARToolkitNFT, true);
   }
 }

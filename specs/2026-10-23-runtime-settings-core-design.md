@@ -240,7 +240,8 @@ Three ways to build `configure()` were considered. The user chose **A**.
     - the threaded preset supports filtering, with per-marker `arFilterTransMat`, cutoff 60.0,
       sample rate 120.0, and a reset on (re)acquisition, as in the single-thread build;
     - `ARToolkitNFT_td` constructs the binding with an explicit `true`, like the other builds.
-      Today it passes nothing, which leaves `withFiltering` uninitialised.
+      Today it passes nothing, so the native no-argument constructor builds the core with
+      filtering off (`core(threadedPreset(), false)`).
   - **Verification**, as #692 asks: with `tools/compare-builds`, the poses change in the
     threaded build only, and the single-thread builds stay bit-identical.
   - This is recorded as a behaviour change. The threaded build's poses become filtered by default.
