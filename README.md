@@ -58,6 +58,61 @@ Note for upgraders: `getTransformationMatrix()` now returns a fresh array for ea
 is found, instead of updating one array in place. Read it each frame rather than keeping a
 reference and expecting it to change.
 
+### Runtime settings: `configure()`
+
+`configure(patch)` changes several settings at once, on `ARControllerNFT` and `ARToolkitNFT`, in
+every build. `getRuntimeSettings()` returns all of them, with the values in effect:
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `near`, `far` | `0.1`, `1000` | Projection planes. `getCameraMatrix()` follows them at once. |
+| `continuousDetection` | `true` | As `setContinuousDetection()` above. |
+| `detectionInterval` | `300` (`0` threaded) | As `setDetectionInterval()` above, in ms. |
+| `filtering` | `true` | Pose filtering, as `setFiltering()`. |
+| `logLevel` | `ARLogLevel.Info` (1) | As `setLogLevel()`. |
+| `ar2` | see below | AR2 tracking: `trackingThresh` 5, `simThresh` 0.5, `searchFeatureNum` 16, `templateSize1` / `templateSize2` 6, `searchSize` 6 (12 on a multi-CPU threaded build). |
+
+```javascript
+ar.configure({ near: 1, far: 5000, ar2: { simThresh: 0.6 } });
+ar.getRuntimeSettings().far; // 5000
+```
+
+The patch is merged into the current settings (`ar2` field by field), checked, and applied in one
+step: if any value is wrong, nothing changes. An unknown key, a value of the wrong type or a
+non-integer for an integer setting throws a `TypeError`; this includes the square-marker keys
+`threshold`, `thresholdMode`, `imageProcMode` and `debugMode`, which do nothing on NFT. A value
+out of range throws a `RangeError`. The individual setters keep working as before.
+
+Behaviour changes in this release:
+
+- `getCameraMatrix()` right after initialisation is built with the near plane `0.1`, the value
+  `ARControllerNFT` always reported, instead of `0.0001`. `setProjectionNearPlane()` and
+  `setProjectionFarPlane()` now rebuild the matrix at once, so `recalculateCameraLens()` is no
+  longer needed.
+- The threaded build now filters poses by default, like the other builds, and `setFiltering()`
+  takes effect there (#692). Before, it was ignored.
+
+### Log level at initialisation
+
+`initWithDimensions()`, `initWithImage()` and `customInit()` take a last, optional
+`{ logLevel }` argument. It is applied before the native core is created, so the start-up output
+follows it:
+
+```javascript
+import { ARControllerNFT, ARLogLevel } from '@webarkit/jsartoolkit-nft'
+
+const ar = await ARControllerNFT.initWithDimensions(640, 480, 'camera_para.dat', false, {
+  logLevel: ARLogLevel.Error,
+});
+```
+
+(In the Node build, which has no `internalLuma` argument, the options are the fourth argument.)
+
+The version line is logged at `ARLogLevel.RelInfo`, so it still prints at `Error`. The camera
+parameter table that the native camera loader prints is not gated yet; it is tracked in
+[webarkit/WebARKitLib#113](https://github.com/webarkit/WebARKitLib/issues/113). The level belongs
+to each controller, since each one runs in its own WASM module.
+
 ## WASM
 
 has **WASM** embedded in a single file!
@@ -300,6 +355,8 @@ pip install -i https://test.pypi.org/simple/ artoolkitnft
 
 - Live camera capture example (the current example processes a single static image)
 - `getKpmImageWidth` / `getKpmImageHeight` (temporarily excluded from the build)
+- `configure()` / `getRuntimeSettings()` (see [Runtime settings](#runtime-settings-configure)).
+  The plane setters already rebuild the camera matrix, as in JS.
 
 The bindings are built and tested on **Linux**, **macOS** (Apple silicon) and **Windows** via the
 [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml)
