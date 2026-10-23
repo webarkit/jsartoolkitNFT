@@ -656,14 +656,14 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
       // A list missing one of the three files fails at registration, as
       // "rejected", as it does natively.
       await this.loadFiles(
-        source.map((url) => ({ url, path: prefix + "." + extensionOf(url) })),
+        source.map((url) => ({ url, path: prefix + "." + Utils.extensionOf(url) })),
         signal,
         written,
       );
       return prefix;
     }
 
-    if (extensionOf(source) === "zft") {
+    if (Utils.extensionOf(source) === "zft") {
       const bytes = await Utils.fetchBinary(source, signal);
       this.storeZFT(bytes, prefix, source, written);
       return prefix;
@@ -805,27 +805,6 @@ const isEmptySource = (source: string | string[]): boolean =>
   Array.isArray(source)
     ? source.length === 0 || Array.from(source).some((url) => !url)
     : !source;
-
-/**
- * The extension of a URL's path, without the dot: a query or a hash is not
- * part of it (`/x/pinball.fset?v=2` gives `fset`, Review Focus 1).
- */
-function extensionOf(url: string): string {
-  let path: string;
-  try {
-    path = new URL(url, globalThis.location?.href).pathname;
-  } catch (cause) {
-    // A URL that cannot be parsed is the caller's mistake, not a download
-    // failure: "argument", like an empty URL.
-    throw new NFTLoadError("argument", `Invalid marker URL: ${url}`, {
-      url,
-      cause,
-    });
-  }
-  const name = path.substring(path.lastIndexOf("/") + 1);
-  const dot = name.lastIndexOf(".");
-  return dot < 0 ? "" : name.substring(dot + 1);
-}
 
 /**
  * An AbortController that also aborts when `parent` does. D12: the link is

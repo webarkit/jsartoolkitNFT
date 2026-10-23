@@ -22,6 +22,29 @@ describe("Utils.hexToBytes", () => {
   });
 });
 
+describe("Utils.extensionOf", () => {
+  it("reads the extension of the last path segment, without query or hash", () => {
+    expect(Utils.extensionOf("/x/pinball.fset?v=2")).toBe("fset");
+    expect(Utils.extensionOf("pinball.zft#top")).toBe("zft");
+    expect(Utils.extensionOf("https://cdn.example/m/pinball.iset")).toBe("iset");
+    expect(Utils.extensionOf("../DataNFT/pinball")).toBe("");
+    expect(Utils.extensionOf("/a.b/pinball")).toBe("");
+    expect(Utils.extensionOf("/x/pinball?file=a.zft")).toBe("");
+  });
+
+  // In an about:blank or about:srcdoc frame, location.href is "about:blank"
+  // or "about:srcdoc", against which a relative URL cannot be resolved, while
+  // fetch resolves it against the document base. The extension must not need
+  // that resolution (#736 review).
+  it("needs no base URL for a relative marker URL", () => {
+    expect(() => new URL("../DataNFT/pinball.fset", "about:blank")).toThrow(
+      TypeError,
+    );
+    expect(Utils.extensionOf("../DataNFT/pinball.fset")).toBe("fset");
+    expect(Utils.extensionOf("DataNFT/zft/pinball.zft")).toBe("zft");
+  });
+});
+
 describe("Utils.fetchBinary", () => {
   it("returns the bytes", async () => {
     const bytes = await Utils.fetchBinary("/examples/DataNFT/zft/pinball.zft");

@@ -19,6 +19,17 @@ export default class Utils {
      * intermediate strings and an array of pair strings per descriptor file.
      */
     static hexToBytes(hex: Uint8Array): Uint8Array;
+    /**
+     * The extension of a marker URL, without the dot. A query or a hash is not
+     * part of it (`/x/pinball.fset?v=2` gives `fset`), and a dot in a directory
+     * name is ignored (`/a.b/pinball` gives `""`).
+     *
+     * Read from the string, not by resolving the URL: in an `about:blank` or
+     * `about:srcdoc` frame, `new URL(relative, location.href)` throws, while
+     * `fetch` resolves the same URL against the document base. Resolving only
+     * to read the extension made such a load fail as "argument" (#736 review).
+     */
+    static extensionOf(url: string): string;
     static string2Uint8Data(string: string): Uint8Array;
     /**
      * Stores data in the Emscripten filesystem.

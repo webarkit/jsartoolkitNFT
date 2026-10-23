@@ -284,18 +284,20 @@ describe(`addNFTMarkers outcomes (#685, ${VARIANTS[0].name})`, () => {
     });
   });
 
-  it("an unparsable URL is argument", async () => {
-    const spy = spyFetch();
+  // The extension is read from the string (Utils.extensionOf), so the loader
+  // never parses a URL itself: an unparsable one is left to fetch, which
+  // rejects it, and the load fails as "network" like any refused request.
+  it("an unparsable URL still fails as an NFTLoadError", async () => {
     await expect(
       tk.addNFTMarkers([["http://[bad/a.fset", "/a.iset", "/a.fset3"]]),
-    ).rejects.toMatchObject({ name: "NFTLoadError", kind: "argument" });
+    ).rejects.toMatchObject({ name: "NFTLoadError", kind: "network" });
     await expect(tk.addNFTMarkers(["http://[bad/a.zft"])).rejects.toMatchObject(
       {
         name: "NFTLoadError",
-        kind: "argument",
+        kind: "network",
+        url: "http://[bad/a.zft",
       },
     );
-    expect(spy).not.toHaveBeenCalled();
   });
 
   it("a throw from _addNFTMarkers is rejected with its cause (D16)", async () => {

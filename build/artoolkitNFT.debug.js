@@ -1116,15 +1116,15 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     return out;
   }
   /**
-        The extension of a URL's path, without the dot: a query or a hash is not
-        part of it (`/x/pinball.zft?v=2` gives `zft`).
+        The extension of a marker URL, without the dot: a query or a hash is not
+        part of it (`/x/pinball.zft?v=2` gives `zft`), and a dot in a directory
+        name is ignored. Read from the string, not by resolving the URL: in an
+        about:blank or about:srcdoc frame `new URL(relative, location.href)`
+        throws, while fetch resolves the same URL against the document base
+        (#736 review). Same rule as Utils.extensionOf in src/.
     */ function extensionOf(url) {
-    let path;
-    try {
-      path = new URL(url, typeof location !== "undefined" ? location.href : undefined).pathname;
-    } catch (cause) {
-      throw loadError(-1, "Invalid marker URL: " + url, cause);
-    }
+    const end = url.search(/[?#]/);
+    const path = end < 0 ? url : url.substring(0, end);
     const name = path.substring(path.lastIndexOf("/") + 1);
     const dot = name.lastIndexOf(".");
     return dot < 0 ? "" : name.substring(dot + 1);
