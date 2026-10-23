@@ -1,4 +1,4 @@
-import { IImageObj, ARLogLevel, NFTEventListener, NFTEvent } from "./CommonInterfaces";
+import { IImageObj, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch } from "./CommonInterfaces";
 export declare abstract class AbstractARControllerNFT {
     static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<AbstractARControllerNFT>;
     static initWithImage: (image: IImageObj, cameraParam: string) => Promise<AbstractARControllerNFT>;
@@ -29,6 +29,8 @@ export declare abstract class AbstractARControllerNFT {
     setProjectionFarPlane: (value: number) => void;
     getProjectionFarPlane: () => number;
     recalculateCameraLens: () => void;
+    configure: (patch: NFTRuntimeSettingsPatch) => void;
+    getRuntimeSettings: () => NFTRuntimeSettings;
     /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
     setThresholdMode: (mode: number) => number;
     /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */

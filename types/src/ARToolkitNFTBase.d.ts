@@ -1,5 +1,5 @@
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
-import { INFTMarkerInfo, ARLogLevel, ARToolkitNFTModule, NFTLoadOptions } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARToolkitNFTModule, NFTLoadOptions } from "./abstractions/CommonInterfaces";
 /**
  * The WASM wrapper shared by the browser builds (default, SIMD, threaded). Each
  * build's `ARToolkitNFT` subclass only names its module factory and the argument
@@ -111,6 +111,27 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
     setContinuousDetection(enabled: boolean): void;
     setDetectionInterval(ms: number): void;
     /**
+     * Changes several runtime settings at once (#720). The patch is deep-merged into
+     * {@link getRuntimeSettings} (`ar2` field by field) and applied in one native call, which
+     * validates everything first and changes nothing on failure.
+     *
+     * `logLevel` is per controller: the level lives in the WASM module's globals, and each
+     * init() creates its own module.
+     * @param patch any subset of the settings.
+     * @throws {TypeError} on an unknown key (including the deprecated square-marker keys
+     * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`) or a value of the wrong
+     * type; nothing is changed.
+     * @throws {RangeError} when the values are out of range; nothing is changed.
+     */
+    configure(patch: NFTRuntimeSettingsPatch): void;
+    /**
+     * The current runtime settings (#720), with the effective values: `detectionInterval`
+     * and `ar2.searchSize` are the build's resolved defaults when they were not set, and
+     * `logLevel` is the module's current level.
+     * @return a fresh object; changing it changes nothing until passed to configure().
+     */
+    getRuntimeSettings(): NFTRuntimeSettings;
+    /**
      * Returns the Emscripten HEAP offset of the square-marker detector's
      * debug image.
      * @deprecated The image is never filled for NFT tracking: only the
@@ -136,8 +157,18 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
      */
     setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
+    /**
+     * Sets the near plane of the projection. Once a camera is loaded the camera lens is
+     * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+     * @param value the near plane, > 0.
+     */
     setProjectionNearPlane(value: number): void;
     getProjectionNearPlane(): number;
+    /**
+     * Sets the far plane of the projection. Once a camera is loaded the camera lens is
+     * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+     * @param value the far plane, > the near plane.
+     */
     setProjectionFarPlane(value: number): void;
     getProjectionFarPlane(): number;
     /**
@@ -191,8 +222,9 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
     getImageProcMode(): number;
     getCameraLens(): any;
     /**
-     * Rebuilds the camera frustum from the near and far planes. The projection setters
-     * only store the planes; they take effect on the next call to this method.
+     * Rebuilds the camera frustum from the near and far planes. Kept for compatibility:
+     * since WebARKitLib 0.12.0 the lens follows the planes, as the projection setters and
+     * configure() rebuild it themselves, so calling this changes nothing.
      */
     recalculateCameraLens(): void;
     passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
