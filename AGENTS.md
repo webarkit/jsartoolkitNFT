@@ -74,8 +74,12 @@ docker exec emscripten-jsartoolkitnft npm run build
 sufficient — and much faster — when the change is link-time only, such as an emcc flag or
 something in `js/*.api.js` (which is injected via `--pre-js`).
 
-**TypeScript** — `npm run build-ts`, run on the host. It bundles `src/**` with webpack into
-`dist/` and emits declarations into `types/`.
+**TypeScript** — `npm run build-ts`, run on the host. `tools/build-ts.mjs` runs one `vite build`
+per bundle (`vite.lib.config.mjs`: three UMD browser bundles, the CommonJS Node bundle) into
+`dist/`, writes the thin ES module wrapper `dist/ARToolkitNFT_node.mjs` (#577), then runs
+`tsc --emitDeclarationOnly` into `types/`. The threaded build also emits its pthread worker as
+`dist/ARToolkitNFT_td.worker.js`: a fixed name, to be served next to `ARToolkitNFT_td.js`.
+`npm run dev-ts` is a minified, source-map-less watch build.
 
 **Debug tracing** — `node tools/makem.js --debug-logs` defines `DEBUG`, which switches on the
 `ARLOGd()` calls in WebARKitLib. Opt-in only: `ARLOGd` is `#ifdef DEBUG` in `ARUtil/log.h`, so
@@ -138,7 +142,7 @@ A browser change therefore goes in the base class. A variant file may hold only 
 build-specific values, plus an override whose sole purpose is per-build JSDoc, as `_td` does
 for `setDetectionInterval`. Subclasses must declare no instance fields: with ESNext class
 fields, a field declared in a subclass is reset to `undefined` after the base constructor sets
-it. Each entry point reaches only its own factory, so each webpack bundle still contains only
+it. Each entry point reaches only its own factory, so each Vite bundle still contains only
 its own WASM build.
 
 The Node build is still a separate copy: `ARToolkitNFT_node.ts` and `ARControllerNFT_node.ts`
@@ -210,8 +214,9 @@ A version bump also needs **both rebuilds** committed in the same PR:
 
 - `npm run build-docker`: the two API files above are compiled into the legacy and embed builds
   as `--pre-js`.
-- `npm run build-ts`: `src/ARToolkitNFT*.ts` import `version` from `package.json`, and webpack
-  inlines it into every `dist/` bundle.
+- `npm run build-ts`: `src/ARToolkitNFT*.ts` import `version` from `package.json`, and Vite
+  inlines it into every `dist/` bundle. Keep it a **named** import: a default import inlines the
+  whole `package.json` (devDependencies, scripts), which `tests/node/dist-paths.test.js` rejects.
 
 Check that nothing still carries the old version: `grep -l "<old version>" build/*.js dist/*.js`
 should print nothing.
@@ -220,9 +225,11 @@ should print nothing.
 
 ## Gotchas
 
-**Rebuild noise.** Running `build-ts` without changing any source still rewrites four `dist/`
-bundles (webpack is not byte-reproducible here) and produces line-ending churn in `types/`.
-Revert those rather than committing them; `main.yml` regenerates both on merge.
+**Rebuild noise.** The Vite build is byte-reproducible: running `build-ts` twice on the same
+sources leaves `dist/` identical, and `git status` shows nothing after a rebuild with no source
+change. A diff in `dist/` therefore means a source, dependency or Node/toolchain change; do not
+revert it as noise. `main.yml` rebuilds and commits `dist/` on `master` after a merge. If
+`types/` shows line-ending-only churn on Windows, revert that.
 
 **Line endings.** `.gitattributes` forces LF for every text file, regardless of `core.autocrlf`,
 so a Windows checkout matches prettier's default and CI. A clone made before it landed keeps its

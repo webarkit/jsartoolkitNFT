@@ -190,6 +190,47 @@ From 1.6.0 version has **Pthread** experimental feature 🎉 🎉 🎉
 ❕❕❕ ATTENTION: this feature is experimental, and it is not well tested yet. It is not recommended to use it in production.
 You need to set up a server with COOP and COEP headers to use this feature. Read this [Emscripten article](https://emscripten.org/docs/porting/pthreads.html#pthreads-support)
 
+### Threaded build: deploying
+
+The threaded build is two files, and the worker must be served **next to the script that loads the bundle**: with a plain `<script>` tag that is the bundle's own folder, with `importScripts()` it is the calling worker script's folder, and in re-bundled apps it is the folder of the last `<script src>` on the page (details below):
+
+- `dist/ARToolkitNFT_td.js`: the bundle you load;
+- `dist/ARToolkitNFT_td.worker.js`: the pthread worker (an ES module worker, fixed name), which the bundle loads from the folder above.
+
+Serve them with the `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers.
+
+With a `<script>` tag, keep the two files side by side and you are done. With `importScripts()` in a worker, the bundle URL is the URL of the worker script that calls `importScripts` (the same rule as webpack), so `ARToolkitNFT_td.worker.js` must sit in the folder of that calling worker script, not next to the bundle. If you **re-bundle** it with your own build (Vite, webpack, ...), the bundler copies `ARToolkitNFT_td.js` into your output but does not know about the worker, so copy it next to the output bundle yourself:
+
+```javascript
+// Vite: vite.config.js, with vite-plugin-static-copy
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+
+export default {
+  plugins: [
+    viteStaticCopy({
+      targets: [{ src: 'node_modules/@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_td.worker.js', dest: 'assets' }],  // = build.assetsDir
+    }),
+  ],
+}
+```
+
+The worker is resolved next to the script that loads the bundle. For module or re-bundled apps that is the last `<script src>` on the page, which in a Vite production build is `/assets/index-*.js`, hence `dest: 'assets'`. (A `public/` placement works only with `build.assetsDir: ''`.) In `vite dev` the location differs (under `/src/`), so test the threaded build with `vite build && vite preview`.
+
+```javascript
+// webpack: webpack.config.js, with copy-webpack-plugin
+const CopyPlugin = require('copy-webpack-plugin')
+
+module.exports = {
+  plugins: [
+    new CopyPlugin({
+      patterns: [{ from: 'node_modules/@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_td.worker.js', to: '.' }],
+    }),
+  ],
+}
+```
+
+The symptom of a missing worker is a 404 for `ARToolkitNFT_td.worker.js` in the network panel, and detection that never finishes.
+
 ## InternalLuma with simd
 Enable internal luma calculation with simd instructions. This feature is experimental and it is not well tested yet. Set the internalLuma flag to true in the ARControllerNFT constructor, or in the `initWithDimensions / initWithImage` static methods.
 
@@ -240,13 +281,16 @@ import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 The package ships an [`exports`](https://nodejs.org/api/packages.html#package-entry-points) map, so the right build is picked automatically per environment:
 
 - in a **browser / bundler**, `@webarkit/jsartoolkit-nft` resolves to the UMD build (`dist/ARToolkitNFT.js`);
-- in **Node.js**, it resolves to the Node build (`dist/ARToolkitNFT_node.js`, CommonJS).
+- in **Node.js**, it resolves to the Node build: `dist/ARToolkitNFT_node.js` (CommonJS) for `require()`, and `dist/ARToolkitNFT_node.mjs` (a thin ES module wrapper over it) for `import`.
 
 ```javascript
 // browser / bundler -> UMD build
 import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 
-// Node.js -> Node build
+// Node.js, ES module -> Node build, named imports
+import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
+
+// Node.js, CommonJS -> Node build
 const { ARToolkitNFT, ARControllerNFT } = require('@webarkit/jsartoolkit-nft')
 ```
 
@@ -263,7 +307,7 @@ You can also target a specific build through a named subpath:
 import '@webarkit/jsartoolkit-nft/simd'
 ```
 
-The raw `dist/*` deep-imports (e.g. `@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_simd.js`) still work, and `<script>` / `importScripts` URLs are not affected by the `exports` map. In Node the build is CommonJS, so use `require()` or a default `import` (named `import { ... }` will come with a future ESM build).
+The raw `dist/*` deep-imports (e.g. `@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_simd.js`) still work, and `<script>` / `importScripts` URLs are not affected by the `exports` map. In Node both `require()` and a named `import { ... }` work: the ES module entry re-exports the CommonJS bundle, so the two share one instance of every class.
 
 **Note**: All the examples in the repository are running the code inside a Worker (don't use it in the main thread!). So i you need to import the library in a worker you need to use the `importScripts` function.
 
@@ -375,6 +419,8 @@ For full build-from-source instructions, local development tips and the publishi
 When you install the package, Node automatically resolves to this build (see the [`exports`](#using-the-library-) map):
 
 ```javascript
+// ES module — named imports resolve to dist/ARToolkitNFT_node.mjs
+import { ARControllerNFT } from '@webarkit/jsartoolkit-nft';
 // CommonJS — resolves to the Node build in Node.js
 const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft');
 // or the explicit subpath
@@ -433,7 +479,6 @@ init();
 
 ### Not yet implemented
 
-- Native ESM consumption (`import { ARControllerNFT } from ...`): the Node build is CommonJS for now, so use `require()` or a default `import`
 - Live camera capture (the examples process a single static image)
 
 Runnable examples live in [`examples/node`](examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
@@ -520,7 +565,7 @@ See the examples folder for details.
 
 ## Build the project 🔨
 
-Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more information. Note that you only need to build the library if you make changes to the C++ core or TypeScript source code. There are three ways to build the project:
+Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more information. Note that you only need to build the library if you make changes to the C++ core or TypeScript source code. The TypeScript bundles in `dist/` are built with [Vite](https://vite.dev) (`npm run build-ts`), which also runs `tsc` for the declarations in `types/`. There are three ways to build the project:
 
 
 ### 1. Natively on Host (Windows, macOS, Linux)

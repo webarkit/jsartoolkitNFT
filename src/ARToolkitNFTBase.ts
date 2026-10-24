@@ -47,8 +47,7 @@ import { logAt } from "./logger";
 import Utils from "./Utils";
 import { NFTLoadError, abortReason, withCallbacks } from "./NFTLoadError";
 import { applyRuntimeSettingsPatch } from "./RuntimeSettings";
-import packageJson from "../package.json";
-const { version } = packageJson;
+import { version } from "../package.json";
 
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
