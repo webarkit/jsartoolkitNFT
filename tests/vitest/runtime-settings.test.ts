@@ -379,8 +379,9 @@ describe.each(VARIANTS)("AR2 settings reach the handle ($name)", (variant) => {
     // The defaults track the photo.
     await processUntil(ar, frame, () => isFound(ar, 0), 300);
 
-    // 0.01 loses it on the live handle and never finds it again: detection still runs and
-    // succeeds, but every pose it hands to AR2 fails the threshold.
+    // 0.01 loses it on the live handle and never finds it again (observed: the marker is
+    // never found at 0.01, and tracks at the default). Why detection does not recover was
+    // not investigated.
     ar.configure({ ar2: { trackingThresh: 0.01 } });
     await processUntil(ar, frame, () => !isFound(ar, 0), 20);
     for (let i = 0; i < 150; i++) {

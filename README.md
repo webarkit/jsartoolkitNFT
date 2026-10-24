@@ -70,7 +70,7 @@ every build. `getRuntimeSettings()` returns all of them, with the values in effe
 | `detectionInterval` | `300` (`0` threaded) | As `setDetectionInterval()` above, in ms. |
 | `filtering` | `true` | Pose filtering, as `setFiltering()`. |
 | `logLevel` | `ARLogLevel.Info` (1) | As `setLogLevel()`. |
-| `ar2` | see below | AR2 tracking: `trackingThresh` 5, `simThresh` 0.5, `searchFeatureNum` 16, `templateSize1` / `templateSize2` 6, `searchSize` 6 (12 on a multi-CPU threaded build). |
+| `ar2` | see below | AR2 tracking: `trackingThresh` 5, `simThresh` 0.5, `searchFeatureNum` 16, `templateSize1` / `templateSize2` 6, `searchSize` 6 or 12, depending on the build and CPU count (the preset's choice). |
 
 ```javascript
 ar.configure({ near: 1, far: 5000, ar2: { simThresh: 0.6 } });
