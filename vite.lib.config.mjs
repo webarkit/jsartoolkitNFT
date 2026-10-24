@@ -69,9 +69,9 @@ function commonBuild() {
     minify: true,
     // No source maps in dist/, as before.
     sourcemap: false,
-    // Rolldown would copy small assets inline as data: URLs; the pthread worker must stay
-    // a file with a fixed name (D3).
-    assetsInlineLimit: 0,
+    // No assetsInlineLimit: workers from `new Worker(new URL(...))` are emitted as files
+    // whatever their size (checked by building without it), so the pthread worker keeps
+    // its fixed name (D3).
   };
 }
 
@@ -137,6 +137,10 @@ export function libConfig(variant, options = {}) {
       // runs, which is the page, not the bundle. The threaded bundle's pthread worker must
       // load from the bundle's own folder, so resolve it against the URL captured at load
       // time (D5.3). Only the "td" variant emits such an asset.
+      // The built code reads `new URL(new URL(f, base).href, "" + base)`: Vite wraps the
+      // returned expression in its own `new URL(<expr>, "" + base)`, so the outer URL is
+      // redundant but harmless (an absolute URL ignores its base) and cannot be removed
+      // from here.
       renderBuiltUrl(filename, { hostType }) {
         if (hostType === "js") {
           return {
@@ -152,6 +156,11 @@ export function libConfig(variant, options = {}) {
           // (`type: "module"`): webpack rewrote it to a classic worker, which would mean
           // converting the glue's import.meta (D6). Its name is fixed instead of webpack's
           // changing chunk id, `602.ARToolkitNFT_td.js` (D3).
+          // The top-level `define` of import.meta.url also reaches this worker bundle,
+          // where `__artkTdBundleUrl` is undefined. That is harmless only because the glue
+          // reads import.meta.url inside try/catch and Vite rewrites the nested pthread
+          // spawns to `new Worker(self.location.href, { type: "module" })`. A future glue
+          // that really uses import.meta.url in the worker would need revisiting.
           worker: {
             format: "es",
             rollupOptions: {

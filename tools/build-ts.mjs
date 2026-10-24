@@ -6,7 +6,9 @@
  * `tsc --emitDeclarationOnly` writes types/, with the tsconfig.json settings (D9).
  *
  * `--watch` (`npm run dev-ts`) rebuilds each bundle and the declarations on change. It
- * skips the clean step, so a watch session never leaves dist/ half empty.
+ * skips the clean step, so a watch session never leaves dist/ half empty. Note that
+ * `dev-ts` is therefore a minified watch build without source maps: it used to be a
+ * webpack development build with inline source maps.
  */
 import { build } from "vite";
 import { spawn } from "node:child_process";
