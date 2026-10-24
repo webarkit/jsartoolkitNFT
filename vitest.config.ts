@@ -8,7 +8,7 @@ import { playwright } from "@vitest/browser-playwright";
  *   and the committed `build/` and `dist/` artifacts are fetchable by the specs
  *   with no proxy configuration.
  * - Specs import `src/` directly. Vite compiles the TypeScript, so the tests
- *   exercise the code that ships as `dist/` without a webpack build in between,
+ *   exercise the code that ships as `dist/` without a bundler build in between,
  *   and coverage of `src/` becomes meaningful (see #580).
  * - Each test file runs in its own iframe. The legacy builds set page globals, so
  *   `tests/vitest/legacy-*.test.ts` rely on this to keep one build per page.

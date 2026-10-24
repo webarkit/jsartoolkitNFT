@@ -67,17 +67,19 @@ if (!watch) clean();
 
 for (const variant of VARIANTS) {
   console.log(`vite build: ${variant}`);
-  // In watch mode build() resolves with a watcher after the first build, so the loop
-  // goes on to the next bundle and all four keep watching.
+  // In watch mode (Vite 8) build() resolves with a watcher as soon as watching starts,
+  // not after the first build, so the loop goes on to the next bundle and all four
+  // keep watching.
   await build(libConfig(variant, { watch }));
 }
 
 /**
  * The Node ESM entry (#577, D7): a hand-written wrapper over the CJS bundle, copied
- * unchanged, with its declarations. It imports ARToolkitNFT_node.js, so it is copied
- * only after the Node build; in watch mode build() resolves after the first build, so
- * the CJS file exists by then. tsc does not clean types/, so copying before it is safe,
- * and in watch mode (where tsc never exits) the copy still happens.
+ * unchanged, with its declarations. Copying does not read the CJS file, so it does not
+ * matter that in watch mode build() resolves before the first build has finished (the
+ * wrapper only imports ARToolkitNFT_node.js at run time). tsc does not clean types/, so
+ * copying before it is safe, and in watch mode (where tsc never exits) the copy still
+ * happens.
  */
 copyFileSync(
   join(ROOT, "src-esm/index_node.mjs"),
