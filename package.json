@@ -6,8 +6,14 @@
   "exports": {
     ".": {
       "node": {
-        "types": "./types/src/index_node.d.ts",
-        "default": "./dist/ARToolkitNFT_node.js"
+        "import": {
+          "types": "./types/src/index_node.d.mts",
+          "default": "./dist/ARToolkitNFT_node.mjs"
+        },
+        "require": {
+          "types": "./types/src/index_node.d.ts",
+          "default": "./dist/ARToolkitNFT_node.js"
+        }
       },
       "browser": {
         "types": "./types/src/index.d.ts",
@@ -27,8 +33,14 @@
       "default": "./dist/ARToolkitNFT_td.js"
     },
     "./node": {
-      "types": "./types/src/index_node.d.ts",
-      "default": "./dist/ARToolkitNFT_node.js"
+      "import": {
+        "types": "./types/src/index_node.d.mts",
+        "default": "./dist/ARToolkitNFT_node.mjs"
+      },
+      "require": {
+        "types": "./types/src/index_node.d.ts",
+        "default": "./dist/ARToolkitNFT_node.js"
+      }
     },
     "./dist/*": "./dist/*",
     "./package.json": "./package.json"
@@ -90,7 +102,7 @@
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
     "test": "npm run test:vitest && npm run test:node",
     "test:vitest": "vitest run",
-    "test:node": "node --test tests/node/*.test.js",
+    "test:node": "node --test tests/node/*.test.js tests/node/*.test.mjs",
     "test:vitest:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test-node-example": "cd examples/node && node example_dist.js",

@@ -10,7 +10,7 @@
  */
 import { build } from "vite";
 import { spawn } from "node:child_process";
-import { readdirSync, rmSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { createRequire } from "node:module";
 import { libConfig } from "../vite.lib.config.mjs";
@@ -69,6 +69,23 @@ for (const variant of VARIANTS) {
   // goes on to the next bundle and all four keep watching.
   await build(libConfig(variant, { watch }));
 }
+
+/**
+ * The Node ESM entry (#577, D7): a hand-written wrapper over the CJS bundle, copied
+ * unchanged, with its declarations. It imports ARToolkitNFT_node.js, so it is copied
+ * only after the Node build; in watch mode build() resolves after the first build, so
+ * the CJS file exists by then. tsc does not clean types/, so copying before it is safe,
+ * and in watch mode (where tsc never exits) the copy still happens.
+ */
+copyFileSync(
+  join(ROOT, "src-esm/index_node.mjs"),
+  join(DIST, "ARToolkitNFT_node.mjs"),
+);
+mkdirSync(join(ROOT, "types/src"), { recursive: true });
+copyFileSync(
+  join(ROOT, "src-esm/index_node.d.mts"),
+  join(ROOT, "types/src/index_node.d.mts"),
+);
 
 console.log("tsc: types/");
 await runTsc();
