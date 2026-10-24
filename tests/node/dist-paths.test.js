@@ -31,6 +31,13 @@ describe("dist bundles", () => {
   });
 
   for (const name of bundles) {
+    it(`${name} embeds only the package version, not the whole package.json`, () => {
+      // `import { version } from "../package.json"` is tree-shaken to the version; a default
+      // import would inline devDependencies and scripts too (#741).
+      const source = fs.readFileSync(path.join(DIST_DIR, name), "utf8");
+      assert.ok(!source.includes("devDependencies"), `${name} inlines package.json`);
+    });
+
     it(`${name} embeds no file:// URL`, () => {
       const source = fs.readFileSync(path.join(DIST_DIR, name), "utf8");
       // A bare "file://" is fine: the Emscripten glue tests URLs against that prefix.

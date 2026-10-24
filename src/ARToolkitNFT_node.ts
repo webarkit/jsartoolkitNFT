@@ -46,9 +46,8 @@ import {
 } from "./abstractions/CommonInterfaces";
 import { logAt } from "./logger";
 import { applyRuntimeSettingsPatch } from "./RuntimeSettings";
-import packageJson from "../package.json";
+import { version } from "../package.json";
 import { NFTLoadError, errorCode } from "./NFTLoadError";
-const { version } = packageJson;
 
 const UNKNOWN_MARKER = -1;
 const NFT_MARKER = 0;
