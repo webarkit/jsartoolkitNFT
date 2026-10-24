@@ -45,9 +45,10 @@ import { ARControllerNFTBase } from "./ARControllerNFTBase";
 // Declare no instance fields here: with ESNext class fields, a field declared in
 // a subclass is reset to `undefined` after the base constructor has set it.
 /**
- * Threaded build: serve `ARToolkitNFT_td.worker.js` from the same folder as
- * `ARToolkitNFT_td.js` (the pthread worker is loaded next to the bundle), with the
- * COOP/COEP headers.
+ * Threaded build: serve `ARToolkitNFT_td.worker.js` next to the script that loads this
+ * bundle (with a plain `<script>` tag, the folder of `ARToolkitNFT_td.js`; with
+ * `importScripts()`, the calling worker's folder; in re-bundled apps, see the README
+ * section "Threaded build: deploying"), with the COOP/COEP headers.
  */
 export class ARControllerNFT extends ARControllerNFTBase {
   /**

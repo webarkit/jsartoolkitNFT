@@ -8,7 +8,9 @@
  *   path ends up in dist/ (#684).
  * - The threaded bundle starts its pthread worker from
  *   `new URL("ARToolkitNFT_td.worker.js", <this URL>)`, so the worker resolves next to the
- *   bundle and not against the page (`examples/x.html` loading `../dist/...`).
+ *   script that loads the bundle (the bundle's own folder for a plain `<script>` tag, the
+ *   calling worker's folder for `importScripts()`, the last `<script src>` folder in
+ *   re-bundled apps) and not against the page (`examples/x.html` loading `../dist/...`).
  * - It must run while the script is evaluated: `document.currentScript` is only set then.
  *
  * The rule is webpack's "auto" publicPath, which the webpack bundles used, so the worker

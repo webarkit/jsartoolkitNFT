@@ -1,9 +1,10 @@
 import { IImageObj, ARInitOptions } from "./abstractions/CommonInterfaces";
 import { ARControllerNFTBase } from "./ARControllerNFTBase";
 /**
- * Threaded build: serve `ARToolkitNFT_td.worker.js` from the same folder as
- * `ARToolkitNFT_td.js` (the pthread worker is loaded next to the bundle), with the
- * COOP/COEP headers.
+ * Threaded build: serve `ARToolkitNFT_td.worker.js` next to the script that loads this
+ * bundle (with a plain `<script>` tag, the folder of `ARToolkitNFT_td.js`; with
+ * `importScripts()`, the calling worker's folder; in re-bundled apps, see the README
+ * section "Threaded build: deploying"), with the COOP/COEP headers.
  */
 export declare class ARControllerNFT extends ARControllerNFTBase {
     /**

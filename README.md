@@ -192,10 +192,10 @@ You need to set up a server with COOP and COEP headers to use this feature. Read
 
 ### Threaded build: deploying
 
-The threaded build is two files that must be served **side by side, from the same folder**:
+The threaded build is two files, and the worker must be served **next to the script that loads the bundle**: with a plain `<script>` tag that is the bundle's own folder, with `importScripts()` it is the calling worker script's folder, and in re-bundled apps it is the folder of the last `<script src>` on the page (details below):
 
 - `dist/ARToolkitNFT_td.js`: the bundle you load;
-- `dist/ARToolkitNFT_td.worker.js`: the pthread worker (an ES module worker, fixed name), which the bundle loads from its own folder.
+- `dist/ARToolkitNFT_td.worker.js`: the pthread worker (an ES module worker, fixed name), which the bundle loads from the folder above.
 
 Serve them with the `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers.
 
