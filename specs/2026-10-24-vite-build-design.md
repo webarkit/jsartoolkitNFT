@@ -105,7 +105,8 @@ These were considered; the user chose **A**.
   - **ESM:** `ARToolkitNFT_node.mjs` is a **thin ESM wrapper** that imports the CJS file and re-exports its named exports (`ARControllerNFT`, `ARToolkitNFT`, `ARLogLevel`, `NFTLoadError`, …). The reasons:
     - **The dual-package hazard.** Bundling `index_node.ts` a second time as ESM would give an app that loads both files two WASM instances and two `NFTLoadError` classes, so `instanceof` would fail.
     - **The bundled ESM build fails at `init()`.** A scratch build showed it: the Emscripten glue reads `__dirname`, which does not exist in ESM.
-  - **Types for the `import` condition:** a generated `types/src/index_node.d.mts` that re-exports from `./index_node.js`, so that `node16`/`nodenext` resolution sees ESM declarations and does not accept a default import the `.mjs` does not provide.
+  - **Types for the `import` condition:** a generated `types/src/index_node.d.mts` that re-exports from `./index_node.js`, so that `node16`/`nodenext` resolution sees ESM declarations.
+  - **Erratum (final review):** the wrapper and the `.d.mts` first provided no default export. That broke `import pkg from "@webarkit/jsartoolkit-nft"`, which worked before this branch (the `node` condition resolved to the CJS file) and is documented in the released README (1.14.0). Both now provide `export default cjs` / a default typed as the module namespace, for backward compatibility with the documented default import.
   - **Verification:** an ESM example (`examples/node/example_dist.mjs`) and a Node `.mjs` test.
 - **D8 (design). Output target.**
   - Vite's default browser target replaces babel. The current `dist/` is already modern: native classes, `async`/`await` and optional chaining; babel only processed the `.ts` sources. Nothing is lost.

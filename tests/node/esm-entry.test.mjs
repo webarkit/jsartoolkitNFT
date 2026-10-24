@@ -10,6 +10,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as esm from "@webarkit/jsartoolkit-nft";
+import pkg from "@webarkit/jsartoolkit-nft";
 
 const cjs = createRequire(import.meta.url)("@webarkit/jsartoolkit-nft");
 const EXAMPLE_DIR = path.resolve(
@@ -34,6 +35,11 @@ describe("Node ESM entry", () => {
     assert.equal(esm.ARToolkitNFT, cjs.ARToolkitNFT);
     assert.equal(esm.ARLogLevel, cjs.ARLogLevel);
     assert.equal(esm.NFTLoadError, cjs.NFTLoadError);
+  });
+
+  it("keeps the documented default import working: it is module.exports, as before", async () => {
+    assert.equal(pkg.ARControllerNFT, cjs.ARControllerNFT);
+    assert.equal((await import("@webarkit/jsartoolkit-nft")).default, pkg);
   });
 
   it("exports exactly the names the CJS bundle does, so the wrapper cannot drift", () => {

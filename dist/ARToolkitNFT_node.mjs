@@ -12,7 +12,12 @@
  * bundle sets __esModule. The names are listed one by one because Node cannot see the
  * named exports of a bundled CJS file statically. Keep them in step with the runtime
  * exports of src/index_node.ts.
+ *
+ * The default export is module.exports, kept for backward compatibility: before the
+ * `import` condition pointed here, Node resolved `import pkg from "..."` to the CJS
+ * bundle, and the released README documents that form.
  */
 import cjs from "./ARToolkitNFT_node.js";
 
 export const { ARToolkitNFT, ARControllerNFT, ARLogLevel, NFTLoadError } = cjs;
+export default cjs;
