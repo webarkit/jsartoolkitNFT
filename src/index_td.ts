@@ -33,8 +33,8 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-// Threaded build: `ARToolkitNFT_td.worker.js` must be served from the same folder as
-// `ARToolkitNFT_td.js` (the pthread worker is loaded next to the bundle).
+// The deployment note for editors is the JSDoc on the _td classes, which hover shows
+// for these re-exports.
 import { ARToolkitNFT } from "./ARToolkitNFT_td";
 import { ARControllerNFT } from "./ARControllerNFT_td";
 

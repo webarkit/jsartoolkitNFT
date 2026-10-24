@@ -1,5 +1,10 @@
 import { IImageObj, ARInitOptions } from "./abstractions/CommonInterfaces";
 import { ARControllerNFTBase } from "./ARControllerNFTBase";
+/**
+ * Threaded build: serve `ARToolkitNFT_td.worker.js` from the same folder as
+ * `ARToolkitNFT_td.js` (the pthread worker is loaded next to the bundle), with the
+ * COOP/COEP headers.
+ */
 export declare class ARControllerNFT extends ARControllerNFTBase {
     /**
      * The ARControllerNFT default constructor. It has no params (see above).

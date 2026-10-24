@@ -40,9 +40,15 @@ import { ARControllerNFTBase } from "./ARControllerNFTBase";
 // The controller of the threaded build. All of its behaviour is in
 // ARControllerNFTBase; this class names the build's ARToolkitNFT and declares the
 // public constructors and static factories, whose types name this class (#734,
-// D4). A plain comment, not JSDoc, so the published documentation stays as it was.
+// D4). A plain comment, not JSDoc, so the published documentation stays as it was (the
+// JSDoc below is only the deployment note, D13).
 // Declare no instance fields here: with ESNext class fields, a field declared in
 // a subclass is reset to `undefined` after the base constructor has set it.
+/**
+ * Threaded build: serve `ARToolkitNFT_td.worker.js` from the same folder as
+ * `ARToolkitNFT_td.js` (the pthread worker is loaded next to the bundle), with the
+ * COOP/COEP headers.
+ */
 export class ARControllerNFT extends ARControllerNFTBase {
   /**
    * The ARControllerNFT default constructor. It has no params (see above).
