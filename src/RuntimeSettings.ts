@@ -39,13 +39,16 @@ const AR2_KEYS: Record<string, ValueKind> = {
   searchSize: "integer",
 };
 
+// The highest level the core's validator accepts (AR_LOG_LEVEL_REL_INFO).
+const MAX_CORE_LOG_LEVEL = 4;
+
 function checkValue(key: string, value: unknown, kind: ValueKind): void {
   // Embind would coerce a wrong type (a string to NaN, 1 to true) instead of failing,
   // so the type is checked here, where the key can still be named.
   const type = kind === "integer" ? "number" : kind;
   if (typeof value !== type) {
     throw new TypeError(
-      `configure(): "${key}" must be a ${kind}, got ${typeof value}`,
+      `configure(): "${key}" must be ${kind === "integer" ? "an" : "a"} ${kind}, got ${typeof value}`,
     );
   }
   // For an int field Embind truncates (3.5 becomes 3) instead of failing: the same silent
@@ -69,9 +72,15 @@ function checkValue(key: string, value: unknown, kind: ValueKind): void {
  *    on failure (D7);
  * 4. throws a RangeError when it refuses the values.
  *
- * The merged settings carry an explicit logLevel, the current one, which the core writes
- * only when it differs from the effective level, so a patch without `logLevel` leaves it
- * alone.
+ * The merged settings carry logLevel -1, the core's "leave unchanged" sentinel, unless the
+ * patch names a level. The effective level must not be copied in: setLogLevel() and
+ * init({ logLevel }) accept any level, a level above RelInfo (4) included, while the core
+ * validates only -1 or 0..4, so copying it back made every later patch, an empty one too,
+ * throw. An explicit `logLevel` in the patch is held to the core's range (0..4, or -1 for
+ * "unchanged") and refused with a RangeError otherwise, instead of being routed to
+ * setLogLevel(): configure() is atomic (a refused patch changes nothing) and setLogLevel()
+ * would be a second, separate write. A level above RelInfo is set with setLogLevel() or
+ * the init option, and configure() keeps working at that level.
  */
 export function applyRuntimeSettingsPatch(
   instance: IARToolKitNFTInstance,
@@ -81,6 +90,7 @@ export function applyRuntimeSettingsPatch(
     throw new TypeError("configure(): the patch must be an object");
   }
   const merged: NFTRuntimeSettings = instance.getRuntimeSettings();
+  merged.logLevel = -1 as any;
 
   for (const [key, value] of Object.entries(patch)) {
     if (value === undefined) continue;
@@ -102,6 +112,12 @@ export function applyRuntimeSettingsPatch(
       throw new TypeError(`configure(): unknown key "${key}"`);
     }
     checkValue(key, value, TOP_LEVEL_KEYS[key]);
+    if (key === "logLevel" && (value as number) > MAX_CORE_LOG_LEVEL) {
+      throw new RangeError(
+        `configure(): "logLevel" must be between 0 and ${MAX_CORE_LOG_LEVEL} (or -1 to leave it), got ${String(value)}; ` +
+          "use setLogLevel() or the init option for a level above RelInfo",
+      );
+    }
     (merged as any)[key] = value;
   }
 

@@ -166,6 +166,19 @@ describe("Node build, runtime settings", () => {
     assert.equal(ar.getRuntimeSettings().logLevel, 3);
   });
 
+  // See tests/vitest/runtime-settings.test.ts: a level above RelInfo (4) must not make the
+  // core's validator, which takes only -1 or 0..4, refuse every later patch.
+  it("configure() keeps working at a log level above RelInfo", () => {
+    ar.setLogLevel(5);
+    ar.configure({ near: 1 });
+    assertClose(ar.getRuntimeSettings().near, 1, 1e-10, "near");
+    assert.equal(ar.getRuntimeSettings().logLevel, 5);
+    assert.doesNotThrow(() => ar.configure({}));
+    assert.equal(ar.getRuntimeSettings().logLevel, 5);
+    assert.throws(() => ar.configure({ logLevel: 7 }), /setLogLevel/);
+    assert.equal(ar.getLogLevel(), 5);
+  });
+
   it("is on ARToolkitNFT too", () => {
     const toolkit = ar.artoolkitNFT;
     toolkit.configure({ continuousDetection: false, detectionInterval: 50 });
@@ -216,6 +229,18 @@ describe("Node build, start-up log level", () => {
     // configure() must not write the core's own level back over the init-time one (D9).
     ar.configure({ near: 1 });
     assert.equal(ar.getRuntimeSettings().logLevel, 3);
+  });
+
+  it("configure() works after init({ logLevel }) above RelInfo", async () => {
+    spyConsole();
+    const ar = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat", {
+      logLevel: 5,
+    });
+    mock.restoreAll();
+    assert.equal(ar.getRuntimeSettings().logLevel, 5);
+    ar.configure({ near: 1 });
+    ar.configure({});
+    assert.equal(ar.getRuntimeSettings().logLevel, 5);
   });
 
   it("default init still logs the version", async () => {

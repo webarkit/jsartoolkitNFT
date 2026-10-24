@@ -199,6 +199,22 @@ describe.each(VARIANTS)("runtime settings ($name)", (variant) => {
     expect(ar.getRuntimeSettings().logLevel).toBe(2);
   });
 
+  // setLogLevel() and init({ logLevel }) accept any level, and a level above RelInfo (4)
+  // removes the version line too. The core's validator takes only -1 or 0..4, so configure()
+  // must not hand the effective level back to it: every patch used to throw RangeError once
+  // the level was above 4.
+  it("configure() keeps working at a log level above RelInfo", () => {
+    ar.setLogLevel(5);
+    ar.configure({ near: 1 });
+    expect(ar.getRuntimeSettings().near).toBeCloseTo(1, 10);
+    expect(ar.getRuntimeSettings().logLevel).toBe(5);
+    expect(() => ar.configure({})).not.toThrow();
+    expect(ar.getRuntimeSettings().logLevel).toBe(5);
+    // an explicit level above RelInfo is refused, configure() takes 0..4; the level stays
+    expect(() => ar.configure({ logLevel: 7 })).toThrow(/setLogLevel/);
+    expect(ar.getLogLevel()).toBe(5);
+  });
+
   it("is on ARToolkitNFT too", () => {
     const toolkit = ar.artoolkitNFT;
     toolkit.configure({ continuousDetection: false, detectionInterval: 50 });
@@ -262,6 +278,23 @@ describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
     // configure() must not write the core's own level back over the init-time one (D9).
     ar.configure({ near: 1 });
     expect(ar.getRuntimeSettings().logLevel).toBe(3);
+    ar.dispose?.();
+  });
+
+  it("configure() works after init({ logLevel }) above RelInfo", async () => {
+    const { ARControllerNFT } = await variant.load();
+    spyConsole();
+    const ar = await ARControllerNFT.initWithDimensions(
+      VIDEO_WIDTH,
+      VIDEO_HEIGHT,
+      CAMERA_PARAM,
+      true,
+      { logLevel: 5 },
+    );
+    expect(ar.getRuntimeSettings().logLevel).toBe(5);
+    ar.configure({ near: 1 });
+    ar.configure({});
+    expect(ar.getRuntimeSettings().logLevel).toBe(5);
     ar.dispose?.();
   });
 
