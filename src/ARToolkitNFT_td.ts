@@ -53,9 +53,11 @@ export class ARToolkitNFT extends ARToolkitNFTBase {
    * "ARToolkitNFT 1.5.0"
    */
   constructor() {
-    // No withFiltering argument, as this build has always constructed it: the
-    // threaded binding does not filter poses, so the argument would have no
-    // effect (ARToolKitNFT_js_td.cpp), but changing it is not part of #734 (D7).
-    super(ARToolkitNFT, initARToolkitNFT);
+    // withFiltering true, so the threaded build filters poses by default like the
+    // other builds (#692, #720 D13; the user's choice A). It used to pass nothing:
+    // the native no-argument constructor builds its core with filtering off, which
+    // made no difference then, as the threaded preset did not filter. Since
+    // WebARKitLib 0.12.0 it does.
+    super(ARToolkitNFT, initARToolkitNFT, true);
   }
 }

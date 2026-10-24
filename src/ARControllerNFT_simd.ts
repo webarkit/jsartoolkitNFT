@@ -33,7 +33,7 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import { IImageObj } from "./abstractions/CommonInterfaces";
+import { IImageObj, ARInitOptions } from "./abstractions/CommonInterfaces";
 import { ARToolkitNFT } from "./ARToolkitNFT_simd";
 import { ARControllerNFTBase } from "./ARControllerNFTBase";
 
@@ -108,6 +108,8 @@ export class ARControllerNFT extends ARControllerNFTBase {
    * @param {number} height
    * @param {string} cameraParam
    * @param {boolean} internalLuma
+   * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+   * so the start-up output follows it (#677). Per controller in JS.
    * @return {Promise<ARControllerNFT>} this
    */
   static async initWithDimensions(
@@ -115,6 +117,7 @@ export class ARControllerNFT extends ARControllerNFTBase {
     height: number,
     cameraParam: string,
     internalLuma: boolean,
+    options?: ARInitOptions,
   ): Promise<ARControllerNFT> {
     // directly init with given width / height
     // Names ARControllerNFT rather than `new this(...)`: a consumer's subclass gets a
@@ -125,7 +128,7 @@ export class ARControllerNFT extends ARControllerNFTBase {
       cameraParam,
       internalLuma,
     );
-    return await arControllerNFT._initialize();
+    return await arControllerNFT._initialize(options);
   }
 
   /** The static method **initWithImage** is the start of your app.
@@ -146,12 +149,15 @@ export class ARControllerNFT extends ARControllerNFTBase {
    * @param {image} image
    * @param {string} cameraParam
    * @param {boolean} internalLuma
+   * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+   * so the start-up output follows it (#677). Per controller in JS.
    * @return {Promise<ARControllerNFT>} this
    */
   static async initWithImage(
     image: IImageObj,
     cameraParam: string,
     internalLuma: boolean,
+    options?: ARInitOptions,
   ): Promise<ARControllerNFT> {
     const width = image.videoWidth || image.width;
     const height = image.videoHeight || image.height;
@@ -163,7 +169,7 @@ export class ARControllerNFT extends ARControllerNFTBase {
       cameraParam,
       internalLuma,
     );
-    return await arControllerNFT._initialize();
+    return await arControllerNFT._initialize(options);
   }
 
   /** The static method **customInit** is the start of your app.
@@ -193,6 +199,8 @@ export class ARControllerNFT extends ARControllerNFTBase {
    * @param {string} cameraParam
    * @param {boolean} internalLuma
    * @param {function} callback
+   * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+   * so the start-up output follows it (#677). Per controller in JS.
    * @return {Promise<ARControllerNFT>} this
    */
   static async customInit(
@@ -201,6 +209,7 @@ export class ARControllerNFT extends ARControllerNFTBase {
     cameraParam: string,
     internalLuma: boolean,
     callback: () => void,
+    options?: ARInitOptions,
   ): Promise<ARControllerNFT> {
     // Names ARControllerNFT rather than `new this(...)`: a consumer's subclass gets a
     // plain ARControllerNFT from here, as before #734.
@@ -211,6 +220,6 @@ export class ARControllerNFT extends ARControllerNFTBase {
       internalLuma,
     );
     callback();
-    return await arControllerNFT._initialize();
+    return await arControllerNFT._initialize(options);
   }
 }

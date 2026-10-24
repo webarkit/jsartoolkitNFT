@@ -115,10 +115,10 @@ describe("ARControllerNFT", () => {
     });
 
     /**
-     * The setters store the value; `recalculateCameraLens()` is what rebuilds
-     * the frustum from it. That two-step is the intended usage — the setters
-     * deliberately do not recalculate on every call, so several can be changed
-     * before paying for one rebuild.
+     * Since WebARKitLib 0.12.0 the setters rebuild the frustum themselves once a
+     * camera is loaded (#720, D5): the old two-step, store then
+     * `recalculateCameraLens()`, left getCameraMatrix() wrong until the second
+     * step. `recalculateCameraLens()` is kept for compatibility.
      */
     it("stores and returns the near plane", () => {
       ar.setProjectionNearPlane(0.5);
@@ -148,17 +148,21 @@ describe("ARControllerNFT", () => {
       expect(after).not.toEqual(before);
     });
 
-    it("does not recalculate until asked", () => {
+    it("rebuilds the frustum on every plane change", () => {
       const nft = ar.artoolkitNFT;
+      const lens = () => Array.from(nft.getCameraLens() as ArrayLike<number>);
 
-      nft.instance.recalculateCameraLens();
-      const lens = Array.from(nft.getCameraLens() as ArrayLike<number>);
-
-      // Changing the planes alone must not move the frustum — that is what
-      // makes the explicit recalculate step meaningful.
+      const before = lens();
       ar.setProjectionNearPlane(0.25);
+      const afterNear = lens();
+      expect(afterNear).not.toEqual(before);
       ar.setProjectionFarPlane(1500);
-      expect(Array.from(nft.getCameraLens() as ArrayLike<number>)).toEqual(lens);
+      expect(lens()).not.toEqual(afterNear);
+
+      // recalculateCameraLens() now rebuilds the same matrix.
+      const rebuilt = lens();
+      nft.instance.recalculateCameraLens();
+      expect(lens()).toEqual(rebuilt);
     });
   });
 

@@ -34,7 +34,13 @@
  *
  */
 
-import { INFTMarkerInfo, ARLogLevel, NFTLoadOptions } from "./CommonInterfaces";
+import {
+  INFTMarkerInfo,
+  ARLogLevel,
+  NFTLoadOptions,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
+} from "./CommonInterfaces";
 export interface IARToolkitNFT {
   getCameraLens(): any;
   recalculateCameraLens(): void;
@@ -52,6 +58,8 @@ export interface IARToolkitNFT {
   setFiltering(enableFiltering: boolean): void;
   setContinuousDetection(enabled: boolean): void;
   setDetectionInterval(ms: number): void;
+  configure(patch: NFTRuntimeSettingsPatch): void;
+  getRuntimeSettings(): NFTRuntimeSettings;
   /** @deprecated Has no effect on NFT tracking; will be removed in the next major version (#659). */
   getProcessingImage(): number;
   setLogLevel(level: ARLogLevel | number): void;

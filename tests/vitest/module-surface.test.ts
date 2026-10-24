@@ -80,6 +80,27 @@ for (const build of MODULE_BUILDS) {
     it(`exposes the ${build.api} class`, () => {
       expect(typeof module[build.api]).toBe("function");
     });
+
+    // Module.setLogLevel (#720, used by init() for #677) sets the level before any
+    // instance exists. Only the builds src/ wraps have it; the embed build binds the
+    // legacy API.
+    if (build.api === "ARToolKitNFT") {
+      it("exports setLogLevel, which applies before an instance exists", () => {
+        expect(typeof module.setLogLevel).toBe("function");
+        module.setLogLevel(3);
+        const instance = new module.ARToolKitNFT();
+        try {
+          expect(instance.getLogLevel()).toBe(3);
+          // The guard of ARToolKitNFT::setLogLevel: a negative level is ignored.
+          module.setLogLevel(-1);
+          expect(instance.getLogLevel()).toBe(3);
+          module.setLogLevel(1);
+          expect(instance.getLogLevel()).toBe(1);
+        } finally {
+          instance.delete();
+        }
+      });
+    }
   });
 }
 

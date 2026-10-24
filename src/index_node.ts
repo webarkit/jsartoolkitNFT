@@ -47,6 +47,10 @@ import type {
   IImageObj,
   NFTEvent,
   NFTEventListener,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
+  ARInitOptions,
+  NFTAR2Settings,
 } from "./abstractions/CommonInterfaces";
 
 export { ARToolkitNFT, ARControllerNFT, ARLogLevel, NFTLoadError };
@@ -56,4 +60,8 @@ export type {
   IImageObj,
   NFTEvent,
   NFTEventListener,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
+  ARInitOptions,
+  NFTAR2Settings,
 };

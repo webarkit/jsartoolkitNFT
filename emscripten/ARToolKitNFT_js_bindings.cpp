@@ -20,6 +20,8 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .function("setFiltering", &ARToolKitNFT::setFiltering)
       .function("setContinuousDetection", &ARToolKitNFT::setContinuousDetection)
       .function("setDetectionInterval", &ARToolKitNFT::setDetectionInterval)
+      .function("configure", &ARToolKitNFT::configure)
+      .function("getRuntimeSettings", &ARToolKitNFT::getRuntimeSettings)
       .function("getCameraLens", &ARToolKitNFT::getCameraLens)
       .function("recalculateCameraLens", &ARToolKitNFT::recalculateCameraLens)
       .function("passVideoData", &ARToolKitNFT::passVideoData)
@@ -55,6 +57,37 @@ EMSCRIPTEN_BINDINGS(constant_bindings) {
       .field("width", &nftMarker::width_NFT)
       .field("height", &nftMarker::height_NFT)
       .field("dpi", &nftMarker::dpi_NFT);
+
+  /*
+   * Runtime settings (#720). The JS names follow #720's TrackerConfig (near, far,
+   * detectionInterval), so the facade planned in #720 passes them through unchanged; the
+   * C++ names stay as they are. ar2 is a nested object. Every field must be present when
+   * JS passes the object in: ARToolkitNFT.configure() merges a patch into
+   * getRuntimeSettings() first.
+   */
+  value_object<NFTAR2Settings>("NFTAR2Settings")
+      .field("trackingThresh", &NFTAR2Settings::trackingThresh)
+      .field("simThresh", &NFTAR2Settings::simThresh)
+      .field("searchFeatureNum", &NFTAR2Settings::searchFeatureNum)
+      .field("templateSize1", &NFTAR2Settings::templateSize1)
+      .field("templateSize2", &NFTAR2Settings::templateSize2)
+      .field("searchSize", &NFTAR2Settings::searchSize);
+
+  value_object<NFTRuntimeSettings>("NFTRuntimeSettings")
+      .field("near", &NFTRuntimeSettings::nearPlane)
+      .field("far", &NFTRuntimeSettings::farPlane)
+      .field("continuousDetection", &NFTRuntimeSettings::continuousDetection)
+      .field("detectionInterval", &NFTRuntimeSettings::detectionIntervalMs)
+      .field("filtering", &NFTRuntimeSettings::filtering)
+      .field("logLevel", &NFTRuntimeSettings::logLevel)
+      .field("ar2", &NFTRuntimeSettings::ar2);
+
+  /*
+   * Module.setLogLevel(level): the log level lives in the module globals (D9), so it can be
+   * set before any ARToolKitNFT exists. init() uses it to apply a level before the native
+   * constructor logs (#677).
+   */
+  function("setLogLevel", &moduleSetLogLevel);
 
   /* errors */
   constant("ERROR_MARKER_INDEX_OUT_OF_BOUNDS", MARKER_INDEX_OUT_OF_BOUNDS);

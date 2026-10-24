@@ -38,9 +38,14 @@ import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
 import {
   INFTMarkerInfo,
   ARLogLevel,
+  NFTRuntimeSettings,
+  NFTRuntimeSettingsPatch,
   ARToolkitNFTNodeModule,
   IARToolKitNFTInstance,
+  ARInitOptions,
 } from "./abstractions/CommonInterfaces";
+import { logAt } from "./logger";
+import { applyRuntimeSettingsPatch } from "./RuntimeSettings";
 import packageJson from "../package.json";
 import { NFTLoadError, errorCode } from "./NFTLoadError";
 const { version } = packageJson;
@@ -144,8 +149,8 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
    * - instance
    * - cameraCount
    * - version
-   * A message is displayed in the console during the intitialization, for example:
-   * "ARToolkitNFT 1.5.0"
+   * A message is displayed in the console during init(), for example:
+   * "ARToolkitNFT 1.5.0" (it moved there from the constructor, #677).
    */
   constructor() {
     // reference to WASM module
@@ -153,7 +158,7 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     this.cameraCount = 0;
     this.nodefsMounted = false;
     this.version = version;
-    console.info("ARToolkitNFT ", this.version);
+    // The version line is logged by init(), after the log level is applied (#677).
   }
 
   // ---------------------------------------------------------------------------
@@ -163,10 +168,19 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
    * Init the class injecting the Wasm Module and link the instanced methods.
    * Every call builds its own module, so each ARToolkitNFT has its own heap
    * and filesystem.
+   * @param options `logLevel` is applied to the fresh module before the core is
+   * constructed (#677, D10), so the start-up lines follow it.
    * @return {object} the this object
    */
-  public async init() {
+  public async init(options?: ARInitOptions) {
     const instance = await initARToolkitNFT();
+    // Between the factory and the core's constructor, through the module-level binding:
+    // the constructor and the camera dump print as soon as they run (#677, D10).
+    const level = options?.logLevel;
+    if (level !== undefined) instance.setLogLevel(level);
+    // The version line moved here from the constructor so that it can follow the level. It
+    // is a RelInfo line, so it can still be kept at any level up to RelInfo (#677).
+    logAt(ARLogLevel.RelInfo, level ?? ARLogLevel.Info, "ARToolkitNFT ", this.version);
     this.instance = new instance.ARToolKitNFT(true);
 
     this.module = instance;
@@ -293,6 +307,34 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
   }
 
   /**
+   * Changes several runtime settings at once (#720). The patch is deep-merged into
+   * {@link getRuntimeSettings} (`ar2` field by field) and applied in one native call, which
+   * validates everything first and changes nothing on failure.
+   *
+   * `logLevel` is per controller: the level lives in the WASM module's globals, and each
+   * init() creates its own module.
+   * @param patch any subset of the settings.
+   * @throws {TypeError} on an unknown key (including the deprecated square-marker keys
+   * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`), a value of the wrong
+   * type, or a non-integer for an integer field (`logLevel`, `ar2.searchFeatureNum`,
+   * `ar2.templateSize1/2`, `ar2.searchSize`); nothing is changed.
+   * @throws {RangeError} when the values are out of range; nothing is changed.
+   */
+  public configure(patch: NFTRuntimeSettingsPatch): void {
+    applyRuntimeSettingsPatch(this.instance, patch);
+  }
+
+  /**
+   * The current runtime settings (#720), with the effective values: `detectionInterval`
+   * and `ar2.searchSize` are the build's resolved defaults when they were not set, and
+   * `logLevel` is the module's current level.
+   * @return a fresh object; changing it changes nothing until passed to configure().
+   */
+  public getRuntimeSettings(): NFTRuntimeSettings {
+    return this.instance.getRuntimeSettings();
+  }
+
+  /**
    * Returns the Emscripten HEAP offset of the square-marker detector's
    * debug image.
    * @deprecated The image is never filled for NFT tracking: only the
@@ -335,6 +377,11 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     return this.instance.getLogLevel();
   }
 
+  /**
+   * Sets the near plane of the projection. Once a camera is loaded the camera lens is
+   * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+   * @param value the near plane, > 0.
+   */
   public setProjectionNearPlane(value: number): void {
     this.instance.setProjectionNearPlane(value);
   }
@@ -343,6 +390,11 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     return this.instance.getProjectionNearPlane();
   }
 
+  /**
+   * Sets the far plane of the projection. Once a camera is loaded the camera lens is
+   * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+   * @param value the far plane, > the near plane.
+   */
   public setProjectionFarPlane(value: number): void {
     this.instance.setProjectionFarPlane(value);
   }
@@ -423,8 +475,9 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
   }
 
   /**
-   * Rebuilds the camera frustum from the near and far planes. The projection setters
-   * only store the planes; they take effect on the next call to this method.
+   * Rebuilds the camera frustum from the near and far planes. Kept for compatibility:
+   * since WebARKitLib 0.12.0 the lens follows the planes, as the projection setters and
+   * configure() rebuild it themselves, so calling this changes nothing.
    */
   public recalculateCameraLens(): void {
     this.instance.recalculateCameraLens();
@@ -494,7 +547,8 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
       if (onError2) onError2(errorCode(e));
       return [];
     }
-    console.log("add nft marker ids: ", markerIds);
+    // Follows the log level like the other JS console lines (#677).
+    logAt(ARLogLevel.Info, this.getLogLevel(), "add nft marker ids: ", markerIds);
     if (callback) callback(markerIds);
     return markerIds;
   }
