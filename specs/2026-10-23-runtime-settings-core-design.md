@@ -2,7 +2,7 @@
 
 **Date:** 2026-10-23
 **Issue:** #720 (phases 1 and 2); also closes #677 and #692
-**Status:** design agreed in discussion; this document is the written spec, awaiting approval
+**Status:** design agreed in discussion; this document is the written spec. It was approved and implemented; where the code shipped differently, the text carries an "Erratum" note.
 
 ## Summary
 
@@ -193,6 +193,11 @@ Three ways to build `configure()` were considered. The user chose **A**.
   - `getRuntimeSettings().logLevel` reads `arLogLevel`. The core constructor does not touch the
     globals. The reason: if the core held its own copy, the first `configure({ near })` after an
     init-time `logLevel` would write the core's INFO back over it.
+  - **Erratum (WebARKitLib #106 review):** the struct default shipped as `logLevel = -1`, meaning
+    "leave unchanged", not `AR_LOG_LEVEL_INFO`. The core writes the globals only when the value
+    differs from the effective level. Reason: a default-built struct must not reset a quieter
+    level, and a `getRuntimeSettings()` round trip must not overwrite a level set through
+    `WebARKitManager`. The core's validator accepts -1 or `AR_LOG_LEVEL_DEBUG`..`AR_LOG_LEVEL_REL_INFO`.
 - **D10 (design). #677 is closed here, all three of its points:**
   1. `initWithDimensions`, `initWithImage` and `customInit` take an optional trailing
      `options: { logLevel?: ARLogLevel }`.
@@ -312,7 +317,7 @@ struct NFTRuntimeSettings {
   bool continuousDetection = true;
   double detectionIntervalMs = -1; // -1: the preset's defaultDetectionIntervalMs
   bool filtering = false;
-  int logLevel = AR_LOG_LEVEL_INFO;
+  int logLevel = -1;               // erratum: shipped as -1 ("leave unchanged"), see D9
   NFTAR2Settings ar2;
 };
 
@@ -435,7 +440,7 @@ These go in the release notes, with their reasons:
 - **Tracking:**
   - `tools/compare-builds` gives identical tracking output before and after with the defaults;
   - `examples/node/example_dist.js` still tracks;
-  - an AR2 change visibly changes behaviour. For example, a very high `trackingThresh` stops
+  - an AR2 change visibly changes behaviour. For example, a very low `trackingThresh` (0.01) stops
     tracking on the photo sequence, which proves the value reaches the handle.
 - **Python:** the existing pytest suite passes against the new core. It is built at -O3, per the
   project notes.

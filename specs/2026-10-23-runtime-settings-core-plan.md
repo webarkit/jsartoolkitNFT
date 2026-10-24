@@ -33,7 +33,7 @@ refer to its decisions.
   - continuous detection on;
   - interval -1 (the preset's choice);
   - filtering false;
-  - log level `AR_LOG_LEVEL_INFO`;
+  - log level `-1` ("leave unchanged"; erratum: the plan said `AR_LOG_LEVEL_INFO`, but a default-built struct must not reset a quieter level nor overwrite one set through `WebARKitManager`, changed in the WebARKitLib #106 review);
   - AR2: trackingThresh 5.0, simThresh 0.5, searchFeatureNum 16, templateSize1 6,
     templateSize2 6, searchSize 0.
 - **Sentinels:** `detectionIntervalMs == -1` and `searchSize == 0` mean "follow the preset".
