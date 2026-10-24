@@ -36,6 +36,12 @@ describe("Node ESM entry", () => {
     assert.equal(esm.NFTLoadError, cjs.NFTLoadError);
   });
 
+  it("exports exactly the names the CJS bundle does, so the wrapper cannot drift", () => {
+    const markers = new Set(["default", "module.exports", "__esModule"]);
+    const names = (o) => Object.keys(o).filter((k) => !markers.has(k)).sort();
+    assert.deepEqual(names(esm), names(cjs));
+  });
+
   it("keeps __esModule on the CJS bundle", () => {
     assert.equal(cjs.__esModule, true);
   });
