@@ -640,8 +640,10 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
 
   // getCameraMatrix() returns a cached copy of the core's lens, refreshed after every
   // change to the planes, rather than reading the lens on each call: callers read it per
-  // frame, and a read would build a new array through Embind every time. Every path that
-  // changes the planes goes through this controller, so the copy cannot go stale.
+  // frame, and a read would build a new array through Embind every time. Every public path
+  // of the controller refreshes it. Calling the wrapper directly
+  // (ar.artoolkitNFT.setProjectionNearPlane()) bypasses the controller: call
+  // recalculateCameraLens(), or a controller setter, to refresh the matrix afterwards.
   private refreshCameraMatrix(): void {
     this.camera_mat = this.artoolkitNFT.getCameraLens();
   }
@@ -921,10 +923,10 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
     // The planes first, then the first lens (#720 phase 1): the matrix cached at init is
     // then built with the planes the getters report. The core's defaults are already 0.1
     // and 1000 since WebARKitLib 0.12.0 (D4); setting them keeps that true whatever the
-    // core's defaults, and the setters refresh the cached matrix themselves.
+    // core's defaults, and the setters refresh the cached matrix themselves (the second
+    // setter leaves it built with both planes).
     this.setProjectionNearPlane(0.1);
     this.setProjectionFarPlane(1000);
-    this.refreshCameraMatrix();
 
     setTimeout(() => {
       this.dispatchEvent({

@@ -40,16 +40,19 @@ import {
   NFTEvent,
   NFTRuntimeSettings,
   NFTRuntimeSettingsPatch,
+  ARInitOptions,
 } from "./CommonInterfaces";
 export abstract class AbstractARControllerNFT {
   static initWithDimensions: (
     width: number,
     height: number,
     cameraParam: string,
+    options?: ARInitOptions,
   ) => Promise<AbstractARControllerNFT>;
   static initWithImage: (
     image: IImageObj,
     cameraParam: string,
+    options?: ARInitOptions,
   ) => Promise<AbstractARControllerNFT>;
   process: (image: IImageObj) => void;
   detectNFTMarker: (videoLuma: any) => void;

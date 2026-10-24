@@ -1,7 +1,7 @@
-import { IImageObj, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch } from "./CommonInterfaces";
+import { IImageObj, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARInitOptions } from "./CommonInterfaces";
 export declare abstract class AbstractARControllerNFT {
-    static initWithDimensions: (width: number, height: number, cameraParam: string) => Promise<AbstractARControllerNFT>;
-    static initWithImage: (image: IImageObj, cameraParam: string) => Promise<AbstractARControllerNFT>;
+    static initWithDimensions: (width: number, height: number, cameraParam: string, options?: ARInitOptions) => Promise<AbstractARControllerNFT>;
+    static initWithImage: (image: IImageObj, cameraParam: string, options?: ARInitOptions) => Promise<AbstractARControllerNFT>;
     process: (image: IImageObj) => void;
     detectNFTMarker: (videoLuma: any) => void;
     trackNFTMarkerId: (id: number, markerWidth?: number) => object;
