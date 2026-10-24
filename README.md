@@ -199,7 +199,7 @@ The threaded build is two files that must be served **side by side, from the sam
 
 Serve them with the `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers.
 
-If you load the bundle with a `<script>` tag or `importScripts()`, copy both files together and you are done. If you **re-bundle** it with your own build (Vite, webpack, ...), the bundler copies `ARToolkitNFT_td.js` into your output but does not know about the worker, so copy it next to the output bundle yourself:
+With a `<script>` tag, keep the two files side by side and you are done. With `importScripts()` in a worker, the bundle URL is the URL of the worker script that calls `importScripts` (the same rule as webpack), so `ARToolkitNFT_td.worker.js` must sit in the folder of that calling worker script, not next to the bundle. If you **re-bundle** it with your own build (Vite, webpack, ...), the bundler copies `ARToolkitNFT_td.js` into your output but does not know about the worker, so copy it next to the output bundle yourself:
 
 ```javascript
 // Vite: vite.config.js, with vite-plugin-static-copy
@@ -208,12 +208,13 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 export default {
   plugins: [
     viteStaticCopy({
-      targets: [{ src: 'node_modules/@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_td.worker.js', dest: '.' }],
+      targets: [{ src: 'node_modules/@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_td.worker.js', dest: 'assets' }],  // = build.assetsDir
     }),
   ],
 }
-// (or put the file in your public/ folder, when the bundle is also served from the root)
 ```
+
+The worker is resolved next to the script that loads the bundle. For module or re-bundled apps that is the last `<script src>` on the page, which in a Vite production build is `/assets/index-*.js`, hence `dest: 'assets'`. (A `public/` placement works only with `build.assetsDir: ''`.) In `vite dev` the location differs (under `/src/`), so test the threaded build with `vite build && vite preview`.
 
 ```javascript
 // webpack: webpack.config.js, with copy-webpack-plugin
