@@ -40,7 +40,17 @@ function owned(name) {
 }
 
 function clean() {
-  for (const name of readdirSync(DIST)) {
+  let names;
+  try {
+    names = readdirSync(DIST);
+  } catch (error) {
+    // No dist/ yet (a fresh checkout without the committed bundles, or a deleted
+    // folder): nothing to clean, and the Vite builds create it. Any other failure
+    // (permissions, a file named dist) still stops the build.
+    if (error.code === "ENOENT") return;
+    throw error;
+  }
+  for (const name of names) {
     if (owned(name)) rmSync(join(DIST, name));
   }
 }
