@@ -20,5 +20,10 @@ import { IARToolKitNFTInstance, NFTRuntimeSettingsPatch } from "./abstractions/C
  * setLogLevel(): configure() is atomic (a refused patch changes nothing) and setLogLevel()
  * would be a second, separate write. A level above RelInfo is set with setLogLevel() or
  * the init option, and configure() keeps working at that level.
+ *
+ * One exception: an explicit `logLevel` equal to the instance's current level is "no
+ * change" and is accepted whatever its value (the core still gets -1). A
+ * getRuntimeSettings() round trip hands the current level back, and it must succeed at any
+ * level, a silenced one above RelInfo included. Only a DIFFERENT level above 4 is refused.
  */
 export declare function applyRuntimeSettingsPatch(instance: IARToolKitNFTInstance, patch: NFTRuntimeSettingsPatch): void;

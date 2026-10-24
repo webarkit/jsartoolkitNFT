@@ -179,6 +179,24 @@ describe("Node build, runtime settings", () => {
     assert.equal(ar.getLogLevel(), 5);
   });
 
+  // A getRuntimeSettings() round trip must succeed at any level; a different level above 4
+  // is still refused.
+  it("accepts the current level back from getRuntimeSettings() above RelInfo", () => {
+    ar.setLogLevel(5);
+    const s = ar.getRuntimeSettings();
+    assert.equal(s.logLevel, 5);
+    s.near = 1;
+    assert.doesNotThrow(() => ar.configure(s));
+    assertClose(ar.getRuntimeSettings().near, 1, 1e-10, "near");
+    assert.equal(ar.getLogLevel(), 5);
+    const before = ar.getRuntimeSettings();
+    assert.doesNotThrow(() => ar.configure({ logLevel: 5 }));
+    assert.deepEqual(ar.getRuntimeSettings(), before);
+    assert.throws(() => ar.configure({ logLevel: 7 }), RangeError);
+    assert.throws(() => ar.configure({ logLevel: 7 }), /setLogLevel/);
+    assert.equal(ar.getLogLevel(), 5);
+  });
+
   it("is on ARToolkitNFT too", () => {
     const toolkit = ar.artoolkitNFT;
     toolkit.configure({ continuousDetection: false, detectionInterval: 50 });

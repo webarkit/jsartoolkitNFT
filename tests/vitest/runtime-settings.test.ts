@@ -215,6 +215,27 @@ describe.each(VARIANTS)("runtime settings ($name)", (variant) => {
     expect(ar.getLogLevel()).toBe(5);
   });
 
+  // A getRuntimeSettings() round trip must succeed at any level: it hands the current
+  // level back, and a level above RelInfo (4) is what init({ logLevel }) and setLogLevel()
+  // can set. A different level above 4 is still refused.
+  it("accepts the current level back from getRuntimeSettings() above RelInfo", () => {
+    ar.setLogLevel(5);
+    const s = ar.getRuntimeSettings();
+    expect(s.logLevel).toBe(5);
+    s.near = 1;
+    expect(() => ar.configure(s)).not.toThrow();
+    expect(ar.getRuntimeSettings().near).toBeCloseTo(1, 10);
+    expect(ar.getLogLevel()).toBe(5);
+    // the same level, explicitly: no change
+    const before = ar.getRuntimeSettings();
+    expect(() => ar.configure({ logLevel: 5 })).not.toThrow();
+    expect(ar.getRuntimeSettings()).toEqual(before);
+    // a different level above 4 is refused and leaves the level alone
+    expect(() => ar.configure({ logLevel: 7 })).toThrow(RangeError);
+    expect(() => ar.configure({ logLevel: 7 })).toThrow(/setLogLevel/);
+    expect(ar.getLogLevel()).toBe(5);
+  });
+
   it("is on ARToolkitNFT too", () => {
     const toolkit = ar.artoolkitNFT;
     toolkit.configure({ continuousDetection: false, detectionInterval: 50 });

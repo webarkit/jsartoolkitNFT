@@ -81,6 +81,11 @@ function checkValue(key: string, value: unknown, kind: ValueKind): void {
  * setLogLevel(): configure() is atomic (a refused patch changes nothing) and setLogLevel()
  * would be a second, separate write. A level above RelInfo is set with setLogLevel() or
  * the init option, and configure() keeps working at that level.
+ *
+ * One exception: an explicit `logLevel` equal to the instance's current level is "no
+ * change" and is accepted whatever its value (the core still gets -1). A
+ * getRuntimeSettings() round trip hands the current level back, and it must succeed at any
+ * level, a silenced one above RelInfo included. Only a DIFFERENT level above 4 is refused.
  */
 export function applyRuntimeSettingsPatch(
   instance: IARToolKitNFTInstance,
@@ -90,6 +95,8 @@ export function applyRuntimeSettingsPatch(
     throw new TypeError("configure(): the patch must be an object");
   }
   const merged: NFTRuntimeSettings = instance.getRuntimeSettings();
+  // The same source getRuntimeSettings() reports from: the level a round trip hands back.
+  const currentLogLevel = merged.logLevel as number;
   merged.logLevel = -1 as any;
 
   for (const [key, value] of Object.entries(patch)) {
@@ -112,6 +119,8 @@ export function applyRuntimeSettingsPatch(
       throw new TypeError(`configure(): unknown key "${key}"`);
     }
     checkValue(key, value, TOP_LEVEL_KEYS[key]);
+    // The current level handed back unchanged: leave the core's -1 sentinel in place.
+    if (key === "logLevel" && value === currentLogLevel) continue;
     if (key === "logLevel" && (value as number) > MAX_CORE_LOG_LEVEL) {
       throw new RangeError(
         `configure(): "logLevel" must be between 0 and ${MAX_CORE_LOG_LEVEL} (or -1 to leave it), got ${String(value)}; ` +

@@ -253,7 +253,10 @@ export declare abstract class ARControllerNFTBase implements AbstractARControlle
      * new planes at once.
      *
      * `logLevel` is per controller: the level lives in the WASM module's globals, and each
-     * controller's init() creates its own module.
+     * controller's init() creates its own module. The core takes 0..4 (or -1 for "leave it"),
+     * so a level above 4 is refused with a RangeError, except the controller's current level:
+     * that counts as no change, so a getRuntimeSettings() round trip succeeds at any level,
+     * a silenced one included. Set a level above 4 with setLogLevel() or the init option.
      * @example
      * ar.configure({ near: 1, far: 5000, ar2: { simThresh: 0.6 } });
      * @param patch any subset of the settings.
