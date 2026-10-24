@@ -66,30 +66,24 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "8.0.6",
-    "@babel/plugin-transform-runtime": "8.0.6",
-    "@babel/preset-env": "8.0.6",
     "@types/node": "^24.19.2",
     "@vitest/browser": "^5.0.4",
     "@vitest/browser-playwright": "^5.0.4",
     "@vitest/coverage-v8": "^5.0.4",
-    "babel-loader": "10.1.1",
     "canvas": "^3.2.3",
     "glob": "^13.0.6",
     "playwright": "^1.63.0",
     "prettier": "^3.9.9",
     "sharp": "^0.35.5",
-    "ts-loader": "^9.6.2",
     "typedoc": "0.28.20",
     "typescript": "6.0.3",
-    "vitest": "^5.0.4",
-    "webpack": "5.111.1",
-    "webpack-cli": "7.2.3"
+    "vite": "8.3.4",
+    "vitest": "^5.0.4"
   },
   "scripts": {
-    "dev-ts": "webpack --mode development --progress --watch",
+    "dev-ts": "node tools/build-ts.mjs --watch",
     "docs": "typedoc",
-    "build-ts": "webpack --mode production",
+    "build-ts": "node tools/build-ts.mjs",
     "build": "node tools/makem.js && node -e \"console.log('Built at', new Date())\"",
     "build-no-libar": "node tools/makem.js --no-libar && node -e \"console.log('Built at', new Date())\"",
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
@@ -107,8 +101,5 @@
     "format": "prettier --write .",
     "setup-docker": "node tools/docker-setup.js"
   },
-  "license": "LGPL-3.0",
-  "dependencies": {
-    "@babel/runtime": "8.0.5"
-  }
+  "license": "LGPL-3.0"
 }
