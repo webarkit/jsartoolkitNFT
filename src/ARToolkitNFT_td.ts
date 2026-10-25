@@ -38,9 +38,16 @@ import { ARToolkitNFTBase } from "./ARToolkitNFTBase";
 
 // The WASM wrapper of the threaded build. All of its code is in ARToolkitNFTBase;
 // this class only picks the build (#734). A plain comment, not JSDoc, so the
-// published documentation of ARToolkitNFT stays as it was.
+// published documentation of ARToolkitNFT stays as it was (the JSDoc below is only
+// the deployment note, D13).
 // Declare no instance fields here: with ESNext class fields, a field declared in
 // a subclass is reset to `undefined` after the base constructor has set it.
+/**
+ * Threaded build: serve `ARToolkitNFT_td.worker.js` next to the script that loads this
+ * bundle (with a plain `<script>` tag, the folder of `ARToolkitNFT_td.js`; with
+ * `importScripts()`, the calling worker's folder; in re-bundled apps, see the README
+ * section "Threaded build: deploying"), with the COOP/COEP headers.
+ */
 export class ARToolkitNFT extends ARToolkitNFTBase {
   /**
    * The ARToolkitNFT constructor. It has no arguments.

@@ -22,5 +22,10 @@ python-bindings/*
 # .npmignore exists.
 coverage/
 tests/
+# Build-only: the Vite config and the sources of the generated Node ESM entry (#741).
+# dist/ARToolkitNFT_node.mjs and types/src/index_node.d.mts are what ship.
+vite.lib.config.mjs
+vitest.config.ts
+src-esm/
 .github/
 .devcontainer/

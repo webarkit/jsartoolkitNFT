@@ -33,6 +33,8 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
+// The deployment note for editors is the JSDoc on the _td classes, which hover shows
+// for these re-exports.
 import { ARToolkitNFT } from "./ARToolkitNFT_td";
 import { ARControllerNFT } from "./ARControllerNFT_td";
 

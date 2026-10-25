@@ -82,9 +82,6 @@ jobs:
         # Fail instead of warning when an entry matches nothing, so the list can't
         # silently drift from what the build emits.
         fail_on_unmatched_files: true
-        # dist/*.ARToolkitNFT_td.js is the threaded build's pthread worker chunk. Its
-        # name carries a webpack chunk id that changes with the chunk; webpack.config.js
-        # deletes stale ones, so the glob matches only the current chunk.
         files: |
           build/artoolkitNFT.debug.js
           build/artoolkitNFT.min.js
@@ -96,11 +93,12 @@ jobs:
           build/artoolkitNFT_thread.js
           build/artoolkitNFT_wasm.js
           build/artoolkitNFT_wasm.simd.js
-          dist/*.ARToolkitNFT_td.js
           dist/ARToolkitNFT.js
           dist/ARToolkitNFT_node.js
+          dist/ARToolkitNFT_node.mjs
           dist/ARToolkitNFT_simd.js
           dist/ARToolkitNFT_td.js
+          dist/ARToolkitNFT_td.worker.js
           js/artoolkitNFT.api.js
           js/artoolkitNFT.embed_ES6_worker.js
           js/artoolkitNFT.multi_worker.js
