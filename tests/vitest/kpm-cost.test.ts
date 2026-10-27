@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { CAMERA_PARAM, MARKER_PINBALL, MARKER_KUVA, loadMarkers } from "./helpers";
+import {
+  CAMERA_PARAM,
+  MARKER_PINBALL,
+  MARKER_KUVA,
+  loadMarkers,
+} from "./helpers";
 import { loadCompositeFrames, isFound, processUntil } from "./frames";
 import { VARIANTS } from "./variants";
 
@@ -31,7 +36,8 @@ const variant = VARIANTS.find((v) => v.name === "wasm")!;
 
 function stats(samples: number[]) {
   const sorted = [...samples].sort((a, b) => a - b);
-  const pick = (q: number) => sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
+  const pick = (q: number) =>
+    sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))];
   return { median: pick(0.5), p90: pick(0.9), max: sorted[sorted.length - 1] };
 }
 
@@ -56,7 +62,9 @@ describe.skip("KPM cost at camera sizes (manual harness)", () => {
         try {
           await processUntil(ar, frames.pinballOnly, () => isFound(ar, 0), 200);
         } catch {
-          console.log(`[kpm-cost] ${size} loaded=[${loaded}] pinball NOT found in 200 frames`);
+          console.log(
+            `[kpm-cost] ${size} loaded=[${loaded}] pinball NOT found in 200 frames`,
+          );
           return;
         }
 

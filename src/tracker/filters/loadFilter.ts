@@ -55,19 +55,25 @@ function checkFilterConfig(config: unknown): void {
     );
   }
   if (typeof config !== "object" || config === null) {
-    throw new TypeError(`filter: ${String(config)} is not a filter; use ${FILTER_FORMS}`);
+    throw new TypeError(
+      `filter: ${String(config)} is not a filter; use ${FILTER_FORMS}`,
+    );
   }
   if ("type" in config) {
     const type = (config as { type: unknown }).type;
     if (type !== "oneEuro") {
-      throw new TypeError(`filter: unknown type "${String(type)}"; the only type is 'oneEuro'`);
+      throw new TypeError(
+        `filter: unknown type "${String(type)}"; the only type is 'oneEuro'`,
+      );
     }
     checkFormKeys(config, "type");
     return;
   }
   if ("create" in config) {
     if (typeof (config as { create: unknown }).create !== "function") {
-      throw new TypeError("filter: create must be a function returning a PoseFilter");
+      throw new TypeError(
+        "filter: create must be a function returning a PoseFilter",
+      );
     }
     checkFormKeys(config, "create");
     return;
@@ -75,7 +81,9 @@ function checkFilterConfig(config: unknown): void {
   if ("module" in config) {
     const url = (config as { module: unknown }).module;
     if (typeof url !== "string" || url === "") {
-      throw new TypeError("filter: module must be a non-empty string, the module's URL");
+      throw new TypeError(
+        "filter: module must be a non-empty string, the module's URL",
+      );
     }
     checkFormKeys(config, "module");
     return;
@@ -120,7 +128,9 @@ export async function loadFilter(
     throw wrap(url, e);
   }
   if (typeof mod?.createPoseFilter !== "function") {
-    throw new Error(`pose filter module ${url}: it does not export createPoseFilter`);
+    throw new Error(
+      `pose filter module ${url}: it does not export createPoseFilter`,
+    );
   }
   const make = mod.createPoseFilter;
   const options = config.options;

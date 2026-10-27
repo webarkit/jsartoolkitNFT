@@ -115,7 +115,10 @@ export interface NFTTracker {
   readonly cameraMatrix: Float64Array;
   /** Returns a Promise because a `{ module }` filter loads asynchronously (D14). */
   configure(patch: NFTTrackerPatch): Promise<void>;
-  addNFTTargets(sources: string[], opts?: AddTargetsOptions): Promise<TargetLoad[]>;
+  addNFTTargets(
+    sources: string[],
+    opts?: AddTargetsOptions,
+  ): Promise<TargetLoad[]>;
   process(frame: TrackerFrame, timestampMs: number): FrameResult;
   projectionFor(viewport: Viewport, geometry?: FrameGeometry): Float64Array;
   dispose(): void;

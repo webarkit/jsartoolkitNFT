@@ -1,6 +1,11 @@
 import type { TrackerFrame } from "./types";
 
-function sizeError(w: number, h: number, width: number, height: number): RangeError {
+function sizeError(
+  w: number,
+  h: number,
+  width: number,
+  height: number,
+): RangeError {
   return new RangeError(
     `NFTTracker.process: the frame is ${w}x${h}, the tracker was created for ${width}x${height}`,
   );

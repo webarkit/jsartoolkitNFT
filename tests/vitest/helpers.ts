@@ -18,7 +18,8 @@ export const MARKER_KUVA = "/examples/DataNFT/kuva";
  */
 export async function distBlobUrl(file: string): Promise<string> {
   const res = await fetch(`/tests/vitest/.dist/${file}.txt`);
-  if (!res.ok) throw new Error(`${file}.txt: ${res.status}; run npm run build-ts`);
+  if (!res.ok)
+    throw new Error(`${file}.txt: ${res.status}; run npm run build-ts`);
   const text = await res.text();
   return URL.createObjectURL(new Blob([text], { type: "text/javascript" }));
 }
@@ -63,7 +64,12 @@ export function loadMarker(
 ): Promise<number> {
   return new Promise<number>((resolve, reject) => {
     const timer = setTimeout(
-      () => reject(new Error(`loadNFTMarker('${url}') timed out — the callback never fired`)),
+      () =>
+        reject(
+          new Error(
+            `loadNFTMarker('${url}') timed out — the callback never fired`,
+          ),
+        ),
       timeoutMs,
     );
     controller.loadNFTMarker(
@@ -94,7 +100,12 @@ export function loadMarkers(
 ): Promise<number[]> {
   return new Promise<number[]>((resolve, reject) => {
     const timer = setTimeout(
-      () => reject(new Error(`loadNFTMarkers([${urls}]) timed out — the callback never fired`)),
+      () =>
+        reject(
+          new Error(
+            `loadNFTMarkers([${urls}]) timed out — the callback never fired`,
+          ),
+        ),
       timeoutMs,
     );
     controller.loadNFTMarkers(

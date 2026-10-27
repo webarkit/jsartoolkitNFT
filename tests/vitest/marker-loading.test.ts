@@ -530,8 +530,9 @@ describe(`loadNFTMarker(s) outcomes (#685, ${VARIANTS[0].name})`, () => {
 
   it("no callbacks rejects with NFTLoadError", async () => {
     const ar = await fc();
-    await expect(ar.loadNFTMarkers([MISSING], undefined, undefined, opts))
-      .rejects.toMatchObject({ name: "NFTLoadError", kind: "http" });
+    await expect(
+      ar.loadNFTMarkers([MISSING], undefined, undefined, opts),
+    ).rejects.toMatchObject({ name: "NFTLoadError", kind: "http" });
   }, 150_000);
 
   it("onSuccess only resolves [] and logs", async () => {

@@ -1,4 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  afterEach,
+  vi,
+} from "vitest";
 import { VARIANTS } from "./variants";
 import { version } from "../../package.json";
 import {
@@ -328,8 +336,8 @@ describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
       CAMERA_PARAM,
       true,
     );
-    const info = spies[1].mock.calls.filter((c) =>
-      c[0] === "ARToolkitNFT " && c[1] === version,
+    const info = spies[1].mock.calls.filter(
+      (c) => c[0] === "ARToolkitNFT " && c[1] === version,
     );
     expect(info).toHaveLength(1);
     expect(info[0].join(" ")).toContain(version);
@@ -347,7 +355,9 @@ describe.each(VARIANTS)("start-up log level ($name)", (variant) => {
       { logLevel: 4 },
     );
     expect(
-      spies[1].mock.calls.filter((c) => c[0] === "ARToolkitNFT " && c[1] === version),
+      spies[1].mock.calls.filter(
+        (c) => c[0] === "ARToolkitNFT " && c[1] === version,
+      ),
     ).toHaveLength(1);
     const controllerLines = spies[0].mock.calls.filter(
       (c) => c[0] === "[ARControllerNFT]",

@@ -37,7 +37,8 @@ function assertMatrixMatchesPlanes(ar) {
   assertClose(planes.far, ar.getProjectionFarPlane(), 1e-2, "far plane");
 }
 
-const init = () => ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
+const init = () =>
+  ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
 
 describe("Node build, runtime settings", () => {
   let ar;
@@ -73,7 +74,12 @@ describe("Node build, runtime settings", () => {
 
   it("matrix matches the planes right after load and after a change (#720 phase 1)", () => {
     assertMatrixMatchesPlanes(ar);
-    assertClose(planesOf(ar.getCameraMatrix()).near, 0.1, 1e-6, "near after load");
+    assertClose(
+      planesOf(ar.getCameraMatrix()).near,
+      0.1,
+      1e-6,
+      "near after load",
+    );
     ar.setProjectionNearPlane(2);
     assertMatrixMatchesPlanes(ar);
     ar.configure({ near: 0.5, far: 300 });
@@ -111,7 +117,10 @@ describe("Node build, runtime settings", () => {
     assert.throws(() => ar.configure({ nearPlane: 1 }), /nearPlane/);
     assert.throws(() => ar.configure({ threshold: 5 }), TypeError);
     assert.throws(() => ar.configure({ imageProcMode: 0 }), TypeError);
-    assert.throws(() => ar.configure({ ar2: { searchFeature: 3 } }), /ar2\.searchFeature/);
+    assert.throws(
+      () => ar.configure({ ar2: { searchFeature: 3 } }),
+      /ar2\.searchFeature/,
+    );
     assert.throws(() => ar.configure({ near: "1" }), TypeError);
     assert.throws(() => ar.configure({ ar2: null }), TypeError);
     assert.deepEqual(ar.getRuntimeSettings(), initial);
@@ -121,17 +130,29 @@ describe("Node build, runtime settings", () => {
   it("non-integer values for integer settings throw TypeError", () => {
     // These are int in the core, and Embind would truncate 3.5 to 3 instead of failing.
     const matrix = cameraMatrix();
-    assert.throws(() => ar.configure({ ar2: { searchFeatureNum: 3.5 } }), TypeError);
+    assert.throws(
+      () => ar.configure({ ar2: { searchFeatureNum: 3.5 } }),
+      TypeError,
+    );
     assert.throws(
       () => ar.configure({ ar2: { searchFeatureNum: 3.5 } }),
       /ar2\.searchFeatureNum/,
     );
-    assert.throws(() => ar.configure({ ar2: { templateSize1: 6.2 } }), TypeError);
-    assert.throws(() => ar.configure({ ar2: { templateSize2: NaN } }), TypeError);
+    assert.throws(
+      () => ar.configure({ ar2: { templateSize1: 6.2 } }),
+      TypeError,
+    );
+    assert.throws(
+      () => ar.configure({ ar2: { templateSize2: NaN } }),
+      TypeError,
+    );
     assert.throws(() => ar.configure({ ar2: { searchSize: 1.5 } }), TypeError);
     assert.throws(() => ar.configure({ logLevel: 1.5 }), /logLevel/);
     // Nothing is applied, not even the valid keys of the same patch.
-    assert.throws(() => ar.configure({ near: 2, ar2: { searchFeatureNum: 3.5 } }), TypeError);
+    assert.throws(
+      () => ar.configure({ near: 2, ar2: { searchFeatureNum: 3.5 } }),
+      TypeError,
+    );
     assert.deepEqual(ar.getRuntimeSettings(), initial);
     assert.deepEqual(cameraMatrix(), matrix);
   });
@@ -140,7 +161,10 @@ describe("Node build, runtime settings", () => {
     const matrix = cameraMatrix();
     assert.throws(() => ar.configure({ near: 0 }), RangeError);
     assert.throws(() => ar.configure({ near: 1, far: 0.5 }), RangeError);
-    assert.throws(() => ar.configure({ ar2: { searchFeatureNum: 41 } }), RangeError);
+    assert.throws(
+      () => ar.configure({ ar2: { searchFeatureNum: 41 } }),
+      RangeError,
+    );
     assert.throws(() => ar.configure({ detectionInterval: -2 }), RangeError);
     assert.deepEqual(ar.getRuntimeSettings(), initial);
     assert.deepEqual(cameraMatrix(), matrix);
@@ -212,22 +236,29 @@ describe("Node build, runtime settings", () => {
 // is applied inside init(), before the core is constructed, so the native start-up lines
 // obey it too. Every console method is spied on: a native logger may use any of them.
 /** The lines of arParamDisp(): the rules, SIZE, the distortion factors and the matrix rows. */
-const CAMERA_DUMP = /^(-{10,}|SIZE = |Distortion factor|\s+fx=|(-?\d+\.\d+ ){4}$)/;
+const CAMERA_DUMP =
+  /^(-{10,}|SIZE = |Distortion factor|\s+fx=|(-?\d+\.\d+ ){4}$)/;
 
 describe("Node build, start-up log level", () => {
   const spyConsole = () =>
     ["log", "info", "warn", "error", "debug"].map((m) =>
       mock.method(console, m, () => {}),
     );
-  const callsOf = (spies) => spies.flatMap((s) => s.mock.calls.map((c) => c.arguments));
+  const callsOf = (spies) =>
+    spies.flatMap((s) => s.mock.calls.map((c) => c.arguments));
   afterEach(() => mock.restoreAll());
   before(() => process.chdir(EXAMPLE_DIR));
 
   it("init-time logLevel silences start-up output", async () => {
     const spies = spyConsole();
-    const ar = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat", {
-      logLevel: 3,
-    });
+    const ar = await ARControllerNFT.initWithDimensions(
+      640,
+      480,
+      "camera_para.dat",
+      {
+        logLevel: 3,
+      },
+    );
     // Two things still print, and are filtered out here:
     // - the version line is a RelInfo line (#677), the quietest level, so it survives Error;
     // - the camera parameter table of arParamDisp(), which prints with the unlevelled ARLOG
@@ -251,9 +282,14 @@ describe("Node build, start-up log level", () => {
 
   it("configure() works after init({ logLevel }) above RelInfo", async () => {
     spyConsole();
-    const ar = await ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat", {
-      logLevel: 5,
-    });
+    const ar = await ARControllerNFT.initWithDimensions(
+      640,
+      480,
+      "camera_para.dat",
+      {
+        logLevel: 5,
+      },
+    );
     mock.restoreAll();
     assert.equal(ar.getRuntimeSettings().logLevel, 5);
     ar.configure({ near: 1 });

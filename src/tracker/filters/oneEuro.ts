@@ -7,7 +7,11 @@ import type { PoseFilter } from "./PoseFilter";
  * `minCutOff` / `beta` passed to `new OneEuroFilter(minCutOff, beta)` unchanged.
  * (aframe-nft divides `minCutOff` by 1000 before passing it; this module does not.)
  */
-export const ONE_EURO_DEFAULTS = { minCutOff: 0.0001, beta: 0.01, warmUp: 0 } as const;
+export const ONE_EURO_DEFAULTS = {
+  minCutOff: 0.0001,
+  beta: 0.01,
+  warmUp: 0,
+} as const;
 
 /**
  * OneEuro through the same module contract as custom filters (D14, D19). One package filter

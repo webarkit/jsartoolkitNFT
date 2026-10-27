@@ -10,7 +10,10 @@ const path = require("node:path");
 const sharp = require("sharp");
 
 const EXAMPLE_DIR = path.resolve(__dirname, "../../examples/node");
-const { ARControllerNFT, createNFTTracker } = require("../../dist/ARToolkitNFT_node.js");
+const {
+  ARControllerNFT,
+  createNFTTracker,
+} = require("../../dist/ARToolkitNFT_node.js");
 
 describe("Node build, createNFTTracker", () => {
   let rgba;
@@ -20,7 +23,11 @@ describe("Node build, createNFTTracker", () => {
 
   /** A tracker on the example image's size; the suite disposes it. */
   async function make() {
-    const t = await createNFTTracker({ width, height, cameraParam: "camera_para.dat" });
+    const t = await createNFTTracker({
+      width,
+      height,
+      cameraParam: "camera_para.dat",
+    });
     trackers.push(t);
     return t;
   }
@@ -43,7 +50,10 @@ describe("Node build, createNFTTracker", () => {
 
   it("loads one source and reports the missing one as a network failure", async () => {
     const t = await make();
-    const results = await t.addNFTTargets(["DataNFT/pinball", "DataNFT/missing"]);
+    const results = await t.addNFTTargets([
+      "DataNFT/pinball",
+      "DataNFT/missing",
+    ]);
     assert.equal(results.length, 2);
     assert.equal(results[0].status, "loaded");
     assert.equal(results[0].info.url, "DataNFT/pinball");
@@ -75,7 +85,11 @@ describe("Node build, createNFTTracker", () => {
     //   built in different seconds can differ by a few millimetres: Date.now() is pinned.
     const wall = mock.method(Date, "now", () => 1_700_000_000_000);
     try {
-      const ctrl = await ARControllerNFT.initWithDimensions(width, height, "camera_para.dat");
+      const ctrl = await ARControllerNFT.initWithDimensions(
+        width,
+        height,
+        "camera_para.dat",
+      );
       const toolkit = ctrl.artoolkitNFT;
       const pass = toolkit.passVideoData.bind(toolkit);
       toolkit.passVideoData = (frame, luma) => pass(frame, luma, true);
@@ -99,7 +113,10 @@ describe("Node build, createNFTTracker", () => {
         if (ctrlPose && target.found) {
           assert.equal(target.pose.length, 16);
           for (let k = 0; k < 16; k++) {
-            assert.ok(Math.abs(target.pose[k] - ctrlPose[k]) <= 1e-9, `pose[${k}]`);
+            assert.ok(
+              Math.abs(target.pose[k] - ctrlPose[k]) <= 1e-9,
+              `pose[${k}]`,
+            );
           }
           compared++;
         }

@@ -210,7 +210,10 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
         // A fresh matrix per event: with several markers found in one frame a
         // shared buffer would be overwritten by the next marker while a
         // listener still holds it.
-        const matrix = this.transMatToGLMat(visible.matrix, new Float64Array(16));
+        const matrix = this.transMatToGLMat(
+          visible.matrix,
+          new Float64Array(16),
+        );
         const matrixGL_RH = this.arglCameraViewRHf(matrix);
         this.transform_mat = matrix;
         this.transformGL_RH = matrixGL_RH;
@@ -839,7 +842,12 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
     // These lines follow the log level (#677), read back from the module so that the level
     // given at init and one set later are both honoured.
     const level = this.artoolkitNFT.getLogLevel();
-    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "ARToolkitNFT initialized");
+    logAt(
+      ARLogLevel.Info,
+      level,
+      "[ARControllerNFT]",
+      "ARToolkitNFT initialized",
+    );
 
     // load the camera
     this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
@@ -853,7 +861,13 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
 
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
-    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "Got ID from setup", this.id);
+    logAt(
+      ARLogLevel.Info,
+      level,
+      "[ARControllerNFT]",
+      "Got ID from setup",
+      this.id,
+    );
 
     this._initNFT();
 

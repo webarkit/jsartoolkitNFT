@@ -212,11 +212,14 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
       const zftRequests = () =>
         fetchSpy.mock.calls.filter(([u]) => String(u).endsWith(".zft")).length;
       try {
-        expect((await t.addNFTTargets([MARKER_PINBALL], { probeZFT: false }))[0].status).toBe(
+        expect(
+          (await t.addNFTTargets([MARKER_PINBALL], { probeZFT: false }))[0]
+            .status,
+        ).toBe("loaded");
+        expect(zftRequests()).toBe(0);
+        expect((await t.addNFTTargets([MARKER_PINBALL]))[0].status).toBe(
           "loaded",
         );
-        expect(zftRequests()).toBe(0);
-        expect((await t.addNFTTargets([MARKER_PINBALL]))[0].status).toBe("loaded");
         expect(zftRequests()).toBe(1);
         await expect(
           t.addNFTTargets([MARKER_PINBALL], { probeZFT: "no" } as any),
@@ -235,7 +238,9 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
       const teardown = vi.spyOn(ARToolkitNFT.prototype, "teardown");
       try {
         await expect(
-          create(variant, { cameraParam: "/examples/Data/missing_camera_para.dat" }),
+          create(variant, {
+            cameraParam: "/examples/Data/missing_camera_para.dat",
+          }),
         ).rejects.toThrow();
         expect(teardown).toHaveBeenCalledTimes(1);
       } finally {
@@ -418,10 +423,15 @@ const transitionsOf = (results: any[]) => results.flatMap((r) => r.transitions);
 const hasEdge = (r: any, type: "found" | "lost") =>
   r.transitions.some((x: any) => x.type === type);
 
-function expectPosesEqual(a: ArrayLike<number>, b: ArrayLike<number>, eps = 1e-9) {
+function expectPosesEqual(
+  a: ArrayLike<number>,
+  b: ArrayLike<number>,
+  eps = 1e-9,
+) {
   expect(a.length).toBe(16);
   expect(b.length).toBe(16);
-  for (let i = 0; i < 16; i++) expect(Math.abs(a[i] - b[i])).toBeLessThanOrEqual(eps);
+  for (let i = 0; i < 16; i++)
+    expect(Math.abs(a[i] - b[i])).toBeLessThanOrEqual(eps);
 }
 
 function maxDiff(a: ArrayLike<number>, b: ArrayLike<number>): number {
@@ -437,10 +447,16 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
   const owned: any[] = [];
 
   /** A tracker with pinball loaded; the suite disposes it. */
-  const withPinball = async (extra: object = {}, origin?: "corner" | "center") => {
+  const withPinball = async (
+    extra: object = {},
+    origin?: "corner" | "center",
+  ) => {
     const t = await create(variant, extra);
     owned.push(t);
-    const res = await t.addNFTTargets([MARKER_PINBALL], origin ? { origin } : undefined);
+    const res = await t.addNFTTargets(
+      [MARKER_PINBALL],
+      origin ? { origin } : undefined,
+    );
     expect(res[0].status).toBe("loaded");
     return { t, info: res[0].info };
   };
@@ -458,13 +474,20 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
 
   it("process finds the target and fires found once", async () => {
     const next = clock();
-    const [found] = await feedUntil([tracker], frames.pinballOnly, next, allFound);
+    const [found] = await feedUntil(
+      [tracker],
+      frames.pinballOnly,
+      next,
+      allFound,
+    );
     const [after] = await feedN([tracker], frames.pinballOnly, next, 5);
     const results = [...found, ...after];
 
     expect(transitionsOf(results)).toEqual([{ type: "found", id: 0 }]);
     // The edge comes on the first tracked frame (D8).
-    expect(found[found.length - 1].transitions).toEqual([{ type: "found", id: 0 }]);
+    expect(found[found.length - 1].transitions).toEqual([
+      { type: "found", id: 0 },
+    ]);
     results.forEach((r, i) => {
       expect(r.time).toBe(i * STEP);
       expect(r.processMs).toBeGreaterThanOrEqual(0);
@@ -485,7 +508,11 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
     return { hidden, lastTracked };
   }
 
-  function expectOneLostAfter(hidden: any[], lastTracked: number, timeout: number) {
+  function expectOneLostAfter(
+    hidden: any[],
+    lastTracked: number,
+    timeout: number,
+  ) {
     // D8: within the grace window `targets` is this frame's raw tracking; only the
     // transitions are debounced.
     expect(hidden[0].targets[0].found).toBe(false);
@@ -517,7 +544,9 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
   });
 
   it("rejects a wrongly sized frame and recovers", () => {
-    expect(() => tracker.process(blankFrame(641, 480), 30_000)).toThrow(RangeError);
+    expect(() => tracker.process(blankFrame(641, 480), 30_000)).toThrow(
+      RangeError,
+    );
     const r = tracker.process(blank, 30_033);
     expect(r.time).toBe(30_033);
     expect(r.targets).toHaveLength(1);
@@ -562,7 +591,9 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
     } finally {
       wall.mockRestore();
     }
-    console.log(`[tracker] ${variant.name}: ${compared} of 30 frames compared with the controller`);
+    console.log(
+      `[tracker] ${variant.name}: ${compared} of 30 frames compared with the controller`,
+    );
     expect(compared).toBeGreaterThan(20);
   }, 120_000);
 
@@ -574,7 +605,14 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
     const wall = pinWallClock();
     let c1: any[], m1: any[], c2: any[], m2: any[];
     try {
-      [c1, m1] = await feedUntil([corner, center], frames.pinballOnly, next, allFound, 120, true);
+      [c1, m1] = await feedUntil(
+        [corner, center],
+        frames.pinballOnly,
+        next,
+        allFound,
+        120,
+        true,
+      );
       [c2, m2] = await feedN([corner, center], frames.pinballOnly, next, 5);
     } finally {
       wall.mockRestore();
@@ -628,11 +666,25 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
       const next = clock();
       const wall = pinWallClock();
       try {
-        await feedUntil([oneEuro, raw], frames.pinballOnly, next, allFound, 120, true);
-        const [o1, r1] = await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
+        await feedUntil(
+          [oneEuro, raw],
+          frames.pinballOnly,
+          next,
+          allFound,
+          120,
+          true,
+        );
+        const [o1, r1] = await feedN(
+          [oneEuro, raw],
+          frames.pinballOnly,
+          next,
+          10,
+        );
         // The filter is on: the filtered pose leaves the raw one.
         expect(
-          o1.some((o, i) => maxDiff(o.targets[0].pose, r1[i].targets[0].pose) > 0),
+          o1.some(
+            (o, i) => maxDiff(o.targets[0].pose, r1[i].targets[0].pose) > 0,
+          ),
         ).toBe(true);
       } finally {
         wall.mockRestore();
@@ -669,7 +721,9 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
       await feedUntil([rec], blank, next, (step) => hasEdge(step[0], "lost"));
       const resetAt = calls.lastIndexOf("reset");
       expect(resetAt).toBeGreaterThan(-1);
-      await feedUntil([rec], frames.pinballOnly, next, (step) => hasEdge(step[0], "found"));
+      await feedUntil([rec], frames.pinballOnly, next, (step) =>
+        hasEdge(step[0], "found"),
+      );
       const first = calls[resetAt + 1];
       if (typeof first !== "object") {
         throw new Error(`no filtered sample after the reset (got ${first})`);
@@ -725,7 +779,12 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
           },
         });
         const next = clock(200_000);
-        const [found] = await feedUntil([t], frames.pinballOnly, next, allFound);
+        const [found] = await feedUntil(
+          [t],
+          frames.pinballOnly,
+          next,
+          allFound,
+        );
         const kept = found[found.length - 1].targets[0].pose as Float64Array;
         const keptTime = kept[15];
         const [after] = await feedN([t], frames.pinballOnly, next, 1);
@@ -738,13 +797,28 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
 
     it("keeps the old filter when a new module fails", async () => {
       const next = clock(50_000);
-      await feedUntil([oneEuro, raw], frames.pinballOnly, next, allFound, 120, true);
-      await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
-      const missing = new URL("/examples/filters/missing-filter.js", location.origin).href;
-      await expect(oneEuro.configure({ filter: { module: missing } })).rejects.toThrow(
-        /missing-filter/,
+      await feedUntil(
+        [oneEuro, raw],
+        frames.pinballOnly,
+        next,
+        allFound,
+        120,
+        true,
       );
-      const [[o], [r]] = await feedN([oneEuro, raw], frames.pinballOnly, next, 1);
+      await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
+      const missing = new URL(
+        "/examples/filters/missing-filter.js",
+        location.origin,
+      ).href;
+      await expect(
+        oneEuro.configure({ filter: { module: missing } }),
+      ).rejects.toThrow(/missing-filter/);
+      const [[o], [r]] = await feedN(
+        [oneEuro, raw],
+        frames.pinballOnly,
+        next,
+        1,
+      );
       expect(o.targets[0].found).toBe(true);
       expect(r.targets[0].found).toBe(true);
       expect(maxDiff(o.targets[0].pose, r.targets[0].pose)).toBeGreaterThan(0);

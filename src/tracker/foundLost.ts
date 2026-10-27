@@ -12,7 +12,11 @@ export class FoundLost {
     this.lostTimeoutMs = lostTimeoutMs;
   }
 
-  update(id: number, tracked: boolean, timeMs: number): "found" | "lost" | null {
+  update(
+    id: number,
+    tracked: boolean,
+    timeMs: number,
+  ): "found" | "lost" | null {
     const last = this.lastSeen.get(id);
     if (tracked) {
       this.lastSeen.set(id, timeMs);

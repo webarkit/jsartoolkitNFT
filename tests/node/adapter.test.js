@@ -42,7 +42,9 @@ function processUntil(ar, frame, done, maxFrames = 60) {
 }
 
 function loadMarkers(ar, urls) {
-  return new Promise((resolve, reject) => ar.loadNFTMarkers(urls, resolve, reject));
+  return new Promise((resolve, reject) =>
+    ar.loadNFTMarkers(urls, resolve, reject),
+  );
 }
 
 describe("Node build, the single-thread adapter", () => {
@@ -52,7 +54,11 @@ describe("Node build, the single-thread adapter", () => {
   before(async () => {
     process.chdir(EXAMPLE_DIR);
     both = await loadBothMarkersFrame();
-    ar = await ARControllerNFT.initWithDimensions(WIDTH, HEIGHT, "camera_para.dat");
+    ar = await ARControllerNFT.initWithDimensions(
+      WIDTH,
+      HEIGHT,
+      "camera_para.dat",
+    );
     const ids = await loadMarkers(ar, ["DataNFT/pinball", "DataNFT/kuva"]);
     assert.deepEqual(ids, [0, 1]);
     ids.forEach((id) => ar.trackNFTMarkerId(id));
@@ -85,6 +91,10 @@ describe("Node build, the single-thread adapter", () => {
 
     assert.deepEqual(await loadMarkers(ar, ["DataNFT/pinball"]), [2]);
     ar.trackNFTMarkerId(2);
-    processUntil(ar, both, () => isFound(ar, 0) && isFound(ar, 1) && isFound(ar, 2));
+    processUntil(
+      ar,
+      both,
+      () => isFound(ar, 0) && isFound(ar, 1) && isFound(ar, 2),
+    );
   });
 });

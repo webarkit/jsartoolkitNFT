@@ -273,7 +273,10 @@ describe("ARControllerNFT", () => {
         "hasOwnProperty",
         "__proto__",
       ]) {
-        expect(() => ar.dispatchEvent({ name, target: ar }), name).not.toThrow();
+        expect(
+          () => ar.dispatchEvent({ name, target: ar }),
+          name,
+        ).not.toThrow();
 
         let fired = 0;
         const listener = () => {

@@ -13,10 +13,16 @@ export function createPoseFilter(options) {
   return {
     filter(timeMs, pose) {
       // A copy on every call, the first too: `prev` changes on the next call.
-      if (!prev) { prev = Float64Array.from(pose); return Float64Array.from(prev); }
-      for (let i = 0; i < pose.length; i++) prev[i] = prev[i] * (1 - w) + pose[i] * w;
+      if (!prev) {
+        prev = Float64Array.from(pose);
+        return Float64Array.from(prev);
+      }
+      for (let i = 0; i < pose.length; i++)
+        prev[i] = prev[i] * (1 - w) + pose[i] * w;
       return Float64Array.from(prev);
     },
-    reset() { prev = null; },
+    reset() {
+      prev = null;
+    },
   };
 }

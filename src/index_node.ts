@@ -53,10 +53,7 @@ import type {
   NFTAR2Settings,
 } from "./abstractions/CommonInterfaces";
 
-import {
-  createTrackerFactory,
-  nodeTargetLoader,
-} from "./tracker/NFTTracker";
+import { createTrackerFactory, nodeTargetLoader } from "./tracker/NFTTracker";
 import type {
   NFTTracker,
   NFTTrackerConfig,

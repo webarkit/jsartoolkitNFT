@@ -1,4 +1,9 @@
-import type { FrameGeometry, TargetInfo, TargetOrigin, Viewport } from "./types";
+import type {
+  FrameGeometry,
+  TargetInfo,
+  TargetOrigin,
+  Viewport,
+} from "./types";
 
 const MM_PER_INCH = 25.4;
 
@@ -29,7 +34,10 @@ export function targetInfo(
  * size, so the pose origin moves from the corner to the centre. Returns a new matrix.
  * With pose = [R | t], the new translation is t + R * (w/2, h/2, 0).
  */
-export function centerOrigin(pose: Float64Array, info: TargetInfo): Float64Array {
+export function centerOrigin(
+  pose: Float64Array,
+  info: TargetInfo,
+): Float64Array {
   const out = new Float64Array(pose);
   const tx = info.widthMm / 2;
   const ty = info.heightMm / 2;

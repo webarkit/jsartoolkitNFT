@@ -20,9 +20,13 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 const { runScenarios } = require("../compare-builds/scenarios.js");
-const { loadNodeFrames, EXAMPLE_DIR } = require("../compare-builds/node-frames.js");
+const {
+  loadNodeFrames,
+  EXAMPLE_DIR,
+} = require("../compare-builds/node-frames.js");
 
-const USAGE = "usage: node tools/compare-python/export-node.js <nodeBundle> <outDir>";
+const USAGE =
+  "usage: node tools/compare-python/export-node.js <nodeBundle> <outDir>";
 
 /** Runs `fn` with the library's per-frame logging silenced; console.error still prints. */
 async function quietly(fn) {

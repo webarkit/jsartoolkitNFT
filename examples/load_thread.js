@@ -7,23 +7,23 @@ let filterBeta = 0.01;
 
 // initialize the OneEuroFilter
 const OneEuroFilterCtor =
-    typeof OneEuroFilter === "function"
-        ? OneEuroFilter
-        : OneEuroFilter && typeof OneEuroFilter.OneEuroFilter === "function"
-            ? OneEuroFilter.OneEuroFilter
-            : null;
+  typeof OneEuroFilter === "function"
+    ? OneEuroFilter
+    : OneEuroFilter && typeof OneEuroFilter.OneEuroFilter === "function"
+      ? OneEuroFilter.OneEuroFilter
+      : null;
 
 if (!OneEuroFilterCtor) {
   throw new Error("OneEuroFilter constructor not found in worker context");
 }
 
 const filter =
-    OneEuroFilterCtor.length >= 2
-        ? new OneEuroFilterCtor(filterMinCF, filterBeta)
-        : new OneEuroFilterCtor({
-          minCutOff: filterMinCF,
-          beta: filterBeta,
-        });
+  OneEuroFilterCtor.length >= 2
+    ? new OneEuroFilterCtor(filterMinCF, filterBeta)
+    : new OneEuroFilterCtor({
+        minCutOff: filterMinCF,
+        beta: filterBeta,
+      });
 
 function load_thread(msg) {
   console.debug("Loading marker at: ", msg.marker);
@@ -71,7 +71,9 @@ function load_thread(msg) {
       });
     }
 
-    const loaded = new CustomEvent("loaded", { detail: { proj: cameraMatrix } });
+    const loaded = new CustomEvent("loaded", {
+      detail: { proj: cameraMatrix },
+    });
     window.dispatchEvent(loaded);
   };
 

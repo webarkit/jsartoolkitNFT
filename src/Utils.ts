@@ -42,7 +42,10 @@ export default class Utils {
    * rejected fetch is "network", except an abort, which propagates unchanged so
    * callers can tell cancellation from failure.
    */
-  static async fetchBinary(url: string, signal?: AbortSignal): Promise<Uint8Array> {
+  static async fetchBinary(
+    url: string,
+    signal?: AbortSignal,
+  ): Promise<Uint8Array> {
     let response: Response;
     try {
       response = await fetch(url, { signal });
