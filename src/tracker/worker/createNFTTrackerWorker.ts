@@ -85,6 +85,46 @@ function checkFilter(filter: FilterConfig | undefined): void {
   }
 }
 
+/**
+ * Resolves a URL the page passed against the page, before it is posted. The worker would
+ * resolve a relative URL against its own file in dist/ (or fail, from a Blob URL), so
+ * without this the same config would load different files on the worker and on the same
+ * thread, against the anti-goal of identical behaviour. The empty string and anything
+ * that does not parse are left for the tracker to refuse.
+ */
+function pageUrl(url: string): string {
+  if (url === "") return url;
+  const base =
+    typeof document !== "undefined" ? document.baseURI : location.href;
+  try {
+    return new URL(url, base).href;
+  } catch {
+    return url;
+  }
+}
+
+/** `filter.module` resolved against the page; every other filter form is unchanged. */
+function withPageModule(filter: FilterConfig): FilterConfig {
+  return typeof filter === "object" &&
+    filter !== null &&
+    "module" in filter &&
+    typeof filter.module === "string"
+    ? { ...filter, module: pageUrl(filter.module) }
+    : filter;
+}
+
+/** The config with its string URLs resolved against the page (a Uint8Array is kept). */
+function withPageUrls<T extends NFTTrackerPatch & { cameraParam?: unknown }>(
+  config: T,
+): T {
+  if (typeof config !== "object" || config === null) return config;
+  const out = { ...config };
+  if (typeof out.cameraParam === "string")
+    out.cameraParam = pageUrl(out.cameraParam);
+  if ("filter" in out) out.filter = withPageModule(out.filter);
+  return out;
+}
+
 /** Rebuilds a worker error; a TypeError or RangeError keeps its class (protocol.ts). */
 function toError(response: { name: string; message: string }): Error {
   const Ctor =
@@ -183,7 +223,11 @@ export async function createNFTTrackerWorker(
   }
 
   try {
-    const res = await send({ type: "init", config, workerBase });
+    const res = await send({
+      type: "init",
+      config: withPageUrls(config),
+      workerBase,
+    });
     matrix = res.cameraMatrix;
   } catch (e) {
     close(e instanceof Error ? e : new Error(String(e)));
@@ -203,7 +247,10 @@ export async function createNFTTrackerWorker(
     async configure(patch: NFTTrackerPatch): Promise<void> {
       check();
       checkFilter(patch?.filter);
-      const res = await send({ type: "configure", patch });
+      const res = await send({
+        type: "configure",
+        patch: withPageUrls(patch),
+      });
       matrix = res.cameraMatrix;
     },
 
@@ -212,8 +259,24 @@ export async function createNFTTrackerWorker(
       opts?: AddTargetsOptions,
     ): Promise<TargetLoad[]> {
       check();
-      const res = await send({ type: "addNFTTargets", sources, opts });
-      return res.value as TargetLoad[];
+      // Resolved against the page, as the config's URLs (see pageUrl).
+      const resolved = Array.isArray(sources)
+        ? sources.map((u) => (typeof u === "string" ? pageUrl(u) : u))
+        : sources;
+      const res = await send({
+        type: "addNFTTargets",
+        sources: resolved,
+        opts,
+      });
+      // One result per source, in order (G4): report each `url` as the caller passed it,
+      // as on the same thread, not as resolved.
+      return (res.value as TargetLoad[]).map((load, i) => {
+        const url = sources[i];
+        if (typeof url !== "string") return load;
+        return load.status === "loaded"
+          ? { ...load, info: { ...load.info, url } }
+          : { ...load, url };
+      });
     },
 
     process(

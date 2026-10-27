@@ -83,6 +83,13 @@ const pinballFrame = () =>
   );
 const tick = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** A root-relative path as a URL relative to the test page, e.g. "../examples/...". */
+function pageRelative(path: string): string {
+  const dir = new URL(".", document.baseURI).pathname;
+  const depth = dir.split("/").filter(Boolean).length;
+  return "../".repeat(depth) + path.replace(/^\//, "");
+}
+
 /** Processes the pinball photo until the target's `found` transition comes. */
 async function processUntilFound(tracker: any, maxFrames = 150) {
   for (let i = 0; i < maxFrames; i++) {
@@ -272,6 +279,36 @@ describe("createNFTTrackerWorker wrapper (default)", () => {
     );
     // A second dispose is a no-op, as on the same thread.
     await t.dispose();
+  });
+
+  it("resolves relative URLs against the page", async () => {
+    // The worker would resolve them against its own (here, Blob) URL; the wrapper resolves
+    // them against the page first, so they mean what they mean on the same thread.
+    const camera = pageRelative(CAMERA_PARAM);
+    const pinball = pageRelative(MARKER_PINBALL);
+    const filter = pageRelative("/examples/filters/average-filter.js");
+    expect(camera.startsWith("/")).toBe(false);
+    const t = await createNFTTrackerWorker(
+      {
+        ...CONFIG,
+        cameraParam: camera,
+        filter: { module: filter, options: { weight: 0.5 } },
+      },
+      opts,
+    );
+    try {
+      const loads = await t.addNFTTargets([pinball]);
+      expect(loads[0].status).toBe("loaded");
+      // Reported as passed, as on the same thread.
+      expect((loads[0] as any).info.url).toBe(pinball);
+      await t.configure({
+        filter: { module: filter, options: { weight: 0.25 } },
+      });
+      const r = await processUntilFound(t);
+      expect(r.targets[0].pose).toBeInstanceOf(Float64Array);
+    } finally {
+      await t.dispose();
+    }
   });
 
   it("a crashed worker rejects instead of hanging", async () => {
