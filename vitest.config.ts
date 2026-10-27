@@ -29,8 +29,9 @@ export default defineConfig({
   test: {
     include: ["tests/vitest/**/*.test.ts"],
 
-    // Copies the built tracker worker bundles to tests/vitest/.workers/ as .txt, so that
-    // tracker-worker.test.ts can start them from Blob URLs untransformed (#720 D15).
+    // Copies the built tracker worker bundles and the UMD bundles to tests/vitest/.dist/
+    // as .txt, so that tracker-worker.test.ts and dist-bundle.test.ts can load them from
+    // Blob URLs untransformed (#720 D15).
     globalSetup: ["tests/vitest/setup/worker-sources.ts"],
 
     // WASM instantiation and NFT dataset loading are slow; the pinball fset3

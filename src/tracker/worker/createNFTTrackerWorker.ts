@@ -161,9 +161,12 @@ export async function createNFTTrackerWorker(
   });
   // D4, the bundle-URL rule: next to the script that loaded this library. In the UMD
   // bundles `import.meta.url` is defined as the bundle's own URL. A relative workerBase
-  // resolves against the page, as any URL the page passes.
+  // resolves against the page, as any URL the page passes. @vite-ignore: this is a
+  // run-time folder URL, not an asset for Vite to emit.
   const workerBase = new URL(
-    String(opts.workerBase ?? new URL(".", import.meta.url).href),
+    String(
+      opts.workerBase ?? new URL(/* @vite-ignore */ ".", import.meta.url).href,
+    ),
     location.href,
   ).href;
   const worker = workerFactory(new URL(WORKER_FILES[build], workerBase).href);

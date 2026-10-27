@@ -142,6 +142,9 @@ export function libConfig(variant, options = {}) {
             // default import resolves as before for TypeScript-compiled CJS consumers (D8).
             esModule: true,
             exports: "named",
+            // D14: keep the pose filter module's `/* @vite-ignore */`, as the UMD
+            // bundles do (see there): every bundle that loads filter modules keeps it.
+            comments: { annotation: true },
           },
         },
       },
@@ -266,6 +269,20 @@ export function libConfig(variant, options = {}) {
           footer: `if(typeof globalThis!=='undefined'&&globalThis.${v.name}){Object.assign(globalThis,globalThis.${v.name});}`,
           // Keep `__esModule: true` on the exports, as webpack set it (D8).
           esModule: true,
+          // D14: the pose filter module's `import(/* @vite-ignore */ url)` keeps its
+          // comment, so that an app that re-bundles this file with Vite gets no "dynamic
+          // import cannot be analyzed" warning and the URL is left to run time.
+          // A minified non-ES build strips every comment by default; `@vite-ignore` is an
+          // annotation comment to the minifier, so keeping annotations keeps it (the ES
+          // worker bundles keep annotations by default). Cost: about 600 bytes per bundle,
+          // mostly the kept `#__PURE__` annotations.
+          // It does NOT stop Vite's dev server from rewriting the import: for any
+          // non-literal import() it still writes `__vite__injectQuery(...)` and prepends an
+          // import of `/@vite/client` (vite's import analysis; @vite-ignore only silences
+          // the warning there), so a bundle served through it becomes an ES module. Serve
+          // the UMD bundles from public/ or a CDN; dist-bundle.test.ts loads them
+          // untransformed for this reason (D15).
+          comments: { annotation: true },
         },
       },
     },

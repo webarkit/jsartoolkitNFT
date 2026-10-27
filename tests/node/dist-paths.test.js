@@ -90,6 +90,28 @@ describe("dist bundles", () => {
       );
     });
 
+    it(`${name} keeps @vite-ignore on the filter module import`, (t) => {
+      // #720 D14: loadFilter's `import(/* @vite-ignore */ url)` must keep its comment
+      // through minification, so that re-bundling the file with Vite leaves the import to
+      // run time without a warning (vite.lib.config.mjs has the details, including what
+      // the comment does not prevent). A bundle that contains loadFilter names
+      // createPoseFilter; every non-literal import() in it must carry the comment.
+      const source = fs.readFileSync(path.join(DIST_DIR, name), "utf8");
+      if (!source.includes("createPoseFilter")) {
+        t.skip("no pose filter loader in this bundle");
+        return;
+      }
+      assert.match(source, /\bimport\(/, `${name} has no dynamic import()`);
+      const bare = source.match(
+        /\bimport\((?!\s*\/\*\s*@vite-ignore\s*\*\/)(?!\s*[`"'])[^)]{0,40}/,
+      );
+      assert.equal(
+        bare?.[0],
+        undefined,
+        `${name} has an import() without /* @vite-ignore */`,
+      );
+    });
+
     it(`${name} embeds no file:// URL`, () => {
       const source = fs.readFileSync(path.join(DIST_DIR, name), "utf8");
       // A bare "file://" is fine: the Emscripten glue tests URLs against that prefix.

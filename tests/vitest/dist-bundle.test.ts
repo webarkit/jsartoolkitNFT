@@ -6,6 +6,7 @@ import {
   VIDEO_HEIGHT,
   blankFrame,
   loadMarker,
+  distBlobUrl,
 } from "./helpers";
 import { loadCompositeFrames, isFound, processUntil } from "./frames";
 
@@ -31,7 +32,21 @@ import { loadCompositeFrames, isFound, processUntil } from "./frames";
  * - the threaded bundle: the only test that starts its pthread worker
  *   (`dist/ARToolkitNFT_td.worker.js`), which the bundle resolves next to itself
  *   while this page sits at the server root, in a different folder (D5).
+ *
+ * **Delivery (#720 D15).** The bundles are not loaded from `/dist/` through the Vite dev
+ * server: it rewrites every non-literal `import()` to `__vite__injectQuery(...)`, even under
+ * `/* @vite-ignore *\/` (which only silences its warning), and prepends an import of
+ * `/@vite/client`, so the served file becomes an ES module that a <script> tag and
+ * importScripts() refuse. The pose filter loader's `import(url)` (D14) triggers this.
+ * Consumers get the file untransformed (from public/ or a CDN), and so does this test: the
+ * globalSetup copies each bundle to `tests/vitest/.dist/<file>.txt`, and the test runs it
+ * from a Blob URL. The bundle-URL banner would then see the `blob:` URL, so its URL global
+ * is pinned to `/dist/` first (see `loadBundle`): the td bundle still starts its pthread
+ * worker from `dist/ARToolkitNFT_td.worker.js`, next to where the bundle is published.
  */
+
+/** The folder the bundles are published in; their sibling files are served from it. */
+const DIST_URL = location.origin + "/dist/";
 
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -43,11 +58,26 @@ function loadScript(src: string): Promise<void> {
   });
 }
 
+/**
+ * Runs `dist/<file>` from a Blob URL of its untransformed text, with its bundle-URL global
+ * (`urlGlobal`, set by the banner from tools/bundle-url.js) pinned to `DIST_URL`: the banner
+ * assigns the global, and a setter-less accessor keeps that assignment from replacing the
+ * folder with the Blob URL's.
+ */
+async function loadBundle(file: string, urlGlobal: string): Promise<void> {
+  Object.defineProperty(globalThis, urlGlobal, {
+    configurable: true,
+    get: () => DIST_URL,
+    set: () => {},
+  });
+  await loadScript(await distBlobUrl(file));
+}
+
 describe("dist/ARToolkitNFT.js (the published browser bundle)", () => {
   let ar: any;
 
   beforeAll(async () => {
-    await loadScript("/dist/ARToolkitNFT.js");
+    await loadBundle("ARToolkitNFT.js", "__artkBundleUrl");
   });
 
   afterAll(() => {
@@ -92,11 +122,14 @@ describe("dist/ARToolkitNFT.js in a classic worker", () => {
   it("puts ARControllerNFT on the worker's global object", async () => {
     const worker = new Worker("/tests/vitest/dist-worker.js");
     try {
-      const type = await new Promise((resolve, reject) => {
+      const reply = new Promise((resolve, reject) => {
         worker.onmessage = (e) => resolve(e.data);
         worker.onerror = (e) =>
           reject(new Error(`worker failed: ${e.message}`));
       });
+      // The fixture importScripts() the untransformed bundle from this Blob URL.
+      worker.postMessage(await distBlobUrl("ARToolkitNFT.js"));
+      const type = await reply;
       expect(type).toBe("function");
     } finally {
       worker.terminate();
@@ -109,7 +142,7 @@ describe("dist/ARToolkitNFT_td.js (the threaded browser bundle)", () => {
 
   beforeAll(async () => {
     // Loaded after the default bundle's tests: its globals replace the default ones.
-    await loadScript("/dist/ARToolkitNFT_td.js");
+    await loadBundle("ARToolkitNFT_td.js", "__artkTdBundleUrl");
   });
 
   afterAll(() => {

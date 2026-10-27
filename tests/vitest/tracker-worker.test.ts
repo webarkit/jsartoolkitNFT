@@ -21,17 +21,19 @@ import {
   MARKER_PINBALL,
   VIDEO_WIDTH,
   VIDEO_HEIGHT,
+  distBlobUrl,
 } from "./helpers";
 import { loadCompositeFrames } from "./frames";
 
 /**
  * createNFTTrackerWorker (#720 D13) on the three built worker bundles.
  *
- * **How the workers start (D15).** Vitest's browser mode rewrites `import()` in the JS
- * files it serves (`wrapDynamicImport`, plus an import of `/@vite/client`), which breaks
- * inside a worker: the worker dies before it answers init. So the test does not start
+ * **How the workers start (D15).** The Vite dev server behind Vitest's browser mode
+ * rewrites every non-literal `import()` in the JS files it serves to
+ * `__vite__injectQuery(...)`, even under `/* @vite-ignore *\/`, and prepends an import of
+ * `/@vite/client`. That breaks inside a worker: it dies before it answers init. So the test does not start
  * `dist/NFTTracker*.worker.js` by URL. The globalSetup (`setup/worker-sources.ts`) copies
- * each bundle to `tests/vitest/.workers/<file>.txt`, which Vite serves untransformed;
+ * each bundle to `tests/vitest/.dist/<file>.txt`, which Vite serves untransformed;
  * the test fetches that text and starts the worker from a Blob URL, through the
  * `__setWorkerFactory` seam.
  *
@@ -104,13 +106,7 @@ async function processUntilFound(tracker: any, maxFrames = 150) {
 
 beforeAll(async () => {
   for (const file of Object.values(WORKER_FILES)) {
-    const res = await fetch(`/tests/vitest/.workers/${file}.txt`);
-    expect(res.ok, `${file}.txt: run npm run build-ts`).toBe(true);
-    const text = await res.text();
-    blobUrls.set(
-      file,
-      URL.createObjectURL(new Blob([text], { type: "text/javascript" })),
-    );
+    blobUrls.set(file, await distBlobUrl(file));
   }
   __setWorkerFactory(factory);
   frames = await loadCompositeFrames(0.32);

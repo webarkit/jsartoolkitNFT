@@ -24,4 +24,4 @@ tools/compare-builds/ref/
 tools/compare-python/frames/
 tools/compare-python/out/
 tools/compare-python/ref/
-tests/vitest/.workers/
+tests/vitest/.dist/
