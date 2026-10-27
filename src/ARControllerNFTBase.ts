@@ -46,6 +46,7 @@ import {
   ARInitOptions,
 } from "./abstractions/CommonInterfaces";
 import { logAt } from "./logger";
+import { transMatToGLMat, arglCameraViewRHf } from "./poseMath";
 import { withCallbacks } from "./NFTLoadError";
 import { IARToolkitNFT } from "./abstractions/IARToolkitNFT";
 import { ARToolkitNFTBase } from "./ARToolkitNFTBase";
@@ -388,33 +389,7 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
     glMat: Float64Array,
     scale?: number,
   ): Float64Array {
-    if (glMat == undefined) {
-      glMat = new Float64Array(16);
-    }
-
-    glMat[0 + 0 * 4] = transMat[0]; // R1C1
-    glMat[0 + 1 * 4] = transMat[1]; // R1C2
-    glMat[0 + 2 * 4] = transMat[2];
-    glMat[0 + 3 * 4] = transMat[3];
-    glMat[1 + 0 * 4] = transMat[4]; // R2
-    glMat[1 + 1 * 4] = transMat[5];
-    glMat[1 + 2 * 4] = transMat[6];
-    glMat[1 + 3 * 4] = transMat[7];
-    glMat[2 + 0 * 4] = transMat[8]; // R3
-    glMat[2 + 1 * 4] = transMat[9];
-    glMat[2 + 2 * 4] = transMat[10];
-    glMat[2 + 3 * 4] = transMat[11];
-    glMat[3 + 0 * 4] = 0.0;
-    glMat[3 + 1 * 4] = 0.0;
-    glMat[3 + 2 * 4] = 0.0;
-    glMat[3 + 3 * 4] = 1.0;
-
-    if (scale != undefined && scale !== 0.0) {
-      glMat[12] *= scale;
-      glMat[13] *= scale;
-      glMat[14] *= scale;
-    }
-    return glMat;
+    return transMatToGLMat(transMat, glMat, scale);
   }
 
   /**
@@ -431,44 +406,7 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
     glRhMatrix?: Float64Array,
     scale?: number,
   ): Float64Array {
-    let m_modelview;
-    if (glRhMatrix == undefined) {
-      m_modelview = new Float64Array(16);
-    } else {
-      m_modelview = glRhMatrix;
-    }
-
-    // x
-    m_modelview[0] = glMatrix[0];
-    m_modelview[4] = glMatrix[4];
-    m_modelview[8] = glMatrix[8];
-    m_modelview[12] = glMatrix[12];
-    // y
-    m_modelview[1] = -glMatrix[1];
-    m_modelview[5] = -glMatrix[5];
-    m_modelview[9] = -glMatrix[9];
-    m_modelview[13] = -glMatrix[13];
-    // z
-    m_modelview[2] = -glMatrix[2];
-    m_modelview[6] = -glMatrix[6];
-    m_modelview[10] = -glMatrix[10];
-    m_modelview[14] = -glMatrix[14];
-
-    // 0 0 0 1
-    m_modelview[3] = 0;
-    m_modelview[7] = 0;
-    m_modelview[11] = 0;
-    m_modelview[15] = 1;
-
-    if (scale != undefined && scale !== 0.0) {
-      m_modelview[12] *= scale;
-      m_modelview[13] *= scale;
-      m_modelview[14] *= scale;
-    }
-
-    glRhMatrix = m_modelview;
-
-    return glRhMatrix;
+    return arglCameraViewRHf(glMatrix, glRhMatrix, scale);
   }
 
   /**
