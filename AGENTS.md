@@ -242,9 +242,10 @@ already LF. To rewrite the working tree once, start from a clean tree (commit or
 run `git rm -r --cached -q . && git reset --hard`. Do not fix it by running `prettier --write`
 over the tree.
 
-**`npm run format-check` currently fails** on roughly 247 files, on `master`, with the
-project's own prettier version. It is not wired into CI. Do not interpret it as a regression
-caused by your change, and do not reformat the tree as a side effect of unrelated work.
+**`npm run format-check` runs in CI** (the Node.js CI job, before the tests), so a PR with
+unformatted files fails. Run `npm run format` before committing. Prettier uses its defaults:
+there is no config file (#733). Do not add one without reformatting the tree in the same PR,
+since a different `printWidth` or `tabWidth` would flag almost every file.
 
 **Node version.** `.nvmrc` pins an exact patch release. If a version manager does not have
 that precise build installed, every `node` and `npm` invocation inside the repository fails
