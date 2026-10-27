@@ -1,6 +1,15 @@
 /**
  * Custom filter module contract (D14). A module exports `createPoseFilter`,
  * which returns one PoseFilter; the facade creates one filter per marker.
+ *
+ * - A module MUST export `createPoseFilter`; loading rejects with an `Error` naming the
+ *   module URL when it is missing, when the module fails to load, or when it throws.
+ * - `filter(timeMs, pose)` gets the 16-value pose and returns the filtered 16 values.
+ *   The tracker calls `reset()` when the marker is lost.
+ * - Under COEP (cross-origin isolation, needed by the threaded builds), a module served
+ *   from another origin needs CORS plus `Cross-Origin-Resource-Policy` headers; a
+ *   same-origin module needs nothing.
+ * - See `examples/filters/average-filter.js` for a template to copy.
  */
 export interface PoseFilter {
   filter(timeMs: number, pose: Float64Array): Float64Array;

@@ -83,6 +83,7 @@
     "@vitest/browser-playwright": "^5.0.4",
     "@vitest/coverage-v8": "^5.0.4",
     "@webarkit/camera-view": "^0.1.0",
+    "@webarkit/oneeurofilter-ts": "^0.2.0",
     "canvas": "^3.2.3",
     "glob": "^13.0.6",
     "playwright": "^1.63.0",
