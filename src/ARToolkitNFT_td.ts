@@ -50,6 +50,16 @@ import { ARToolkitNFTBase } from "./ARToolkitNFTBase";
  */
 export class ARToolkitNFT extends ARToolkitNFTBase {
   /**
+   * @internal The native teardown() joins the KPM detection thread; with no pthread pool
+   * that join waits on the main thread for a thread that needs the event loop, so it
+   * never returns (#695). The tracker facade's dispose() skips it (#720). A static
+   * getter, not a field: variant subclasses declare no fields.
+   */
+  static override get teardownBlocksMainThread(): boolean {
+    return true;
+  }
+
+  /**
    * The ARToolkitNFT constructor. It has no arguments.
    * These properties are initialized:
    * - instance

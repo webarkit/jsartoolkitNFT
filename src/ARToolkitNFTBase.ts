@@ -68,6 +68,14 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
     return NFT_MARKER;
   }
 
+  /**
+   * @internal True when teardown() cannot run on the browser main thread: the tracker
+   * facade's dispose() then skips it (#720, #695). Only the threaded build says true.
+   */
+  static get teardownBlocksMainThread(): boolean {
+    return false;
+  }
+
   /* errors */
   static ERROR_MARKER_INDEX_OUT_OF_BOUNDS: number;
 
@@ -114,7 +122,9 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
   private instance: any;
   private module: any;
   private variantClass: typeof ARToolkitNFTBase;
-  private initModule: () => Promise<ARToolkitNFTModule>;
+  private initModule: (
+    moduleOptions?: Record<string, unknown>,
+  ) => Promise<ARToolkitNFTModule>;
   private instanceArgs: [] | [withFiltering: boolean];
   private markerNFTCount: number;
   private cameraCount: number;
@@ -161,7 +171,9 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
    */
   protected constructor(
     variantClass: typeof ARToolkitNFTBase,
-    initModule: () => Promise<ARToolkitNFTModule>,
+    initModule: (
+      moduleOptions?: Record<string, unknown>,
+    ) => Promise<ARToolkitNFTModule>,
     ...instanceArgs: [] | [withFiltering: boolean]
   ) {
     this.variantClass = variantClass;
@@ -182,11 +194,15 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
    * Init the class injecting the Wasm Module, link the instanced methods and
    * create a global artoolkitNFT variable.
    * @param options `logLevel` is applied to the fresh module before the core is
-   * constructed (#677, D10), so the start-up lines follow it.
+   * constructed (#677, D10), so the start-up lines follow it. `moduleOptions` is handed
+   * to the Emscripten module factory as its Module object: the tracker facade's threaded
+   * worker host sets `mainScriptUrlOrBlob` through it (#720 D16).
    * @return {object} the this object
    */
-  public async init(options?: ARInitOptions) {
-    const instance = await this.initModule();
+  public async init(
+    options?: ARInitOptions & { moduleOptions?: Record<string, unknown> },
+  ) {
+    const instance = await this.initModule(options?.moduleOptions);
     // Between the factory and the core's constructor, through the module-level binding:
     // the constructor and the camera dump print as soon as they run (#677, D10).
     const level = options?.logLevel;

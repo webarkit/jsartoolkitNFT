@@ -5,7 +5,9 @@
  * `vite build` once per variant with `libConfig(variant)`:
  * - "default", "simd", "td": UMD browser bundles (ARToolkitNFT.js, ARToolkitNFT_simd.js,
  *   ARToolkitNFT_td.js), loaded with <script>, importScripts() or a bundler;
- * - "node": the CommonJS bundle for Node (ARToolkitNFT_node.js).
+ * - "node": the CommonJS bundle for Node (ARToolkitNFT_node.js);
+ * - "worker-default", "worker-simd", "worker-td": the tracker facade's ES module workers
+ *   (NFTTracker.worker.js, NFTTracker_simd.worker.js, NFTTracker_td.worker.js, #720 D16).
  *
  * D-numbers refer to the decisions in specs/2026-10-24-vite-build-design.md.
  */
@@ -45,6 +47,25 @@ const BROWSER = {
   },
 };
 
+/**
+ * The tracker facade's worker bundles (#720 D16): one ES module per build, started by
+ * createNFTTrackerWorker with `new Worker(url, { type: "module" })`.
+ */
+const WORKER = {
+  "worker-default": {
+    entry: "src/tracker/worker/host_default.ts",
+    file: "NFTTracker.worker.js",
+  },
+  "worker-simd": {
+    entry: "src/tracker/worker/host_simd.ts",
+    file: "NFTTracker_simd.worker.js",
+  },
+  "worker-td": {
+    entry: "src/tracker/worker/host_td.ts",
+    file: "NFTTracker_td.worker.js",
+  },
+};
+
 /** Settings every variant shares. */
 function common() {
   return {
@@ -62,7 +83,7 @@ function common() {
 function commonBuild() {
   return {
     outDir: "dist",
-    // The four builds share dist/, and dist/ also holds files no build owns.
+    // The builds share dist/, and dist/ also holds files no build owns.
     // tools/build-ts.mjs deletes only the files the builds write (D10).
     emptyOutDir: false,
     // Published bundles are minified, as webpack's production mode did.
@@ -76,7 +97,7 @@ function commonBuild() {
 }
 
 /**
- * @param {"default" | "simd" | "td" | "node"} variant
+ * @param {"default" | "simd" | "td" | "node" | "worker-default" | "worker-simd" | "worker-td"} variant
  * @param {{ watch?: boolean }} [options]
  * @returns {import("vite").InlineConfig}
  */
@@ -86,6 +107,10 @@ export function libConfig(variant, options = {}) {
   if (variant === "node") {
     return {
       ...common(),
+      // An SSR build externalizes node_modules by default, but @webarkit/oneeurofilter-ts
+      // is a devDependency that must ship inside the bundle (#720 D19): a consumer's
+      // require() of the Node entry would otherwise fail to resolve it.
+      ssr: { noExternal: ["@webarkit/oneeurofilter-ts"] },
       build: {
         ...commonBuild(),
         watch,
@@ -117,6 +142,60 @@ export function libConfig(variant, options = {}) {
             // default import resolves as before for TypeScript-compiled CJS consumers (D8).
             esModule: true,
             exports: "named",
+            // D14: keep the pose filter module's `/* @vite-ignore */`, as the UMD
+            // bundles do (see there): every bundle that loads filter modules keeps it.
+            comments: { annotation: true },
+          },
+        },
+      },
+    };
+  }
+
+  const w = WORKER[variant];
+  if (w) {
+    return {
+      ...common(),
+      // D16: no `define` of import.meta.url, no banner, no footer and no renderBuiltUrl,
+      // unlike the UMD bundles. These are ES modules, so the real import.meta.url already
+      // resolves next to the file; mapping it to a globalThis.__artk* URL global, which
+      // nothing sets in the worker, would break it. The threaded host does not rely on it
+      // for its pthreads anyway: it passes mainScriptUrlOrBlob (host.ts).
+      ...(variant === "worker-td"
+        ? {
+            // The glue's pthread worker, emitted from the glue's
+            // `new Worker(new URL(..., import.meta.url), { type: "module" })`.
+            // Its own name, not a shared ARToolkitNFT_td.worker.js (D16): built side by
+            // side, `cmp` against the UMD td build's pthread worker differs only in
+            // `import.meta.url` versus `globalThis.__artkTdBundleUrl`, because the UMD td
+            // define reaches its pthread worker too. Sharing the file would let whichever
+            // build ran last overwrite the other's.
+            worker: {
+              format: "es",
+              rollupOptions: {
+                output: { entryFileNames: "NFTTracker_td.pthread.js" },
+              },
+            },
+          }
+        : {}),
+      build: {
+        ...commonBuild(),
+        watch,
+        lib: {
+          entry: resolve(ROOT, w.entry),
+          formats: ["es"],
+          fileName: () => w.file,
+        },
+        rollupOptions: {
+          output: {
+            // One file per worker: the user's filter module is the only dynamic import,
+            // and it is left alone (@vite-ignore, D14).
+            codeSplitting: false,
+            // Vite's `minify` keeps the whitespace and comments of an ES lib build, so that
+            // a re-bundler can still read pure annotations. These workers are not meant to
+            // be re-bundled: they are loaded as they are (an app may copy or rehost them), so
+            // they are minified fully like the UMD bundles. The filter module's dynamic
+            // import keeps its `/* @vite-ignore */` comment through this minify (checked).
+            minify: true,
           },
         },
       },
@@ -190,6 +269,20 @@ export function libConfig(variant, options = {}) {
           footer: `if(typeof globalThis!=='undefined'&&globalThis.${v.name}){Object.assign(globalThis,globalThis.${v.name});}`,
           // Keep `__esModule: true` on the exports, as webpack set it (D8).
           esModule: true,
+          // D14: the pose filter module's `import(/* @vite-ignore */ url)` keeps its
+          // comment, so that an app that re-bundles this file with Vite gets no "dynamic
+          // import cannot be analyzed" warning and the URL is left to run time.
+          // A minified non-ES build strips every comment by default; `@vite-ignore` is an
+          // annotation comment to the minifier, so keeping annotations keeps it (the ES
+          // worker bundles keep annotations by default). Cost: about 600 bytes per bundle,
+          // mostly the kept `#__PURE__` annotations.
+          // It does NOT stop Vite's dev server from rewriting the import: for any
+          // non-literal import() it still writes `__vite__injectQuery(...)` and prepends an
+          // import of `/@vite/client` (vite's import analysis; @vite-ignore only silences
+          // the warning there), so a bundle served through it becomes an ES module. Serve
+          // the UMD bundles from public/ or a CDN; dist-bundle.test.ts loads them
+          // untransformed for this reason (D15).
+          comments: { annotation: true },
         },
       },
     },

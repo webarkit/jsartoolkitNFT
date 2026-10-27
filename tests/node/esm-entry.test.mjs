@@ -30,6 +30,11 @@ describe("Node ESM entry", () => {
     }
   });
 
+  it("exports createNFTTracker (#720)", () => {
+    assert.equal(typeof esm.createNFTTracker, "function");
+    assert.equal(esm.createNFTTracker, cjs.createNFTTracker);
+  });
+
   it("shares one instance with CJS: same classes, so instanceof works", () => {
     assert.equal(esm.ARControllerNFT, cjs.ARControllerNFT);
     assert.equal(esm.ARToolkitNFT, cjs.ARToolkitNFT);

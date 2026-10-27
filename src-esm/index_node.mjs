@@ -19,5 +19,11 @@
  */
 import cjs from "./ARToolkitNFT_node.js";
 
-export const { ARToolkitNFT, ARControllerNFT, ARLogLevel, NFTLoadError } = cjs;
+export const {
+  ARToolkitNFT,
+  ARControllerNFT,
+  ARLogLevel,
+  NFTLoadError,
+  createNFTTracker,
+} = cjs;
 export default cjs;

@@ -164,7 +164,10 @@ npm run format-check
 - **`tests/vitest/`**, in a real Chromium. It drives `src/` (what `dist/` ships) through marker
   loading and detection on a real photo. It also detects the pinball marker once with every
   committed browser artifact in `build/`, checks each ES6 module's runtime exports, and
-  smoke-tests the `dist/ARToolkitNFT.js` bundle.
+  smoke-tests the `dist/ARToolkitNFT.js` bundle. A spec that instantiates the threaded build
+  (any loop over `VARIANTS`, or a td worker) must be listed in `THREADED` in `vitest.config.ts`:
+  each td module reserves a 1 GB shared memory, and such specs run in parallel exhaust the
+  browser's resources and hang the run.
 - **`tests/node/`**: the Node build, with `node --test`.
 
 A green run means every artifact loads and detects a marker in one fixed photo. It does not
@@ -184,7 +187,7 @@ Put the test where the method is used:
 
 | New code | Test goes in |
 |---|---|
-| A method in `src/` browser entry points (default, `_simd`, `_td`) | `tests/vitest/controller.test.ts`, or a focused `tests/vitest/<feature>.test.ts`. Loop over `VARIANTS` from `tests/vitest/variants.ts` when the behaviour should hold on every browser build. |
+| A method in `src/` browser entry points (default, `_simd`, `_td`) | `tests/vitest/controller.test.ts`, or a focused `tests/vitest/<feature>.test.ts`. Loop over `VARIANTS` from `tests/vitest/variants.ts` when the behaviour should hold on every browser build, and then add the file to `THREADED` in `vitest.config.ts`: `VARIANTS` includes the threaded build, and threaded specs run in parallel hang the run. |
 | The same method on the Node entry point (`_node`) | `tests/node/` as well. The browser suite cannot load the Node build, so a method added to all four entry points needs both. |
 | A method in `js/artoolkitNFT.api.js` or `js/artoolkitNFT_ES6.api.js` | the shared suite in `tests/vitest/legacy.ts`, which runs on every legacy and embed build |
 | A new `Module.x` runtime export | `tests/vitest/module-surface.test.ts`, which checks the four ES6 module builds. The global builds' `Module` is only covered indirectly, by the detection in `tests/vitest/legacy.ts`, so add an assertion there if the legacy API uses the export. |

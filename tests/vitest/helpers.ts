@@ -11,6 +11,18 @@ export const CAMERA_PARAM = "/examples/Data/camera_para.dat";
 export const MARKER_PINBALL = "/examples/DataNFT/pinball";
 export const MARKER_KUVA = "/examples/DataNFT/kuva";
 
+/**
+ * A Blob URL of a built `dist/` file's text, copied by the globalSetup
+ * (`setup/worker-sources.ts`) to `tests/vitest/.dist/<file>.txt`. Vite's dev server
+ * would transform the `.js` file itself (see there), so the specs load the copy (#720 D15).
+ */
+export async function distBlobUrl(file: string): Promise<string> {
+  const res = await fetch(`/tests/vitest/.dist/${file}.txt`);
+  if (!res.ok) throw new Error(`${file}.txt: ${res.status}; run npm run build-ts`);
+  const text = await res.text();
+  return URL.createObjectURL(new Blob([text], { type: "text/javascript" }));
+}
+
 export const VIDEO_WIDTH = 640;
 export const VIDEO_HEIGHT = 480;
 
