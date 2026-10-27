@@ -38,6 +38,13 @@ describe("dist bundles", () => {
       assert.ok(!source.includes("devDependencies"), `${name} inlines package.json`);
     });
 
+    it(`${name} requires no @webarkit package`, () => {
+      // devDependencies such as @webarkit/oneeurofilter-ts must be bundled (#720 D19);
+      // a require() of one would fail for the consumer.
+      const source = fs.readFileSync(path.join(DIST_DIR, name), "utf8");
+      assert.ok(!source.includes('require("@webarkit/'), `${name} requires an @webarkit package`);
+    });
+
     it(`${name} embeds no file:// URL`, () => {
       const source = fs.readFileSync(path.join(DIST_DIR, name), "utf8");
       // A bare "file://" is fine: the Emscripten glue tests URLs against that prefix.

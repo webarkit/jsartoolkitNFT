@@ -86,6 +86,10 @@ export function libConfig(variant, options = {}) {
   if (variant === "node") {
     return {
       ...common(),
+      // An SSR build externalizes node_modules by default, but @webarkit/oneeurofilter-ts
+      // is a devDependency that must ship inside the bundle (#720 D19): a consumer's
+      // require() of the Node entry would otherwise fail to resolve it.
+      ssr: { noExternal: ["@webarkit/oneeurofilter-ts"] },
       build: {
         ...commonBuild(),
         watch,
