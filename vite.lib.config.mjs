@@ -161,6 +161,11 @@ export function libConfig(variant, options = {}) {
         ? {
             // The glue's pthread worker, emitted from the glue's
             // `new Worker(new URL(..., import.meta.url), { type: "module" })`.
+            // Its own name, not a shared ARToolkitNFT_td.worker.js (D16): built side by
+            // side, `cmp` against the UMD td build's pthread worker differs only in
+            // `import.meta.url` versus `globalThis.__artkTdBundleUrl`, because the UMD td
+            // define reaches its pthread worker too. Sharing the file would let whichever
+            // build ran last overwrite the other's.
             worker: {
               format: "es",
               rollupOptions: {
@@ -183,8 +188,10 @@ export function libConfig(variant, options = {}) {
             // and it is left alone (@vite-ignore, D14).
             codeSplitting: false,
             // Vite's `minify` keeps the whitespace and comments of an ES lib build, so that
-            // a re-bundler can still read pure annotations. These workers are loaded as
-            // they are, never re-bundled, so they are minified fully like the UMD bundles.
+            // a re-bundler can still read pure annotations. These workers are not meant to
+            // be re-bundled: they are loaded as they are (an app may copy or rehost them), so
+            // they are minified fully like the UMD bundles. The filter module's dynamic
+            // import keeps its `/* @vite-ignore */` comment through this minify (checked).
             minify: true,
           },
         },

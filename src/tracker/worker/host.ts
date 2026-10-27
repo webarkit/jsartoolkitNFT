@@ -21,7 +21,8 @@ interface HostScope {
  * @param pthreadFile the threaded build's pthread worker file name. The host resolves it
  * against the `workerBase` of the init message and hands it to the Emscripten module as
  * `mainScriptUrlOrBlob` (D16), so the pthreads do not depend on this file's
- * `import.meta.url`, which is a Blob URL in the tests (D15) or a re-bundled URL in apps.
+ * `import.meta.url`, which is a Blob URL in the tests (D15), or wherever an app copied or
+ * rehosted the worker file.
  */
 export function runHost(
   createNFTTracker: ReturnType<typeof createTrackerFactory>,
