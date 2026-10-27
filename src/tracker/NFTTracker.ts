@@ -2,9 +2,14 @@ import type { ARToolkitNFTBase } from "../ARToolkitNFTBase";
 // Type-only: the Node class must stay out of the browser bundles.
 import type { ARToolkitNFT as NodeToolkit } from "../ARToolkitNFT_node";
 import type { NFTLoadErrorKind } from "../NFTLoadError";
-import type { NFTRuntimeSettingsPatch } from "../abstractions/CommonInterfaces";
+import type {
+  INFTMarkerInfo,
+  NFTRuntimeSettingsPatch,
+} from "../abstractions/CommonInterfaces";
+import { arglCameraViewRHf, transMatToGLMat } from "../poseMath";
+import { copyFrame } from "./frame";
 import { FoundLost } from "./foundLost";
-import { projectionFor, targetInfo } from "./geometry";
+import { centerOrigin, projectionFor, targetInfo } from "./geometry";
 import {
   loadFilter,
   usesNativeFiltering,
@@ -22,7 +27,9 @@ import type {
   TargetInfo,
   TargetLoad,
   TargetLoadReason,
+  TargetResult,
   TrackerFrame,
+  Transition,
   Viewport,
 } from "./types";
 
@@ -65,6 +72,12 @@ const CONFIG_KEYS = new Set(["width", "height", "cameraParam"]);
 const MAX_CORE_LOG_LEVEL = 4;
 
 const DEFAULT_LOST_TIMEOUT_MS = 200;
+
+/**
+ * The luma argument of passVideoData. With lumaInternal = true the core computes the luma
+ * in WASM and never reads it (D9b), so a zero-length array is enough.
+ */
+const EMPTY_LUMA = new Uint8Array(0);
 
 /**
  * Browser loader: `ARToolkitNFT.addNFTMarkers([url])`, Promise style, one source per call
@@ -183,7 +196,7 @@ class Tracker implements NFTTracker {
 
   /** Loaded targets by id, in load order. */
   private readonly targets = new Map<number, TargetInfo>();
-  /** Per-target found/lost; process() (Task 6) feeds it. */
+  /** Per-target found/lost; process() feeds it. */
   private foundLost: FoundLost;
   /** Creates one JS filter per target; null for 'none' and 'native' (D3, D18). */
   private filterFactory: FilterFactory;
@@ -295,9 +308,56 @@ class Tracker implements NFTTracker {
     return results;
   }
 
-  process(_frame: TrackerFrame, _timestampMs: number): FrameResult {
+  process(frame: TrackerFrame, timestampMs: number): FrameResult {
     this.check();
-    throw new Error("NFTTracker.process: not implemented yet (#720 Task 6)");
+    const started = performance.now();
+    // D6: the frame must have the tracker's size; a wrong one throws RangeError here,
+    // before anything reaches the core, so the next frame works as usual.
+    const rgba = copyFrame(frame, this.width, this.height);
+    // D9b: the WASM luma path (lumaInternal = true), so the luma argument is unused.
+    this.toolkit.passVideoData(rgba, EMPTY_LUMA, true);
+    this.toolkit.detectNFTMarker();
+
+    const targets: TargetResult[] = [];
+    const transitions: Transition[] = [];
+    for (const [id, info] of this.targets) {
+      const marker = this.toolkit.getNFTMarker(id) as INFTMarkerInfo;
+      const found = Boolean(marker.found);
+      let pose: Float64Array | null = null;
+      if (found) {
+        // D9: the same conversion as the controller's matrixGL_RH (shared helpers).
+        pose = arglCameraViewRHf(
+          transMatToGLMat(marker.pose, new Float64Array(16)),
+        );
+        if (info.origin === "center") pose = centerOrigin(pose, info);
+        // D3: one JS filter per target, created on its first tracked frame. The filters
+        // are fed only tracked poses (D8). 'native' filtering happens in the core (D18).
+        if (this.filterFactory !== null) {
+          let filter = this.filters.get(id);
+          if (filter === undefined) {
+            filter = this.filterFactory();
+            this.filters.set(id, filter);
+          }
+          pose = filter.filter(timestampMs, pose);
+        }
+      }
+      // D8: `targets` is this frame's raw tracking (found is false and pose null within
+      // the grace window); only the transitions are debounced by lostTimeout.
+      const edge = this.foundLost.update(id, found, timestampMs);
+      if (edge !== null) {
+        transitions.push({ type: edge, id });
+        // D3: a JS filter starts afresh after lost. The 'native' filter is reset by the
+        // core itself, on its own first untracked frame (D18), which the facade cannot change.
+        if (edge === "lost") this.filters.get(id)?.reset();
+      }
+      targets.push({ id, found, pose, error: found ? marker.error : null });
+    }
+    return {
+      time: timestampMs,
+      processMs: performance.now() - started,
+      targets,
+      transitions,
+    };
   }
 
   projectionFor(viewport: Viewport, geometry?: FrameGeometry): Float64Array {

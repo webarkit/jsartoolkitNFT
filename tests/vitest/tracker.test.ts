@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { VARIANTS } from "./variants";
 import {
   CAMERA_PARAM,
@@ -6,12 +6,16 @@ import {
   MARKER_KUVA,
   VIDEO_WIDTH,
   VIDEO_HEIGHT,
+  blankFrame,
+  loadMarker,
 } from "./helpers";
+import { loadCompositeFrames } from "./frames";
+import { centerOrigin } from "../../src/tracker/geometry";
 
 /**
  * createNFTTracker (#720), the facade on ARToolkitNFT (D2), on every browser build:
- * creation, configure, addNFTTargets (one source at a time, D10) and dispose.
- * process() and the pose-equality tests are in the next part of this file (Task 6).
+ * creation, configure, addNFTTargets (one source at a time, D10) and dispose; then
+ * process(): found/lost (D8), filtering (D3, D18) and pose equality with the controller (D9).
  */
 
 /** The near and far planes encoded in an OpenGL frustum matrix (column-major). */
@@ -184,4 +188,337 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
     },
     600_000,
   );
+});
+
+/** The frame step the process() tests use, in ms (about 30 fps). */
+const STEP = 33;
+
+/** Yields between frames so the threaded build's detection worker can run (see processUntil). */
+const tick = (ms = 5) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Comparing the poses of two cores fed the same frames needs the same timing on both:
+ *
+ * - **The AR2 seed.** AR2's template selection seeds `rand()` with `time(NULL)`
+ *   (WebARKitLib `lib/SRC/AR2/selectTemplate.c`), which Emscripten reads from `Date.now()`.
+ *   Two cores that first track in different wall-clock seconds pick different templates,
+ *   and their poses differ by up to a few millimetres. `pinWallClock` pins `Date.now()`
+ *   so that both seed alike; the core's detection clock is `performance.now()`, untouched.
+ * - **The detection pass (threaded build).** KPM runs on a worker per core, and its
+ *   result is collected on the first frame after it finishes. While a tracker under
+ *   comparison has not found the target, `SETTLE_MS` between frames lets every worker
+ *   finish, so all of them start tracking on the same frame.
+ *
+ * With both, the poses are equal to 1e-9 on every build. Without either, they are not,
+ * for reasons outside the facade.
+ */
+const SETTLE_MS = 1000;
+function pinWallClock() {
+  return vi.spyOn(Date, "now").mockReturnValue(1_700_000_000_000);
+}
+
+/** A caller-side clock (D7): each call returns the next timestamp. */
+function clock(start = 0) {
+  let t = start - STEP;
+  return () => (t += STEP);
+}
+
+/**
+ * Feeds `frame` to every tracker, one timestamp per step, until `done(step)` holds for
+ * that step's results. Returns every step's results, one array per tracker. With
+ * `settle`, it waits SETTLE_MS after a step where some tracker has not found the target.
+ */
+async function feedUntil(
+  trackers: any[],
+  frame: ImageData,
+  next: () => number,
+  done: (step: any[]) => boolean,
+  maxFrames = 120,
+  settle = false,
+): Promise<any[][]> {
+  const all: any[][] = trackers.map(() => []);
+  for (let i = 0; i < maxFrames; i++) {
+    const t = next();
+    const step = trackers.map((tr) => tr.process(frame, t));
+    step.forEach((r, k) => all[k].push(r));
+    if (done(step)) return all;
+    await tick(settle && !allFound(step) ? SETTLE_MS : 5);
+  }
+  throw new Error(`condition not met after ${maxFrames} frames`);
+}
+
+/** Feeds exactly `n` frames. */
+function feedN(
+  trackers: any[],
+  frame: ImageData,
+  next: () => number,
+  n: number,
+  settle = false,
+) {
+  let left = n;
+  return feedUntil(trackers, frame, next, () => --left === 0, n, settle);
+}
+
+function allFound(step: any[]): boolean {
+  return step.every((r) => r.targets[0].found);
+}
+const transitionsOf = (results: any[]) => results.flatMap((r) => r.transitions);
+const hasEdge = (r: any, type: "found" | "lost") =>
+  r.transitions.some((x: any) => x.type === type);
+
+function expectPosesEqual(a: ArrayLike<number>, b: ArrayLike<number>, eps = 1e-9) {
+  expect(a.length).toBe(16);
+  expect(b.length).toBe(16);
+  for (let i = 0; i < 16; i++) expect(Math.abs(a[i] - b[i])).toBeLessThanOrEqual(eps);
+}
+
+function maxDiff(a: ArrayLike<number>, b: ArrayLike<number>): number {
+  let d = 0;
+  for (let i = 0; i < 16; i++) d = Math.max(d, Math.abs(a[i] - b[i]));
+  return d;
+}
+
+describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
+  let frames: { pinballOnly: ImageData; width: number; height: number };
+  let blank: ImageData;
+  let tracker: any;
+  const owned: any[] = [];
+
+  /** A tracker with pinball loaded; the suite disposes it. */
+  const withPinball = async (extra: object = {}, origin?: "corner" | "center") => {
+    const t = await create(variant, extra);
+    owned.push(t);
+    const res = await t.addNFTTargets([MARKER_PINBALL], origin ? { origin } : undefined);
+    expect(res[0].status).toBe("loaded");
+    return { t, info: res[0].info };
+  };
+
+  beforeAll(async () => {
+    frames = await loadCompositeFrames(0.32);
+    expect([frames.width, frames.height]).toEqual([VIDEO_WIDTH, VIDEO_HEIGHT]);
+    blank = blankFrame();
+    ({ t: tracker } = await withPinball());
+  }, 120_000);
+
+  afterAll(() => {
+    for (const t of owned) t.dispose();
+  });
+
+  it("process finds the target and fires found once", async () => {
+    const next = clock();
+    const [found] = await feedUntil([tracker], frames.pinballOnly, next, allFound);
+    const [after] = await feedN([tracker], frames.pinballOnly, next, 5);
+    const results = [...found, ...after];
+
+    expect(transitionsOf(results)).toEqual([{ type: "found", id: 0 }]);
+    // The edge comes on the first tracked frame (D8).
+    expect(found[found.length - 1].transitions).toEqual([{ type: "found", id: 0 }]);
+    results.forEach((r, i) => {
+      expect(r.time).toBe(i * STEP);
+      expect(r.processMs).toBeGreaterThanOrEqual(0);
+    });
+    const target = found[found.length - 1].targets[0];
+    expect(target.id).toBe(0);
+    expect(target.found).toBe(true);
+    expect(target.pose).toBeInstanceOf(Float64Array);
+    expect(target.pose.length).toBe(16);
+    expect(typeof target.error).toBe("number");
+  });
+
+  /** Tracks, then feeds `n` blank frames; returns their results and the last tracked time. */
+  async function hide(t: any, next: () => number, n: number) {
+    const [found] = await feedUntil([t], frames.pinballOnly, next, allFound);
+    const lastTracked = found[found.length - 1].time;
+    const [hidden] = await feedN([t], blank, next, n);
+    return { hidden, lastTracked };
+  }
+
+  function expectOneLostAfter(hidden: any[], lastTracked: number, timeout: number) {
+    // D8: within the grace window `targets` is this frame's raw tracking; only the
+    // transitions are debounced.
+    expect(hidden[0].targets[0].found).toBe(false);
+    expect(hidden[0].targets[0].pose).toBeNull();
+    expect(hidden[0].targets[0].error).toBeNull();
+    expect(hidden.every((r) => !r.targets[0].found)).toBe(true);
+    expect(transitionsOf(hidden)).toEqual([{ type: "lost", id: 0 }]);
+    const at = hidden.findIndex((r) => r.transitions.length > 0);
+    expect(at).toBe(hidden.findIndex((r) => r.time - lastTracked > timeout));
+  }
+
+  it("hiding the target gives exactly one lost after lostTimeout", async () => {
+    const { hidden, lastTracked } = await hide(tracker, clock(10_000), 10);
+    expectOneLostAfter(hidden, lastTracked, 200);
+    // 33 ms steps: the 7th blank frame (231 ms) is the first past 200 ms.
+    expect(hidden.findIndex((r) => r.transitions.length > 0)).toBe(6);
+  });
+
+  it("configure({ lostTimeout }) is live", async () => {
+    await tracker.configure({ lostTimeout: 50 });
+    try {
+      const { hidden, lastTracked } = await hide(tracker, clock(20_000), 5);
+      expectOneLostAfter(hidden, lastTracked, 50);
+      // The 2nd blank frame (66 ms) is the first past 50 ms.
+      expect(hidden.findIndex((r) => r.transitions.length > 0)).toBe(1);
+    } finally {
+      await tracker.configure({ lostTimeout: 200 });
+    }
+  });
+
+  it("rejects a wrongly sized frame and recovers", () => {
+    expect(() => tracker.process(blankFrame(641, 480), 30_000)).toThrow(RangeError);
+    const r = tracker.process(blank, 30_033);
+    expect(r.time).toBe(30_033);
+    expect(r.targets).toHaveLength(1);
+  });
+
+  it("poses equal the controller's matrixGL_RH", async () => {
+    // Defaults on both sides: the tracker's filter is 'native' (D18) and the controller's
+    // core filters by default. The controller takes the WASM luma path, as the tracker
+    // does (D9b), and the same detection defaults: same core, same defaults.
+    const { ARControllerNFT } = await variant.load();
+    const ctrl = await ARControllerNFT.initWithDimensions(
+      frames.width,
+      frames.height,
+      CAMERA_PARAM,
+      true,
+    );
+    expect(await loadMarker(ctrl, MARKER_PINBALL)).toBe(0);
+    const { t } = await withPinball();
+
+    let ctrlPose: Float64Array | null = null;
+    ctrl.addEventListener("getNFTMarker", (e: any) => {
+      if (e.data.index === 0) ctrlPose = e.data.matrixGL_RH;
+    });
+
+    const next = clock();
+    let compared = 0;
+    const wall = pinWallClock();
+    try {
+      for (let i = 0; i < 30; i++) {
+        const time = next();
+        ctrlPose = null;
+        ctrl.process(frames.pinballOnly);
+        const target = t.process(frames.pinballOnly, time).targets[0];
+        // The same found/lost on both sides (anti-goal), then the same pose.
+        expect(target.found).toBe(ctrlPose !== null);
+        if (ctrlPose && target.found) {
+          expectPosesEqual(target.pose, ctrlPose);
+          compared++;
+        }
+        await tick(target.found ? 5 : SETTLE_MS);
+      }
+    } finally {
+      wall.mockRestore();
+    }
+    console.log(`[tracker] ${variant.name}: ${compared} of 30 frames compared with the controller`);
+    expect(compared).toBeGreaterThan(20);
+  }, 120_000);
+
+  it("origin center shifts the pose", async () => {
+    const { t: corner } = await withPinball();
+    const { t: center, info } = await withPinball({}, "center");
+    expect(info.origin).toBe("center");
+    const next = clock();
+    const wall = pinWallClock();
+    let c1: any[], m1: any[], c2: any[], m2: any[];
+    try {
+      [c1, m1] = await feedUntil([corner, center], frames.pinballOnly, next, allFound, 120, true);
+      [c2, m2] = await feedN([corner, center], frames.pinballOnly, next, 5);
+    } finally {
+      wall.mockRestore();
+    }
+    const cornerRes = [...c1, ...c2];
+    const centerRes = [...m1, ...m2];
+    let compared = 0;
+    cornerRes.forEach((c, i) => {
+      const a = c.targets[0];
+      const b = centerRes[i].targets[0];
+      if (a.found && b.found) {
+        expectPosesEqual(b.pose, centerOrigin(a.pose, info));
+        expect(maxDiff(a.pose, b.pose)).toBeGreaterThan(1);
+        compared++;
+      }
+    });
+    expect(compared).toBeGreaterThan(0);
+  }, 120_000);
+
+  describe("JS filters", () => {
+    let oneEuro: any;
+    let raw: any;
+
+    it("the default filter is native", async () => {
+      const { ARToolkitNFT } = await variant.load();
+      const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
+      try {
+        await withPinball();
+        const flags = spy.mock.calls.map((c: any[]) => c[0]?.filtering);
+        expect(flags).toContain(true);
+        expect(flags).not.toContain(false);
+      } finally {
+        spy.mockRestore();
+      }
+    }, 120_000);
+
+    it("a JS filter turns native filtering off and resets on lost", async () => {
+      const { ARToolkitNFT } = await variant.load();
+      const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
+      try {
+        ({ t: oneEuro } = await withPinball({ filter: { type: "oneEuro" } }));
+        const flags = spy.mock.calls.map((c: any[]) => c[0]?.filtering);
+        expect(flags).toContain(false);
+        expect(flags).not.toContain(true);
+      } finally {
+        spy.mockRestore();
+      }
+      // The raw pose, for the same frames (D18: 'none' turns native filtering off too).
+      ({ t: raw } = await withPinball({ filter: "none" }));
+
+      const next = clock();
+      const wall = pinWallClock();
+      try {
+        await feedUntil([oneEuro, raw], frames.pinballOnly, next, allFound, 120, true);
+        const [o1, r1] = await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
+        // The filter is on: the filtered pose leaves the raw one.
+        expect(
+          o1.some((o, i) => maxDiff(o.targets[0].pose, r1[i].targets[0].pose) > 0),
+        ).toBe(true);
+
+        const lost = new Set<number>();
+        await feedUntil([oneEuro, raw], blank, next, (step) => {
+          step.forEach((r, k) => hasEdge(r, "lost") && lost.add(k));
+          return lost.size === 2;
+        });
+
+        const [o2, r2] = await feedUntil(
+          [oneEuro, raw],
+          frames.pinballOnly,
+          next,
+          (step) => hasEdge(step[0], "found"),
+          120,
+          true,
+        );
+        const a = o2[o2.length - 1].targets[0];
+        const b = r2[r2.length - 1].targets[0];
+        expect(b.found).toBe(true);
+        // Reset on lost (D3): the first sample after a reset passes through unchanged.
+        expect(Array.from(a.pose)).toEqual(Array.from(b.pose));
+      } finally {
+        wall.mockRestore();
+      }
+    }, 120_000);
+
+    it("keeps the old filter when a new module fails", async () => {
+      const next = clock(50_000);
+      await feedUntil([oneEuro, raw], frames.pinballOnly, next, allFound, 120, true);
+      await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
+      const missing = new URL("/examples/filters/missing-filter.js", location.origin).href;
+      await expect(oneEuro.configure({ filter: { module: missing } })).rejects.toThrow(
+        /missing-filter/,
+      );
+      const [[o], [r]] = await feedN([oneEuro, raw], frames.pinballOnly, next, 1);
+      expect(o.targets[0].found).toBe(true);
+      expect(r.targets[0].found).toBe(true);
+      expect(maxDiff(o.targets[0].pose, r.targets[0].pose)).toBeGreaterThan(0);
+    }, 120_000);
+  });
 });
