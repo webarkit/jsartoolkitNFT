@@ -6,8 +6,9 @@
  *  facade (#720).
  *
  *  Why one copy (#720 D9): the facade must return the same GL matrix as the
- *  controller's `matrixGL_RH` event field, and the anti-goal is that the two
- *  APIs' poses match. A second copy of these bodies could drift apart silently.
+ *  controller's `matrixGL_RH` event field, and the anti-goal is poses that
+ *  differ between the two APIs. A second copy of these bodies could drift apart
+ *  silently.
  *  The bodies below were moved from ARControllerNFTBase / ARControllerNFT_node
  *  unchanged; the controllers keep their public methods as one-line delegates.
  */

@@ -44,7 +44,8 @@ export function centerOrigin(pose: Float64Array, info: TargetInfo): Float64Array
  * D12, D17: starts from `cameraMatrix` (built for the processing frame) and maps it onto
  * the viewport. With a geometry it first undoes the camera side's letterbox and portrait
  * rotation, i.e. the inverse of `getProcessGeometry`; without one the processing frame
- * is the source. Returns a new matrix. x terms are indices 0, 4, 8, 12 and y terms
+ * is the source. The geometry's `x` and `y` are ignored: the letterbox is taken to be
+ * centred, as `getProcessGeometry` makes it, so scaling about the centre undoes it. Returns a new matrix. x terms are indices 0, 4, 8, 12 and y terms
  * 1, 5, 9, 13 (column-major).
  */
 export function projectionFor(

@@ -219,7 +219,9 @@ worker.
 
 `process()` takes an `ImageData`, an `ImageBitmap` or `{ data, width, height }` (RGBA). The frame must be
 exactly `width` × `height` of the config, and any other size throws a `RangeError`. In the worker the frame
-is transferred, not copied, so the caller's buffer is empty afterwards.
+is transferred, not copied, so the caller's buffer is empty afterwards. A `data` view of only part of its
+buffer (a frame inside a bigger buffer, or inside WebAssembly memory) or of a `SharedArrayBuffer` is copied
+instead, and the caller keeps its buffer.
 
 `timestampMs` is your clock, normally `performance.now()`. It drives `lostTimeout` and the filters.
 
@@ -320,7 +322,9 @@ re-bundles the library normally passes it. Serve these files from that folder:
 queued, so feeding the tracker every camera frame never builds up latency. Ignore the skipped results.
 
 **`dispose()`** waits at most 2 seconds for the worker to dispose its tracker, then terminates the worker
-anyway. Calls still pending reject with a "disposed" error.
+anyway. Calls still pending reject with a "disposed" error. It never rejects, and every call returns the same
+Promise, which settles once the worker is terminated: after `await tracker.dispose()` a new tracker never
+runs alongside the old worker.
 
 **Threaded build limitation.** On `td`, `dispose()` skips the native teardown, because the threaded
 detector's destructor joins a pthread and hangs
