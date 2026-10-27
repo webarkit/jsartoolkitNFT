@@ -356,6 +356,159 @@ describe("createNFTTrackerWorker wrapper (default)", () => {
     }
   });
 
+  /**
+   * A fake worker (no WASM) through the factory seam: it answers init, and the request
+   * types in `answers`. Its cameraMatrix is non-zero so projectionFor has something to scale.
+   */
+  async function withFake(
+    answers: string[],
+    run: (t: any, fake: any) => Promise<void>,
+    config: any = CONFIG,
+  ): Promise<void> {
+    let fake: any;
+    __setWorkerFactory(() => {
+      fake = {
+        onmessage: null,
+        onerror: null,
+        onmessageerror: null,
+        terminate: vi.fn(),
+        postMessage: vi.fn((msg: any) => {
+          if (msg.type !== "init" && !answers.includes(msg.type)) return;
+          Promise.resolve().then(() =>
+            fake.onmessage({
+              data: {
+                v: 1,
+                id: msg.id,
+                type: "ok",
+                value:
+                  msg.type === "process"
+                    ? { time: msg.timestampMs }
+                    : undefined,
+                cameraMatrix: Float64Array.from(
+                  { length: 16 },
+                  (_, i) => i + 1,
+                ),
+              },
+            }),
+          );
+        }),
+      };
+      return fake;
+    });
+    try {
+      const t = await createNFTTrackerWorker(config, opts);
+      await run(t, fake);
+    } finally {
+      vi.useRealTimers();
+      __setWorkerFactory(factory);
+    }
+  }
+
+  it("dispose resolves when the worker crashes during the wait", async () => {
+    await withFake([], async (t, fake) => {
+      const disposing = t.dispose();
+      fake.onerror({ preventDefault() {}, message: "boom" });
+      await expect(disposing).resolves.toBeUndefined();
+      expect(fake.terminate).toHaveBeenCalled();
+    });
+  });
+
+  it("a second dispose returns the same promise, settled after terminate", async () => {
+    await withFake(["dispose"], async (t, fake) => {
+      const first = t.dispose();
+      const second = t.dispose();
+      expect(second).toBe(first);
+      // A caller awaiting either may create a new tracker at once: the old worker
+      // must already be terminated by then (D13).
+      const terminatedAtSettle = second.then(
+        () => fake.terminate.mock.calls.length,
+      );
+      expect(await terminatedAtSettle).toBe(1);
+      await t.dispose();
+      expect(fake.terminate).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("process never throws synchronously", async () => {
+    await withFake(["process"], async (t) => {
+      let p: Promise<unknown> | undefined;
+      expect(() => {
+        p = t.process(null, 0);
+      }).not.toThrow();
+      await expect(p).rejects.toThrow(TypeError);
+      // The refused frame did not leave a process() in flight.
+      expect(
+        await t.process(
+          { data: new Uint8ClampedArray(4), width: 1, height: 1 },
+          7,
+        ),
+      ).toEqual({ time: 7 });
+    });
+  });
+
+  it("a reply that cannot be deserialised rejects instead of hanging", async () => {
+    await withFake([], async (t, fake) => {
+      const pending = t.addNFTTargets([PINBALL]);
+      fake.onmessageerror(new MessageEvent("messageerror"));
+      await expect(pending).rejects.toThrow(/could not be deserialised/);
+      await expect(t.configure({ near: 1 })).rejects.toThrow(
+        /could not be deserialised/,
+      );
+    });
+  });
+
+  it("projectionFor keeps the size given at creation", async () => {
+    const config = { ...CONFIG };
+    await withFake(
+      [],
+      async (t) => {
+        const viewport = { width: 1280, height: 720 };
+        const before = Array.from(t.projectionFor(viewport));
+        config.width = 1;
+        config.height = 1000;
+        expect(Array.from(t.projectionFor(viewport))).toEqual(before);
+      },
+      config,
+    );
+  });
+
+  it("a view of part of a buffer is copied, not transferred", async () => {
+    const size = VIDEO_WIDTH * VIDEO_HEIGHT * 4;
+    const pixels = pinballFrame().data;
+    // A view at offset 0 of a bigger buffer: transferring it would detach the rest.
+    const big = new Uint8ClampedArray(size + 64);
+    big.set(pixels);
+    const head = big.subarray(0, size);
+    const r1 = await tracker.process(
+      { data: head, width: VIDEO_WIDTH, height: VIDEO_HEIGHT },
+      3000,
+    );
+    expect(r1.time).toBe(3000);
+    expect(big.buffer.byteLength).toBe(size + 64);
+    expect(head[0]).toBe(pixels[0]);
+    // A view at an offset.
+    const tail = new Uint8ClampedArray(size + 64);
+    tail.set(pixels, 64);
+    const r2 = await tracker.process(
+      { data: tail.subarray(64), width: VIDEO_WIDTH, height: VIDEO_HEIGHT },
+      3001,
+    );
+    expect(r2.time).toBe(3001);
+    expect(tail.buffer.byteLength).toBe(size + 64);
+    // A view of WebAssembly memory, whose buffer cannot be transferred at all.
+    const memory = new WebAssembly.Memory({
+      initial: Math.ceil(size / 65536) + 1,
+    });
+    const wasmView = new Uint8ClampedArray(memory.buffer, 0, size);
+    wasmView.set(pixels);
+    const r3 = await tracker.process(
+      { data: wasmView, width: VIDEO_WIDTH, height: VIDEO_HEIGHT },
+      3002,
+    );
+    expect(r3.time).toBe(3002);
+    expect(memory.buffer.byteLength).toBeGreaterThan(0);
+  });
+
   it("a crashed worker rejects instead of hanging", async () => {
     const crashing = URL.createObjectURL(
       new Blob(["throw new Error('boom');"], { type: "text/javascript" }),

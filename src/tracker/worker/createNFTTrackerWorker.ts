@@ -25,7 +25,11 @@ import {
   type BuildName,
 } from "./selectBuild";
 
-export interface WorkerOptions {
+/**
+ * Options of createNFTTrackerWorker. Not named `WorkerOptions`, which would shadow the DOM
+ * type of the same name in a consumer's code.
+ */
+export interface NFTTrackerWorkerOptions {
   /** `"auto"` (the default) picks td, then simd, then default (D4). */
   build?: "auto" | BuildName;
   /**
@@ -45,7 +49,9 @@ export interface NFTTrackerWorker {
     opts?: AddTargetsOptions,
   ): Promise<TargetLoad[]>;
   /**
-   * Transfers the frame to the worker (D6): afterwards the caller's buffer is empty.
+   * Transfers the frame to the worker (D6): afterwards the caller's buffer is empty. A
+   * `data` view that does not span its whole buffer, or a shared buffer, is copied
+   * instead, and the caller keeps its buffer. Never throws: an invalid frame rejects.
    * A call made while another is in flight resolves `{ skipped: true }` at once, and
    * that frame is neither sent nor transferred (D13).
    */
@@ -55,7 +61,10 @@ export interface NFTTrackerWorker {
   ): Promise<FrameResult | SkippedFrame>;
   /** Runs on this thread from the cached cameraMatrix: no round trip (D13). */
   projectionFor(viewport: Viewport, geometry?: FrameGeometry): Float64Array;
-  /** Disposes the worker's tracker, then terminates the worker. */
+  /**
+   * Disposes the worker's tracker, then terminates the worker. Never rejects, and every
+   * call returns the same Promise, which settles once the worker is terminated.
+   */
   dispose(): Promise<void>;
 }
 
@@ -146,6 +155,41 @@ function toError(response: { name: string; message: string }): Error {
   return error;
 }
 
+/**
+ * The process() message and its transfer list (D6). The frame is transferred, not copied,
+ * when that is safe: an ImageBitmap, or `data` spanning the whole of a plain ArrayBuffer.
+ * Otherwise `data` is copied and the copy transferred: transferring the buffer behind a
+ * view of part of it would detach memory the caller still uses (a frame in a bigger
+ * buffer, or in WebAssembly memory, whose buffer refuses to detach: a DataCloneError on
+ * every frame), and a SharedArrayBuffer cannot be transferred at all.
+ * Throws a TypeError for a frame that is not an object.
+ */
+function framePayload(frame: TrackerFrame): {
+  message: Extract<Request, { type: "process" }>["frame"];
+  transfer: Transferable[];
+} {
+  if (typeof ImageBitmap !== "undefined" && frame instanceof ImageBitmap) {
+    return { message: frame, transfer: [frame] };
+  }
+  if (typeof frame !== "object" || frame === null) {
+    throw new TypeError(
+      "NFTTracker.process: the frame must be an ImageData, an ImageBitmap or { data, width, height }",
+    );
+  }
+  const { data, width, height } = frame as Exclude<TrackerFrame, ImageBitmap>;
+  // A missing or non-typed-array `data` is posted as is, for the tracker's own check to
+  // refuse with its usual error.
+  if (!ArrayBuffer.isView(data)) {
+    return { message: { data, width, height }, transfer: [] };
+  }
+  const whole =
+    data.buffer instanceof ArrayBuffer &&
+    data.byteOffset === 0 &&
+    data.byteLength === data.buffer.byteLength;
+  const sent = whole ? data : data.slice();
+  return { message: { data: sent, width, height }, transfer: [sent.buffer] };
+}
+
 /** The request without the fields `send` adds. */
 type Body = Request extends infer R
   ? R extends Request
@@ -160,9 +204,13 @@ type Ok = Extract<Response, { type: "ok" }>;
  */
 export async function createNFTTrackerWorker(
   config: NFTTrackerConfig,
-  opts: WorkerOptions = {},
+  opts: NFTTrackerWorkerOptions = {},
 ): Promise<NFTTrackerWorker> {
   checkFilter(config?.filter);
+  // Captured now: projectionFor must not follow later changes to the caller's object, which
+  // the worker's tracker, created with these values, does not see either (D12).
+  const width = config?.width;
+  const height = config?.height;
   const build = selectBuild(opts.build ?? "auto", {
     crossOriginIsolated: globalThis.crossOriginIsolated === true,
     simd: supportsWasmSimd(),
@@ -188,6 +236,8 @@ export async function createNFTTrackerWorker(
   let closed: Error | null = null;
   /** D13: one process() at a time. */
   let inFlight = false;
+  /** The one dispose() Promise; every call returns it. */
+  let disposing: Promise<void> | null = null;
   let matrix: Float64Array;
 
   /** Rejects every pending request with `error` and stops the worker. */
@@ -216,6 +266,12 @@ export async function createNFTTrackerWorker(
         `NFTTracker worker: ${event.message || "the worker failed to start"}`,
       ),
     );
+  };
+
+  // A reply the page cannot deserialise is lost, so its request would never settle. Close
+  // as for a crash, so that nothing hangs.
+  worker.onmessageerror = () => {
+    close(new Error("NFTTracker worker: a reply could not be deserialised"));
   };
 
   function send(body: Body, transfer: Transferable[] = []): Promise<Ok> {
@@ -299,23 +355,18 @@ export async function createNFTTrackerWorker(
       // worker may answer, and a queue would only add latency; the next call after the
       // in-flight one resolves is processed.
       if (inFlight) return Promise.resolve({ skipped: true });
-      // D6: the frame is transferred, not copied. A shared buffer cannot be transferred,
-      // so it is copied instead.
-      let message: Extract<Request, { type: "process" }>["frame"];
-      let transfer: Transferable[];
-      if (typeof ImageBitmap !== "undefined" && frame instanceof ImageBitmap) {
-        message = frame;
-        transfer = [frame];
-      } else {
-        const { data, width, height } = frame as Exclude<
-          TrackerFrame,
-          ImageBitmap
-        >;
-        message = { data, width, height };
-        transfer = data?.buffer instanceof ArrayBuffer ? [data.buffer] : [];
+      let payload: ReturnType<typeof framePayload>;
+      try {
+        payload = framePayload(frame);
+      } catch (e) {
+        // A Promise-returning call never throws synchronously, so callers handle one path.
+        return Promise.reject(e);
       }
       inFlight = true;
-      return send({ type: "process", frame: message, timestampMs }, transfer)
+      return send(
+        { type: "process", frame: payload.message, timestampMs },
+        payload.transfer,
+      )
         .then((res) => res.value as FrameResult)
         .finally(() => {
           inFlight = false;
@@ -324,35 +375,40 @@ export async function createNFTTrackerWorker(
 
     projectionFor(viewport: Viewport, geometry?: FrameGeometry): Float64Array {
       check();
-      return projectionFor(
-        matrix,
-        config.width,
-        config.height,
-        viewport,
-        geometry,
-      );
+      return projectionFor(matrix, width, height, viewport, geometry);
     },
 
-    async dispose(): Promise<void> {
-      if (closed) return;
+    dispose(): Promise<void> {
+      // D13 (amended): one Promise for every call, settled only after terminate(). A caller
+      // that awaits dispose() and then creates a new tracker must never have two workers
+      // alive at once: on td each holds a 1 GB shared memory.
+      if (disposing) return disposing;
+      // Crashed, or closed by a failed reply: the worker is already terminated.
+      if (closed) return (disposing = Promise.resolve());
       const done = send({ type: "dispose" });
       // Calls made from now on reject locally; requests already posted are answered first.
-      closed = new Error(DISPOSED);
-      let timer: ReturnType<typeof setTimeout> | undefined;
-      const timeout = new Promise<void>((resolve) => {
-        timer = setTimeout(resolve, DISPOSE_TIMEOUT_MS);
-      });
-      try {
-        // A bounded wait (D13, amended): see DISPOSE_TIMEOUT_MS.
-        await Promise.race([done, timeout]);
-      } finally {
-        clearTimeout(timer);
-        // On the threaded build the tracker's dispose() skips the native teardown, which
-        // would block (#695). Terminating the worker is what frees its WASM memory, on
-        // every build. Anything still pending (an unanswered process()) is rejected with
-        // the disposed error.
-        close(closed);
-      }
+      const disposed = new Error(DISPOSED);
+      closed = disposed;
+      disposing = (async () => {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const timeout = new Promise<void>((resolve) => {
+          timer = setTimeout(resolve, DISPOSE_TIMEOUT_MS);
+        });
+        try {
+          // A bounded wait (D13, amended): see DISPOSE_TIMEOUT_MS. A worker that crashes or
+          // answers with an error meanwhile is terminated all the same, so dispose() never
+          // rejects: the caller has nothing left to clean up.
+          await Promise.race([done.catch(() => {}), timeout]);
+        } finally {
+          clearTimeout(timer);
+          // On the threaded build the tracker's dispose() skips the native teardown, which
+          // would block (#695). Terminating the worker is what frees its WASM memory, on
+          // every build. Anything still pending (an unanswered process()) is rejected with
+          // the disposed error.
+          close(disposed);
+        }
+      })();
+      return disposing;
     },
   };
 }

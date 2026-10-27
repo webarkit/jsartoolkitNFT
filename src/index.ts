@@ -85,7 +85,7 @@ import type {
 import { createNFTTrackerWorker } from "./tracker/worker/createNFTTrackerWorker";
 import type {
   NFTTrackerWorker,
-  WorkerOptions,
+  NFTTrackerWorkerOptions,
 } from "./tracker/worker/createNFTTrackerWorker";
 
 /**
@@ -136,5 +136,5 @@ export type {
   PoseFilter,
   PoseFilterModule,
   NFTTrackerWorker,
-  WorkerOptions,
+  NFTTrackerWorkerOptions,
 };
