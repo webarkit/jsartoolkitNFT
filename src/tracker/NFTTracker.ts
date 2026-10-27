@@ -80,6 +80,26 @@ const DEFAULT_LOST_TIMEOUT_MS = 200;
 const EMPTY_LUMA = new Uint8Array(0);
 
 /**
+ * A loader's caught error as a failed outcome (D10), shared by both loaders so the
+ * mapping lives in one place. An NFTLoadError is matched on `name` rather than
+ * `instanceof`, as errors from different bundles are different classes.
+ */
+function outcomeFromError(e: unknown): {
+  errorKind: NFTLoadErrorKind | "unknown";
+  message: string;
+} {
+  const err = e as {
+    name?: string;
+    kind?: NFTLoadErrorKind;
+    message?: string;
+  };
+  if (err?.name === "NFTLoadError" && err.kind) {
+    return { errorKind: err.kind, message: err.message ?? "" };
+  }
+  return { errorKind: "unknown", message: err?.message ?? String(e) };
+}
+
+/**
  * Browser loader: `ARToolkitNFT.addNFTMarkers([url])`, Promise style, one source per call
  * (D10). It rejects with an NFTLoadError, matched on `name` rather than `instanceof`, as
  * errors from different bundles are different classes.
@@ -90,15 +110,7 @@ export const browserTargetLoader: TargetLoader = {
       const ids: number[] = await toolkit.addNFTMarkers([url]);
       return { id: ids[0] };
     } catch (e) {
-      const err = e as {
-        name?: string;
-        kind?: NFTLoadErrorKind;
-        message?: string;
-      };
-      if (err?.name === "NFTLoadError" && err.kind) {
-        return { errorKind: err.kind, message: err.message ?? "" };
-      }
-      return { errorKind: "unknown", message: err?.message ?? String(e) };
+      return outcomeFromError(e);
     }
   },
 };
@@ -116,15 +128,7 @@ export const nodeTargetLoader: TargetLoader = {
       const ids: number[] = toolkit.tryAddNFTMarkers([url]);
       return { id: ids[0] };
     } catch (e) {
-      const err = e as {
-        name?: string;
-        kind?: NFTLoadErrorKind;
-        message?: string;
-      };
-      if (err?.name === "NFTLoadError" && err.kind) {
-        return { errorKind: err.kind, message: err.message ?? "" };
-      }
-      return { errorKind: "unknown", message: err?.message ?? String(e) };
+      return outcomeFromError(e);
     }
   },
 };
