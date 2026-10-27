@@ -47,10 +47,10 @@ ARnft, for example, has one shared filter that is never reset, and sends `lost` 
 - **G3. Filtering per marker,** reset on `lost`:
   - `'none'`;
   - `'native'`: ARToolKit's filter, through `configure({ filtering })`;
-  - `{ type: 'oneEuro', minCutOff, beta, dCutOff?, warmUp? }`;
+  - `{ type: 'oneEuro', minCutOff?, beta?, warmUp? }`: **the default** (D18, revised by the user on 2026-10-27);
   - `{ module: string, options?: unknown }`: a custom filter loaded by URL. It works in the worker and in the same thread.
 
-  OneEuro is implemented **through the same `PoseFilterModule` interface** as custom filters.
+  OneEuro is implemented **through the same `PoseFilterModule` interface** as custom filters, on top of `@webarkit/oneeurofilter-ts` (D19).
 - **G4. `addNFTTargets(sources, opts?)`** resolves to one `TargetLoad` per source, in order: `{ status: 'loaded', info }` or `{ status: 'error', url, reason, message }`. It never rejects for a per-source failure, and never yields an `undefined` id. `info` gives the size in pixels, dpi **and millimetres**, and `origin: 'corner' | 'center'` decides where the pose origin sits.
 - **G5. Geometry:**
   - `cameraMatrix` is always consistent with `near` / `far`;
@@ -74,7 +74,7 @@ ARnft, for example, has one shared filter that is never reset, and sends `lost` 
 
 - **A consumer has to write its own found/lost edge detection or filter reset** to use the facade correctly.
 - **A worker message carries a function or a class instance.** Everything that crosses `postMessage` must be plain data.
-- **The facade and `ARControllerNFT` behave differently for the same frames.** The poses must be the same, and found/lost must be the same with the same `lostTimeout`.
+- **The facade and `ARControllerNFT` behave differently for the same frames.** With `filter: 'native'`, the poses must be the same, and found/lost must be the same with the same `lostTimeout`. With the default OneEuro the poses are filtered differently on purpose (D18).
 - **Loading the worker downloads more than one WASM build.**
 
 ## Approaches
@@ -213,11 +213,19 @@ export interface FrameGeometry {
   - The geometry fields map one to one onto `getProcessGeometry()`'s `{ rot, w, h, pw, ph, ox, oy }` plus the video size.
   - D12's formula is therefore the inverse of `getProcessGeometry`. The tests check it against ARnft's and webarkit-studio's current projection code for the same inputs.
 - **D18 (design, after the builder check). Filter defaults and keys:**
-  - **The default `filter` is `'native'`.** Every build constructs the core with native filtering on, so this matches the controller out of the box, and the pose-equality anti-goal holds with defaults.
+  - **The default `filter` is OneEuro** (user, 2026-10-27; it replaces the earlier `'native'` default). The default parameters are ARnft's, `{ type: 'oneEuro', minCutOff: 0.0001, beta: 0.01 }`, so a consumer gets per-target smoothing with a reset on `lost` out of the box. That is what ARnft, aframe-nft and webarkit-studio each wire by hand today.
+    - The cost: with defaults, the poses differ from the controller's, which filters natively. The pose-equality test therefore passes `filter: 'native'` explicitly, and the README says how to match the controller.
   - `'none'`, OneEuro and custom filters turn native filtering **off** (`configure({ filtering: false })`), so poses are never filtered twice.
   - **`filtering` is not a facade key.** The facade takes only `filter`, and passing `filtering` throws `TypeError`, with a message pointing to `filter`. That gives one way to say it.
   - **`logLevel`:** the facade accepts any level >= 0, as `setLogLevel` does. Levels 0-4 go through `configure()`. A level above 4, used to silence everything, goes through `setLogLevel()`, because the core's `configure()` refuses it.
   - **The `'native'` reset is the core's.** The native filter resets on the core's own first untracked frame (`filterNeedsReset`), not after the facade's `lostTimeout`. The facade cannot change this, and the README says so. The JS filters (OneEuro and custom) reset on the facade's `lost` transition.
+
+- **D19 (user, 2026-10-27). OneEuro uses `@webarkit/oneeurofilter-ts`** (0.2.0, LGPL-3.0 like this project), the package ARnft and aframe-nft already use, not a local copy.
+  - **Bundled:** Vite inlines it into each bundle and worker bundle, so it is a devDependency, and consumers install nothing more. The worker bundles stay self-contained.
+  - **Units are the package's:** time in milliseconds, and `minCutOff` and `beta` passed to `new OneEuroFilter(minCutOff, beta)` **unchanged**, as ARnft does. The derivative cutoff is fixed inside the package at 1 Hz, so the facade has no `dCutOff`, which drops it from G3's first sketch.
+  - aframe-nft divides `minCutOff` by 1000 before passing it; the README notes the difference, so its users can convert.
+  - `warmUp` (default 0) is the facade's: the first `warmUp` samples after a reset pass through unfiltered while still priming the filter.
+- **D20 (user, 2026-10-27). `@webarkit/camera-view` is a devDependency** (0.1.0, on npm). The `projectionFor` tests build their `FrameGeometry` with its `getProcessGeometry` and `toFrameGeometry`, instead of a copy of the rule, and the ported example uses it to letterbox. The library itself does not depend on it at run time: `FrameGeometry` stays a plain-data type declared in the facade.
 
 ## Current state
 
@@ -285,9 +293,7 @@ Every non-obvious choice carries its reason in a code comment, the commit body a
 - Internal names, and how the variant class is injected (follow `ARToolkitNFTBase`).
 - Where the shared pose helpers live.
 - The worker protocol's message names (plain data, versioned by a `type` field).
-- The OneEuro implementation: depend on `@webarkit/oneeurofilter-ts`, or keep a small local copy.
-  - The parameter units must match webarkit-studio's (`minCutOff`, `beta`, `warmUp`).
-  - aframe-nft divides `minCutOff` by 1000, which the README notes.
+- How the OneEuro wrapper applies `warmUp` (D19 fixes the package and the units).
 - Which ES6 example to port.
 - The test file names, following the AGENTS.md placement rules.
 - The commit split.

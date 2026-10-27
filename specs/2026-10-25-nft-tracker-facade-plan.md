@@ -35,7 +35,7 @@
 - **Pose matrices:** a pose is a column-major 4×4 right-handed GL matrix, the controller's `matrixGL_RH`, as a `Float64Array(16)`, or `null`.
 - **Defaults:**
   - `lostTimeout` defaults to 200 ms;
-  - `filter` defaults to `'native'` (D18);
+  - `filter` defaults to OneEuro with ARnft's parameters, `{ type: "oneEuro", minCutOff: 0.0001, beta: 0.01 }` (D18 revised, D19). Export it as `DEFAULT_FILTER` from `src/tracker/filters/oneEuro.ts`;
   - the maximum number of loaded targets is 20.
 - **Luma:** the facade always passes luma through the WASM path, `lumaInternal = true` (D9b).
 - **Variant subclasses:** a variant subclass declares no instance fields (AGENTS.md: ESNext class-field reset).
@@ -61,7 +61,7 @@
 | `src/tracker/foundLost.ts` | `FoundLost`: per-target debounced transitions (D8) |
 | `src/tracker/geometry.ts` | `targetInfo`, `centerOrigin`, `projectionFor` (D11, D12, D17) |
 | `src/tracker/filters/PoseFilter.ts` | `PoseFilter`, `PoseFilterModule` (D14) |
-| `src/tracker/filters/oneEuro.ts` | built-in OneEuro, as a `PoseFilterModule` |
+| `src/tracker/filters/oneEuro.ts` | built-in OneEuro over `@webarkit/oneeurofilter-ts`, as a `PoseFilterModule`; `DEFAULT_FILTER` |
 | `src/tracker/filters/loadFilter.ts` | resolves a `FilterConfig` to a factory; module import and error reporting |
 | `src/tracker/frame.ts` | `copyFrame`: validates the size and returns the RGBA bytes (D6) |
 | `src/tracker/NFTTracker.ts` | `createTrackerFactory(toolkitClass, loader)` and the `NFTTracker` implementation |
@@ -121,7 +121,7 @@ export interface TargetResult { id: number; found: boolean; pose: Float64Array |
 export interface Transition { type: "found" | "lost"; id: number; }
 export interface FrameResult { time: number; processMs: number; targets: TargetResult[]; transitions: Transition[]; }
 export interface SkippedFrame { skipped: true; }
-export interface OneEuroConfig { type: "oneEuro"; minCutOff: number; beta: number; dCutOff?: number; warmUp?: number; }
+export interface OneEuroConfig { type: "oneEuro"; minCutOff?: number; beta?: number; warmUp?: number; } // defaults 0.0001, 0.01, 0 (D19)
 export type FilterConfig =
   | "none" | "native" | OneEuroConfig
   | { module: string; options?: unknown }
@@ -184,17 +184,9 @@ export interface NFTTracker {
     - a viewport of 1280×480 (wider) scales indices 0, 4, 8 and 12 by `(640/480) / (1280/480) = 0.5`, with the y terms unchanged;
     - a viewport of 640×960 (taller) scales indices 1, 5, 9 and 13 by `(640/960) / (640/480) = 0.5`.
   - `projectionFor cover` with the same viewports: wider scales the y terms by 2; taller scales the x terms by 2.
-  - **`projectionFor with geometry matches ARnft`**, for a geometry from camera-view's rule. The rule is copied as a test helper from `@webarkit/camera-view@0.1.0`'s `getProcessGeometry`:
-
-```ts
-// in the test file, as a fixture: ARnft's process geometry (camera-view 0.1.0)
-function processGeometry(vw: number, vh: number, rotatePortrait: boolean): FrameGeometry {
-  const rot = rotatePortrait && vh > vw, V = rot ? vh : vw, H = rot ? vw : vh;
-  const s = 320 / Math.max(V, (H / 3) * 4), w = V * s, h = H * s;
-  const pw = Math.max(w, (h / 3) * 4), ph = Math.max(h, (w / 4) * 3);
-  return { frameWidth: pw, frameHeight: ph, videoWidth: vw, videoHeight: vh, x: (pw - w) / 2, y: (ph - h) / 2, width: w, height: h, rotated: rot };
-}
-```
+  - **`projectionFor with geometry matches ARnft`**, for a geometry built with the real package (D20): `toFrameGeometry(vw, vh, getProcessGeometry(vw, vh, rotatePortrait))` from `@webarkit/camera-view`.
+    - Add `"@webarkit/camera-view": "^0.1.0"` to `devDependencies` in this task, and run `npm install`.
+    - The test also asserts that the package's result is assignable to the facade's `FrameGeometry`, as a compile-time check: `const g: FrameGeometry = toFrameGeometry(...)`.
 
     The expected value is ARnft `NFTWorker.dispatchProjectionMatrix`'s output, inlined in the test as `arnftProjection(P, g)`:
     - x terms (0, 4, 8, 12) times `pw / w`, and y terms (1, 5, 9, 13) times `ph / h`;
@@ -229,12 +221,14 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
 **Files:**
 - Modify: `src/tracker/filters/PoseFilter.ts`. Add JSDoc for the module contract, the COEP note and the "must export createPoseFilter" rule.
 - Create: `src/tracker/filters/oneEuro.ts`, `src/tracker/filters/loadFilter.ts`, `examples/filters/average-filter.js`
+- Modify: `package.json`, `package-lock.json`. Add `"@webarkit/oneeurofilter-ts": "^0.2.0"` to `devDependencies` (D19: it is bundled, so consumers install nothing).
 - Test: `tests/vitest/tracker-filters.test.ts`
 
 **Interfaces:**
 - Consumes: `FilterConfig`, `OneEuroConfig` (Task 2).
 - Produces:
   - `createPoseFilter(options: OneEuroConfig): PoseFilter`, exported from `oneEuro.ts`, so the module itself satisfies `PoseFilterModule`;
+  - `DEFAULT_FILTER: OneEuroConfig = { type: "oneEuro", minCutOff: 0.0001, beta: 0.01 }`, exported from `oneEuro.ts`;
   - `type FilterFactory = (() => PoseFilter) | null`, where `null` means no JS filter (`'none'` and `'native'`);
   - `loadFilter(config: FilterConfig, where: "thread" | "worker"): Promise<FilterFactory>`;
   - `usesNativeFiltering(config: FilterConfig): boolean`, which is true only for `'native'`.
@@ -243,7 +237,8 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
   - **OneEuro:**
     - `the first sample passes through`;
     - `a constant input stays constant`;
-    - `a step is smoothed`: the output after the step lies strictly between the old and new values for `minCutOff: 1, beta: 0`;
+    - `a step is smoothed`: the output after the step lies strictly between the old and new values for the default parameters, with samples 33 ms apart;
+    - `matches the package`: for the same sample stream, the output equals `new OneEuroFilter(0.0001, 0.01).filter(t, x)` from `@webarkit/oneeurofilter-ts` to 1e-12. This proves the units are passed unchanged (D19);
     - `warmUp samples pass through`: with `warmUp: 3`, the first 3 outputs equal their inputs;
     - `reset restarts`: after `reset()`, the next sample passes through.
   - **The loader:**
@@ -258,12 +253,11 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
   Module URLs are made absolute with `new URL(path, location.origin).href`.
 - [ ] **Step 2: Run** `npx vitest run tests/vitest/tracker-filters.test.ts`. Expected: FAIL.
 - [ ] **Step 3: Implement.**
-  - **OneEuro is a local copy**, not the `@webarkit/oneeurofilter-ts` dependency. This is the plan's call: it is about 60 lines, and adding no runtime dependency keeps the worker bundles self-contained.
-    - It is the standard Casiez 1€ filter, applied element-wise to the 16 pose values.
-    - Time is in seconds (`timeMs / 1000`).
-    - Defaults: `dCutOff = 1` and `warmUp = 0`.
-    - `warmUp` is the number of initial samples returned unfiltered while still priming the filter.
-    - The JSDoc notes that aframe-nft divides `minCutOff` by 1000, and that webarkit-studio's units are the reference.
+  - **OneEuro wraps `@webarkit/oneeurofilter-ts`** (D19, the user's choice). It uses one `OneEuroFilter` per pose filter, over the 16 values.
+    - `timeMs` and `minCutOff` / `beta` are passed unchanged, as ARnft does. Defaults come from `DEFAULT_FILTER`.
+    - `warmUp`, default 0: the first `warmUp` samples after construction or `reset()` return the input while still being fed to the package filter.
+    - Reuse an output buffer through the package's `out` argument, then return a copy, so a caller can keep the returned array.
+    - The JSDoc gives the units, and notes that aframe-nft divides `minCutOff` by 1000.
   - **`loadFilter` for `{ module }`:** use `import(/* @vite-ignore */ url)`. The comment says Vite must leave it alone, and cites D14.
     - Wrap every failure as `new Error(\`pose filter module ${url}: ${reason}\`)`.
     - Validate the factory eagerly: call `createPoseFilter(options)` once at load time, so a throwing factory rejects `loadFilter` and not the first `process()`.
@@ -312,6 +306,7 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
     - apply the core settings with `configure`, merged with `filtering` derived by `usesNativeFiltering` (D18);
     - load the filter;
     - read `cameraMatrix = Float64Array.from(toolkit.getCameraLens())`.
+  - **The default `filter`** is `DEFAULT_FILTER`. Add a test, `the default filter is OneEuro`: a tracker created with no `filter` key returns a pose that differs from a `filter: "none"` tracker's on the second tracked frame, and equals a tracker created with `filter: DEFAULT_FILTER`.
   - **`configure(patch)`** splits the facade keys (`lostTimeout`, `filter`, `logLevel`) from the core keys.
     - A key outside `NFTTrackerSettings` rejects with `TypeError`; `filtering` gets the message `'"filtering" is not a tracker setting: use "filter" (D18)'`.
     - A `logLevel` of 4 or less goes to the core `configure`; above 4 it goes to `toolkit.setLogLevel()`.
@@ -362,7 +357,7 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
       - The controller's `detectionInterval` and continuous detection are left at the defaults, and so are the tracker's: same core, same defaults.
     - **`origin center shifts the pose`:** load with `{ origin: "center" }`, and assert that the pose equals `centerOrigin(cornerPose, info)` for a corner-origin tracker fed the same frames.
     - **`a JS filter turns native filtering off and resets on lost`:**
-      - with `filter: { type: "oneEuro", minCutOff: 1, beta: 0 }`, native filtering is off. The tracker does not expose its toolkit, so `vi.spyOn(ARToolkitNFT.prototype, "configure")` before creating it, and assert that a call carried `filtering: false`;
+      - with the default config (no `filter` key), native filtering is off, because the default is OneEuro (D18 revised). The tracker does not expose its toolkit, so `vi.spyOn(ARToolkitNFT.prototype, "configure")` before creating it, and assert that a call carried `filtering: false`;
       - after found → lost → found, the first pose after the re-found equals the raw pose for that frame, because the filter was reset.
 
       Get the raw pose by running a `filter: "none"` tracker alongside.
@@ -541,7 +536,7 @@ export type Response =
 - [ ] **Step 1: Port the example.**
   - The page loads `../dist/ARToolkitNFT.js` and calls `createNFTTrackerWorker({ width, height, cameraParam: "Data/camera_para.dat" }, { workerBase: "../dist/" })`.
   - It loads `DataNFT/pinball`.
-  - Each frame it draws the video letterboxed into the processing canvas, using camera-view's rule, copied as a small function with a comment pointing to `@webarkit/camera-view`, and builds the `FrameGeometry`.
+  - Each frame it draws the video letterboxed into the processing canvas, with `@webarkit/camera-view` (D20), imported as an ES module from `../node_modules/@webarkit/camera-view/dist/camera-view.mjs`, which `python-server.py` serves from the repository root. Use its `getProcessGeometry` / `toFrameGeometry`, or its `FrameSource` if that fits more simply; the builder reads the package's README and picks one.
   - It calls `process(ctx.getImageData(...), performance.now())`, ignores `skipped`, and on `found` / `lost` shows or hides the model.
   - It applies `pose` and `projectionFor({ width: innerWidth, height: innerHeight, fit: "cover" }, geometry)`.
   - It logs `processMs`.
@@ -557,13 +552,14 @@ export type Response =
     - `projectionFor` and `FrameGeometry`, pointing to `@webarkit/camera-view`;
     - `workerBase`, and the files to serve: `NFTTracker*.worker.js` plus the td pthread file;
     - skipped frames (D13);
+    - the default OneEuro, and `filter: "native"` to match `ARControllerNFT`'s poses exactly (D18 revised);
     - the `'native'` filter resetting on the core's untracked frame, not on `lostTimeout` (D18).
   - **"Writing a pose filter":**
     - the `PoseFilterModule` contract (D14) and `examples/filters/average-filter.js`;
     - that the module must be an ES module reachable by URL;
     - COEP: a cross-origin module needs CORS plus `Cross-Origin-Resource-Policy`; same-origin needs nothing;
     - `{ create }` works only on the same thread;
-    - OneEuro's units, including the aframe-nft `minCutOff / 1000` note.
+    - OneEuro's units: those of `@webarkit/oneeurofilter-ts`, time in ms, with the aframe-nft `minCutOff / 1000` note (D19).
 - [ ] **Step 4: Rebuild and run everything.**
   - `npm run build-ts`;
   - `timeout 2400 npm test`, rerunning once on a known hang or flake;
