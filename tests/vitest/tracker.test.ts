@@ -11,6 +11,7 @@ import {
 } from "./helpers";
 import { loadCompositeFrames } from "./frames";
 import { centerOrigin } from "../../src/tracker/geometry";
+import { createPoseFilter } from "../../src/tracker/filters/oneEuro";
 
 /**
  * createNFTTracker (#720), the facade on ARToolkitNFT (D2), on every browser build:
@@ -505,29 +506,47 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
         expect(
           o1.some((o, i) => maxDiff(o.targets[0].pose, r1[i].targets[0].pose) > 0),
         ).toBe(true);
-
-        const lost = new Set<number>();
-        await feedUntil([oneEuro, raw], blank, next, (step) => {
-          step.forEach((r, k) => hasEdge(r, "lost") && lost.add(k));
-          return lost.size === 2;
-        });
-
-        const [o2, r2] = await feedUntil(
-          [oneEuro, raw],
-          frames.pinballOnly,
-          next,
-          (step) => hasEdge(step[0], "found"),
-          120,
-          true,
-        );
-        const a = o2[o2.length - 1].targets[0];
-        const b = r2[r2.length - 1].targets[0];
-        expect(b.found).toBe(true);
-        // Reset on lost (D3): the first sample after a reset passes through unchanged.
-        expect(Array.from(a.pose)).toEqual(Array.from(b.pose));
       } finally {
         wall.mockRestore();
       }
+
+      // Reset on lost (D3): the first sample after a reset passes through unchanged.
+      // Checked on one tracker, by recording its filter's input and output, and not against
+      // a second, unfiltered tracker: on the threaded build each tracker's KPM runs on its
+      // own threads, so two trackers can find the target again on different frames and then
+      // track from different poses (a CI failure on threaded only). The filter is OneEuro's
+      // own module, the one `{ type: "oneEuro" }` uses.
+      const calls: Array<{ input: number[]; output: number[] } | "reset"> = [];
+      const { t: rec } = await withPinball({
+        filter: {
+          create: () => {
+            const f = createPoseFilter({ type: "oneEuro" });
+            return {
+              filter(time: number, p: Float64Array) {
+                const input = Array.from(p);
+                const out = f.filter(time, p);
+                calls.push({ input, output: Array.from(out) });
+                return out;
+              },
+              reset() {
+                calls.push("reset");
+                f.reset();
+              },
+            };
+          },
+        },
+      });
+      await feedUntil([rec], frames.pinballOnly, next, allFound);
+      await feedN([rec], frames.pinballOnly, next, 10);
+      await feedUntil([rec], blank, next, (step) => hasEdge(step[0], "lost"));
+      const resetAt = calls.lastIndexOf("reset");
+      expect(resetAt).toBeGreaterThan(-1);
+      await feedUntil([rec], frames.pinballOnly, next, (step) => hasEdge(step[0], "found"));
+      const first = calls[resetAt + 1];
+      if (typeof first !== "object") {
+        throw new Error(`no filtered sample after the reset (got ${first})`);
+      }
+      expect(first.output).toEqual(first.input);
     }, 120_000);
 
     // The checks below are the facade's JS, the same on every build: wasm only.
