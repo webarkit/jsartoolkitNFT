@@ -244,7 +244,8 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
     /**
      * The throwing core of {@link addNFTMarkers}. Synchronous like it (#685, D9):
      * Node reads the files in place, so there is nothing to await.
-     * @internal Used by ARControllerNFT_node, which needs the NFTLoadError.
+     * @internal Shared with the tracker facade (#720 D10); kept out of the public docs.
+     * Used by ARControllerNFT_node and nodeTargetLoader, which need the NFTLoadError.
      * @param {Array<string>} urls paths of the descriptor files without ext
      * @return {Array<number>} the real marker ids.
      * @throws {NFTLoadError} `argument` for an empty list or URL, `missing` for a

@@ -395,6 +395,11 @@ const tracker = await createNFTTrackerWorker({
   needs CORS plus a `Cross-Origin-Resource-Policy` header. A same-origin module needs nothing.
 - `{ create: (options) => PoseFilter }` passes a factory directly, but only on the same thread: a function
   cannot be posted to a worker, so `createNFTTrackerWorker` rejects it with a `TypeError`.
+- `filter()` must return exactly 16 values, or `process()` throws a `TypeError`. The tracker copies the
+  returned pose, so a filter may reuse one output array across calls.
+- A malformed `filter` config (an unknown string, an unknown `type`, an empty `module`) is refused with a
+  `TypeError` before anything loads: `createNFTTracker`, `createNFTTrackerWorker` and `configure({ filter })`
+  reject with it.
 
 
 ## ES6

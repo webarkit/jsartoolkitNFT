@@ -11,6 +11,11 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
      */
     static get UNKNOWN_MARKER(): number;
     static get NFT_MARKER(): number;
+    /**
+     * @internal True when teardown() cannot run on the browser main thread: the tracker
+     * facade's dispose() then skips it (#720, #695). Only the threaded build says true.
+     */
+    static get teardownBlocksMainThread(): boolean;
     static ERROR_MARKER_INDEX_OUT_OF_BOUNDS: number;
     static AR_DEBUG_DISABLE: number;
     static AR_DEBUG_ENABLE: number;
@@ -81,15 +86,19 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
      * A message is displayed in the browser console during init(), for example:
      * "ARToolkitNFT 1.5.0" (it moved there from the constructor, #677).
      */
-    protected constructor(variantClass: typeof ARToolkitNFTBase, initModule: () => Promise<ARToolkitNFTModule>, ...instanceArgs: [] | [withFiltering: boolean]);
+    protected constructor(variantClass: typeof ARToolkitNFTBase, initModule: (moduleOptions?: Record<string, unknown>) => Promise<ARToolkitNFTModule>, ...instanceArgs: [] | [withFiltering: boolean]);
     /**
      * Init the class injecting the Wasm Module, link the instanced methods and
      * create a global artoolkitNFT variable.
      * @param options `logLevel` is applied to the fresh module before the core is
-     * constructed (#677, D10), so the start-up lines follow it.
+     * constructed (#677, D10), so the start-up lines follow it. `moduleOptions` is handed
+     * to the Emscripten module factory as its Module object: the tracker facade's threaded
+     * worker host sets `mainScriptUrlOrBlob` through it (#720 D16).
      * @return {object} the this object
      */
-    init(options?: ARInitOptions): Promise<this>;
+    init(options?: ARInitOptions & {
+        moduleOptions?: Record<string, unknown>;
+    }): Promise<this>;
     setup(width: number, height: number, cameraId: number): number;
     teardown(): void;
     setupAR2(): void;
