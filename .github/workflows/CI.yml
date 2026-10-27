@@ -33,6 +33,11 @@ jobs:
       - name: Install
         run: npm ci
 
+      # Fails on any file prettier would change (#733). Runs before the browser
+      # install so that a formatting slip fails fast.
+      - name: Check formatting
+        run: npm run format-check
+
       - name: Install Playwright Chromium
         shell: bash
         # Playwright's Chromium is the only browser the tests need. Its download,
