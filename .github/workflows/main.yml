@@ -99,6 +99,10 @@ jobs:
           dist/ARToolkitNFT_simd.js
           dist/ARToolkitNFT_td.js
           dist/ARToolkitNFT_td.worker.js
+          dist/NFTTracker.worker.js
+          dist/NFTTracker_simd.worker.js
+          dist/NFTTracker_td.worker.js
+          dist/NFTTracker_td.pthread.js
           js/artoolkitNFT.api.js
           js/artoolkitNFT.embed_ES6_worker.js
           js/artoolkitNFT.multi_worker.js
