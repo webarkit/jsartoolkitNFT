@@ -174,6 +174,212 @@ context anyway, and Cordova and Capacitor serve over a custom scheme. The Node b
 no `signal` or `probeZFT`; its `loadNFTMarker(s)` return an already-settled Promise. The deprecated legacy
 APIs in `build/` keep their callback-only signatures.
 
+## Tracker facade
+
+`createNFTTracker` and `createNFTTrackerWorker` wrap the core in one small API: create a tracker, add
+targets, then call `process(frame, timestampMs)` once per camera frame. `createNFTTracker` runs on the
+calling thread, and every build exports it, Node included. `createNFTTrackerWorker` runs the same tracker
+in a dedicated worker. It is in the browser builds only, and every method returns a Promise. `ARControllerNFT`
+is unchanged and keeps working.
+
+```javascript
+// Same thread
+const tracker = await createNFTTracker({ width: 320, height: 240, cameraParam: 'Data/camera_para.dat' })
+const [load] = await tracker.addNFTTargets(['DataNFT/pinball'])
+const result = tracker.process(imageData, performance.now())
+
+// In a worker: the same calls, each returning a Promise
+const tracker = await createNFTTrackerWorker(
+  { width: 320, height: 240, cameraParam: 'Data/camera_para.dat' },
+  { workerBase: '/dist/' },
+)
+const [load] = await tracker.addNFTTargets(['DataNFT/pinball'])
+const result = await tracker.process(imageData, performance.now())
+if (!result.skipped) { /* use result */ }
+```
+
+[`examples/ARToolkitNFT_ES6_tracker_example.html`](examples/ARToolkitNFT_ES6_tracker_example.html) is a
+complete page: camera, worker tracker and three.js. Serve the repository with `python python-server.py` and
+open `/examples/ARToolkitNFT_ES6_tracker_example.html`.
+
+Relative URLs (`cameraParam`, the target sources, a filter `module`) resolve against the page, with
+`createNFTTrackerWorker` as with `createNFTTracker`: the wrapper resolves them before it posts them to the
+worker.
+
+### Frames and results
+
+`process()` takes an `ImageData`, an `ImageBitmap` or `{ data, width, height }` (RGBA). The frame must be
+exactly `width` × `height` of the config, and any other size throws a `RangeError`. In the worker the frame
+is transferred, not copied, so the caller's buffer is empty afterwards.
+
+`timestampMs` is your clock, normally `performance.now()`. It drives `lostTimeout` and the filters.
+
+```typescript
+interface FrameResult {
+  time: number                 // the timestampMs you passed
+  processMs: number            // time spent in process()
+  targets: { id: number; found: boolean; pose: Float64Array | null; error: number | null }[]
+  transitions: { type: 'found' | 'lost'; id: number }[]
+}
+```
+
+`pose` is a column-major 4×4 model-view matrix in millimetres, the same matrix as `matrixGL_RH` in
+`ARControllerNFT`'s events. It is ready for `Matrix4.fromArray()` in three.js.
+
+**Found and lost.** `targets` reports this frame's raw tracking. `transitions` is debounced:
+
+- `found` comes on the first tracked frame, at the start or after a `lost`;
+- `lost` comes once a target has been untracked for longer than `lostTimeout` (default `200` ms).
+
+Between the two, in the grace window, the target has `found: false` and `pose: null`, but no `lost` has
+fired yet. To keep showing the last pose until `lost`, keep it yourself.
+
+### Adding targets
+
+`addNFTTargets(sources, { origin })` loads the sources one at a time and resolves to one result per source,
+in order. A failure stays local to its source, and the call itself does not reject for a load failure:
+
+```javascript
+// { status: 'loaded', info: { id, url, widthPx, heightPx, dpi, widthMm, heightMm, origin } }
+// { status: 'error', url, reason, message }
+```
+
+| `reason` | When |
+| --- | --- |
+| `'network'` | An HTTP error, a network failure or a missing file. |
+| `'format'` | A `.zft` that fails to decompress or decode. |
+| `'capacity'` | The 20-target limit is reached. |
+| `'unknown'` | The core refused the dataset (it may be unreadable, e.g. a corrupt `.fset`), or a bad argument. |
+
+The `id`s are the core's. They stay stable for the tracker's lifetime and are never reused.
+
+**`origin`**: `'corner'` (the default) is ARToolKit's own origin, a corner of the image. `'center'` moves the
+pose's origin to the middle of the image, from `widthMm` / `heightMm` (mm = px / dpi × 25.4). That is the
+offset each app used to compute by hand.
+
+### Projection: `projectionFor` and `FrameGeometry`
+
+`cameraMatrix` is the projection for the processing frame. `projectionFor(viewport, geometry?)` maps it onto
+what you display:
+
+```javascript
+camera.projectionMatrix.fromArray(
+  tracker.projectionFor({ width: innerWidth, height: innerHeight, fit: 'cover' }, geometry),
+)
+```
+
+`fit` is `'contain'` (the default: the whole frame shows, letterboxed) or `'cover'` (the frame fills the
+viewport, cropped). The worker tracker computes it on the page, with no round trip.
+
+The tracker does not fit the camera video into the processing frame: the camera side does. `FrameGeometry`
+says where it drew the video, so that `projectionFor` can undo the letterbox and the portrait rotation:
+
+```typescript
+interface FrameGeometry {
+  frameWidth: number; frameHeight: number             // the processing frame
+  videoWidth: number; videoHeight: number             // the source video
+  x: number; y: number; width: number; height: number // where the video was drawn
+  rotated: boolean                                    // a portrait video drawn rotated 90 degrees
+}
+```
+
+[`@webarkit/camera-view`](https://github.com/webarkit/camera-view) produces it: `CameraView.geometry`, or
+`toFrameGeometry(vw, vh, getProcessGeometry(vw, vh))`, which the example uses. Without a geometry, the
+processing frame itself is the source.
+
+### Running in a worker
+
+`createNFTTrackerWorker(config, { build, workerBase })` picks the build at run time:
+
+- `td` (threaded) when the page is cross-origin isolated (COOP and COEP headers);
+- otherwise `simd` when WebAssembly SIMD is supported;
+- otherwise `default`.
+
+`build: 'default' | 'simd' | 'td'` forces one. `workerBase` is the URL of the **folder** that holds the
+worker files. Without it, that folder is the one of the script that loaded the bundle. An app that
+re-bundles the library normally passes it. Serve these files from that folder:
+
+- `NFTTracker.worker.js`
+- `NFTTracker_simd.worker.js`
+- `NFTTracker_td.worker.js`
+- `NFTTracker_td.pthread.js`, which the td worker loads itself.
+
+**Skipped frames.** One `process()` runs at a time. A call made while another is in flight resolves
+`{ skipped: true }` at once, and that frame is neither sent nor transferred. The frames are dropped, not
+queued, so feeding the tracker every camera frame never builds up latency. Ignore the skipped results.
+
+**`dispose()`** waits at most 2 seconds for the worker to dispose its tracker, then terminates the worker
+anyway. Calls still pending reject with a "disposed" error.
+
+**Threaded build limitation.** On `td`, `dispose()` skips the native teardown, because the threaded
+detector's destructor joins a pthread and hangs
+([#695](https://github.com/webarkit/jsartoolkitNFT/issues/695)). The WASM memory is freed only when the
+worker, or the page for `createNFTTracker`, goes away. The worker tracker terminates its worker, so its
+memory is freed.
+
+**Vite dev server.** Serving the UMD bundles (`ARToolkitNFT*.js`) through the Vite dev server transforms
+them: it rewrites the filter module's `import()` and turns the file into an ES module, which then fails as a
+`<script>`. Serve them from `public/` or a CDN. See the comment in `vite.lib.config.mjs`.
+
+### Pose filters
+
+The `filter` setting chooses how poses are smoothed:
+
+| `filter` | What it does |
+| --- | --- |
+| `'native'` (default) | The core's own filter. The poses match `ARControllerNFT`'s for a controller created with `internalLuma = true`, which is the luma path the tracker uses. |
+| `{ type: 'oneEuro', minCutOff, beta, warmUp }` | A OneEuro filter per target, reset on `lost`. Defaults `0.0001`, `0.01`, `0`. |
+| `'none'` | No filtering. |
+| `{ module, options }` | Your own filter, loaded by URL (see below). |
+| `{ create, options }` | Your own factory function, on the same thread only. |
+
+Every filter other than `'native'` turns the core's filter off, so poses are never filtered twice. Set it
+with `filter`, at creation or with `configure({ filter })`. The `filtering` key throws a `TypeError` here.
+
+The `'native'` filter resets on the core's first untracked frame, not on the tracker's `lost`
+(`lostTimeout`). The tracker cannot change that. The JS filters (OneEuro and yours) reset on `lost`.
+
+**OneEuro** uses [`@webarkit/oneeurofilter-ts`](https://github.com/webarkit/oneeurofilter-ts), bundled into
+the library, with its units: time in milliseconds, and `minCutOff` and `beta` passed to it unchanged, as
+ARnft does. aframe-nft divides `minCutOff` by 1000 before passing it, so divide a value taken from
+aframe-nft's settings by 1000 to get the same filter here. OneEuro expects increasing timestamps, so pass
+`performance.now()`. A time that does not increase returns the previous output. `warmUp` passes the first
+`warmUp` poses after a reset through unfiltered, while still feeding them to the filter.
+
+To compare the poses of two cores frame by frame, pin `Date.now`: AR2 seeds `rand` with `time(NULL)`.
+
+## Writing a pose filter
+
+A filter module is an **ES module** that exports `createPoseFilter`. The tracker creates one filter per
+target and calls `reset()` when that target is lost:
+
+```typescript
+interface PoseFilter {
+  filter(timeMs: number, pose: Float64Array): Float64Array // the 16 pose values in, filtered values out
+  reset(): void
+}
+interface PoseFilterModule {
+  createPoseFilter(options: unknown): PoseFilter
+}
+```
+
+[`examples/filters/average-filter.js`](examples/filters/average-filter.js) is a template to copy:
+
+```javascript
+const tracker = await createNFTTrackerWorker({
+  width: 320, height: 240, cameraParam: 'Data/camera_para.dat',
+  filter: { module: 'filters/average-filter.js', options: { weight: 0.5 } },
+})
+```
+
+- The module is loaded with `import()`, so it must be an ES module reachable by URL.
+- A module that fails to load, has no `createPoseFilter`, or whose `createPoseFilter` throws rejects
+  `createNFTTracker`, `createNFTTrackerWorker` or `configure({ filter })` with an `Error` naming the URL.
+- **COEP.** On a cross-origin isolated page (needed by the `td` build), a module served from another origin
+  needs CORS plus a `Cross-Origin-Resource-Policy` header. A same-origin module needs nothing.
+- `{ create: (options) => PoseFilter }` passes a factory directly, but only on the same thread: a function
+  cannot be posted to a worker, so `createNFTTrackerWorker` rejects it with a `TypeError`.
+
 
 ## ES6
 

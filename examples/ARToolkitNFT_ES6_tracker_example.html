@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ARToolkitNFT_ES6 tracker facade example</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./js/third_party/three.js/three.module.min.js",
+          "three/addons/": "./js/third_party/three.js/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="css/nft-style.css" />
+  </head>
+  <body>
+    <div id="loading">
+      <img alt="JsartoolkitNFT logo" src="Data/JsartoolkitNFT-logo.gif" />
+      <span class="loading-text">Loading, please wait</span>
+    </div>
+    <!--
+  ==================
+  STATS
+  ==================
+  -->
+    <div id="stats" class="ui stats">
+      <div id="stats1" class="stats-item">
+        <p class="stats-item-title">Main</p>
+      </div>
+
+      <div id="stats2" class="stats-item">
+        <p class="stats-item-title">Worker</p>
+      </div>
+    </div>
+
+    <div id="app">
+      <video loop autoplay muted playsinline id="video"></video>
+      <canvas id="canvas"></canvas>
+    </div>
+    <script src="js/third_party/three.js/stats.min.js"></script>
+    <!-- The UMD bundle: createNFTTrackerWorker becomes a global. Serve it as a plain file
+         (python python-server.py), not through Vite's dev server, which rewrites it. -->
+    <script src="../dist/ARToolkitNFT.js"></script>
+
+    <script type="module">
+      import start from "./tracker_worker_ES6.js";
+
+      const statsMain = new Stats();
+      statsMain.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.getElementById("stats1").appendChild(statsMain.dom);
+
+      const statsWorker = new Stats();
+      statsWorker.showPanel(0);
+      document.getElementById("stats2").appendChild(statsWorker.dom);
+
+      async function openCamera() {
+        const video = document.querySelector("#video");
+        video.srcObject = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { facingMode: "environment", width: 640, height: 480 },
+        });
+        await new Promise((resolve) =>
+          video.addEventListener("loadeddata", resolve, { once: true }),
+        );
+        await video.play();
+        return video;
+      }
+
+      console.log("init the NFT tracker...");
+      openCamera()
+        .then((video) =>
+          start(
+            "DataNFT/pinball",
+            video,
+            () => statsMain.update(),
+            () => statsWorker.update(),
+          ),
+        )
+        .catch((e) => console.error(e));
+    </script>
+  </body>
+</html>
