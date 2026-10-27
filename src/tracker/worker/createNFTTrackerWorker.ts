@@ -306,9 +306,10 @@ export async function createNFTTrackerWorker(
   };
 
   return {
+    /** A copy, as on the same thread: projectionFor() reads the cached matrix. */
     get cameraMatrix(): Float64Array {
       check();
-      return matrix;
+      return Float64Array.from(matrix);
     },
 
     async configure(patch: NFTTrackerPatch): Promise<void> {

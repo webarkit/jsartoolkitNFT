@@ -101,6 +101,11 @@ describe("loadFilter", () => {
       [{ type: "kalman" }, /"kalman".*oneEuro/],
       [{ module: 5 }, /module.*string/],
       [{ create: 5 }, /create.*function/],
+      // A key the form does not take (G6), so a misspelt one is not ignored.
+      [{ type: "oneEuro", minCutoff: 1 }, /"minCutoff".*minCutOff/],
+      [{ type: "oneEuro", module: "/f.js" }, /"module".*type/],
+      [{ module: "/f.js", option: 1 }, /"option".*options/],
+      [{ create: () => ({}), extra: 1 }, /"extra"/],
     ];
     for (const [config, message] of cases) {
       const e = await loadFilter(config as any, "thread").catch((x) => x);

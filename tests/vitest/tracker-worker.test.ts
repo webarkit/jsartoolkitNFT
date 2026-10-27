@@ -225,6 +225,13 @@ describe("createNFTTrackerWorker wrapper (default)", () => {
     expect(Array.isArray(third.targets)).toBe(true);
   });
 
+  it("cameraMatrix is a copy: changing it does not change projectionFor", () => {
+    const viewport = { width: 640, height: 480 };
+    const before = Array.from(tracker.projectionFor(viewport));
+    tracker.cameraMatrix.fill(0);
+    expect(Array.from(tracker.projectionFor(viewport))).toEqual(before);
+  });
+
   it("configure updates cameraMatrix", async () => {
     const before = new Float64Array(tracker.cameraMatrix);
     await tracker.configure({ near: 1, far: 500 });

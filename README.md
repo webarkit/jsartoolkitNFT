@@ -268,6 +268,13 @@ The `id`s are the core's. They stay stable for the tracker's lifetime and are ne
 pose's origin to the middle of the image, from `widthMm` / `heightMm` (mm = px / dpi × 25.4). That is the
 offset each app used to compute by hand.
 
+**`probeZFT`** (browser only, default `true`): as with `addNFTMarkers`, a source without an extension is
+first checked for a `.zft`, which logs a 404 for targets that have none. Pass `probeZFT: false` to skip the
+check when your targets have no `.zft`.
+
+`dispose()` cancels a load still in progress: its target is never registered, and the call rejects with
+the "disposed" error.
+
 ### Projection: `projectionFor` and `FrameGeometry`
 
 `cameraMatrix` is the projection for the processing frame. `projectionFor(viewport, geometry?)` maps it onto
@@ -349,7 +356,9 @@ The `filter` setting chooses how poses are smoothed:
 | `{ create, options }` | Your own factory function, on the same thread only. |
 
 Every filter other than `'native'` turns the core's filter off, so poses are never filtered twice. Set it
-with `filter`, at creation or with `configure({ filter })`. The `filtering` key throws a `TypeError` here.
+with `filter`, at creation or with `configure({ filter })`. The `filtering` key throws a `TypeError` here,
+and so does a key the form does not take (a misspelt `minCutoff`, say). A `{ create }` factory is called
+once when the filter is set, as a module's is, so a factory that throws fails there, not on a later frame.
 
 The `'native'` filter resets on the core's first untracked frame, not on the tracker's `lost`
 (`lostTimeout`). The tracker cannot change that. The JS filters (OneEuro and yours) reset on `lost`.

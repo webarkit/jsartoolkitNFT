@@ -111,6 +111,12 @@ export interface FrameGeometry {
 /** `origin` defaults to "corner". */
 export interface AddTargetsOptions {
     origin?: TargetOrigin;
+    /**
+     * Browser only: check for `<source>.zft` before the `.fset`, `.iset` and `.fset3` files.
+     * True by default, as ARControllerNFT and `addNFTMarkers`; false skips the check, and its
+     * console 404, for targets that have no `.zft` (#676). Node has no `.zft` and ignores it.
+     */
+    probeZFT?: boolean;
 }
 export interface NFTTracker {
     readonly cameraMatrix: Float64Array;

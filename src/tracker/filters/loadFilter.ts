@@ -19,6 +19,28 @@ function wrap(url: string, reason: unknown): Error {
 const FILTER_FORMS =
   "'none', 'native', { type: 'oneEuro' }, { module } or { create }";
 
+/** The keys each object form takes; the form is told by `type`, `create` or `module`. */
+const FORM_KEYS = {
+  type: new Set(["type", "minCutOff", "beta", "warmUp"]),
+  create: new Set(["create", "options"]),
+  module: new Set(["module", "options"]),
+} as const;
+
+/**
+ * Throws a TypeError on a key the form does not take, as the settings do (G6): a misspelt
+ * `minCutoff` would otherwise be ignored without a word, and `{ type, module }` would
+ * silently be OneEuro.
+ */
+function checkFormKeys(config: object, form: keyof typeof FORM_KEYS): void {
+  for (const key of Object.keys(config)) {
+    if (!FORM_KEYS[form].has(key)) {
+      throw new TypeError(
+        `filter: unknown key "${key}" in a { ${form} } filter; it takes ${[...FORM_KEYS[form]].join(", ")}`,
+      );
+    }
+  }
+}
+
 /**
  * Refuses a malformed FilterConfig with a TypeError naming the problem, before anything
  * loads (G6: a bad setting throws a clear error). Without it a misspelt string failed on
@@ -40,12 +62,14 @@ function checkFilterConfig(config: unknown): void {
     if (type !== "oneEuro") {
       throw new TypeError(`filter: unknown type "${String(type)}"; the only type is 'oneEuro'`);
     }
+    checkFormKeys(config, "type");
     return;
   }
   if ("create" in config) {
     if (typeof (config as { create: unknown }).create !== "function") {
       throw new TypeError("filter: create must be a function returning a PoseFilter");
     }
+    checkFormKeys(config, "create");
     return;
   }
   if ("module" in config) {
@@ -53,6 +77,7 @@ function checkFilterConfig(config: unknown): void {
     if (typeof url !== "string" || url === "") {
       throw new TypeError("filter: module must be a non-empty string, the module's URL");
     }
+    checkFormKeys(config, "module");
     return;
   }
   throw new TypeError(
@@ -81,6 +106,9 @@ export async function loadFilter(
       );
     }
     const { create, options } = config;
+    // Validated eagerly, as a module's factory (D14): a throwing create() rejects
+    // createNFTTracker or configure(), not the first process() that finds a target.
+    create(options);
     return () => create(options);
   }
   const url = config.module;

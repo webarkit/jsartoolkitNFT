@@ -20,12 +20,17 @@ export type TargetLoadOutcome = {
  * entry point injects its own.
  */
 export interface TargetLoader {
-    load(toolkit: any, url: string): Promise<TargetLoadOutcome>;
+    load(toolkit: any, url: string, opts: {
+        signal: AbortSignal;
+        probeZFT?: boolean;
+    }): Promise<TargetLoadOutcome>;
 }
 /**
  * Browser loader: `ARToolkitNFT.addNFTMarkers([url])`, Promise style, one source per call
  * (D10). It rejects with an NFTLoadError, matched on `name` rather than `instanceof`, as
- * errors from different bundles are different classes.
+ * errors from different bundles are different classes. `signal` is the tracker's: dispose()
+ * aborts it, and addNFTMarkers checks it right before the native registration, so no
+ * marker is registered on a torn-down core.
  */
 export declare const browserTargetLoader: TargetLoader;
 /**
@@ -34,6 +39,7 @@ export declare const browserTargetLoader: TargetLoader;
  * synchronous Node loader. The sources are extension-less paths relative to the working
  * directory, as the Node toolkit accepts them. A thrown NFTLoadError is matched on `name`
  * rather than `instanceof`, as in the browser loader; anything else becomes "unknown".
+ * It needs no signal: the load runs to its end before dispose() can run. Node has no .zft.
  */
 export declare const nodeTargetLoader: TargetLoader;
 /**

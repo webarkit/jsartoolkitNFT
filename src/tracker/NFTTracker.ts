@@ -49,7 +49,11 @@ export type TargetLoadOutcome =
  * entry point injects its own.
  */
 export interface TargetLoader {
-  load(toolkit: any, url: string): Promise<TargetLoadOutcome>;
+  load(
+    toolkit: any,
+    url: string,
+    opts: { signal: AbortSignal; probeZFT?: boolean },
+  ): Promise<TargetLoadOutcome>;
 }
 
 /** The core's limit on markers per toolkit (PAGES_MAX). */
@@ -102,12 +106,19 @@ function outcomeFromError(e: unknown): {
 /**
  * Browser loader: `ARToolkitNFT.addNFTMarkers([url])`, Promise style, one source per call
  * (D10). It rejects with an NFTLoadError, matched on `name` rather than `instanceof`, as
- * errors from different bundles are different classes.
+ * errors from different bundles are different classes. `signal` is the tracker's: dispose()
+ * aborts it, and addNFTMarkers checks it right before the native registration, so no
+ * marker is registered on a torn-down core.
  */
 export const browserTargetLoader: TargetLoader = {
-  async load(toolkit, url) {
+  async load(toolkit, url, { signal, probeZFT }) {
     try {
-      const ids: number[] = await toolkit.addNFTMarkers([url]);
+      // No callbacks: the Promise style, which rejects on a failure. The options come
+      // fourth, after the deprecated callback and onError.
+      const ids: number[] = await toolkit.addNFTMarkers([url], undefined, undefined, {
+        signal,
+        probeZFT,
+      });
       return { id: ids[0] };
     } catch (e) {
       return outcomeFromError(e);
@@ -121,6 +132,7 @@ export const browserTargetLoader: TargetLoader = {
  * synchronous Node loader. The sources are extension-less paths relative to the working
  * directory, as the Node toolkit accepts them. A thrown NFTLoadError is matched on `name`
  * rather than `instanceof`, as in the browser loader; anything else becomes "unknown".
+ * It needs no signal: the load runs to its end before dispose() can run. Node has no .zft.
  */
 export const nodeTargetLoader: TargetLoader = {
   async load(toolkit, url) {
@@ -248,6 +260,12 @@ class Tracker implements NFTTracker {
   private filterFactory: FilterFactory;
   /** The JS filter of each target, created lazily by process() and reset on lost (D3). */
   private filters = new Map<number, PoseFilter>();
+  /**
+   * Aborted by dispose(), before the native teardown: a load still downloading when the
+   * tracker is disposed then never reaches the native registration, which would run on a
+   * torn-down core.
+   */
+  private readonly loads = new AbortController();
 
   constructor(
     toolkit: any,
@@ -274,9 +292,10 @@ class Tracker implements NFTTracker {
     if (this.disposed) throw new Error(DISPOSED);
   }
 
+  /** A copy: projectionFor() reads the cached matrix, which a caller must not change. */
   get cameraMatrix(): Float64Array {
     this.check();
-    return this.matrix;
+    return Float64Array.from(this.matrix);
   }
 
   async configure(patch: NFTTrackerPatch): Promise<void> {
@@ -329,13 +348,20 @@ class Tracker implements NFTTracker {
       throw new TypeError("addNFTTargets: sources must be an array of URLs");
     }
     const origin = opts?.origin ?? "corner";
+    const probeZFT = opts?.probeZFT;
+    if (probeZFT !== undefined && typeof probeZFT !== "boolean") {
+      throw new TypeError("addNFTTargets: probeZFT must be a boolean");
+    }
     const results: TargetLoad[] = [];
     // One source at a time (D10): each gets its own result and a failure stays local
     // to it, which the core's all-or-nothing batch cannot give. KPM then rebuilds its
     // matcher once per source, acceptable for the few (at most 20) targets of a scene.
     for (const url of sources) {
-      const outcome = await this.loader.load(this.toolkit, url);
-      // dispose() may have run during the load.
+      const outcome = await this.loader.load(this.toolkit, url, {
+        signal: this.loads.signal,
+        probeZFT,
+      });
+      // dispose() may have run during the load: it aborted it before any registration.
       this.check();
       if ("id" in outcome) {
         const data = this.toolkit.getNFTData(outcome.id) as {
@@ -364,8 +390,11 @@ class Tracker implements NFTTracker {
     this.toolkit.passVideoData(rgba, EMPTY_LUMA, true);
     this.toolkit.detectNFTMarker();
 
+    // Two passes. The first reads every target and runs the filters, which may throw
+    // (a filter's own error, or a wrong pose length); the second updates found/lost. A
+    // filter that throws then leaves found/lost as it was, and no earlier target's edge
+    // is consumed without being returned.
     const targets: TargetResult[] = [];
-    const transitions: Transition[] = [];
     for (const [id, info] of this.targets) {
       const marker = this.toolkit.getNFTMarker(id) as INFTMarkerInfo;
       const found = Boolean(marker.found);
@@ -389,6 +418,10 @@ class Tracker implements NFTTracker {
       }
       // D8: `targets` is this frame's raw tracking (found is false and pose null within
       // the grace window); only the transitions are debounced by lostTimeout.
+      targets.push({ id, found, pose, error: found ? marker.error : null });
+    }
+    const transitions: Transition[] = [];
+    for (const { id, found } of targets) {
       const edge = this.foundLost.update(id, found, timestampMs);
       if (edge !== null) {
         transitions.push({ type: edge, id });
@@ -396,7 +429,6 @@ class Tracker implements NFTTracker {
         // core itself, on its own first untracked frame (D18), which the facade cannot change.
         if (edge === "lost") this.filters.get(id)?.reset();
       }
-      targets.push({ id, found, pose, error: found ? marker.error : null });
     }
     return {
       time: timestampMs,
@@ -427,6 +459,9 @@ class Tracker implements NFTTracker {
     // dispose() does not run it again on a half torn-down core, and later calls throw the
     // usual "disposed" error. The teardown error itself still reaches the caller.
     try {
+      // First: a load still in flight sees the abort before its native registration, which
+      // runs in the same synchronous step as its abort check (ARToolkitNFTBase.runBatch).
+      this.loads.abort();
       if (!this.skipTeardown) this.toolkit.teardown();
     } finally {
       this.disposed = true;
@@ -488,9 +523,11 @@ export function createTrackerFactory(
       logLevel: config.logLevel,
       moduleOptions: init?.moduleOptions,
     });
-    const cameraId = await toolkit.loadCamera(cameraParam);
-    toolkit.setup(width, height, cameraId);
     try {
+      // In the try, so that a camera that fails to load or set up is cleaned up as well.
+      // teardown() is safe before setup(): the native destructor runs it on any instance.
+      const cameraId = await toolkit.loadCamera(cameraParam);
+      toolkit.setup(width, height, cameraId);
       // As the controller's _initNFT(): without the AR2 tracker handle the core refuses
       // every marker, and configure({ ar2 }) has nothing to apply to.
       toolkit.setupAR2();
@@ -510,8 +547,9 @@ export function createTrackerFactory(
         skipTeardown,
       );
     } catch (e) {
-      // A refused setting or a filter that fails to load: free what setup() allocated,
-      // except on the threaded build, whose teardown() never returns (#695).
+      // A camera that fails, a refused setting or a filter that fails to load: free what
+      // init() and setup() allocated, except on the threaded build, whose teardown() never
+      // returns (#695).
       if (!skipTeardown) toolkit.teardown();
       throw e;
     }

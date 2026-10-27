@@ -185,6 +185,134 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
     },
   );
 
+  // The checks below are the facade's JS, the same on every build, and the threaded build
+  // never tears down (#695): wasm only.
+  it.runIf(variant.name === "wasm")(
+    "dispose during a load registers nothing and rejects the load",
+    async () => {
+      const t: any = await create(variant);
+      const register = vi.spyOn(t.toolkit.instance, "_addNFTMarkers");
+      try {
+        const loading = t.addNFTTargets([MARKER_PINBALL]);
+        // The downloads are in flight: dispose() aborts them before any registration.
+        t.dispose();
+        await expect(loading).rejects.toThrow("NFTTracker: disposed");
+        expect(register).not.toHaveBeenCalled();
+      } finally {
+        register.mockRestore();
+      }
+    },
+  );
+
+  it.runIf(variant.name === "wasm")(
+    "probeZFT: false skips the .zft check, which is on by default",
+    async () => {
+      const t = await create(variant);
+      const fetchSpy = vi.spyOn(globalThis, "fetch");
+      const zftRequests = () =>
+        fetchSpy.mock.calls.filter(([u]) => String(u).endsWith(".zft")).length;
+      try {
+        expect((await t.addNFTTargets([MARKER_PINBALL], { probeZFT: false }))[0].status).toBe(
+          "loaded",
+        );
+        expect(zftRequests()).toBe(0);
+        expect((await t.addNFTTargets([MARKER_PINBALL]))[0].status).toBe("loaded");
+        expect(zftRequests()).toBe(1);
+        await expect(
+          t.addNFTTargets([MARKER_PINBALL], { probeZFT: "no" } as any),
+        ).rejects.toThrow(TypeError);
+      } finally {
+        fetchSpy.mockRestore();
+        t.dispose();
+      }
+    },
+  );
+
+  it.runIf(variant.name === "wasm")(
+    "a camera that fails to load frees the toolkit",
+    async () => {
+      const { ARToolkitNFT } = await variant.load();
+      const teardown = vi.spyOn(ARToolkitNFT.prototype, "teardown");
+      try {
+        await expect(
+          create(variant, { cameraParam: "/examples/Data/missing_camera_para.dat" }),
+        ).rejects.toThrow();
+        expect(teardown).toHaveBeenCalledTimes(1);
+      } finally {
+        teardown.mockRestore();
+      }
+    },
+  );
+
+  it("cameraMatrix is a copy: changing it does not change projectionFor", () => {
+    const viewport = { width: 640, height: 480 };
+    const before = Array.from(tracker.projectionFor(viewport));
+    tracker.cameraMatrix.fill(0);
+    expect(Array.from(tracker.projectionFor(viewport))).toEqual(before);
+    expect(planesOf(tracker.cameraMatrix).near).toBeCloseTo(0.1, 6);
+  });
+
+  it.runIf(variant.name === "wasm")(
+    "a filter that throws on one target loses no other target's found edge",
+    async () => {
+      let made = 0;
+      let failing = false;
+      const t: any = await create(variant, {
+        filter: {
+          create: () => {
+            // The first instance is the eager check; then one per target, in id order.
+            const index = made++;
+            return {
+              filter: (_t: number, p: Float64Array) => {
+                if (failing && index === 2) throw new Error("filter failed");
+                return p;
+              },
+              reset() {},
+            };
+          },
+        },
+      });
+      try {
+        const loads = await t.addNFTTargets([MARKER_PINBALL, MARKER_PINBALL]);
+        expect(loads.map((l: any) => l.status)).toEqual(["loaded", "loaded"]);
+        // Both targets tracked on every frame, whatever the image.
+        const pose = new Float64Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -500]);
+        const marker = vi
+          .spyOn(t.toolkit, "getNFTMarker")
+          .mockImplementation((id: any) => ({ id, found: 1, error: 0, pose }));
+        try {
+          failing = true;
+          expect(() => t.process(blankFrame(), 0)).toThrow("filter failed");
+          failing = false;
+          const r = t.process(blankFrame(), 33);
+          expect(r.transitions).toEqual([
+            { type: "found", id: 0 },
+            { type: "found", id: 1 },
+          ]);
+        } finally {
+          marker.mockRestore();
+        }
+      } finally {
+        t.dispose();
+      }
+    },
+  );
+
+  it.runIf(variant.name === "wasm")(
+    "a throwing { create } factory rejects at creation",
+    async () => {
+      await expect(
+        create(variant, {
+          filter: {
+            create: () => {
+              throw new Error("bad options");
+            },
+          },
+        }),
+      ).rejects.toThrow("bad options");
+    },
+  );
+
   // KPM rebuilds its matcher once per source (D10), so 20 loads are slow: wasm only.
   it.runIf(variant.name === "wasm")(
     "reports capacity past 20",
