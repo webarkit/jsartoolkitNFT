@@ -47,7 +47,7 @@ ARnft, for example, has one shared filter that is never reset, and sends `lost` 
 - **G3. Filtering per marker,** reset on `lost`:
   - `'none'`;
   - `'native'`: ARToolKit's filter, through `configure({ filtering })`;
-  - `{ type: 'oneEuro', minCutOff?, beta?, warmUp? }`: **the default** (D18, revised by the user on 2026-10-27);
+  - `{ type: 'oneEuro', minCutOff?, beta?, warmUp? }`, with ARnft's parameters as defaults (D19);
   - `{ module: string, options?: unknown }`: a custom filter loaded by URL. It works in the worker and in the same thread.
 
   OneEuro is implemented **through the same `PoseFilterModule` interface** as custom filters, on top of `@webarkit/oneeurofilter-ts` (D19).
@@ -74,7 +74,7 @@ ARnft, for example, has one shared filter that is never reset, and sends `lost` 
 
 - **A consumer has to write its own found/lost edge detection or filter reset** to use the facade correctly.
 - **A worker message carries a function or a class instance.** Everything that crosses `postMessage` must be plain data.
-- **The facade and `ARControllerNFT` behave differently for the same frames.** With `filter: 'native'`, the poses must be the same, and found/lost must be the same with the same `lostTimeout`. With the default OneEuro the poses are filtered differently on purpose (D18).
+- **The facade and `ARControllerNFT` behave differently for the same frames.** The poses must be the same, and found/lost must be the same with the same `lostTimeout`.
 - **Loading the worker downloads more than one WASM build.**
 
 ## Approaches
@@ -213,8 +213,8 @@ export interface FrameGeometry {
   - The geometry fields map one to one onto `getProcessGeometry()`'s `{ rot, w, h, pw, ph, ox, oy }` plus the video size.
   - D12's formula is therefore the inverse of `getProcessGeometry`. The tests check it against ARnft's and webarkit-studio's current projection code for the same inputs.
 - **D18 (design, after the builder check). Filter defaults and keys:**
-  - **The default `filter` is OneEuro** (user, 2026-10-27; it replaces the earlier `'native'` default). The default parameters are ARnft's, `{ type: 'oneEuro', minCutOff: 0.0001, beta: 0.01 }`, so a consumer gets per-target smoothing with a reset on `lost` out of the box. That is what ARnft, aframe-nft and webarkit-studio each wire by hand today.
-    - The cost: with defaults, the poses differ from the controller's, which filters natively. The pose-equality test therefore passes `filter: 'native'` explicitly, and the README says how to match the controller.
+  - **The default `filter` is `'native'`.** Every build constructs the core with native filtering on, so this matches the controller out of the box, and the pose-equality anti-goal holds with defaults.
+    - The user briefly made OneEuro the default (87fa3e6), then reverted that on 2026-10-27, so that the facade's defaults keep matching the controller's poses. OneEuro stays one `{ type: 'oneEuro' }` away, with ARnft's parameters (D19).
   - `'none'`, OneEuro and custom filters turn native filtering **off** (`configure({ filtering: false })`), so poses are never filtered twice.
   - **`filtering` is not a facade key.** The facade takes only `filter`, and passing `filtering` throws `TypeError`, with a message pointing to `filter`. That gives one way to say it.
   - **`logLevel`:** the facade accepts any level >= 0, as `setLogLevel` does. Levels 0-4 go through `configure()`. A level above 4, used to silence everything, goes through `setLogLevel()`, because the core's `configure()` refuses it.

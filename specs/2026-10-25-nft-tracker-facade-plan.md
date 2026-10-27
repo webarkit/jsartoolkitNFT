@@ -35,7 +35,8 @@
 - **Pose matrices:** a pose is a column-major 4×4 right-handed GL matrix, the controller's `matrixGL_RH`, as a `Float64Array(16)`, or `null`.
 - **Defaults:**
   - `lostTimeout` defaults to 200 ms;
-  - `filter` defaults to OneEuro with ARnft's parameters, `{ type: "oneEuro", minCutOff: 0.0001, beta: 0.01 }` (D18 revised, D19). Export it as `DEFAULT_FILTER` from `src/tracker/filters/oneEuro.ts`;
+  - `filter` defaults to `'native'` (D18), so the defaults match the controller's poses;
+  - `{ type: "oneEuro" }` defaults to ARnft's parameters, `minCutOff: 0.0001` and `beta: 0.01` (D19). Export them as `ONE_EURO_DEFAULTS` from `src/tracker/filters/oneEuro.ts`;
   - the maximum number of loaded targets is 20.
 - **Luma:** the facade always passes luma through the WASM path, `lumaInternal = true` (D9b).
 - **Variant subclasses:** a variant subclass declares no instance fields (AGENTS.md: ESNext class-field reset).
@@ -61,7 +62,7 @@
 | `src/tracker/foundLost.ts` | `FoundLost`: per-target debounced transitions (D8) |
 | `src/tracker/geometry.ts` | `targetInfo`, `centerOrigin`, `projectionFor` (D11, D12, D17) |
 | `src/tracker/filters/PoseFilter.ts` | `PoseFilter`, `PoseFilterModule` (D14) |
-| `src/tracker/filters/oneEuro.ts` | built-in OneEuro over `@webarkit/oneeurofilter-ts`, as a `PoseFilterModule`; `DEFAULT_FILTER` |
+| `src/tracker/filters/oneEuro.ts` | built-in OneEuro over `@webarkit/oneeurofilter-ts`, as a `PoseFilterModule`; `ONE_EURO_DEFAULTS` |
 | `src/tracker/filters/loadFilter.ts` | resolves a `FilterConfig` to a factory; module import and error reporting |
 | `src/tracker/frame.ts` | `copyFrame`: validates the size and returns the RGBA bytes (D6) |
 | `src/tracker/NFTTracker.ts` | `createTrackerFactory(toolkitClass, loader)` and the `NFTTracker` implementation |
@@ -228,7 +229,7 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
 - Consumes: `FilterConfig`, `OneEuroConfig` (Task 2).
 - Produces:
   - `createPoseFilter(options: OneEuroConfig): PoseFilter`, exported from `oneEuro.ts`, so the module itself satisfies `PoseFilterModule`;
-  - `DEFAULT_FILTER: OneEuroConfig = { type: "oneEuro", minCutOff: 0.0001, beta: 0.01 }`, exported from `oneEuro.ts`;
+  - `ONE_EURO_DEFAULTS = { minCutOff: 0.0001, beta: 0.01, warmUp: 0 } as const`, exported from `oneEuro.ts`;
   - `type FilterFactory = (() => PoseFilter) | null`, where `null` means no JS filter (`'none'` and `'native'`);
   - `loadFilter(config: FilterConfig, where: "thread" | "worker"): Promise<FilterFactory>`;
   - `usesNativeFiltering(config: FilterConfig): boolean`, which is true only for `'native'`.
@@ -254,7 +255,7 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
 - [ ] **Step 2: Run** `npx vitest run tests/vitest/tracker-filters.test.ts`. Expected: FAIL.
 - [ ] **Step 3: Implement.**
   - **OneEuro wraps `@webarkit/oneeurofilter-ts`** (D19, the user's choice). It uses one `OneEuroFilter` per pose filter, over the 16 values.
-    - `timeMs` and `minCutOff` / `beta` are passed unchanged, as ARnft does. Defaults come from `DEFAULT_FILTER`.
+    - `timeMs` and `minCutOff` / `beta` are passed unchanged, as ARnft does. Defaults come from `ONE_EURO_DEFAULTS`.
     - `warmUp`, default 0: the first `warmUp` samples after construction or `reset()` return the input while still being fed to the package filter.
     - Reuse an output buffer through the package's `out` argument, then return a copy, so a caller can keep the returned array.
     - The JSDoc gives the units, and notes that aframe-nft divides `minCutOff` by 1000.
@@ -306,7 +307,7 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
     - apply the core settings with `configure`, merged with `filtering` derived by `usesNativeFiltering` (D18);
     - load the filter;
     - read `cameraMatrix = Float64Array.from(toolkit.getCameraLens())`.
-  - **The default `filter`** is `DEFAULT_FILTER`. Add a test, `the default filter is OneEuro`: a tracker created with no `filter` key returns a pose that differs from a `filter: "none"` tracker's on the second tracked frame, and equals a tracker created with `filter: DEFAULT_FILTER`.
+  - **The default `filter`** is `'native'` (D18). The test `the default filter is native` lives in Task 6: with no `filter` key, the core is configured with `filtering: true`.
   - **`configure(patch)`** splits the facade keys (`lostTimeout`, `filter`, `logLevel`) from the core keys.
     - A key outside `NFTTrackerSettings` rejects with `TypeError`; `filtering` gets the message `'"filtering" is not a tracker setting: use "filter" (D18)'`.
     - A `logLevel` of 4 or less goes to the core `configure`; above 4 it goes to `toolkit.setLogLevel()`.
@@ -351,13 +352,13 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
       - exactly one `lost`, on the first frame where the time since the last tracked frame is over 200.
     - **`configure({ lostTimeout }) is live`:** with 50, the lost transition comes on the first blank frame more than 50 ms later.
     - **`poses equal the controller's matrixGL_RH`:**
-      - `createNFTTracker({ width, height, cameraParam, filter: "native" })` against `ARControllerNFT.initWithDimensions(w, h, CAMERA_PARAM, true)`, where `true` is `internalLuma` (D9b);
+      - `createNFTTracker({ width, height, cameraParam })`, **with the defaults** (`filter` is `'native'`, D18), against `ARControllerNFT.initWithDimensions(w, h, CAMERA_PARAM, true)`, where `true` is `internalLuma` (D9b);
       - both load pinball, and both get the same N = 30 `pinballOnly` frames;
       - for every frame where both found, `pose` equals the `getNFTMarker` event's `matrixGL_RH` to 1e-9.
       - The controller's `detectionInterval` and continuous detection are left at the defaults, and so are the tracker's: same core, same defaults.
     - **`origin center shifts the pose`:** load with `{ origin: "center" }`, and assert that the pose equals `centerOrigin(cornerPose, info)` for a corner-origin tracker fed the same frames.
     - **`a JS filter turns native filtering off and resets on lost`:**
-      - with the default config (no `filter` key), native filtering is off, because the default is OneEuro (D18 revised). The tracker does not expose its toolkit, so `vi.spyOn(ARToolkitNFT.prototype, "configure")` before creating it, and assert that a call carried `filtering: false`;
+      - with `filter: { type: "oneEuro" }`, native filtering is off, and with no `filter` key it stays on (`the default filter is native`, D18). The tracker does not expose its toolkit, so `vi.spyOn(ARToolkitNFT.prototype, "configure")` before creating it, and assert that a call carried `filtering: false` (OneEuro) or `filtering: true` (default);
       - after found → lost → found, the first pose after the re-found equals the raw pose for that frame, because the filter was reset.
 
       Get the raw pose by running a `filter: "none"` tracker alongside.
@@ -552,7 +553,7 @@ export type Response =
     - `projectionFor` and `FrameGeometry`, pointing to `@webarkit/camera-view`;
     - `workerBase`, and the files to serve: `NFTTracker*.worker.js` plus the td pthread file;
     - skipped frames (D13);
-    - the default OneEuro, and `filter: "native"` to match `ARControllerNFT`'s poses exactly (D18 revised);
+    - the default `'native'` filter, which matches `ARControllerNFT`'s poses (for a controller created with `internalLuma = true`, D9b), and `{ type: "oneEuro" }` for per-target smoothing with a reset on `lost`;
     - the `'native'` filter resetting on the core's untracked frame, not on `lostTimeout` (D18).
   - **"Writing a pose filter":**
     - the `PoseFilterModule` contract (D14) and `examples/filters/average-filter.js`;
