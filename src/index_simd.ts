@@ -82,6 +82,11 @@ import type {
   PoseFilter,
   PoseFilterModule,
 } from "./tracker/filters/PoseFilter";
+import { createNFTTrackerWorker } from "./tracker/worker/createNFTTrackerWorker";
+import type {
+  NFTTrackerWorker,
+  WorkerOptions,
+} from "./tracker/worker/createNFTTrackerWorker";
 
 /**
  * Creates an NFT tracker on this build's ARToolkitNFT (#720 D2): load targets, then
@@ -97,6 +102,7 @@ export {
   ARLogLevel,
   NFTLoadError,
   createNFTTracker,
+  createNFTTrackerWorker,
 };
 export type {
   INFTMarker,
@@ -129,4 +135,6 @@ export type {
   AddTargetsOptions,
   PoseFilter,
   PoseFilterModule,
+  NFTTrackerWorker,
+  WorkerOptions,
 };
