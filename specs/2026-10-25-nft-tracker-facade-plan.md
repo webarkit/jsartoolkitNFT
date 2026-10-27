@@ -262,7 +262,23 @@ cover:   a_v > a_s ? y-terms *= a_v / a_s : x-terms *= a_s / a_v
   - **`loadFilter` for `{ module }`:** use `import(/* @vite-ignore */ url)`. The comment says Vite must leave it alone, and cites D14.
     - Wrap every failure as `new Error(\`pose filter module ${url}: ${reason}\`)`.
     - Validate the factory eagerly: call `createPoseFilter(options)` once at load time, so a throwing factory rejects `loadFilter` and not the first `process()`.
-  - **`examples/filters/average-filter.js`** is the spike's `average-filter.js`, with a header comment explaining how to copy it.
+  - **`examples/filters/average-filter.js`** is the spike's filter, kept here because the spike worktree is deleted. Add a header comment explaining how to copy it:
+
+```js
+// Running average with a configurable weight, so a test can predict the output.
+export function createPoseFilter(options) {
+  const w = options.weight;
+  let prev = null;
+  return {
+    filter(timeMs, pose) {
+      if (!prev) { prev = Float64Array.from(pose); return prev; }
+      for (let i = 0; i < pose.length; i++) prev[i] = prev[i] * (1 - w) + pose[i] * w;
+      return Float64Array.from(prev);
+    },
+    reset() { prev = null; },
+  };
+}
+```
 - [ ] **Step 4: Run it.** Expected: PASS.
 - [ ] **Step 5: Commit:** `feat: add the built-in OneEuro filter and the pose filter module loader (#720)`. The body cites D3 and D14.
 
