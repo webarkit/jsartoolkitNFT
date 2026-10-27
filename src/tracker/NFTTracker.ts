@@ -104,6 +104,32 @@ export const browserTargetLoader: TargetLoader = {
 };
 
 /**
+ * Node loader: `ARToolkitNFT.tryAddNFTMarkers([prefix])`, synchronous, one source per call
+ * (D10). It is wrapped in an async function so `addNFTTargets` stays asynchronous over the
+ * synchronous Node loader. The sources are extension-less paths relative to the working
+ * directory, as the Node toolkit accepts them. A thrown NFTLoadError is matched on `name`
+ * rather than `instanceof`, as in the browser loader; anything else becomes "unknown".
+ */
+export const nodeTargetLoader: TargetLoader = {
+  async load(toolkit, url) {
+    try {
+      const ids: number[] = toolkit.tryAddNFTMarkers([url]);
+      return { id: ids[0] };
+    } catch (e) {
+      const err = e as {
+        name?: string;
+        kind?: NFTLoadErrorKind;
+        message?: string;
+      };
+      if (err?.name === "NFTLoadError" && err.kind) {
+        return { errorKind: err.kind, message: err.message ?? "" };
+      }
+      return { errorKind: "unknown", message: err?.message ?? String(e) };
+    }
+  },
+};
+
+/**
  * Throws a TypeError on a key outside NFTTrackerSettings (plus `extra`). `filtering` gets
  * its own message: the facade has one way to say it, `filter` (D18).
  */
