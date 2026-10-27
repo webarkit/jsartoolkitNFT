@@ -39,7 +39,12 @@ function loadedWorkerFile() {
   return entry ? entry.name.split("/").pop() : null;
 }
 
-export default async function start(markerUrl, video, render_update, track_update) {
+export default async function start(
+  markerUrl,
+  video,
+  render_update,
+  track_update,
+) {
   const vw = video.videoWidth;
   const vh = video.videoHeight;
 
@@ -47,7 +52,11 @@ export default async function start(markerUrl, video, render_update, track_updat
   // processing frame (at most 320 x 240), and `geometry` records where it went, so that
   // projectionFor() can undo it. `floor` = true: these are the values actually drawn,
   // as CameraView does.
-  const geometry = toFrameGeometry(vw, vh, getProcessGeometry(vw, vh, false, true));
+  const geometry = toFrameGeometry(
+    vw,
+    vh,
+    getProcessGeometry(vw, vh, false, true),
+  );
   const { frameWidth: pw, frameHeight: ph } = geometry;
 
   const canvas_process = document.createElement("canvas");
@@ -65,7 +74,10 @@ export default async function start(markerUrl, video, render_update, track_updat
     { width: pw, height: ph, cameraParam: "Data/camera_para.dat" },
     { workerBase: "../dist/" },
   );
-  console.log("tracker worker:", loadedWorkerFile() ?? "(not in the resource timing)");
+  console.log(
+    "tracker worker:",
+    loadedWorkerFile() ?? "(not in the resource timing)",
+  );
 
   // origin "center": the pose's origin is the middle of the image (D11), so the model
   // needs no offset of its own.
@@ -141,14 +153,32 @@ export default async function start(markerUrl, video, render_update, track_updat
     }
   };
 
+  // Set on pagehide: the loop stops, so no process() call is made on a disposed tracker
+  // (it would reject with the "disposed" error).
+  let disposed = false;
+
   const tick = () => {
+    if (disposed) return;
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, pw, ph);
-    ctx.drawImage(video, 0, 0, vw, vh, geometry.x, geometry.y, geometry.width, geometry.height);
+    ctx.drawImage(
+      video,
+      0,
+      0,
+      vw,
+      vh,
+      geometry.x,
+      geometry.y,
+      geometry.width,
+      geometry.height,
+    );
     // The frame's buffer is transferred to the worker (D6): a new ImageData each call.
     tracker
       .process(ctx.getImageData(0, 0, pw, ph), performance.now())
-      .then(handle, (e) => console.error(e));
+      // A call still in flight at pagehide rejects with "disposed": expected, not logged.
+      .then(handle, (e) => {
+        if (!disposed) console.error(e);
+      });
 
     render_update();
     renderer.render(scene, camera);
@@ -156,5 +186,8 @@ export default async function start(markerUrl, video, render_update, track_updat
   };
   requestAnimationFrame(tick);
 
-  window.addEventListener("pagehide", () => tracker.dispose());
+  window.addEventListener("pagehide", () => {
+    disposed = true;
+    tracker.dispose();
+  });
 }

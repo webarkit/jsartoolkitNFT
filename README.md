@@ -182,13 +182,21 @@ calling thread, and every build exports it, Node included. `createNFTTrackerWork
 in a dedicated worker. It is in the browser builds only, and every method returns a Promise. `ARControllerNFT`
 is unchanged and keeps working.
 
+In both samples, `imageData` is a 320 × 240 frame of the camera, e.g. the video drawn (letterboxed) into a
+320 × 240 canvas and read back with `ctx.getImageData(0, 0, 320, 240)`; see
+[Projection](#projection-projectionfor-and-framegeometry) and the example below.
+
+Same thread:
+
 ```javascript
-// Same thread
 const tracker = await createNFTTracker({ width: 320, height: 240, cameraParam: 'Data/camera_para.dat' })
 const [load] = await tracker.addNFTTargets(['DataNFT/pinball'])
 const result = tracker.process(imageData, performance.now())
+```
 
-// In a worker: the same calls, each returning a Promise
+In a worker, the same calls, each returning a Promise:
+
+```javascript
 const tracker = await createNFTTrackerWorker(
   { width: 320, height: 240, cameraParam: 'Data/camera_para.dat' },
   { workerBase: '/dist/' },
@@ -199,8 +207,9 @@ if (!result.skipped) { /* use result */ }
 ```
 
 [`examples/ARToolkitNFT_ES6_tracker_example.html`](examples/ARToolkitNFT_ES6_tracker_example.html) is a
-complete page: camera, worker tracker and three.js. Serve the repository with `python python-server.py` and
-open `/examples/ARToolkitNFT_ES6_tracker_example.html`.
+complete page: camera, worker tracker and three.js. Run `npm install` first: the page imports
+`@webarkit/camera-view`, a devDependency, from `node_modules/`. Then serve the repository root with
+`python python-server.py` and open `/examples/ARToolkitNFT_ES6_tracker_example.html`.
 
 Relative URLs (`cameraParam`, the target sources, a filter `module`) resolve against the page, with
 `createNFTTrackerWorker` as with `createNFTTracker`: the wrapper resolves them before it posts them to the
@@ -284,8 +293,10 @@ interface FrameGeometry {
 ```
 
 [`@webarkit/camera-view`](https://github.com/webarkit/camera-view) produces it: `CameraView.geometry`, or
-`toFrameGeometry(vw, vh, getProcessGeometry(vw, vh))`, which the example uses. Without a geometry, the
-processing frame itself is the source.
+`toFrameGeometry(vw, vh, getProcessGeometry(vw, vh, false, true))`, which the example uses. The last
+argument, `floor`, rounds the sizes down to integers, so the frame size matches the canvas and its
+`ImageData` exactly (`CameraView` does the same). Without a geometry, the processing frame itself is the
+source.
 
 ### Running in a worker
 
@@ -368,6 +379,7 @@ interface PoseFilterModule {
 ```javascript
 const tracker = await createNFTTrackerWorker({
   width: 320, height: 240, cameraParam: 'Data/camera_para.dat',
+  // A relative path resolves against the page, here a page in examples/.
   filter: { module: 'filters/average-filter.js', options: { weight: 0.5 } },
 })
 ```
