@@ -9,7 +9,11 @@
 export const VARIANTS: {
   name: string;
   detectionIntervalMs: number;
-  load: () => Promise<{ ARControllerNFT: any }>;
+  load: () => Promise<{
+    ARControllerNFT: any;
+    ARToolkitNFT: any;
+    createNFTTracker: any;
+  }>;
 }[] = [
   { name: "wasm", detectionIntervalMs: 300, load: () => import("../../src/index") },
   {

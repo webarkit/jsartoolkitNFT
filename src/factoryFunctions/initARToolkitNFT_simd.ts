@@ -37,6 +37,12 @@
 import ARToolkitNFT from "../../build/artoolkitNFT_ES6_wasm.simd";
 import { ARToolkitNFTModule } from "../abstractions/CommonInterfaces";
 
-export async function initARToolkitNFT(): Promise<ARToolkitNFTModule> {
-  return (await ARToolkitNFT()) as ARToolkitNFTModule;
+/**
+ * @param moduleOptions passed to the Emscripten factory as its Module object, e.g.
+ * `mainScriptUrlOrBlob` for the threaded build's tracker worker host (#720 D16).
+ */
+export async function initARToolkitNFT(
+  moduleOptions?: Record<string, unknown>,
+): Promise<ARToolkitNFTModule> {
+  return (await ARToolkitNFT(moduleOptions)) as ARToolkitNFTModule;
 }
