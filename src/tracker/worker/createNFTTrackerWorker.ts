@@ -61,6 +61,14 @@ export interface NFTTrackerWorker {
 
 const DISPOSED = "NFTTracker: disposed";
 
+/**
+ * D13 (amended 2026-10-27): how long dispose() waits for the worker's answer before it
+ * terminates the worker anyway. A threaded worker that stops answering (seen under heavy
+ * load in the test suite) must not hang dispose(); terminating it frees its memory either
+ * way, so the answer is only a courtesy to the tracker's own cleanup.
+ */
+const DISPOSE_TIMEOUT_MS = 2000;
+
 type WorkerFactory = (url: string) => Worker;
 const defaultWorkerFactory: WorkerFactory = (url) =>
   // The worker bundles are ES modules (D16).
@@ -330,12 +338,19 @@ export async function createNFTTrackerWorker(
       const done = send({ type: "dispose" });
       // Calls made from now on reject locally; requests already posted are answered first.
       closed = new Error(DISPOSED);
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const timeout = new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, DISPOSE_TIMEOUT_MS);
+      });
       try {
-        await done;
+        // A bounded wait (D13, amended): see DISPOSE_TIMEOUT_MS.
+        await Promise.race([done, timeout]);
       } finally {
+        clearTimeout(timer);
         // On the threaded build the tracker's dispose() skips the native teardown, which
         // would block (#695). Terminating the worker is what frees its WASM memory, on
-        // every build.
+        // every build. Anything still pending (an unanswered process()) is rejected with
+        // the disposed error.
         close(closed);
       }
     },

@@ -307,6 +307,55 @@ describe("createNFTTrackerWorker wrapper (default)", () => {
     }
   });
 
+  it("dispose does not hang on a worker that stops answering", async () => {
+    // D13 (amended): a fake worker that answers init and nothing else, as the threaded
+    // worker did once under load. dispose() waits a bounded time, then terminates.
+    let fake: any;
+    __setWorkerFactory(() => {
+      fake = {
+        onmessage: null,
+        onerror: null,
+        terminate: vi.fn(),
+        postMessage: vi.fn((msg: any) => {
+          if (msg.type !== "init") return;
+          Promise.resolve().then(() =>
+            fake.onmessage({
+              data: {
+                v: 1,
+                id: msg.id,
+                type: "ok",
+                cameraMatrix: new Float64Array(16),
+              },
+            }),
+          );
+        }),
+      };
+      return fake;
+    });
+    try {
+      const t = await createNFTTrackerWorker(CONFIG, opts);
+      vi.useFakeTimers();
+      const pending = t.process(
+        { data: new Uint8ClampedArray(4), width: 1, height: 1 },
+        0,
+      );
+      const rejected = expect(pending).rejects.toThrow("NFTTracker: disposed");
+      let resolved = false;
+      const disposing = t.dispose().then(() => (resolved = true));
+      await vi.advanceTimersByTimeAsync(1999);
+      // Still waiting for the answer.
+      expect(resolved).toBe(false);
+      expect(fake.terminate).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1);
+      await disposing;
+      expect(fake.terminate).toHaveBeenCalledTimes(1);
+      await rejected;
+    } finally {
+      vi.useRealTimers();
+      __setWorkerFactory(factory);
+    }
+  });
+
   it("a crashed worker rejects instead of hanging", async () => {
     const crashing = URL.createObjectURL(
       new Blob(["throw new Error('boom');"], { type: "text/javascript" }),

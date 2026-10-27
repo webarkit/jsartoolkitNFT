@@ -172,6 +172,7 @@ ARnft, for example, has one shared filter that is never reset, and sends `lost` 
   - `cameraMatrix` is a property updated after `configure` and after init;
   - `projectionFor` runs on the main thread from the cached `cameraMatrix`, with no round trip.
   - One `process` runs at a time. A `process()` call made while one is in flight resolves with `{ skipped: true }`, without queueing, so a consumer feeding camera frames never builds up latency. This is the common pattern; the builder documents it.
+  - **(amended 2026-10-27) `dispose()` waits a bounded time** (`DISPOSE_TIMEOUT_MS`, 2 s) for the worker's answer, then terminates the worker anyway and rejects every pending call with the disposed error. Why: a threaded worker that stopped answering under load (seen in the full test suite) made `dispose()` hang; terminating frees the worker's memory whether or not it answered.
 - **D14 (design). Custom filter module contract,** exported as types from `src/tracker/filters/PoseFilter.ts`:
 
 ```ts
