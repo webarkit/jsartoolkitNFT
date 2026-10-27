@@ -10,13 +10,58 @@ export function usesNativeFiltering(config: FilterConfig): boolean {
   return config === "native";
 }
 
+/** The module's own error is kept as `cause`, and its message repeated in ours. */
 function wrap(url: string, reason: unknown): Error {
   const msg = reason instanceof Error ? reason.message : String(reason);
-  return new Error(`pose filter module ${url}: ${msg}`);
+  return new Error(`pose filter module ${url}: ${msg}`, { cause: reason });
+}
+
+const FILTER_FORMS =
+  "'none', 'native', { type: 'oneEuro' }, { module } or { create }";
+
+/**
+ * Refuses a malformed FilterConfig with a TypeError naming the problem, before anything
+ * loads (G6: a bad setting throws a clear error). Without it a misspelt string failed on
+ * the `in` operator, `{}` as an import of `undefined`, and an unknown `type` was taken for
+ * OneEuro.
+ */
+function checkFilterConfig(config: unknown): void {
+  if (typeof config === "string") {
+    if (config === "none" || config === "native") return;
+    throw new TypeError(
+      `filter: "${config}" is not a filter; use ${FILTER_FORMS}`,
+    );
+  }
+  if (typeof config !== "object" || config === null) {
+    throw new TypeError(`filter: ${String(config)} is not a filter; use ${FILTER_FORMS}`);
+  }
+  if ("type" in config) {
+    const type = (config as { type: unknown }).type;
+    if (type !== "oneEuro") {
+      throw new TypeError(`filter: unknown type "${String(type)}"; the only type is 'oneEuro'`);
+    }
+    return;
+  }
+  if ("create" in config) {
+    if (typeof (config as { create: unknown }).create !== "function") {
+      throw new TypeError("filter: create must be a function returning a PoseFilter");
+    }
+    return;
+  }
+  if ("module" in config) {
+    const url = (config as { module: unknown }).module;
+    if (typeof url !== "string" || url === "") {
+      throw new TypeError("filter: module must be a non-empty string, the module's URL");
+    }
+    return;
+  }
+  throw new TypeError(
+    `filter: an object filter needs module, create or type; use ${FILTER_FORMS}`,
+  );
 }
 
 /**
- * Resolve a FilterConfig to a factory of independent filters (one per marker, D3).
+ * Resolve a FilterConfig to a factory of independent filters (one per target, D3).
  * `where` says which side loads it: a function cannot cross postMessage (D3), so
  * `{ create }` is refused in a worker.
  */
@@ -24,6 +69,7 @@ export async function loadFilter(
   config: FilterConfig,
   where: "thread" | "worker",
 ): Promise<FilterFactory> {
+  checkFilterConfig(config);
   if (config === "none" || config === "native") return null;
   if ("type" in config) {
     return () => createOneEuro(config);

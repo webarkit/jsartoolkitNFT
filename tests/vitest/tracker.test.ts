@@ -161,6 +161,29 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
     expect(() => t.cameraMatrix).toThrow(disposed);
   });
 
+  // The threaded build never calls teardown(), so this is about the other builds; the
+  // behaviour is the facade's JS, so one build is enough.
+  it.runIf(variant.name === "wasm")(
+    "a throwing teardown still disposes, once",
+    async () => {
+      const t: any = await create(variant);
+      const toolkit = t.toolkit;
+      const teardown = vi
+        .spyOn(toolkit, "teardown")
+        .mockImplementationOnce(() => {
+          throw new Error("teardown failed");
+        });
+      expect(() => t.dispose()).toThrow("teardown failed");
+      // Disposed anyway: a second dispose() does not run teardown() again.
+      expect(() => t.dispose()).not.toThrow();
+      expect(teardown).toHaveBeenCalledTimes(1);
+      expect(() => t.cameraMatrix).toThrow("NFTTracker: disposed");
+      teardown.mockRestore();
+      // The stub replaced the real teardown: free the core now.
+      toolkit.teardown();
+    },
+  );
+
   // KPM rebuilds its matcher once per source (D10), so 20 loads are slow: wasm only.
   it.runIf(variant.name === "wasm")(
     "reports capacity past 20",
@@ -506,6 +529,65 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
         wall.mockRestore();
       }
     }, 120_000);
+
+    // The checks below are the facade's JS, the same on every build: wasm only.
+    it.runIf(variant.name === "wasm")(
+      "a filter that returns the wrong number of values throws a TypeError",
+      async () => {
+        const { t } = await withPinball({
+          filter: {
+            create: () => ({
+              filter: (_t: number, p: Float64Array) => p.subarray(0, 15),
+              reset() {},
+            }),
+          },
+        });
+        const next = clock(100_000);
+        let error: unknown = null;
+        for (let i = 0; i < 120 && error === null; i++) {
+          try {
+            t.process(frames.pinballOnly, next());
+          } catch (e) {
+            error = e;
+          }
+          await tick(5);
+        }
+        expect(error).toBeInstanceOf(TypeError);
+        expect((error as Error).message).toMatch(/15/);
+      },
+      120_000,
+    );
+
+    it.runIf(variant.name === "wasm")(
+      "a kept pose is not changed by the next frame",
+      async () => {
+        // A filter that reuses one output array, as a filter avoiding allocations may.
+        const { t } = await withPinball({
+          filter: {
+            create: () => {
+              const out = new Float64Array(16);
+              return {
+                filter: (time: number, p: Float64Array) => {
+                  out.set(p);
+                  out[15] = time;
+                  return out;
+                },
+                reset() {},
+              };
+            },
+          },
+        });
+        const next = clock(200_000);
+        const [found] = await feedUntil([t], frames.pinballOnly, next, allFound);
+        const kept = found[found.length - 1].targets[0].pose as Float64Array;
+        const keptTime = kept[15];
+        const [after] = await feedN([t], frames.pinballOnly, next, 1);
+        expect(after[0].targets[0].found).toBe(true);
+        expect(after[0].targets[0].pose[15]).not.toBe(keptTime);
+        expect(kept[15]).toBe(keptTime);
+      },
+      120_000,
+    );
 
     it("keeps the old filter when a new module fails", async () => {
       const next = clock(50_000);

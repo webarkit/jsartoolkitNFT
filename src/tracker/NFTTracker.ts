@@ -213,6 +213,22 @@ function reasonFor(
   }
 }
 
+/**
+ * A JS filter's output as the pose the facade returns (G7: `Float64Array(16) | null`).
+ * It must hold 16 values, or this throws a TypeError naming the count. It is always copied:
+ * a filter may return an array it reuses on the next frame, or its input, and a caller
+ * that keeps a frame's pose must not see it change.
+ */
+function filteredPose(out: ArrayLike<number>): Float64Array {
+  const count = out?.length;
+  if (count !== 16) {
+    throw new TypeError(
+      `NFTTracker.process: the pose filter returned ${count === undefined ? "no array" : `${count} values`}, a pose has 16`,
+    );
+  }
+  return Float64Array.from(out);
+}
+
 class Tracker implements NFTTracker {
   private toolkit: any;
   private readonly width: number;
@@ -368,7 +384,7 @@ class Tracker implements NFTTracker {
             filter = this.filterFactory();
             this.filters.set(id, filter);
           }
-          pose = filter.filter(timestampMs, pose);
+          pose = filteredPose(filter.filter(timestampMs, pose));
         }
       }
       // D8: `targets` is this frame's raw tracking (found is false and pose null within
@@ -407,13 +423,19 @@ class Tracker implements NFTTracker {
     // main thread and never returns (#695), so it is skipped: the WASM core then stays
     // allocated until the module goes away with the page (or, for the worker host, the
     // worker). The JS side is dropped either way.
-    if (!this.skipTeardown) this.toolkit.teardown();
-    this.disposed = true;
-    this.toolkit = null;
-    this.targets.clear();
-    this.filters.clear();
-    this.filterFactory = null;
-    this.foundLost = new FoundLost(0);
+    // try/finally: a teardown() that throws still leaves the tracker disposed, so a second
+    // dispose() does not run it again on a half torn-down core, and later calls throw the
+    // usual "disposed" error. The teardown error itself still reaches the caller.
+    try {
+      if (!this.skipTeardown) this.toolkit.teardown();
+    } finally {
+      this.disposed = true;
+      this.toolkit = null;
+      this.targets.clear();
+      this.filters.clear();
+      this.filterFactory = null;
+      this.foundLost = new FoundLost(0);
+    }
   }
 }
 

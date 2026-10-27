@@ -27,6 +27,11 @@ export interface Transition {
   id: number;
 }
 export interface FrameResult {
+  /**
+   * Never set on a result: declared so that `if (!result.skipped)` compiles on the union
+   * `FrameResult | SkippedFrame` that the worker tracker's process() resolves.
+   */
+  skipped?: undefined;
   time: number;
   processMs: number;
   targets: TargetResult[];
@@ -35,7 +40,10 @@ export interface FrameResult {
 export interface SkippedFrame {
   skipped: true;
 }
-/** Defaults 0.0001, 0.01, 0 (D19). */
+/**
+ * Defaults 0.0001, 0.01, 0 (D19). The filter is driven by process()'s `timestampMs`, which
+ * must increase (milliseconds): a time that does not increase returns the previous output.
+ */
 export interface OneEuroConfig {
   type: "oneEuro";
   minCutOff?: number;
@@ -76,6 +84,12 @@ export interface Viewport {
   height: number;
   fit?: "contain" | "cover";
 }
+/**
+ * Where the camera side put the video in the processing frame, as `getProcessGeometry()`
+ * gives it (D17). `x` and `y` are not read: projectionFor assumes the video is centred in
+ * the frame, as `getProcessGeometry()`'s letterbox always is, so only the sizes and
+ * `rotated` matter.
+ */
 export interface FrameGeometry {
   frameWidth: number;
   frameHeight: number;
