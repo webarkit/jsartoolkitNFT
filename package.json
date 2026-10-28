@@ -79,20 +79,20 @@
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
-    "@vitest/browser": "^5.0.4",
-    "@vitest/browser-playwright": "^5.0.4",
-    "@vitest/coverage-istanbul": "^5.0.4",
+    "@vitest/browser": "^5.0.5",
+    "@vitest/browser-playwright": "^5.0.5",
+    "@vitest/coverage-istanbul": "^5.0.5",
     "@webarkit/camera-view": "^0.1.0",
     "@webarkit/oneeurofilter-ts": "^0.2.1",
     "canvas": "^3.2.3",
     "glob": "^13.0.6",
-    "playwright": "^1.63.0",
-    "prettier": "^3.9.9",
+    "playwright": "^1.64.1",
+    "prettier": "^3.9.10",
     "sharp": "^0.35.5",
     "typedoc": "0.28.20",
     "typescript": "6.0.3",
-    "vite": "8.3.4",
-    "vitest": "^5.0.4"
+    "vite": "8.3.5",
+    "vitest": "^5.0.5"
   },
   "scripts": {
     "dev-ts": "node tools/build-ts.mjs --watch",
