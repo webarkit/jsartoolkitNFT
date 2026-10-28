@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # On a tag push github.ref is already the tag. On workflow_dispatch it
           # is the default branch, so the `tag` input has to be applied here or a
@@ -41,7 +41,7 @@ jobs:
             ${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || github.ref }}
 
       - name: Use Node.js from .nvmrc
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: ".nvmrc"
           registry-url: https://registry.npmjs.org

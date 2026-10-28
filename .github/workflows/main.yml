@@ -14,14 +14,14 @@ jobs:
     runs-on: ubuntu-24.04  # Upgrade to Ubuntu 24.04
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Use Node.js from .nvmrc
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version-file: ".nvmrc"
 
-    - uses: actions/cache@v5
+    - uses: actions/cache@v6
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -39,7 +39,7 @@ jobs:
         echo $RELEASE_VERSION
         echo ${{ steps.vars.outputs.tag }}
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: build
         path: |
@@ -56,7 +56,7 @@ jobs:
 
     - run: docker exec emscripten npm run build
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: dist
         path: dist
@@ -65,7 +65,7 @@ jobs:
 
     - name: Commit changes
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-      uses: EndBug/add-and-commit@v10
+      uses: EndBug/add-and-commit@v11
       with:
         default_author: github_actions
         message: new build files from action
@@ -82,9 +82,6 @@ jobs:
         # Fail instead of warning when an entry matches nothing, so the list can't
         # silently drift from what the build emits.
         fail_on_unmatched_files: true
-        # dist/*.ARToolkitNFT_td.js is the threaded build's pthread worker chunk. Its
-        # name carries a webpack chunk id that changes with the chunk; webpack.config.js
-        # deletes stale ones, so the glob matches only the current chunk.
         files: |
           build/artoolkitNFT.debug.js
           build/artoolkitNFT.min.js
@@ -96,11 +93,16 @@ jobs:
           build/artoolkitNFT_thread.js
           build/artoolkitNFT_wasm.js
           build/artoolkitNFT_wasm.simd.js
-          dist/*.ARToolkitNFT_td.js
           dist/ARToolkitNFT.js
           dist/ARToolkitNFT_node.js
+          dist/ARToolkitNFT_node.mjs
           dist/ARToolkitNFT_simd.js
           dist/ARToolkitNFT_td.js
+          dist/ARToolkitNFT_td.worker.js
+          dist/NFTTracker.worker.js
+          dist/NFTTracker_simd.worker.js
+          dist/NFTTracker_td.worker.js
+          dist/NFTTracker_td.pthread.js
           js/artoolkitNFT.api.js
           js/artoolkitNFT.embed_ES6_worker.js
           js/artoolkitNFT.multi_worker.js

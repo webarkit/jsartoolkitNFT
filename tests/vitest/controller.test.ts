@@ -115,10 +115,10 @@ describe("ARControllerNFT", () => {
     });
 
     /**
-     * The setters store the value; `recalculateCameraLens()` is what rebuilds
-     * the frustum from it. That two-step is the intended usage — the setters
-     * deliberately do not recalculate on every call, so several can be changed
-     * before paying for one rebuild.
+     * Since WebARKitLib 0.12.0 the setters rebuild the frustum themselves once a
+     * camera is loaded (#720, D5): the old two-step, store then
+     * `recalculateCameraLens()`, left getCameraMatrix() wrong until the second
+     * step. `recalculateCameraLens()` is kept for compatibility.
      */
     it("stores and returns the near plane", () => {
       ar.setProjectionNearPlane(0.5);
@@ -148,17 +148,21 @@ describe("ARControllerNFT", () => {
       expect(after).not.toEqual(before);
     });
 
-    it("does not recalculate until asked", () => {
+    it("rebuilds the frustum on every plane change", () => {
       const nft = ar.artoolkitNFT;
+      const lens = () => Array.from(nft.getCameraLens() as ArrayLike<number>);
 
-      nft.instance.recalculateCameraLens();
-      const lens = Array.from(nft.getCameraLens() as ArrayLike<number>);
-
-      // Changing the planes alone must not move the frustum — that is what
-      // makes the explicit recalculate step meaningful.
+      const before = lens();
       ar.setProjectionNearPlane(0.25);
+      const afterNear = lens();
+      expect(afterNear).not.toEqual(before);
       ar.setProjectionFarPlane(1500);
-      expect(Array.from(nft.getCameraLens() as ArrayLike<number>)).toEqual(lens);
+      expect(lens()).not.toEqual(afterNear);
+
+      // recalculateCameraLens() now rebuilds the same matrix.
+      const rebuilt = lens();
+      nft.instance.recalculateCameraLens();
+      expect(lens()).toEqual(rebuilt);
     });
   });
 
@@ -231,6 +235,83 @@ describe("ARControllerNFT", () => {
       ar.removeEventListener("testEvent", listener);
       ar.dispatchEvent({ name: "testEvent", target: ar });
       expect(fired).toBe(1);
+    });
+
+    it("still reaches later listeners when one removes itself during dispatch", () => {
+      // Regression for #686: dispatchEvent must iterate over a snapshot, or
+      // splicing A out of the live array skips B (the array shifts under the loop).
+      let firedA = 0;
+      let firedB = 0;
+      const listenerA = () => {
+        firedA += 1;
+        ar.removeEventListener("selfRemove", listenerA);
+      };
+      const listenerB = () => {
+        firedB += 1;
+      };
+
+      ar.addEventListener("selfRemove", listenerA);
+      ar.addEventListener("selfRemove", listenerB);
+      ar.dispatchEvent({ name: "selfRemove", target: ar });
+      expect(firedA).toBe(1);
+      expect(firedB).toBe(1);
+
+      // A is gone, B stays registered.
+      ar.dispatchEvent({ name: "selfRemove", target: ar });
+      expect(firedA).toBe(1);
+      expect(firedB).toBe(2);
+
+      ar.removeEventListener("selfRemove", listenerB);
+    });
+
+    it("treats Object.prototype property names as ordinary event names", () => {
+      // The listener registry has no prototype, so a name such as "toString" is not
+      // mistaken for a listener array inherited from Object.prototype (#731).
+      for (const name of [
+        "toString",
+        "constructor",
+        "hasOwnProperty",
+        "__proto__",
+      ]) {
+        expect(
+          () => ar.dispatchEvent({ name, target: ar }),
+          name,
+        ).not.toThrow();
+
+        let fired = 0;
+        const listener = () => {
+          fired += 1;
+        };
+        ar.addEventListener(name, listener);
+        ar.dispatchEvent({ name, target: ar });
+        expect(fired, name).toBe(1);
+
+        ar.removeEventListener(name, listener);
+        ar.dispatchEvent({ name, target: ar });
+        expect(fired, name).toBe(1);
+      }
+    });
+
+    it("fires a callback registered twice on the same event twice", () => {
+      // Listeners are an array, not a set: duplicate registrations are intentional.
+      let fired = 0;
+      const listener = () => {
+        fired += 1;
+      };
+
+      ar.addEventListener("twice", listener);
+      ar.addEventListener("twice", listener);
+      ar.dispatchEvent({ name: "twice", target: ar });
+      expect(fired).toBe(2);
+
+      // removeEventListener drops one registration per call.
+      ar.removeEventListener("twice", listener);
+      ar.dispatchEvent({ name: "twice", target: ar });
+      expect(fired).toBe(3);
+
+      ar.removeEventListener("twice", listener);
+      ar.dispatchEvent({ name: "twice", target: ar });
+      expect(fired).toBe(3);
     });
   });
 });

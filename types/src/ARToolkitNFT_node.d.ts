@@ -1,5 +1,5 @@
 import { IARToolkitNFT_node } from "./abstractions/IARToolkitNFT_node";
-import { INFTMarkerInfo, ARLogLevel } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, ARLogLevel, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARInitOptions } from "./abstractions/CommonInterfaces";
 export declare class ARToolkitNFT implements IARToolkitNFT_node {
     /**
      * static properties
@@ -65,17 +65,19 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
      * - instance
      * - cameraCount
      * - version
-     * A message is displayed in the console during the intitialization, for example:
-     * "ARToolkitNFT 1.5.0"
+     * A message is displayed in the console during init(), for example:
+     * "ARToolkitNFT 1.5.0" (it moved there from the constructor, #677).
      */
     constructor();
     /**
      * Init the class injecting the Wasm Module and link the instanced methods.
      * Every call builds its own module, so each ARToolkitNFT has its own heap
      * and filesystem.
+     * @param options `logLevel` is applied to the fresh module before the core is
+     * constructed (#677, D10), so the start-up lines follow it.
      * @return {object} the this object
      */
-    init(): Promise<this>;
+    init(options?: ARInitOptions): Promise<this>;
     setup(width: number, height: number, cameraId: number): number;
     teardown(): void;
     setupAR2(): void;
@@ -98,6 +100,28 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
     setFiltering(enableFiltering: boolean): void;
     setContinuousDetection(enabled: boolean): void;
     setDetectionInterval(ms: number): void;
+    /**
+     * Changes several runtime settings at once (#720). The patch is deep-merged into
+     * {@link getRuntimeSettings} (`ar2` field by field) and applied in one native call, which
+     * validates everything first and changes nothing on failure.
+     *
+     * `logLevel` is per controller: the level lives in the WASM module's globals, and each
+     * init() creates its own module.
+     * @param patch any subset of the settings.
+     * @throws {TypeError} on an unknown key (including the deprecated square-marker keys
+     * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`), a value of the wrong
+     * type, or a non-integer for an integer field (`logLevel`, `ar2.searchFeatureNum`,
+     * `ar2.templateSize1/2`, `ar2.searchSize`); nothing is changed.
+     * @throws {RangeError} when the values are out of range; nothing is changed.
+     */
+    configure(patch: NFTRuntimeSettingsPatch): void;
+    /**
+     * The current runtime settings (#720), with the effective values: `detectionInterval`
+     * and `ar2.searchSize` are the build's resolved defaults when they were not set, and
+     * `logLevel` is the module's current level.
+     * @return a fresh object; changing it changes nothing until passed to configure().
+     */
+    getRuntimeSettings(): NFTRuntimeSettings;
     /**
      * Returns the Emscripten HEAP offset of the square-marker detector's
      * debug image.
@@ -124,8 +148,18 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
      */
     setLogLevel(level: ARLogLevel | number): void;
     getLogLevel(): number;
+    /**
+     * Sets the near plane of the projection. Once a camera is loaded the camera lens is
+     * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+     * @param value the near plane, > 0.
+     */
     setProjectionNearPlane(value: number): void;
     getProjectionNearPlane(): number;
+    /**
+     * Sets the far plane of the projection. Once a camera is loaded the camera lens is
+     * rebuilt at once (WebARKitLib 0.12.0); before that the value is stored.
+     * @param value the far plane, > the near plane.
+     */
     setProjectionFarPlane(value: number): void;
     getProjectionFarPlane(): number;
     /**
@@ -179,8 +213,9 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
     getImageProcMode(): number;
     getCameraLens(): any;
     /**
-     * Rebuilds the camera frustum from the near and far planes. The projection setters
-     * only store the planes; they take effect on the next call to this method.
+     * Rebuilds the camera frustum from the near and far planes. Kept for compatibility:
+     * since WebARKitLib 0.12.0 the lens follows the planes, as the projection setters and
+     * configure() rebuild it themselves, so calling this changes nothing.
      */
     recalculateCameraLens(): void;
     passVideoData(videoFrame: Uint8ClampedArray, videoLuma: Uint8Array, lumaInternal: boolean): void;
@@ -205,7 +240,19 @@ export declare class ARToolkitNFT implements IARToolkitNFT_node {
      * @param {function} onError2 the error callback.
      * @return {Array<number>} an array of ids.
      */
-    addNFTMarkers(urls: Array<string>, callback: (ids: number[]) => void, onError2: (errorNumber: number) => void): Array<number>;
+    addNFTMarkers(urls: Array<string>, callback?: (ids: number[]) => void, onError2?: (errorNumber: number) => void): Array<number>;
+    /**
+     * The throwing core of {@link addNFTMarkers}. Synchronous like it (#685, D9):
+     * Node reads the files in place, so there is nothing to await.
+     * @internal Shared with the tracker facade (#720 D10); kept out of the public docs.
+     * Used by ARControllerNFT_node and nodeTargetLoader, which need the NFTLoadError.
+     * @param {Array<string>} urls paths of the descriptor files without ext
+     * @return {Array<number>} the real marker ids.
+     * @throws {NFTLoadError} `argument` for an empty list or URL, `missing` for a
+     * file that does not exist, `rejected` when the native loader refuses the
+     * markers or throws.
+     */
+    tryAddNFTMarkers(urls: Array<string>): Array<number>;
     /**
      * Mount the working directory on NODEFS_MOUNT, once per module.
      * @return {void}

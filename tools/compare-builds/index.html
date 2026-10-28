@@ -20,8 +20,9 @@
   page.
 
   The iframes load this same page with `?frame`, which does nothing but give the bundle a
-  real document URL: the bundled axios resolves relative URLs against location.href, which
-  fails on an about:blank iframe.
+  real document URL, so the bundle resolves relative URLs as it does on any page. The bundle
+  used to need this because axios resolved them against location.href, which fails on an
+  about:blank iframe; axios is gone and fetch is used now, so this is kept only as a precaution.
 -->
 <html lang="en">
   <head>

@@ -41,16 +41,22 @@ const KUVA_PRINT: ReadonlyArray<readonly [number, number]> = [
 
 async function fetchOk(url: string): Promise<Response> {
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`could not fetch ${url}: ${response.status}`);
+  if (!response.ok)
+    throw new Error(`could not fetch ${url}: ${response.status}`);
   return response;
 }
 
-export async function loadCompositeFrames(
-  scale = 1,
-): Promise<{ both: ImageData; pinballOnly: ImageData; width: number; height: number }> {
+export async function loadCompositeFrames(scale = 1): Promise<{
+  both: ImageData;
+  pinballOnly: ImageData;
+  width: number;
+  height: number;
+}> {
   const photo = await createImageBitmap(await (await fetchOk(PHOTO)).blob());
   if (photo.width !== COMPOSITE_WIDTH || photo.height !== COMPOSITE_HEIGHT) {
-    throw new Error(`${PHOTO} is ${photo.width}x${photo.height}, expected ${COMPOSITE_WIDTH}x${COMPOSITE_HEIGHT}`);
+    throw new Error(
+      `${PHOTO} is ${photo.width}x${photo.height}, expected ${COMPOSITE_WIDTH}x${COMPOSITE_HEIGHT}`,
+    );
   }
 
   const width = Math.round(COMPOSITE_WIDTH * scale);

@@ -164,6 +164,18 @@ void ARToolKitNFT::setProjectionFarPlane(const ARdouble projectionFarPlane) {
 
 ARdouble ARToolKitNFT::getProjectionFarPlane() { return this->core.getProjectionFarPlane(); }
 
+/*******************
+ * Runtime settings *
+ *******************/
+
+int ARToolKitNFT::configure(NFTRuntimeSettings settings) {
+  return this->core.configure(settings);
+}
+
+NFTRuntimeSettings ARToolKitNFT::getRuntimeSettings() {
+  return this->core.getRuntimeSettings();
+}
+
 /*****************
  * Marker loading *
  *****************/
@@ -194,7 +206,7 @@ int ARToolKitNFT::teardown() {
 /***************
  * Set Log Level
  ****************/
-void ARToolKitNFT::setLogLevel(int level) {
+void moduleSetLogLevel(int level) {
   // Guard as ARToolKit5's arwSetLogLevel does: a negative level would make
   // arLog's `logLevel < arLogLevel` test pass for every message, turning an
   // apparent "off" into maximum verbosity. The core logs with the native
@@ -204,6 +216,8 @@ void ARToolKitNFT::setLogLevel(int level) {
     webarkitLogLevel = level;
   }
 }
+
+void ARToolKitNFT::setLogLevel(int level) { moduleSetLogLevel(level); }
 
 int ARToolKitNFT::getLogLevel() { return arLogLevel; }
 

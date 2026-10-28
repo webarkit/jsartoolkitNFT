@@ -7,6 +7,7 @@
 [![Tested with Vitest](https://img.shields.io/badge/tested_with-Vitest-6E9F18.svg?logo=vitest&logoColor=white)](https://vitest.dev/)
 [![CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml)
 [![Build jsartoolkitNFT CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/webarkit/jsartoolkitNFT/graph/badge.svg)](https://codecov.io/gh/webarkit/jsartoolkitNFT)
 
 
 
@@ -58,6 +59,61 @@ Note for upgraders: `getTransformationMatrix()` now returns a fresh array for ea
 is found, instead of updating one array in place. Read it each frame rather than keeping a
 reference and expecting it to change.
 
+### Runtime settings: `configure()`
+
+`configure(patch)` changes several settings at once, on `ARControllerNFT` and `ARToolkitNFT`, in
+every build. `getRuntimeSettings()` returns all of them, with the values in effect:
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `near`, `far` | `0.1`, `1000` | Projection planes. `getCameraMatrix()` follows them at once. |
+| `continuousDetection` | `true` | As `setContinuousDetection()` above. |
+| `detectionInterval` | `300` (`0` threaded) | As `setDetectionInterval()` above, in ms. |
+| `filtering` | `true` | Pose filtering, as `setFiltering()`. |
+| `logLevel` | `ARLogLevel.Info` (1) | As `setLogLevel()`. |
+| `ar2` | see below | AR2 tracking: `trackingThresh` 5, `simThresh` 0.5, `searchFeatureNum` 16, `templateSize1` / `templateSize2` 6, `searchSize` 6 or 12, depending on the build and CPU count (the preset's choice). |
+
+```javascript
+ar.configure({ near: 1, far: 5000, ar2: { simThresh: 0.6 } });
+ar.getRuntimeSettings().far; // 5000
+```
+
+The patch is merged into the current settings (`ar2` field by field), checked, and applied in one
+step: if any value is wrong, nothing changes. An unknown key, a value of the wrong type or a
+non-integer for an integer setting throws a `TypeError`; this includes the square-marker keys
+`threshold`, `thresholdMode`, `imageProcMode` and `debugMode`, which do nothing on NFT. A value
+out of range throws a `RangeError`. The individual setters keep working as before.
+
+Behaviour changes in this release:
+
+- `getCameraMatrix()` right after initialisation is built with the near plane `0.1`, the value
+  `ARControllerNFT` always reported, instead of `0.0001`. `setProjectionNearPlane()` and
+  `setProjectionFarPlane()` now rebuild the matrix at once, so `recalculateCameraLens()` is no
+  longer needed.
+- The threaded build now filters poses by default, like the other builds, and `setFiltering()`
+  takes effect there (#692). Before, it was ignored.
+
+### Log level at initialisation
+
+`initWithDimensions()`, `initWithImage()` and `customInit()` take a last, optional
+`{ logLevel }` argument. It is applied before the native core is created, so the start-up output
+follows it:
+
+```javascript
+import { ARControllerNFT, ARLogLevel } from '@webarkit/jsartoolkit-nft'
+
+const ar = await ARControllerNFT.initWithDimensions(640, 480, 'camera_para.dat', false, {
+  logLevel: ARLogLevel.Error,
+});
+```
+
+(In the Node build, which has no `internalLuma` argument, the options are the fourth argument.)
+
+The version line is logged at `ARLogLevel.RelInfo`, so it still prints at `Error`. The camera
+parameter table that the native camera loader prints is not gated yet; it is tracked in
+[webarkit/WebARKitLib#113](https://github.com/webarkit/WebARKitLib/issues/113). The level belongs
+to each controller, since each one runs in its own WASM module.
+
 ## WASM
 
 has **WASM** embedded in a single file!
@@ -65,6 +121,295 @@ has **WASM** embedded in a single file!
 ## ZFT
 
 **JSARToolKitNFT** now supports loading NFT markers from `.zft` compressed files. This allows for faster loading times and reduced file sizes.
+
+A URL that ends in `.zft` is downloaded directly, once. A URL without an extension (`path/to/marker`) is
+checked for a `.zft` with one asynchronous request, and falls back to the `.iset`, `.fset` and `.fset3`
+files when there is none. Any HTTP error status on that check means "no `.zft`", so storage services that
+answer 403 for a missing object still work. A marker without a `.zft` logs one 404 in the console; pass
+`probeZFT: false` to skip the check (see below).
+
+## Loading NFT markers
+
+`loadNFTMarker` and `loadNFTMarkers` return a Promise that resolves with the marker ids **once the files are
+downloaded and registered**, so tracking can start right after the `await`:
+
+```javascript
+const [id] = await arController.loadNFTMarker('path/to/marker')
+const ids = await arController.loadNFTMarkers(['path/to/a', 'path/to/b'])
+```
+
+A failure rejects with an `NFTLoadError`. Its `kind` is one of `http`, `network`, `missing`, `format`,
+`rejected` or `argument`, and it carries the `url`, the HTTP `status` and the `cause` when there are any.
+`NFTLoadError` is exported from every entry point. Test `err.name === 'NFTLoadError'` rather than `instanceof`, because each bundle carries its own copy of the class.
+
+```javascript
+try {
+  await arController.loadNFTMarker('path/to/marker')
+} catch (err) {
+  if (err.name === 'NFTLoadError' && err.kind === 'http') {
+    console.error('Not found:', err.url, err.status)
+  }
+}
+```
+
+The callbacks still work but are deprecated. A call that passes a callback never rejects for a load failure (a throw from your own callback still rejects): a failure goes to
+`onError` once (or to `console.error` when there is no `onError`) and the Promise resolves `[]`.
+
+```javascript
+arController.loadNFTMarker('path/to/marker', (id) => { /* loaded */ }, (code) => { /* HTTP status, or -1 */ })
+```
+
+In the browser builds (default, `simd`, `td`) a fourth argument takes options. `signal` cancels the load, and
+`AbortSignal.timeout()` gives a timeout; an aborted load rejects with the signal's reason. `probeZFT: false`
+skips the `.zft` check for markers that have none.
+
+```javascript
+await arController.loadNFTMarker('path/to/marker', undefined, undefined, {
+  signal: AbortSignal.timeout(10000),
+  probeZFT: false,
+})
+```
+
+`fetch` replaces `XMLHttpRequest` and `axios`, so a `file://` URL no longer loads. WebAR needs a secure
+context anyway, and Cordova and Capacitor serve over a custom scheme. The Node build reads local files and has
+no `signal` or `probeZFT`; its `loadNFTMarker(s)` return an already-settled Promise. The deprecated legacy
+APIs in `build/` keep their callback-only signatures.
+
+## Tracker facade
+
+`createNFTTracker` and `createNFTTrackerWorker` wrap the core in one small API: create a tracker, add
+targets, then call `process(frame, timestampMs)` once per camera frame. `createNFTTracker` runs on the
+calling thread, and every build exports it, Node included. `createNFTTrackerWorker` runs the same tracker
+in a dedicated worker. It is in the browser builds only, and every method returns a Promise. `ARControllerNFT`
+is unchanged and keeps working.
+
+In both samples, `imageData` is a 320 × 240 frame of the camera, e.g. the video drawn (letterboxed) into a
+320 × 240 canvas and read back with `ctx.getImageData(0, 0, 320, 240)`; see
+[Projection](#projection-projectionfor-and-framegeometry) and the example below.
+
+Same thread:
+
+```javascript
+const tracker = await createNFTTracker({ width: 320, height: 240, cameraParam: 'Data/camera_para.dat' })
+const [load] = await tracker.addNFTTargets(['DataNFT/pinball'])
+const result = tracker.process(imageData, performance.now())
+```
+
+In a worker, the same calls, each returning a Promise:
+
+```javascript
+const tracker = await createNFTTrackerWorker(
+  { width: 320, height: 240, cameraParam: 'Data/camera_para.dat' },
+  { workerBase: '/dist/' },
+)
+const [load] = await tracker.addNFTTargets(['DataNFT/pinball'])
+const result = await tracker.process(imageData, performance.now())
+if (!result.skipped) { /* use result */ }
+```
+
+[`examples/ARToolkitNFT_ES6_tracker_example.html`](examples/ARToolkitNFT_ES6_tracker_example.html) is a
+complete page: camera, worker tracker and three.js. Run `npm install` first: the page imports
+`@webarkit/camera-view`, a devDependency, from `node_modules/`. Then serve the repository root with
+`python python-server.py` and open `/examples/ARToolkitNFT_ES6_tracker_example.html`.
+
+Relative URLs (`cameraParam`, the target sources, a filter `module`) resolve against the page, with
+`createNFTTrackerWorker` as with `createNFTTracker`: the wrapper resolves them before it posts them to the
+worker.
+
+### Frames and results
+
+`process()` takes an `ImageData`, an `ImageBitmap` or `{ data, width, height }` (RGBA). The frame must be
+exactly `width` × `height` of the config, and any other size throws a `RangeError`. In the worker the frame
+is transferred, not copied, so the caller's buffer is empty afterwards. A `data` view of only part of its
+buffer (a frame inside a bigger buffer, or inside WebAssembly memory) or of a `SharedArrayBuffer` is copied
+instead, and the caller keeps its buffer.
+
+`timestampMs` is your clock, normally `performance.now()`. It drives `lostTimeout` and the filters.
+
+```typescript
+interface FrameResult {
+  time: number                 // the timestampMs you passed
+  processMs: number            // time spent in process()
+  targets: { id: number; found: boolean; pose: Float64Array | null; error: number | null }[]
+  transitions: { type: 'found' | 'lost'; id: number }[]
+}
+```
+
+`pose` is a column-major 4×4 model-view matrix in millimetres, the same matrix as `matrixGL_RH` in
+`ARControllerNFT`'s events. It is ready for `Matrix4.fromArray()` in three.js.
+
+**Found and lost.** `targets` reports this frame's raw tracking. `transitions` is debounced:
+
+- `found` comes on the first tracked frame, at the start or after a `lost`;
+- `lost` comes once a target has been untracked for longer than `lostTimeout` (default `200` ms).
+
+Between the two, in the grace window, the target has `found: false` and `pose: null`, but no `lost` has
+fired yet. To keep showing the last pose until `lost`, keep it yourself.
+
+### Adding targets
+
+`addNFTTargets(sources, { origin })` loads the sources one at a time and resolves to one result per source,
+in order. A failure stays local to its source, and the call itself does not reject for a load failure:
+
+```javascript
+// { status: 'loaded', info: { id, url, widthPx, heightPx, dpi, widthMm, heightMm, origin } }
+// { status: 'error', url, reason, message }
+```
+
+| `reason` | When |
+| --- | --- |
+| `'network'` | An HTTP error, a network failure or a missing file. |
+| `'format'` | A `.zft` that fails to decompress or decode. |
+| `'capacity'` | The 20-target limit is reached. |
+| `'unknown'` | The core refused the dataset (it may be unreadable, e.g. a corrupt `.fset`), or a bad argument. |
+
+The `id`s are the core's. They stay stable for the tracker's lifetime and are never reused.
+
+**`origin`**: `'corner'` (the default) is ARToolKit's own origin, a corner of the image. `'center'` moves the
+pose's origin to the middle of the image, from `widthMm` / `heightMm` (mm = px / dpi × 25.4). That is the
+offset each app used to compute by hand.
+
+**`probeZFT`** (browser only, default `true`): as with `addNFTMarkers`, a source without an extension is
+first checked for a `.zft`, which logs a 404 for targets that have none. Pass `probeZFT: false` to skip the
+check when your targets have no `.zft`.
+
+`dispose()` cancels a load still in progress: its target is never registered, and the call rejects with
+the "disposed" error.
+
+### Projection: `projectionFor` and `FrameGeometry`
+
+`cameraMatrix` is the projection for the processing frame. `projectionFor(viewport, geometry?)` maps it onto
+what you display:
+
+```javascript
+camera.projectionMatrix.fromArray(
+  tracker.projectionFor({ width: innerWidth, height: innerHeight, fit: 'cover' }, geometry),
+)
+```
+
+`fit` is `'contain'` (the default: the whole frame shows, letterboxed) or `'cover'` (the frame fills the
+viewport, cropped). The worker tracker computes it on the page, with no round trip.
+
+The tracker does not fit the camera video into the processing frame: the camera side does. `FrameGeometry`
+says where it drew the video, so that `projectionFor` can undo the letterbox and the portrait rotation:
+
+```typescript
+interface FrameGeometry {
+  frameWidth: number; frameHeight: number             // the processing frame
+  videoWidth: number; videoHeight: number             // the source video
+  x: number; y: number; width: number; height: number // where the video was drawn
+  rotated: boolean                                    // a portrait video drawn rotated 90 degrees
+}
+```
+
+[`@webarkit/camera-view`](https://github.com/webarkit/camera-view) produces it: `CameraView.geometry`, or
+`toFrameGeometry(vw, vh, getProcessGeometry(vw, vh, false, true))`, which the example uses. The last
+argument, `floor`, rounds the sizes down to integers, so the frame size matches the canvas and its
+`ImageData` exactly (`CameraView` does the same). Without a geometry, the processing frame itself is the
+source.
+
+### Running in a worker
+
+`createNFTTrackerWorker(config, { build, workerBase })` picks the build at run time:
+
+- `td` (threaded) when the page is cross-origin isolated (COOP and COEP headers);
+- otherwise `simd` when WebAssembly SIMD is supported;
+- otherwise `default`.
+
+`build: 'default' | 'simd' | 'td'` forces one. `workerBase` is the URL of the **folder** that holds the
+worker files. Without it, that folder is the one of the script that loaded the bundle. An app that
+re-bundles the library normally passes it. Serve these files from that folder:
+
+- `NFTTracker.worker.js`
+- `NFTTracker_simd.worker.js`
+- `NFTTracker_td.worker.js`
+- `NFTTracker_td.pthread.js`, which the td worker loads itself.
+
+**Skipped frames.** One `process()` runs at a time. A call made while another is in flight resolves
+`{ skipped: true }` at once, and that frame is neither sent nor transferred. The frames are dropped, not
+queued, so feeding the tracker every camera frame never builds up latency. Ignore the skipped results.
+
+**`dispose()`** waits at most 2 seconds for the worker to dispose its tracker, then terminates the worker
+anyway. Calls still pending reject with a "disposed" error. It never rejects, and every call returns the same
+Promise, which settles once the worker is terminated: after `await tracker.dispose()` a new tracker never
+runs alongside the old worker.
+
+**Threaded build limitation.** On `td`, `dispose()` skips the native teardown, because the threaded
+detector's destructor joins a pthread and hangs
+([#695](https://github.com/webarkit/jsartoolkitNFT/issues/695)). The WASM memory is freed only when the
+worker, or the page for `createNFTTracker`, goes away. The worker tracker terminates its worker, so its
+memory is freed.
+
+**Vite dev server.** Serving the UMD bundles (`ARToolkitNFT*.js`) through the Vite dev server transforms
+them: it rewrites the filter module's `import()` and turns the file into an ES module, which then fails as a
+`<script>`. Serve them from `public/` or a CDN. See the comment in `vite.lib.config.mjs`.
+
+### Pose filters
+
+The `filter` setting chooses how poses are smoothed:
+
+| `filter` | What it does |
+| --- | --- |
+| `'native'` (default) | The core's own filter. The poses match `ARControllerNFT`'s for a controller created with `internalLuma = true`, which is the luma path the tracker uses. |
+| `{ type: 'oneEuro', minCutOff, beta, warmUp }` | A OneEuro filter per target, reset on `lost`. Defaults `0.0001`, `0.01`, `0`. |
+| `'none'` | No filtering. |
+| `{ module, options }` | Your own filter, loaded by URL (see below). |
+| `{ create, options }` | Your own factory function, on the same thread only. |
+
+Every filter other than `'native'` turns the core's filter off, so poses are never filtered twice. Set it
+with `filter`, at creation or with `configure({ filter })`. The `filtering` key throws a `TypeError` here,
+and so does a key the form does not take (a misspelt `minCutoff`, say). A `{ create }` factory is called
+once when the filter is set, as a module's is, so a factory that throws fails there, not on a later frame.
+
+The `'native'` filter resets on the core's first untracked frame, not on the tracker's `lost`
+(`lostTimeout`). The tracker cannot change that. The JS filters (OneEuro and yours) reset on `lost`.
+
+**OneEuro** uses [`@webarkit/oneeurofilter-ts`](https://github.com/webarkit/oneeurofilter-ts), bundled into
+the library, with its units: time in milliseconds, and `minCutOff` and `beta` passed to it unchanged, as
+ARnft does. aframe-nft divides `minCutOff` by 1000 before passing it, so divide a value taken from
+aframe-nft's settings by 1000 to get the same filter here. OneEuro expects increasing timestamps, so pass
+`performance.now()`. A time that does not increase returns the previous output. `warmUp` passes the first
+`warmUp` poses after a reset through unfiltered, while still feeding them to the filter.
+
+To compare the poses of two cores frame by frame, pin `Date.now`: AR2 seeds `rand` with `time(NULL)`.
+
+## Writing a pose filter
+
+A filter module is an **ES module** that exports `createPoseFilter`. The tracker creates one filter per
+target and calls `reset()` when that target is lost:
+
+```typescript
+interface PoseFilter {
+  filter(timeMs: number, pose: Float64Array): Float64Array // the 16 pose values in, filtered values out
+  reset(): void
+}
+interface PoseFilterModule {
+  createPoseFilter(options: unknown): PoseFilter
+}
+```
+
+[`examples/filters/average-filter.js`](examples/filters/average-filter.js) is a template to copy:
+
+```javascript
+const tracker = await createNFTTrackerWorker({
+  width: 320, height: 240, cameraParam: 'Data/camera_para.dat',
+  // A relative path resolves against the page, here a page in examples/.
+  filter: { module: 'filters/average-filter.js', options: { weight: 0.5 } },
+})
+```
+
+- The module is loaded with `import()`, so it must be an ES module reachable by URL.
+- A module that fails to load, has no `createPoseFilter`, or whose `createPoseFilter` throws rejects
+  `createNFTTracker`, `createNFTTrackerWorker` or `configure({ filter })` with an `Error` naming the URL.
+- **COEP.** On a cross-origin isolated page (needed by the `td` build), a module served from another origin
+  needs CORS plus a `Cross-Origin-Resource-Policy` header. A same-origin module needs nothing.
+- `{ create: (options) => PoseFilter }` passes a factory directly, but only on the same thread: a function
+  cannot be posted to a worker, so `createNFTTrackerWorker` rejects it with a `TypeError`.
+- `filter()` must return exactly 16 values, or `process()` throws a `TypeError`. The tracker copies the
+  returned pose, so a filter may reuse one output array across calls.
+- A malformed `filter` config (an unknown string, an unknown `type`, an empty `module`) is refused with a
+  `TypeError` before anything loads: `createNFTTracker`, `createNFTTrackerWorker` and `configure({ filter })`
+  reject with it.
 
 
 ## ES6
@@ -81,6 +426,47 @@ From 1.6.0 version has **Pthread** experimental feature 🎉 🎉 🎉
 
 ❕❕❕ ATTENTION: this feature is experimental, and it is not well tested yet. It is not recommended to use it in production.
 You need to set up a server with COOP and COEP headers to use this feature. Read this [Emscripten article](https://emscripten.org/docs/porting/pthreads.html#pthreads-support)
+
+### Threaded build: deploying
+
+The threaded build is two files, and the worker must be served **next to the script that loads the bundle**: with a plain `<script>` tag that is the bundle's own folder, with `importScripts()` it is the calling worker script's folder, and in re-bundled apps it is the folder of the last `<script src>` on the page (details below):
+
+- `dist/ARToolkitNFT_td.js`: the bundle you load;
+- `dist/ARToolkitNFT_td.worker.js`: the pthread worker (an ES module worker, fixed name), which the bundle loads from the folder above.
+
+Serve them with the `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers.
+
+With a `<script>` tag, keep the two files side by side and you are done. With `importScripts()` in a worker, the bundle URL is the URL of the worker script that calls `importScripts` (the same rule as webpack), so `ARToolkitNFT_td.worker.js` must sit in the folder of that calling worker script, not next to the bundle. If you **re-bundle** it with your own build (Vite, webpack, ...), the bundler copies `ARToolkitNFT_td.js` into your output but does not know about the worker, so copy it next to the output bundle yourself:
+
+```javascript
+// Vite: vite.config.js, with vite-plugin-static-copy
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+
+export default {
+  plugins: [
+    viteStaticCopy({
+      targets: [{ src: 'node_modules/@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_td.worker.js', dest: 'assets' }],  // = build.assetsDir
+    }),
+  ],
+}
+```
+
+The worker is resolved next to the script that loads the bundle. For module or re-bundled apps that is the last `<script src>` on the page, which in a Vite production build is `/assets/index-*.js`, hence `dest: 'assets'`. (A `public/` placement works only with `build.assetsDir: ''`.) In `vite dev` the location differs (under `/src/`), so test the threaded build with `vite build && vite preview`.
+
+```javascript
+// webpack: webpack.config.js, with copy-webpack-plugin
+const CopyPlugin = require('copy-webpack-plugin')
+
+module.exports = {
+  plugins: [
+    new CopyPlugin({
+      patterns: [{ from: 'node_modules/@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_td.worker.js', to: '.' }],
+    }),
+  ],
+}
+```
+
+The symptom of a missing worker is a 404 for `ARToolkitNFT_td.worker.js` in the network panel, and detection that never finishes.
 
 ## InternalLuma with simd
 Enable internal luma calculation with simd instructions. This feature is experimental and it is not well tested yet. Set the internalLuma flag to true in the ARControllerNFT constructor, or in the `initWithDimensions / initWithImage` static methods.
@@ -132,13 +518,16 @@ import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 The package ships an [`exports`](https://nodejs.org/api/packages.html#package-entry-points) map, so the right build is picked automatically per environment:
 
 - in a **browser / bundler**, `@webarkit/jsartoolkit-nft` resolves to the UMD build (`dist/ARToolkitNFT.js`);
-- in **Node.js**, it resolves to the Node build (`dist/ARToolkitNFT_node.js`, CommonJS).
+- in **Node.js**, it resolves to the Node build: `dist/ARToolkitNFT_node.js` (CommonJS) for `require()`, and `dist/ARToolkitNFT_node.mjs` (a thin ES module wrapper over it) for `import`.
 
 ```javascript
 // browser / bundler -> UMD build
 import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
 
-// Node.js -> Node build
+// Node.js, ES module -> Node build, named imports
+import { ARToolkitNFT, ARControllerNFT } from '@webarkit/jsartoolkit-nft'
+
+// Node.js, CommonJS -> Node build
 const { ARToolkitNFT, ARControllerNFT } = require('@webarkit/jsartoolkit-nft')
 ```
 
@@ -155,7 +544,7 @@ You can also target a specific build through a named subpath:
 import '@webarkit/jsartoolkit-nft/simd'
 ```
 
-The raw `dist/*` deep-imports (e.g. `@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_simd.js`) still work, and `<script>` / `importScripts` URLs are not affected by the `exports` map. In Node the build is CommonJS, so use `require()` or a default `import` (named `import { ... }` will come with a future ESM build).
+The raw `dist/*` deep-imports (e.g. `@webarkit/jsartoolkit-nft/dist/ARToolkitNFT_simd.js`) still work, and `<script>` / `importScripts` URLs are not affected by the `exports` map. In Node both `require()` and a named `import { ... }` work: the ES module entry re-exports the CommonJS bundle, so the two share one instance of every class.
 
 **Note**: All the examples in the repository are running the code inside a Worker (don't use it in the main thread!). So i you need to import the library in a worker you need to use the `importScripts` function.
 
@@ -247,6 +636,8 @@ pip install -i https://test.pypi.org/simple/ artoolkitnft
 
 - Live camera capture example (the current example processes a single static image)
 - `getKpmImageWidth` / `getKpmImageHeight` (temporarily excluded from the build)
+- `configure()` / `getRuntimeSettings()` (see [Runtime settings](#runtime-settings-configure)).
+  The plane setters already rebuild the camera matrix, as in JS.
 
 The bindings are built and tested on **Linux**, **macOS** (Apple silicon) and **Windows** via the
 [Build and Test Python Bindings](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/build-python.yml)
@@ -265,6 +656,8 @@ For full build-from-source instructions, local development tips and the publishi
 When you install the package, Node automatically resolves to this build (see the [`exports`](#using-the-library-) map):
 
 ```javascript
+// ES module — named imports resolve to dist/ARToolkitNFT_node.mjs
+import { ARControllerNFT } from '@webarkit/jsartoolkit-nft';
 // CommonJS — resolves to the Node build in Node.js
 const { ARControllerNFT } = require('@webarkit/jsartoolkit-nft');
 // or the explicit subpath
@@ -323,7 +716,6 @@ init();
 
 ### Not yet implemented
 
-- Native ESM consumption (`import { ARControllerNFT } from ...`): the Node build is CommonJS for now, so use `require()` or a default `import`
 - Live camera capture (the examples process a single static image)
 
 Runnable examples live in [`examples/node`](examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
@@ -364,6 +756,11 @@ npm run test:vitest   # the browser suite only
 npm run test:node     # the Node suite only
 npm run test:coverage # the browser suite, with an lcov report scoped to src/
 ```
+
+CI runs the browser suite with coverage and uploads `coverage/lcov.info` to
+[Codecov](https://codecov.io/gh/webarkit/jsartoolkitNFT). The report covers `src/` only: the
+WebAssembly core and the committed bundles in `build/` are not instrumented. Coverage is
+reported, not enforced, so a drop does not fail a PR.
 
 `npm run test:vitest:watch` re-runs on change while you work. To run a single file, pass its
 path:
@@ -410,7 +807,7 @@ See the examples folder for details.
 
 ## Build the project 🔨
 
-Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more information. Note that you only need to build the library if you make changes to the C++ core or TypeScript source code. There are three ways to build the project:
+Go to the [wiki](https://github.com/kalwalt/jsartoolkitNFT/wiki#build-instructions) for more information. Note that you only need to build the library if you make changes to the C++ core or TypeScript source code. The TypeScript bundles in `dist/` are built with [Vite](https://vite.dev) (`npm run build-ts`), which also runs `tsc` for the declarations in `types/`. There are three ways to build the project:
 
 
 ### 1. Natively on Host (Windows, macOS, Linux)

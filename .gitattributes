@@ -1,0 +1,29 @@
+# Normalise line endings: text files are LF in the repository and in every
+# working tree, whatever core.autocrlf says. This matches prettier's default
+# (endOfLine: lf) and the Linux CI.
+* text=auto eol=lf
+
+# Binary assets. Listed explicitly so git never tries to convert them.
+*.wasm binary
+*.fset binary
+*.fset3 binary
+*.iset binary
+*.zft binary
+*.dat binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.glb binary
+*.bin binary
+*.mp4 binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.lib binary
+
+# Generated bundles: keep them text (so eol still normalises) but collapse
+# them in diffs.
+dist/*.js -diff
+build/*.js -diff

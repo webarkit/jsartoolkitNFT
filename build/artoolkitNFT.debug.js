@@ -115,7 +115,7 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     this.videoLumaPointer = null;
     this._bwpointer = undefined;
     this._lumaCtx = undefined;
-    this.version = "1.14.0";
+    this.version = "1.15.0";
     console.info("JsartoolkitNFT ", this.version);
     console.warn("This library is deprecated, use the ES6 version instead!! It will be removed in a future release.");
     if (typeof cameraPara === "string") {
@@ -326,13 +326,13 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     const self = this;
     artoolkitNFT.addNFTMarkers(this.id, markerURLs, function(ids) {
       self.nftMarkerCount += ids.length;
-      onSuccess(ids);
+      if (onSuccess) onSuccess(ids);
     }, onError);
   };
   ARControllerNFT.prototype.loadNFTMarker = function(markerURL, onSuccess, onError) {
     if (markerURL) {
       this.loadNFTMarkers([ markerURL ], function(ids) {
-        onSuccess(ids[0]);
+        if (onSuccess) onSuccess(ids[0]);
       }, onError);
     } else {
       if (onError) {
@@ -810,152 +810,349 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     }
   }
   let marker_count = 0;
-  function addNFTMarker(arId, url, callback, onError) {
-    const mId = marker_count++;
-    const prefix = "/markerNFT_" + mId;
-    const filename1 = prefix + ".fset";
-    const filename2 = prefix + ".iset";
-    const filename3 = prefix + ".fset3";
-    ajax(url + ".fset", filename1, function() {
-      ajax(url + ".iset", filename2, function() {
-        ajax(url + ".fset3", filename3, function() {
-          var nftMarker = Module._addNFTMarker(arId, prefix);
-          if (callback) callback(nftMarker);
-        }, function(errorNumber) {
-          if (onError) onError(errorNumber);
-        });
-      }, function(errorNumber) {
-        if (onError) onError(errorNumber);
-      });
-    }, function(errorNumber) {
-      if (onError) onError(errorNumber);
+  /**
+        Loads one NFT marker and calls `callback` with its id: addNFTMarkers with a
+        single URL, with the same outcome rules.
+
+        @param {number} arId The id of the ARControllerNFT.
+        @param {string} url A URL prefix without extension, or a URL ending in `.zft`.
+        @param {function} callback Called with the marker id on success.
+        @param {function} onError Called once with the HTTP status or -1 on failure.
+    */ function addNFTMarker(arId, url, callback, onError) {
+    // It called Module._addNFTMarker, which no binding defines, so it threw
+    // after its downloads and could never succeed. It now goes through the batch
+    // loader (#685, D13).
+    addNFTMarkers(arId, [ url ], function(ids) {
+      if (callback) callback(ids[0]);
+    }, onError);
+  }
+  /**
+        Loads NFT markers and registers them in one native call.
+
+        Each URL is either a prefix without extension, for which `<url>.zft` is
+        probed first and `.fset`, `.iset` and `.fset3` are loaded when there is no
+        archive, or a URL ending in `.zft`, which is loaded directly.
+
+        Each call has exactly one outcome: `callback(ids)` on success, or
+        `onerror(code)` once on failure, with the HTTP status of the failed
+        download, or -1 for anything else (a network failure, a `.zft` that cannot be
+        decompressed, a native refusal such as an unreadable dataset). Without
+        `onerror` the failure goes to `console.error`. A failed call registers none
+        of its markers and leaves none of its files in the Emscripten FS.
+
+        Known limitation of the legacy native loader (#685, D17): each call replaces
+        the markers loaded by earlier calls, and the ids restart at 0 on every call.
+        All or nothing holds within one call only. A call with 20 or more URLs is
+        refused with `onerror(-1)` before any request.
+
+        @param {number} arId The id of the ARControllerNFT.
+        @param {string[]} urls The markers to load, one URL per marker.
+        @param {function} callback Called with the array of marker ids on success.
+        @param {function} onerror Called once with the HTTP status or -1 on failure.
+    */ function addNFTMarkers(arId, urls, callback, onerror) {
+    runMarkerBatch(arId, urls).then(function(ids) {
+      if (callback) callback(ids);
+    }, function(e) {
+      // The old loader called `onerror` from an `(filename, errorNumber)`
+      // handler that `ajax` invoked as `errorCallback(status)`: the status
+      // landed in `filename`, so `onerror` always got undefined, once per
+      // failed file, and it was called without a check. It is now called
+      // once, with the HTTP status or -1.
+      if (onerror) onerror(errorCode(e)); else console.error(e);
     });
   }
-  function addNFTMarkers(arId, urls, callback, onerror) {
-    const prefixes = [];
-    let pending = urls.length * 3;
-    const onSuccess = filename => {
-      pending -= 1;
-      if (pending === 0) {
-        const vec = new Module.StringList;
-        const markerIds = [];
-        for (let i = 0; i < prefixes.length; i++) {
-          vec.push_back(prefixes[i]);
-        }
-        const ret = Module._addNFTMarkers(arId, vec);
-        for (let i = 0; i < ret.size(); i++) {
-          markerIds.push(ret.get(i));
-        }
-        console.log("add nft marker ids: ", markerIds);
-        if (callback) callback(markerIds);
-      }
-    };
-    const onError = (filename, errorNumber) => {
-      console.log("failed to load: ", filename);
-      onerror(errorNumber);
-    };
-    const loadZFT = prefix => {
-      const marker_num = prefix.substring(11);
-      const prefixTemp = "/tempMarkerNFT_" + marker_num;
-      const response = Module._decompressZFT(prefix, prefixTemp);
-      // The archive is no longer needed once decompressed: free it from MEMFS.
-      try {
-        FS.unlink(prefix + ".zft");
-      } catch (e) {}
-      if (response !== 1) {
-        onError(prefix + ".zft");
-        return;
-      }
-      let contentIsetUint8 = FS.readFile(prefixTemp + ".iset");
-      let contentFsetUint8 = FS.readFile(prefixTemp + ".fset");
-      let contentFset3Uint8 = FS.readFile(prefixTemp + ".fset3");
-      FS.unlink(prefixTemp + ".iset");
-      FS.unlink(prefixTemp + ".fset");
-      FS.unlink(prefixTemp + ".fset3");
-      let hexStrIset = Uint8ArrayToStr(contentIsetUint8);
-      let hexStrFset = Uint8ArrayToStr(contentFsetUint8);
-      let hexStrFset3 = Uint8ArrayToStr(contentFset3Uint8);
-      let contentIset = new Uint8Array(hexStrIset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-      let contentFset = new Uint8Array(hexStrFset.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-      let contentFset3 = new Uint8Array(hexStrFset3.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-      writeByteArrayToFS(prefix + ".fset", contentFset, function() {});
-      writeByteArrayToFS(prefix + ".iset", contentIset, function() {});
-      writeByteArrayToFS(prefix + ".fset3", contentFset3, function() {});
-    };
-    const onSuccessZFT = function() {
-      loadZFT(arguments[1]);
-      onSuccess();
-    };
+  // The legacy native loader's PAGES_MAX (emscripten/ARToolKitJS.cpp).
+  const LEGACY_MAX_MARKERS = 20;
+  /**
+        The batch behind addNFTMarkers, with the algorithm of the TypeScript loader
+        (src/ARToolkitNFTBase.ts) minus its options: load every marker
+        concurrently, then register them in one `_addNFTMarkers`, or clean up and
+        throw one error.
+    */ async function runMarkerBatch(arId, urls) {
+    if (!Array.isArray(urls) || urls.length === 0) {
+      throw loadError(-1, "addNFTMarkers: no marker URLs given");
+    }
+    // Compatibility: the old loader built every file name as `url + '.fset'`,
+    // which coerced a one-element array such as ['…/pinball'] to its string,
+    // so that form loaded. Callers that pass the marker that way are
+    // unwrapped, not refused. The legacy APIs take URL prefixes only: longer
+    // arrays never loaded.
+    urls = urls.map(function(url) {
+      return Array.isArray(url) && url.length === 1 ? url[0] : url;
+    });
     for (let i = 0; i < urls.length; i++) {
-      const url = urls[i];
-      const prefix = "/markerNFT_" + marker_count;
-      prefixes.push(prefix);
-      const filename1 = prefix + ".fset";
-      const filename2 = prefix + ".iset";
-      const filename3 = prefix + ".fset3";
-      const filename4 = prefix + ".zft";
-      let type = checkZFT(url + ".zft");
-      if (type) {
-        pending -= 2;
-        ajax(url + ".zft", filename4, onSuccessZFT, onError.bind(filename4), prefix);
-      } else {
-        ajax(url + ".fset", filename1, onSuccess.bind(filename1), onError.bind(filename1), prefix);
-        ajax(url + ".iset", filename2, onSuccess.bind(filename2), onError.bind(filename2), prefix);
-        ajax(url + ".fset3", filename3, onSuccess.bind(filename3), onError.bind(filename3), prefix);
+      // An empty URL would probe the page itself (D15).
+      if (typeof urls[i] !== "string" || urls[i] === "") {
+        throw loadError(-1, "addNFTMarkers: empty marker URL");
       }
-      marker_count += 1;
+    }
+    // D17: the legacy native loader runs exit(-1) at 20 markers per call,
+    // which terminates the module. The call is refused before any request.
+    if (urls.length >= LEGACY_MAX_MARKERS) {
+      throw loadError(-1, "addNFTMarkers: the legacy API loads at most " + (LEGACY_MAX_MARKERS - 1) + " markers per call, got " + urls.length);
+    }
+    // The call's own controller: it stops the other downloads on the first
+    // failure.
+    const controller = new AbortController;
+    const written = [];
+    let ok = false;
+    try {
+      const prefixes = await settleAll(urls.map(function(url) {
+        return loadMarkerSource(url, controller.signal, written);
+      }), function() {
+        controller.abort();
+      });
+      const ids = registerMarkers(arId, prefixes);
+      if (ids.length < prefixes.length) {
+        throw loadError(-1, "The native core registered " + ids.length + " of " + prefixes.length + " markers: a dataset may be " + "unreadable. The core's log says which.");
+      }
+      ok = true;
+      return ids;
+    } finally {
+      // All or nothing: a failed call leaves no file behind. Safe here
+      // because settleAll waited for every download (D11).
+      if (!ok) unlinkAll(written);
     }
   }
-  function checkZFT(url) {
-    let isZFT = null;
-    let request = new XMLHttpRequest;
-    request.open("GET", url, false);
-    // `false` makes the request synchronous
-    request.send(null);
-    if (request.status === 200) {
-      isZFT = true;
-    } else if (request.status === 404) {
-      isZFT = false;
-    }
-    return isZFT;
-  }
-  function Uint8ArrayToStr(array) {
-    let out, i, len, c;
-    let char2, char3;
-    out = "";
-    len = array.length;
-    i = 0;
-    while (i < len) {
-      c = array[i++];
-      switch (c >> 4) {
-       case 0:
-       case 1:
-       case 2:
-       case 3:
-       case 4:
-       case 5:
-       case 6:
-       case 7:
-        // 0xxxxxxx
-        out += String.fromCharCode(c);
-        break;
-
-       case 12:
-       case 13:
-        // 110x xxxx   10xx xxxx
-        char2 = array[i++];
-        out += String.fromCharCode(((c & 31) << 6) | (char2 & 63));
-        break;
-
-       case 14:
-        // 1110 xxxx  10xx xxxx  10xx xxxx
-        char2 = array[i++];
-        char3 = array[i++];
-        out += String.fromCharCode(((c & 15) << 12) | ((char2 & 63) << 6) | ((char3 & 63) << 0));
-        break;
+  /**
+        Registers the prefixes in one native call and reads back the ids. `vec` and
+        `ret` are Embind objects, deleted here: the old loader leaked both.
+    */ function registerMarkers(arId, prefixes) {
+    const vec = new Module.StringList;
+    let ret;
+    try {
+      for (let i = 0; i < prefixes.length; i++) {
+        vec.push_back(prefixes[i]);
       }
+      try {
+        ret = Module._addNFTMarkers(arId, vec);
+      } catch (cause) {
+        // D16: a throw from the native side (an abort, an Emscripten
+        // ExitStatus) is a refusal like any other.
+        throw loadError(-1, "The native core threw while registering the markers", cause);
+      }
+      const ids = [];
+      for (let i = 0; i < ret.size(); i++) {
+        ids.push(ret.get(i));
+      }
+      return ids;
+    } finally {
+      vec.delete();
+      if (ret && ret.delete) ret.delete();
+    }
+  }
+  /**
+        Loads one marker into the FS and returns its prefix. It knows nothing of
+        the other markers of the call and aborts none of them.
+    */ async function loadMarkerSource(url, signal, written) {
+    // Taken before any request, so prefixes stay unique across concurrent
+    // calls and are never reused.
+    const prefix = "/markerNFT_" + marker_count++;
+    if (extensionOf(url) === "zft") {
+      const bytes = await fetchBinary(url, signal);
+      storeZFT(bytes, prefix, url, written);
+      return prefix;
+    }
+    const zftUrl = url + ".zft";
+    let res;
+    try {
+      res = await fetch(zftUrl, {
+        signal
+      });
+    } catch (cause) {
+      if (signal.aborted) throw cause;
+      throw loadError(-1, "Network error fetching " + zftUrl, cause);
+    }
+    if (res.ok) {
+      // The probe's own bytes are used: one request, not a probe and then a
+      // second download of the same archive.
+      const bytes = await readBody(res, zftUrl, signal);
+      storeZFT(bytes, prefix, zftUrl, written);
+      return prefix;
+    }
+    // D6: any HTTP error status means "no .zft" and falls back to the three
+    // files, not only 404. S3 and GCS answer 403 for a missing object when
+    // listing is not allowed, and those markers load through this fallback.
+    if (res.body) res.body.cancel().catch(function() {});
+    await loadFiles([ "fset", "iset", "fset3" ].map(function(ext) {
+      return {
+        url: url + "." + ext,
+        path: prefix + "." + ext
+      };
+    }), signal, written);
+    return prefix;
+  }
+  /**
+        Downloads files concurrently and stores each at its path. On the first
+        failure the others are aborted, and it still waits for all of them (D11).
+    */ async function loadFiles(files, signal, written) {
+    const controller = new AbortController;
+    const onAbort = function() {
+      controller.abort();
+    };
+    if (signal.aborted) onAbort(); else signal.addEventListener("abort", onAbort);
+    try {
+      await settleAll(files.map(async function(file) {
+        const bytes = await fetchBinary(file.url, controller.signal);
+        storeFile(bytes, file.path, written);
+      }), onAbort);
+    } finally {
+      signal.removeEventListener("abort", onAbort);
+    }
+  }
+  /**
+        Decompresses a `.zft` archive and writes the marker's `.fset`, `.iset` and
+        `.fset3` under `prefix`. Any failure throws, so nothing is registered: the
+        old loader reported a failed decompression and then registered anyway.
+    */ function storeZFT(bytes, prefix, url, written) {
+    const archive = prefix + ".zft";
+    const temp = "/tempMarkerNFT_" + prefix.substring("/markerNFT_".length);
+    const extensions = [ "fset", "iset", "fset3" ];
+    storeFile(bytes, archive, written);
+    // Recorded before decompressing: a failed decompression may leave some of
+    // them behind, and the batch's cleanup removes them.
+    for (let i = 0; i < extensions.length; i++) {
+      written.push(temp + "." + extensions[i]);
+    }
+    let result;
+    try {
+      // The core takes the archive's path without ".zft" and appends it.
+      result = Module._decompressZFT(prefix, temp);
+    } catch (cause) {
+      throw loadError(-1, "Could not decompress " + url, cause);
+    } finally {
+      // The archive is no longer needed once decompressed: free it from MEMFS.
+      unlinkAll([ archive ]);
+    }
+    if (result !== 1) {
+      throw loadError(-1, "Could not decompress " + url);
+    }
+    try {
+      for (let i = 0; i < extensions.length; i++) {
+        const hex = FS.readFile(temp + "." + extensions[i]);
+        unlinkAll([ temp + "." + extensions[i] ]);
+        storeFile(hexToBytes(hex), prefix + "." + extensions[i], written);
+      }
+    } catch (cause) {
+      throw loadError(-1, "Could not decode " + url, cause);
+    }
+  }
+  /** Writes one file to the FS, recording its path first for the cleanup. */ function storeFile(bytes, path, written) {
+    written.push(path);
+    FS.writeFile(path, bytes, {
+      encoding: "binary"
+    });
+  }
+  /** Unlinks FS files, ignoring the ones that are already gone. */ function unlinkAll(paths) {
+    for (let i = 0; i < paths.length; i++) {
+      try {
+        FS.unlink(paths[i]);
+      } catch (e) {}
+    }
+  }
+  /**
+        An Error carrying the code `onerror` receives: the HTTP status, or -1.
+        The legacy API has no NFTLoadError class; the code is all it reports.
+    */ function loadError(code, message, cause) {
+    const error = new Error(message);
+    error.code = code;
+    if (cause !== undefined) error.cause = cause;
+    return error;
+  }
+  /** The code for `onerror`: the HTTP status of a failed download, or -1. */ function errorCode(e) {
+    return e && typeof e.code === "number" ? e.code : -1;
+  }
+  /**
+        Fetches a file as bytes. A non-OK response throws with the HTTP status as
+        its code; a rejected fetch throws -1, except an abort, which propagates
+        unchanged.
+    */ async function fetchBinary(url, signal) {
+    let response;
+    try {
+      response = await fetch(url, {
+        signal
+      });
+    } catch (cause) {
+      if (signal && signal.aborted) throw cause;
+      throw loadError(-1, "Network error fetching " + url, cause);
+    }
+    if (!response.ok) {
+      throw loadError(response.status, "HTTP " + response.status + " fetching " + url);
+    }
+    return readBody(response, url, signal);
+  }
+  /**
+        Reads a response body as bytes. The connection can still fail after the
+        headers arrived; that is a network failure too (-1).
+    */ async function readBody(response, url, signal) {
+    try {
+      return new Uint8Array(await response.arrayBuffer());
+    } catch (cause) {
+      if (signal && signal.aborted) throw cause;
+      throw loadError(-1, "Network error reading " + url, cause);
+    }
+  }
+  /**
+        Decodes ASCII hex (two digits per byte, either case) straight to bytes.
+        Replaces Uint8ArrayToStr + match(/.{1,2}/g) + parseInt, which built two
+        intermediate strings and an array of pair strings per descriptor file.
+    */ function hexToBytes(hex) {
+    if (hex.length % 2 !== 0) {
+      throw new RangeError("hexToBytes: odd number of hex digits");
+    }
+    const nibble = function(c) {
+      if (c >= 48 && c <= 57) return c - 48;
+      // 0-9
+      if (c >= 97 && c <= 102) return c - 87;
+      // a-f
+      if (c >= 65 && c <= 70) return c - 55;
+      // A-F
+      throw new RangeError("hexToBytes: invalid hex digit (byte " + c + ")");
+    };
+    const out = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < out.length; i++) {
+      out[i] = (nibble(hex[2 * i]) << 4) | nibble(hex[2 * i + 1]);
     }
     return out;
+  }
+  /**
+        The extension of a marker URL, without the dot: a query or a hash is not
+        part of it (`/x/pinball.zft?v=2` gives `zft`), and a dot in a directory
+        name is ignored. Read from the string, not by resolving the URL: in an
+        about:blank or about:srcdoc frame `new URL(relative, location.href)`
+        throws, while fetch resolves the same URL against the document base
+        (#736 review). Same rule as Utils.extensionOf in src/.
+    */ function extensionOf(url) {
+    const end = url.search(/[?#]/);
+    const path = end < 0 ? url : url.substring(0, end);
+    const name = path.substring(path.lastIndexOf("/") + 1);
+    const dot = name.lastIndexOf(".");
+    return dot < 0 ? "" : name.substring(dot + 1);
+  }
+  /**
+        Settles every task, calling `onFirstFailure` as soon as one fails, and then
+        resolves to all the values or rejects with the first failure.
+
+        D11: it waits for every task, aborted or not, before deciding. Rejecting on
+        the first failure, as Promise.all does, would let a download that finishes
+        late write its file after the caller has cleaned up.
+    */ async function settleAll(tasks, onFirstFailure) {
+    let failed = false;
+    let failure;
+    const results = await Promise.allSettled(tasks.map(function(task) {
+      return task.catch(function(e) {
+        if (!failed) {
+          failed = true;
+          failure = e;
+          onFirstFailure();
+        }
+        throw e;
+      });
+    }));
+    if (failed) throw failure;
+    return results.map(function(r) {
+      return r.value;
+    });
   }
   let camera_count = 0;
   function loadCamera(url, callback, errorCallback) {
@@ -976,7 +1173,15 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
       // Or a string with the camera param
       writeStringToFS(filename, url, writeCallback);
     } else {
-      ajax(url, filename, writeCallback, errorCallback);
+      // fetch replaces the XHR `ajax`, which handled only onload: a
+      // network failure never called back. errorCallback keeps its
+      // numeric payload (D16): the HTTP status, or -1 for a network
+      // failure.
+      fetchBinary(url).then(function(bytes) {
+        writeByteArrayToFS(filename, bytes, writeCallback);
+      }, function(e) {
+        if (errorCallback) errorCallback(errorCode(e)); else console.error(e);
+      });
     }
   }
   // transfer image
@@ -993,26 +1198,6 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
     });
     // console.log('FS written', target);
     callback(byteArray, prefix);
-  }
-  // Eg.
-  //	ajax('../bin/Data2/markers.dat', '/Data2/markers.dat', callback);
-  //	ajax('../bin/Data/patt.hiro', '/patt.hiro', callback);
-  function ajax(url, target, callback, errorCallback, prefix) {
-    const oReq = new XMLHttpRequest;
-    oReq.open("GET", url, true);
-    oReq.responseType = "arraybuffer";
-    // blob arraybuffer
-    oReq.onload = function() {
-      if (this.status == 200) {
-        // console.log('ajax done for ', url);
-        const arrayBuffer = oReq.response;
-        const byteArray = new Uint8Array(arrayBuffer);
-        writeByteArrayToFS(target, byteArray, callback, prefix);
-      } else {
-        errorCallback(this.status);
-      }
-    };
-    oReq.send();
   }
   /* Exports */ scope.artoolkitNFT = artoolkitNFT;
   scope.ARControllerNFT = ARControllerNFT;
@@ -1275,7 +1460,7 @@ function initActiveSegments(imports) {
   base64DecodeToExistingUint8Array(bufferView, 71044, "LBoBAH0BAAB+AQAAcgEAAH8BAACAAQAAgQEAAIIBAACDAQAAhAEAAIUBAAAAAAAACBsBAIYBAACHAQAAcgEAAIgBAACJAQAAigEAAIsBAACMAQAAAAAAACwbAQCNAQAAjgEAAHIBAACPAQAAkAEAAJEBAACSAQAAkwEAAHQAAAByAAAAdQAAAGUAAAAAAAAAZgAAAGEAAABsAAAAcwAAAGUAAAAAAAAAJQAAAG0AAAAvAAAAJQAAAGQAAAAvAAAAJQAAAHkAAAAAAAAAJQAAAEgAAAA6AAAAJQAAAE0AAAA6AAAAJQAAAFMAAAAAAAAAJQAAAGEAAAAgAAAAJQAAAGIAAAAgAAAAJQAAAGQAAAAgAAAAJQAAAEgAAAA6AAAAJQAAAE0AAAA6AAAAJQAAAFMAAAAgAAAAJQAAAFkAAAAAAAAAJQAAAEkAAAA6AAAAJQAAAE0AAAA6AAAAJQAAAFMAAAAgAAAAJQAAAHA=");
   base64DecodeToExistingUint8Array(bufferView, 71420, "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");
   base64DecodeToExistingUint8Array(bufferView, 76548, "8B8BAAgCAAAJAgAACgIAAAsCAAAMAgAADQIAAA4CAAAAAAAA4CABABgCAAAZAgAAGgIAABsCAAAcAgAAHQIAAB4CAAAAAAAAXCsBABYAAABhAgAAYgIAAAAuAQBkKwEATlN0M19fMjE0X19zaGFyZWRfY291bnRFAAAAAIQuAQCYKwEAAAAAAAEAAABcKwEAAAAAAE5TdDNfXzIxOV9fc2hhcmVkX3dlYWtfY291bnRFAAAAKC4BAMQrAQAkMAEATjEwX19jeHhhYml2MTE2X19zaGltX3R5cGVfaW5mb0UAAAAAKC4BAPQrAQC4KwEATjEwX19jeHhhYml2MTE3X19jbGFzc190eXBlX2luZm9FAAAAKC4BACQsAQC4KwEATjEwX19jeHhhYml2MTE3X19wYmFzZV90eXBlX2luZm9FAAAAKC4BAFQsAQAYLAEATjEwX19jeHhhYml2MTE5X19wb2ludGVyX3R5cGVfaW5mb0UAKC4BAIQsAQC4KwEATjEwX19jeHhhYml2MTIwX19mdW5jdGlvbl90eXBlX2luZm9FAAAAACguAQC4LAEAGCwBAE4xMF9fY3h4YWJpdjEyOV9fcG9pbnRlcl90b19tZW1iZXJfdHlwZV9pbmZvRQAAAAAAAAAELQEAYwIAAGQCAABlAgAAZgIAAGcCAAAoLgEAEC0BALgrAQBOMTBfX2N4eGFiaXYxMjNfX2Z1bmRhbWVudGFsX3R5cGVfaW5mb0UA8CwBAEAtAQB2AAAA8CwBAEwtAQBEbgAA8CwBAFgtAQBiAAAA8CwBAGQtAQBjAAAA8CwBAHAtAQBoAAAA8CwBAHwtAQBhAAAA8CwBAIgtAQBzAAAA8CwBAJQtAQB0AAAA8CwBAKAtAQBpAAAA8CwBAKwtAQBqAAAA8CwBALgtAQBsAAAA8CwBAMQtAQBtAAAA8CwBANAtAQB4AAAA8CwBANwtAQB5AAAA8CwBAOgtAQBmAAAA8CwBAPQtAQBkAAAAAAAAAOgrAQBjAgAAaAIAAGUCAABmAgAAaQIAAGoCAABrAgAAbAIAAAAAAABILgEAYwIAAG0CAABlAgAAZgIAAGkCAABuAgAAbwIAAHACAAAoLgEAVC4BAOgrAQBOMTBfX2N4eGFiaXYxMjBfX3NpX2NsYXNzX3R5cGVfaW5mb0UAAAAAAAAAAKQuAQBjAgAAcQIAAGUCAABmAgAAaQIAAHICAABzAgAAdAIAACguAQCwLgEA6CsBAE4xMF9fY3h4YWJpdjEyMV9fdm1pX2NsYXNzX3R5cGVfaW5mb0UAAAAAAAAASCwBAGMCAAB1AgAAZQIAAGYCAAB2AgAAAAAAAEgvAQANAAAAdwIAAHgCAAAAAAAAZC8BAA0AAAB5AgAAegIAAAAAAAAwLwEADQAAAHsCAAB8AgAAAC4BADgvAQBTdDlleGNlcHRpb24AAAAAKC4BAFQvAQAwLwEAU3Q5YmFkX2FsbG9jAAAAACguAQBwLwEASC8BAFN0MjBiYWRfYXJyYXlfbmV3X2xlbmd0aAAAAAAAAAAAoC8BAAwAAAB9AgAAfgIAACguAQCsLwEAMC8BAFN0MTFsb2dpY19lcnJvcgAAAAAA0C8BAAwAAAB/AgAAfgIAACguAQDcLwEAoC8BAFN0MTJsZW5ndGhfZXJyb3IAAAAAAAAAAAQwAQAMAAAAgAIAAH4CAAAoLgEAEDABAKAvAQBTdDEyb3V0X29mX3JhbmdlAAAAAAAuAQAsMAEAU3Q5dHlwZV9pbmZv");
-  base64DecodeToExistingUint8Array(bufferView, 77888, "AQAAACEEAADoBgAAzQsAAK8NAAD//////f////7///8AIAAAAAAAAAU=");
+  base64DecodeToExistingUint8Array(bufferView, 77888, "AQAAAAEAAAAhBAAA6AYAAM0LAACvDQAA//////3////+////ACAAAAU=");
   base64DecodeToExistingUint8Array(bufferView, 77940, "EAE=");
   base64DecodeToExistingUint8Array(bufferView, 77964, "DgEAAA0BAABwQAE=");
   base64DecodeToExistingUint8Array(bufferView, 77988, "Ag==");
@@ -1527,7 +1712,7 @@ function asmFunc(imports) {
   HEAP32[20485] = 65536;
   HEAP32[20484] = 153264;
   HEAP32[20477] = 42;
-  HEAP32[20486] = HEAP32[19480];
+  HEAP32[20486] = HEAP32[19481];
  }
  
  function arSetDebugMode($0, $1) {
@@ -10819,23 +11004,23 @@ function asmFunc(imports) {
  }
  
  function webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($0) {
-  $1219($0, 78400, 77896, 77892);
+  $1219($0, 78400, 77900, 77896, 1);
  }
  
  function webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($0, $1) {
-  $1220($0, $1, 24515, 79073, 77896, 77892);
+  $1220($0, $1, 24515, 79073, 77900, 77896, 1);
  }
  
  function webarkitLOGi_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20int_29($0, $1) {
-  $1220($0, $1, 24520, 79251, 77896, 77892);
+  $1220($0, $1, 24520, 79251, 77900, 77896, 1);
  }
  
  function webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__29($0) {
-  $1219($0, 79394, 77904, 77900);
+  $1219($0, 79394, 77908, 77904, 3);
  }
  
  function webarkitLOGe_28std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char___20const__2c_20char_20const__29($0, $1) {
-  $1220($0, $1, 24515, 80083, 77904, 77900);
+  $1220($0, $1, 24515, 80083, 77908, 77904, 3);
  }
  
  function webarkit__webarkitVideoLumaFinal_28webarkit__WebARKitLumaInfo___29($0) {
@@ -14461,7 +14646,7 @@ function asmFunc(imports) {
   HEAP32[$11 + 220 >> 2] = $1;
   block : {
    if (!std____2____hash_iterator_std____2____hash_node_std____2____hash_value_type_int_2c_20arController__2c_20void_____20std____2____hash_table_std____2____hash_value_type_int_2c_20arController__2c_20std____2____unordered_map_hasher_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20true__2c_20std____2____unordered_map_equal_int_2c_20std____2____hash_value_type_int_2c_20arController__2c_20std____2__equal_to_int__2c_20std____2__hash_int__2c_20true__2c_20std____2__allocator_std____2____hash_value_type_int_2c_20arController_____find_int__28int_20const__29(81468, $11 + 220 | 0)) {
-    emscripten__val_20emscripten__val__internalCallWithPolicy__28emscripten__internal__EM_INVOKER_KIND_293_2c_20emscripten__internal__WithPolicies___2c_20emscripten__val_2c_20int___28emscripten___EM_VAL__2c_20char_20const__2c_20int__29($0, 77908);
+    emscripten__val_20emscripten__val__internalCallWithPolicy__28emscripten__internal__EM_INVOKER_KIND_293_2c_20emscripten__internal__WithPolicies___2c_20emscripten__val_2c_20int___28emscripten___EM_VAL__2c_20char_20const__2c_20int__29($0, 77912);
     break block;
    }
    $38 = std____2__unordered_map_int_2c_20arController_2c_20std____2__hash_int__2c_20std____2__equal_to_int__2c_20std____2__allocator_std____2__pair_int_20const_2c_20arController_____operator_5b_5d_28int_20const__29($11 + 220 | 0);
@@ -14470,7 +14655,7 @@ function asmFunc(imports) {
    emscripten__val__array_28_29($11 + 200 | 0);
    block1 : {
     if (HEAP32[$38 + 268 >> 2] <= ($2 | 0)) {
-     emscripten__val_20emscripten__val__internalCallWithPolicy__28emscripten__internal__EM_INVOKER_KIND_293_2c_20emscripten__internal__WithPolicies___2c_20emscripten__val_2c_20int___28emscripten___EM_VAL__2c_20char_20const__2c_20int__29($0, 77912);
+     emscripten__val_20emscripten__val__internalCallWithPolicy__28emscripten__internal__EM_INVOKER_KIND_293_2c_20emscripten__internal__WithPolicies___2c_20emscripten__val_2c_20int___28emscripten___EM_VAL__2c_20char_20const__2c_20int__29($0, 77916);
      break block1;
     }
     HEAP32[$11 + 140 >> 2] = -1082130432;
@@ -15966,13 +16151,15 @@ function asmFunc(imports) {
        $3 = std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char____basic_string_5babi_ne200100_5d_0__28char_20const__29($11 + 20 | 0, 47346);
        $1 = __stack_pointer - 16 | 0;
        __stack_pointer = $1;
-       $4 = HEAP32[$3 >> 2];
-       $5 = HEAP8[$3 + 11 | 0];
-       HEAP32[$1 + 4 >> 2] = HEAP32[19475];
-       HEAP32[$1 + 8 >> 2] = HEAP32[19476];
-       HEAP32[$1 + 12 >> 2] = $2;
-       HEAP32[$1 >> 2] = ($5 | 0) < 0 ? $4 : $3;
-       emscripten_asm_const_int(80265, 24520, $1 | 0) | 0;
+       if (HEAP32[19473] <= 3) {
+        $4 = HEAP32[$3 >> 2];
+        $5 = HEAP8[$3 + 11 | 0];
+        HEAP32[$1 + 4 >> 2] = HEAP32[19476];
+        HEAP32[$1 + 8 >> 2] = HEAP32[19477];
+        HEAP32[$1 + 12 >> 2] = $2;
+        HEAP32[$1 >> 2] = ($5 | 0) < 0 ? $4 : $3;
+        emscripten_asm_const_int(80265, 24520, $1 | 0) | 0;
+       }
        __stack_pointer = $1 + 16 | 0;
        std____2__basic_string_char_2c_20std____2__char_traits_char__2c_20std____2__allocator_char_____basic_string_28_29($3);
       }
@@ -25592,9 +25779,9 @@ function asmFunc(imports) {
   void_20emscripten__function_int_2c_20int__28char_20const__2c_20int_20_28__29_28int_29_29(43133, 65);
   _embind_register_function(40778, 2, 51856, 51864, 110, 66, 0, 0);
   _embind_register_function(44876, 5, 51872, 51892, 111, 67, 0, 0);
-  void_20emscripten__constant_int__28char_20const__2c_20int_20const__29(46023, 77908);
-  void_20emscripten__constant_int__28char_20const__2c_20int_20const__29(46052, 77916);
-  void_20emscripten__constant_int__28char_20const__2c_20int_20const__29(45144, 77912);
+  void_20emscripten__constant_int__28char_20const__2c_20int_20const__29(46023, 77912);
+  void_20emscripten__constant_int__28char_20const__2c_20int_20const__29(46052, 77920);
+  void_20emscripten__constant_int__28char_20const__2c_20int_20const__29(45144, 77916);
   HEAP32[$1 + 8 >> 2] = 0;
   void_20emscripten__constant_int__28char_20const__2c_20int_20const__29(45844, $0);
   HEAP32[$1 + 8 >> 2] = 1;
@@ -73818,31 +74005,35 @@ function asmFunc(imports) {
   HEAP32[$1 >> 2] = HEAP32[$1 + 4 >> 2];
  }
  
- function $1219($0, $1, $2, $3) {
-  var $4 = 0, $5 = 0, $6 = 0;
-  $4 = __stack_pointer - 16 | 0;
-  __stack_pointer = $4;
-  $5 = HEAP32[$0 >> 2];
-  $6 = HEAP8[$0 + 11 | 0];
-  HEAP32[$4 + 4 >> 2] = HEAP32[$3 >> 2];
-  HEAP32[$4 + 8 >> 2] = HEAP32[$2 >> 2];
-  HEAP32[$4 >> 2] = ($6 | 0) < 0 ? $5 : $0;
-  emscripten_asm_const_int($1 | 0, 24511, $4 | 0) | 0;
-  __stack_pointer = $4 + 16 | 0;
+ function $1219($0, $1, $2, $3, $4) {
+  var $5 = 0, $6 = 0;
+  $5 = __stack_pointer - 16 | 0;
+  __stack_pointer = $5;
+  if (HEAP32[19473] <= ($4 | 0)) {
+   $4 = HEAP32[$0 >> 2];
+   $6 = HEAP8[$0 + 11 | 0];
+   HEAP32[$5 + 4 >> 2] = HEAP32[$3 >> 2];
+   HEAP32[$5 + 8 >> 2] = HEAP32[$2 >> 2];
+   HEAP32[$5 >> 2] = ($6 | 0) < 0 ? $4 : $0;
+   emscripten_asm_const_int($1 | 0, 24511, $5 | 0) | 0;
+  }
+  __stack_pointer = $5 + 16 | 0;
  }
  
- function $1220($0, $1, $2, $3, $4, $5) {
-  var $6 = 0, $7 = 0, $8 = 0;
-  $6 = __stack_pointer - 16 | 0;
-  __stack_pointer = $6;
-  $7 = HEAP32[$0 >> 2];
-  $8 = HEAP8[$0 + 11 | 0];
-  HEAP32[$6 + 4 >> 2] = HEAP32[$5 >> 2];
-  HEAP32[$6 + 8 >> 2] = HEAP32[$4 >> 2];
-  HEAP32[$6 + 12 >> 2] = $1;
-  HEAP32[$6 >> 2] = ($8 | 0) < 0 ? $7 : $0;
-  emscripten_asm_const_int($3 | 0, $2 | 0, $6 | 0) | 0;
-  __stack_pointer = $6 + 16 | 0;
+ function $1220($0, $1, $2, $3, $4, $5, $6) {
+  var $7 = 0, $8 = 0;
+  $7 = __stack_pointer - 16 | 0;
+  __stack_pointer = $7;
+  if (HEAP32[19473] <= ($6 | 0)) {
+   $6 = HEAP32[$0 >> 2];
+   $8 = HEAP8[$0 + 11 | 0];
+   HEAP32[$7 + 4 >> 2] = HEAP32[$5 >> 2];
+   HEAP32[$7 + 8 >> 2] = HEAP32[$4 >> 2];
+   HEAP32[$7 + 12 >> 2] = $1;
+   HEAP32[$7 >> 2] = ($8 | 0) < 0 ? $6 : $0;
+   emscripten_asm_const_int($3 | 0, $2 | 0, $7 | 0) | 0;
+  }
+  __stack_pointer = $7 + 16 | 0;
  }
  
  function _ZN17compiler_builtins3int4sdiv3Div3div17he78fc483e41d7ec7E($0, $1, $2) {

@@ -27,7 +27,12 @@ for (const variant of VARIANTS) {
 
     beforeAll(async () => {
       const { ARControllerNFT } = await variant.load();
-      ar = await ARControllerNFT.initWithDimensions(VIDEO_WIDTH, VIDEO_HEIGHT, CAMERA_PARAM, true);
+      ar = await ARControllerNFT.initWithDimensions(
+        VIDEO_WIDTH,
+        VIDEO_HEIGHT,
+        CAMERA_PARAM,
+        true,
+      );
       const ids = await loadMarkers(ar, [MARKER_PINBALL, MARKER_KUVA]);
       expect(ids).toEqual([0, 1]);
     }, 150_000);
@@ -38,8 +43,15 @@ for (const variant of VARIANTS) {
 
     it("refuses a load that would exceed PAGES_MAX markers in total", async () => {
       const batch = Array(PAGES_MAX - 1).fill(MARKER_KUVA);
-      const ids = await loadMarkers(ar, batch);
-      expect(ids).toEqual([]);
+      // A refusal is a failure (#685): the callback-style controller reports it
+      // through onError, which loadMarkers turns into a rejection...
+      await expect(loadMarkers(ar, batch)).rejects.toThrow();
+      // ...and the toolkit's Promise rejects with kind "rejected".
+      const tk = ar.artoolkitNFT;
+      await expect(tk.addNFTMarkers(batch)).rejects.toMatchObject({
+        name: "NFTLoadError",
+        kind: "rejected",
+      });
       // The two loaded markers are still addressable, and nothing past them is.
       expect(ar.getNFTMarker(1)).toMatchObject({ id: 1 });
       expect(ar.getNFTMarker(2)).toBe(-3);

@@ -46,12 +46,15 @@
       "src/index_simd.ts",
       "src/index_td.ts",
       "src/index.ts",
+      "src/ARControllerNFTBase.ts",
       "src/ARControllerNFT_simd.ts",
       "src/ARControllerNFT_td.ts",
       "src/ARControllerNFT.ts",
+      "src/ARToolkitNFTBase.ts",
       "src/ARToolkitNFT_simd.ts",
       "src/ARToolkitNFT_td.ts",
       "src/ARToolkitNFT.ts",
+      "src/NFTLoadError.ts",
       "src/Utils.ts"
     ],
     "out": "docs"

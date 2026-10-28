@@ -33,35 +33,99 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
-import axios, { AxiosResponse } from "axios";
+import { NFTLoadError } from "./NFTLoadError";
 
 export default class Utils {
-  static async fetchRemoteData(url: string): Promise<Uint8Array> {
+  /**
+   * Fetches a file as bytes. Uses fetch alone (no module needed) so it can be
+   * unit-tested and reused. A non-OK response is an "http" NFTLoadError; a
+   * rejected fetch is "network", except an abort, which propagates unchanged so
+   * callers can tell cancellation from failure.
+   */
+  static async fetchBinary(
+    url: string,
+    signal?: AbortSignal,
+  ): Promise<Uint8Array> {
+    let response: Response;
     try {
-      const response: AxiosResponse<any> = await axios.get(url, {
-        responseType: "arraybuffer",
+      response = await fetch(url, { signal });
+    } catch (cause) {
+      if (signal?.aborted) throw cause;
+      throw new NFTLoadError("network", `Network error fetching ${url}`, {
+        url,
+        cause,
       });
-      return new Uint8Array(response.data);
-    } catch (error) {
-      throw new Error("Error in Utils.fetchRemoteData: ", error);
+    }
+    if (!response.ok) {
+      throw new NFTLoadError(
+        "http",
+        `HTTP ${response.status} fetching ${url}`,
+        { url, status: response.status },
+      );
+    }
+    return Utils.readBody(response, url, signal);
+  }
+
+  /**
+   * Reads a response body as bytes. The connection can still fail after the
+   * headers arrived (a reset mid-download); that is a "network" NFTLoadError
+   * too, so a Promise-style failure is always an NFTLoadError or the abort
+   * reason, as documented. An abort propagates unchanged.
+   */
+  static async readBody(
+    response: Response,
+    url: string,
+    signal?: AbortSignal,
+  ): Promise<Uint8Array> {
+    try {
+      return new Uint8Array(await response.arrayBuffer());
+    } catch (cause) {
+      if (signal?.aborted) throw cause;
+      throw new NFTLoadError("network", `Network error reading ${url}`, {
+        url,
+        cause,
+      });
     }
   }
 
-  static async fetchRemoteDataCallback(
-    url: string,
-    callback: any,
-  ): Promise<any> {
-    try {
-      const response: any = await axios
-        .get(url, { responseType: "arraybuffer" })
-        .then((response: any) => {
-          const data = new Uint8Array(response.data);
-          callback(response);
-        });
-      return response;
-    } catch (error) {
-      throw new Error("Error in Utils.fetchRemoteDataCallback: ", error);
+  /**
+   * Decodes ASCII hex (two digits per byte, either case) straight to bytes.
+   * Replaces Uint8ArrayToStr + match(/.{1,2}/g) + parseInt, which built two
+   * intermediate strings and an array of pair strings per descriptor file.
+   */
+  static hexToBytes(hex: Uint8Array): Uint8Array {
+    if (hex.length % 2 !== 0) {
+      throw new RangeError("hexToBytes: odd number of hex digits");
     }
+    const nibble = (c: number): number => {
+      if (c >= 48 && c <= 57) return c - 48; // 0-9
+      if (c >= 97 && c <= 102) return c - 87; // a-f
+      if (c >= 65 && c <= 70) return c - 55; // A-F
+      throw new RangeError(`hexToBytes: invalid hex digit (byte ${c})`);
+    };
+    const out = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < out.length; i++) {
+      out[i] = (nibble(hex[2 * i]) << 4) | nibble(hex[2 * i + 1]);
+    }
+    return out;
+  }
+
+  /**
+   * The extension of a marker URL, without the dot. A query or a hash is not
+   * part of it (`/x/pinball.fset?v=2` gives `fset`), and a dot in a directory
+   * name is ignored (`/a.b/pinball` gives `""`).
+   *
+   * Read from the string, not by resolving the URL: in an `about:blank` or
+   * `about:srcdoc` frame, `new URL(relative, location.href)` throws, while
+   * `fetch` resolves the same URL against the document base. Resolving only
+   * to read the extension made such a load fail as "argument" (#736 review).
+   */
+  static extensionOf(url: string): string {
+    const end = url.search(/[?#]/);
+    const path = end < 0 ? url : url.substring(0, end);
+    const name = path.substring(path.lastIndexOf("/") + 1);
+    const dot = name.lastIndexOf(".");
+    return dot < 0 ? "" : name.substring(dot + 1);
   }
 
   static string2Uint8Data(string: string): Uint8Array {
@@ -72,59 +136,6 @@ export default class Utils {
     return data;
   }
 
-  static Uint8ArrayToStr(array: any): string {
-    let out, i, len, c;
-    let char2, char3;
-
-    out = "";
-    len = array.length;
-    i = 0;
-    while (i < len) {
-      c = array[i++];
-      switch (c >> 4) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-          // 0xxxxxxx
-          out += String.fromCharCode(c);
-          break;
-        case 12:
-        case 13:
-          // 110x xxxx   10xx xxxx
-          char2 = array[i++];
-          out += String.fromCharCode(((c & 0x1f) << 6) | (char2 & 0x3f));
-          break;
-        case 14:
-          // 1110 xxxx  10xx xxxx  10xx xxxx
-          char2 = array[i++];
-          char3 = array[i++];
-          out += String.fromCharCode(
-            ((c & 0x0f) << 12) | ((char2 & 0x3f) << 6) | ((char3 & 0x3f) << 0),
-          );
-          break;
-      }
-    }
-
-    return out;
-  }
-
-  static checkZFT(url: string): boolean {
-    const request = new XMLHttpRequest();
-    request.open("GET", url, false); // `false` makes the request synchronous
-    request.send(null);
-
-    if (request.status === 200) {
-      return true;
-    } else if (request.status === 404) {
-      return false;
-    }
-    return false;
-  }
   /**
    * Stores data in the Emscripten filesystem.
    * Note: FS is provided by emscripten and valid data must be in binary format encoded as Uint8Array

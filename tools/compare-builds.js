@@ -19,7 +19,8 @@
  *   for example /dist/ARToolkitNFT.js; the file at the same path under the repository
  *   is the one hashed and checked against what the server sends. --threaded compares only
  *   the found set and the pose of the last frame of each scenario (see scenarios.js); use
- *   it for ARToolkitNFT_td.js, whose 602.ARToolkitNFT_td.js chunk must sit next to it.
+ *   it for ARToolkitNFT_td.js, whose ARToolkitNFT_td.worker.js must sit next to it (an old
+ *   webpack build's *.ARToolkitNFT_td.js chunk is found too, so it can still be compared).
  *   --threaded --strict plays the threaded runs the same way (same waits after each frame)
  *   but compares every record, as the single-thread comparisons do. It only holds when the
  *   threaded build repeats itself frame by frame, so check that first by comparing the old
@@ -89,11 +90,18 @@ function nodeBundleFiles(bundle) {
   return [{ name: bundle, file }];
 }
 
-/** The files of a browser bundle, by server path: the bundle and, threaded, its chunk. */
+/** The files of a browser bundle, by server path: the bundle and, threaded, its worker. */
 function browserBundleFiles(url, threaded) {
   const urls = [url];
   if (threaded) {
-    urls.push(`${path.posix.dirname(url)}/602.${path.posix.basename(url)}`);
+    const dir = path.posix.dirname(url);
+    const base = path.posix.basename(url);
+    const worker = `${dir}/${base.replace(/\.js$/, "")}.worker.js`;
+    const onDisk = (u) =>
+      fs.existsSync(path.join(REPO_ROOT, ...decodeURIComponent(u).split("/")));
+    // The Vite build writes ARToolkitNFT_td.worker.js; the webpack build wrote a numbered
+    // chunk, 602.ARToolkitNFT_td.js. Fall back to it so an old build can be compared (#741).
+    urls.push(onDisk(worker) ? worker : `${dir}/602.${base}`);
   }
   return urls.map((u) => {
     const file = path.join(REPO_ROOT, ...decodeURIComponent(u).split("/"));

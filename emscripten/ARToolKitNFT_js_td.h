@@ -10,6 +10,13 @@
 
 static int MARKER_INDEX_OUT_OF_BOUNDS = -3;
 
+/**
+ * Module.setLogLevel(level): sets the module's log level before any instance exists, so
+ * init() can silence the core constructor's own output (#677, #720). Same guard as
+ * ARToolKitNFT::setLogLevel, which calls it.
+ */
+void moduleSetLogLevel(int level);
+
 // Zero pose for markers that are not found. float here, so JS gets a Float32Array; the
 // single-thread binding's is int (drift, kept as it is).
 static std::array<float, 12> zeros = {}; // Zero-initialized array
@@ -61,6 +68,11 @@ public:
     void setFiltering(bool enableFiltering);
     void setContinuousDetection(bool enabled);
     void setDetectionInterval(double ms);
+
+    // Runtime settings (#720): forwarded to the core, which validates everything first and
+    // changes nothing on failure. @return 0, or -1 with nothing changed.
+    int configure(NFTRuntimeSettings settings);
+    NFTRuntimeSettings getRuntimeSettings();
 
 private:
     // arhandle keeps a pointer to the core's paramLT, so it is deleted before the

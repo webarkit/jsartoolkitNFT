@@ -1,4 +1,4 @@
-import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel } from "./abstractions/CommonInterfaces";
+import { INFTMarkerInfo, IImageObj, INFTMarker, ARLogLevel, NFTEventListener, NFTEvent, NFTRuntimeSettings, NFTRuntimeSettingsPatch, ARInitOptions } from "./abstractions/CommonInterfaces";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 export declare class ARControllerNFT implements AbstractARControllerNFT {
     private id;
@@ -74,9 +74,11 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param {number} width
      * @param {number} height
      * @param {string} cameraParam
+     * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+     * so the start-up output follows it (#677). Per controller in JS.
      * @return {Promise<ARControllerNFT>} this
      */
-    static initWithDimensions(width: number, height: number, cameraParam: string): Promise<ARControllerNFT>;
+    static initWithDimensions(width: number, height: number, cameraParam: string, options?: ARInitOptions): Promise<ARControllerNFT>;
     /** The static method **initWithImage** is the start of your app.
      *  Define it with an HTML element like a video or a static Image
      *  and the camera parameter file path. As with **initWithDimensions** it return a Promise
@@ -94,9 +96,11 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      *  ```
      * @param {image} image
      * @param {string} cameraParam
+     * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+     * so the start-up output follows it (#677). Per controller in JS.
      * @return {Promise<ARControllerNFT>} this
      */
-    static initWithImage(image: IImageObj, cameraParam: string): Promise<ARControllerNFT>;
+    static initWithImage(image: IImageObj, cameraParam: string, options?: ARInitOptions): Promise<ARControllerNFT>;
     /** The static method **customInit** is the start of your app.
      *  This method is only for advanced users.
      *  Define it with the width and height of the video stream,
@@ -122,9 +126,11 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param {number} height
      * @param {string} cameraParam
      * @param {function} callback
+     * @param {ARInitOptions} [options] `logLevel` is applied before the core is constructed,
+     * so the start-up output follows it (#677). Per controller in JS.
      * @return {Promise<ARControllerNFT>} this
      */
-    static customInit(width: number, height: number, cameraParam: string, callback: () => void): Promise<ARControllerNFT>;
+    static customInit(width: number, height: number, cameraParam: string, callback: () => void, options?: ARInitOptions): Promise<ARControllerNFT>;
     set width(width: number);
     get width(): number;
     set height(height: number);
@@ -132,10 +138,13 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
     set cameraParam(cameraParam: string);
     get cameraParam(): string;
     /**
-     * This is one of the most important method inside ARControllerNFT. It detect the marker
-     * and dispatch internally with the getNFTMarker event listener the NFTMarkerInfo
-     * struct object of the tracked NFT Markers.
-     * @param {image} image data
+     * Runs one tracking step on the given frame: copies the image to the WASM heap,
+     * detects the loaded NFT markers and updates the state of every marker registered
+     * with trackNFTMarkerId(). For each marker found it dispatches a "getNFTMarker"
+     * event carrying the NFTMarkerInfo and the pose; for a tracked marker that has
+     * not been seen for longer than the lost threshold it dispatches "lostNFTMarker"
+     * once, with the last known pose (see MarkerLostTracker).
+     * @param {IImageObj} image The frame to process (video, canvas, image or raw pixel data).
      * @return {void}
      */
     process(image: IImageObj): void;
@@ -146,14 +155,14 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     detectNFTMarker(): number;
     /**
-     * Adds the given NFT marker ID to the index of tracked IDs.
-     * Sets the markerWidth for the pattern marker to markerWidth.
-     * Used by process() to implement continuous tracking,
-     * keeping track of the marker's transformation matrix
-     * and customizable marker widths.
+     * Adds the given NFT marker ID to the set of tracked IDs, or returns the existing
+     * entry if the ID is already tracked. Used by process() to implement continuous
+     * tracking: the entry keeps the marker's transformation matrices and its
+     * visibility in the current and previous frame.
      * @param {number} id ID of the NFT marker to track.
-     * @param {number} markerWidth The width of the marker to track.
-     * @return {Object} The marker tracking object.
+     * @param {number} [markerWidth] Width of the marker; overrides the width of an
+     *   already tracked entry, and falls back to defaultMarkerWidth for a new one.
+     * @return {INFTMarker} The marker tracking object (the same object on every call for a given ID).
      */
     trackNFTMarkerId(id: number, markerWidth?: number): INFTMarker;
     /**
@@ -177,28 +186,39 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * Add an event listener on this ARControllerNFT for the named event, calling the callback function
      * whenever that event is dispatched.
      * Possible events are:
-     * - getNFTMarker - dispatched whenever process() finds a NFT marker
-     * - lostNFTMarker - dispatched whenever process() lost a visible NFT marker
+     * - getNFTMarker - dispatched by process() for every NFT marker found in the frame
+     * - lostNFTMarker - dispatched by process() once a tracked NFT marker has been out of
+     *   view for longer than the lost threshold (a single missed frame is not a loss)
      * - load - dispatched when the ARControllerNFT is ready to use (useful if passing in a camera URL in the constructor)
+     *
+     * Listeners are kept in an array, not a set: registering the same callback twice
+     * makes it fire twice per event, and each removeEventListener() call drops one
+     * registration.
+     * Listeners added through on() (EventEmitter) are notified too, after these.
      * @param {string} name Name of the event to listen to.
-     * @param {function} callback Callback function to call when an event with the given name is dispatched.
+     * @param {NFTEventListener} callback Callback function to call when an event with the given name is dispatched.
      */
-    addEventListener(name: string, callback: object): void;
+    addEventListener(name: string, callback: NFTEventListener): void;
     /**
-     * Remove an event listener from the named event.
+     * Remove an event listener from the named event. Only the first registration of
+     * the callback is removed; a callback registered twice needs two calls. Safe to
+     * call from inside a listener while the event is being dispatched: the current
+     * dispatch still reaches every listener that was registered when it started.
      * @param {string} name Name of the event to stop listening to.
-     * @param {function} callback Callback function to remove from the listeners of the named event.
+     * @param {NFTEventListener} callback Callback function to remove from the listeners of the named event.
      */
-    removeEventListener(name: string, callback: object): void;
+    removeEventListener(name: string, callback: NFTEventListener): void;
     /**
-     * Dispatches the given event to all registered listeners on event.name.
-     * @param {Object} event Event to dispatch.
+     * Dispatches the given event to all listeners registered on event.name, in
+     * registration order, with `this` bound to the controller. The listener list is
+     * snapshotted before the loop, so a listener that removes itself (or adds or
+     * removes other listeners) during dispatch does not change which listeners the
+     * current dispatch reaches; such changes apply from the next dispatch.
+     * The event is then re-emitted on the internal EventEmitter for listeners
+     * registered through on().
+     * @param {NFTEvent} event Event to dispatch.
      */
-    dispatchEvent(event: {
-        name: string;
-        target: any;
-        data?: object;
-    }): void;
+    dispatchEvent(event: NFTEvent): void;
     /**
      * Sets up the square-marker detector's debug image: enables debug mode
      * and keeps the image's address.
@@ -235,8 +255,9 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     getTransformationMatrix(): Float64Array;
     /**
-     * Returns the projection matrix computed from camera parameters for the ARControllerNFT,
-     * as of initialisation or the last call to recalculateCameraLens().
+     * Returns the projection matrix computed from camera parameters for the ARControllerNFT.
+     * It follows the near and far planes: it is built with them from initialisation on, and
+     * rebuilt by setProjectionNearPlane(), setProjectionFarPlane() and configure().
      * @return {Float64Array} The 16-element WebGL camera matrix for the ARControllerNFT camera parameters.
      */
     getCameraMatrix(): Float64Array;
@@ -288,8 +309,9 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     getLogLevel(): number;
     /**
-     * Sets the value of the near plane of the camera.
-     * @param {number} value the value of the near plane
+     * Sets the value of the near plane of the camera. The camera lens follows at once, and
+     * getCameraMatrix() returns the rebuilt matrix (WebARKitLib 0.12.0).
+     * @param {number} value the value of the near plane, > 0
      * @return {number} 0 (void)
      */
     setProjectionNearPlane(value: number): void;
@@ -299,8 +321,9 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     getProjectionNearPlane(): number;
     /**
-     * Sets the value of the far plane of the camera.
-     * @param {number} value the value of the far plane
+     * Sets the value of the far plane of the camera. The camera lens follows at once, and
+     * getCameraMatrix() returns the rebuilt matrix (WebARKitLib 0.12.0).
+     * @param {number} value the value of the far plane, > the near plane
      * @return {number} 0 (void)
      */
     setProjectionFarPlane(value: number): void;
@@ -310,11 +333,42 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     getProjectionFarPlane(): number;
     /**
-     * Rebuilds the camera frustum from the near and far planes set with
-     * setProjectionNearPlane() and setProjectionFarPlane(), which only store them.
-     * getCameraMatrix() returns the rebuilt matrix afterwards.
+     * Rebuilds the camera frustum from the near and far planes. Kept for compatibility:
+     * since WebARKitLib 0.12.0 the lens follows the planes, as setProjectionNearPlane(),
+     * setProjectionFarPlane() and configure() rebuild it themselves, so calling this
+     * changes nothing.
      */
     recalculateCameraLens(): void;
+    /**
+     * Changes several runtime settings at once (#720): the planes, the detection policy,
+     * filtering, the log level and the AR2 tracking parameters. The patch is deep-merged into
+     * {@link getRuntimeSettings} (`ar2` field by field) and applied in one native call, which
+     * validates everything first and changes nothing on failure. getCameraMatrix() reflects
+     * new planes at once.
+     *
+     * `logLevel` is per controller: the level lives in the WASM module's globals, and each
+     * controller's init() creates its own module. The core takes 0..4 (or -1 for "leave it"),
+     * so a level above 4 is refused with a RangeError, except the controller's current level:
+     * that counts as no change, so a getRuntimeSettings() round trip succeeds at any level,
+     * a silenced one included. Set a level above 4 with setLogLevel() or the init option.
+     * @example
+     * ar.configure({ near: 1, far: 5000, ar2: { simThresh: 0.6 } });
+     * @param patch any subset of the settings.
+     * @throws {TypeError} on an unknown key (including the deprecated square-marker keys
+     * `threshold`, `thresholdMode`, `imageProcMode`, `debugMode`), a value of the wrong
+     * type, or a non-integer for an integer field (`logLevel`, `ar2.searchFeatureNum`,
+     * `ar2.templateSize1/2`, `ar2.searchSize`); nothing is changed.
+     * @throws {RangeError} when the values are out of range; nothing is changed.
+     */
+    configure(patch: NFTRuntimeSettingsPatch): void;
+    /**
+     * The current runtime settings (#720), with the effective values: `detectionInterval`
+     * and `ar2.searchSize` are the build's resolved defaults when they were not set, and
+     * `logLevel` is this controller's current level.
+     * @return a fresh object; changing it changes nothing until passed to configure().
+     */
+    getRuntimeSettings(): NFTRuntimeSettings;
+    private refreshCameraMatrix;
     /**
      * Sets the square-marker labeling threshold mode (auto/manual).
      * @deprecated Has no effect on NFT tracking: only the square-marker labeling
@@ -348,15 +402,35 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      */
     getThreshold(): number;
     /**
-     * Loads an NFT marker from the given URL or data string
-     * @param {string} urlOrData - The URL prefix or data of the NFT markers to load.
+     * Loads one NFT marker. See {@link loadNFTMarkers} for the callback rule.
+     * @param {string} markerURL - Path of the descriptor files without extension,
+     * relative to the working directory.
+     * @param {function} onSuccess - Called with the marker id.
+     * @param {function} onError - Called with -1 on failure.
+     * @return {Promise<number[]>} The ids, in a settled Promise.
      */
-    loadNFTMarker(markerURL: string, onSuccess: (ids: number) => void, onError: (err: any) => void): void;
+    loadNFTMarker(markerURL: string, onSuccess?: (id: number) => void, onError?: (code: number) => void): Promise<number[]>;
     /**
-     * Loads an array of NFT markers from the given URLs or data string
-     * @param {string} urlOrData - The array of URLs prefix or data of the NFT markers to load.
+     * Loads an array of NFT markers.
+     *
+     * The callback rule (#685, D8): a call that passes a callback never rejects
+     * because of a load failure. `onError` gets the code (-1), or `console.error`
+     * is used when there is none, and the Promise resolves `[]`. A call with no
+     * callbacks rejects with an NFTLoadError. A throw from the caller's own
+     * callback rejects the Promise and does not reach `onError`.
+     *
+     * D9: this is deliberately not `async`. Node reads the files in place, so
+     * the work is synchronous, and the callbacks fire before the method returns,
+     * as before. A script that calls `process()` right after `loadNFTMarker()`
+     * keeps working. The returned Promise is already settled. `withCallbacks` is
+     * not used, because it would defer the callbacks to a microtask.
+     * @param {Array<string>} markerURLs - Paths without extension, relative to the
+     * working directory.
+     * @param {function} onSuccess - Called with the ids.
+     * @param {function} onError - Called with -1 on failure.
+     * @return {Promise<number[]>} The ids, in a settled Promise.
      */
-    loadNFTMarkers(markerURLs: any, onSuccess: any, onError: any): void;
+    loadNFTMarkers(markerURLs: Array<string>, onSuccess?: (ids: number[]) => void, onError?: (code: number) => void): Promise<number[]>;
     /**
      * Sets the square-marker detector's image processing mode (frame or
      * field).
@@ -422,11 +496,6 @@ export declare class ARControllerNFT implements AbstractARControllerNFT {
      * @param data Uint8Array
      */
     setGrayData(data: Uint8Array): void;
-    /**
-     * Used internally by ARControllerNFT, it permit to add methods to this.
-     * @return {any} ARControllerNFT
-     */
-    private converter;
     /**
      * This function init the ARControllerNFT with the necessary parmeters and variables.
      * Don't call directly this but instead instantiate a new ARControllerNFT.

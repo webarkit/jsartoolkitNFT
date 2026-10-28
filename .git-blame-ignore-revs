@@ -1,0 +1,9 @@
+# Commits that only reformat code. `git blame` skips them, so a line is
+# attributed to the commit that last changed what it does.
+# GitHub's blame view reads this file on its own. For a local clone, run once:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# Only list commits that change formatting and nothing else, and merge
+# their PR with a merge commit: a squash or rebase merge changes the hash.
+
+# style: format the tree with prettier (#733)
+a1ce4e06cff34cd4c3245ec246fe6a8053022a91

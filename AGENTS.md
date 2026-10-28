@@ -74,8 +74,12 @@ docker exec emscripten-jsartoolkitnft npm run build
 sufficient — and much faster — when the change is link-time only, such as an emcc flag or
 something in `js/*.api.js` (which is injected via `--pre-js`).
 
-**TypeScript** — `npm run build-ts`, run on the host. It bundles `src/**` with webpack into
-`dist/` and emits declarations into `types/`.
+**TypeScript** — `npm run build-ts`, run on the host. `tools/build-ts.mjs` runs one `vite build`
+per bundle (`vite.lib.config.mjs`: three UMD browser bundles, the CommonJS Node bundle) into
+`dist/`, writes the thin ES module wrapper `dist/ARToolkitNFT_node.mjs` (#577), then runs
+`tsc --emitDeclarationOnly` into `types/`. The threaded build also emits its pthread worker as
+`dist/ARToolkitNFT_td.worker.js`: a fixed name, to be served next to `ARToolkitNFT_td.js`.
+`npm run dev-ts` is a minified, source-map-less watch build.
 
 **Debug tracing** — `node tools/makem.js --debug-logs` defines `DEBUG`, which switches on the
 `ARLOGd()` calls in WebARKitLib. Opt-in only: `ARLOGd` is `#ifdef DEBUG` in `ARUtil/log.h`, so
@@ -125,9 +129,26 @@ There are **two parallel implementations of the same API**, and a fix often belo
 The legacy file is injected at link time via `--pre-js`, so changing it requires a WASM
 relink, not just `build-ts`.
 
-Variants of the TypeScript entry point (`ARToolkitNFT.ts`, `_simd`, `_td`, `_node`) are
-near-identical by design. A change to one usually needs applying to all four — keep them
-structurally aligned so diffs stay readable.
+The three browser builds (default, `_simd`, `_td`) share one implementation per class:
+
+| File | Holds |
+|---|---|
+| `src/ARToolkitNFTBase.ts` | the WASM wrapper's code, once |
+| `src/ARControllerNFTBase.ts` | the controller's code, once |
+| `src/ARToolkitNFT.ts`, `_simd`, `_td` | a subclass that names its build's module factory and the argument of its native constructor |
+| `src/ARControllerNFT.ts`, `_simd`, `_td` | a subclass that names its build's `ARToolkitNFT`, and declares the public constructor overloads and static factories (`initWithDimensions`, `initWithImage`, `customInit`), whose types name that class |
+
+A browser change therefore goes in the base class. A variant file may hold only those
+build-specific values, plus an override whose sole purpose is per-build JSDoc, as `_td` does
+for `setDetectionInterval`. Subclasses must declare no instance fields: with ESNext class
+fields, a field declared in a subclass is reset to `undefined` after the base constructor sets
+it. Each entry point reaches only its own factory, so each Vite bundle still contains only
+its own WASM build.
+
+The Node build is still a separate copy: `ARToolkitNFT_node.ts` and `ARControllerNFT_node.ts`
+differ in more than file access (EventEmitter events, no `internalLuma`, synchronous loading).
+A change to the browser classes may need applying there too. #734 stays open for folding them
+into the base classes.
 
 ---
 
@@ -143,8 +164,17 @@ npm run format-check
 - **`tests/vitest/`**, in a real Chromium. It drives `src/` (what `dist/` ships) through marker
   loading and detection on a real photo. It also detects the pinball marker once with every
   committed browser artifact in `build/`, checks each ES6 module's runtime exports, and
-  smoke-tests the `dist/ARToolkitNFT.js` bundle.
+  smoke-tests the `dist/ARToolkitNFT.js` bundle. A spec that instantiates the threaded build
+  (any loop over `VARIANTS`, or a td worker) must be listed in `THREADED` in `vitest.config.ts`:
+  each td module reserves a 1 GB shared memory, and such specs run in parallel exhaust the
+  browser's resources and hang the run.
 - **`tests/node/`**: the Node build, with `node --test`.
+
+CI does not call `npm test`. It runs `npm run test:coverage` and then `npm run test:node`, the
+same two suites, so that Vitest writes `coverage/lcov.info` for Codecov (#580). If you change
+the `test` script, change the Tests step in `.github/workflows/CI.yml` too. Coverage uses the
+istanbul provider, which instruments `src/` only: v8 slowed the legacy builds' tests until they
+timed out.
 
 A green run means every artifact loads and detects a marker in one fixed photo. It does not
 measure tracking quality: stability, jitter, or loss and recovery on a moving camera. When
@@ -163,7 +193,7 @@ Put the test where the method is used:
 
 | New code | Test goes in |
 |---|---|
-| A method in `src/` browser entry points (default, `_simd`, `_td`) | `tests/vitest/controller.test.ts`, or a focused `tests/vitest/<feature>.test.ts`. Loop over `VARIANTS` from `tests/vitest/variants.ts` when the behaviour should hold on every browser build. |
+| A method in `src/` browser entry points (default, `_simd`, `_td`) | `tests/vitest/controller.test.ts`, or a focused `tests/vitest/<feature>.test.ts`. Loop over `VARIANTS` from `tests/vitest/variants.ts` when the behaviour should hold on every browser build, and then add the file to `THREADED` in `vitest.config.ts`: `VARIANTS` includes the threaded build, and threaded specs run in parallel hang the run. |
 | The same method on the Node entry point (`_node`) | `tests/node/` as well. The browser suite cannot load the Node build, so a method added to all four entry points needs both. |
 | A method in `js/artoolkitNFT.api.js` or `js/artoolkitNFT_ES6.api.js` | the shared suite in `tests/vitest/legacy.ts`, which runs on every legacy and embed build |
 | A new `Module.x` runtime export | `tests/vitest/module-surface.test.ts`, which checks the four ES6 module builds. The global builds' `Module` is only covered indirectly, by the detection in `tests/vitest/legacy.ts`, so add an assertion there if the legacy API uses the export. |
@@ -193,8 +223,9 @@ A version bump also needs **both rebuilds** committed in the same PR:
 
 - `npm run build-docker`: the two API files above are compiled into the legacy and embed builds
   as `--pre-js`.
-- `npm run build-ts`: `src/ARToolkitNFT*.ts` import `version` from `package.json`, and webpack
-  inlines it into every `dist/` bundle.
+- `npm run build-ts`: `src/ARToolkitNFT*.ts` import `version` from `package.json`, and Vite
+  inlines it into every `dist/` bundle. Keep it a **named** import: a default import inlines the
+  whole `package.json` (devDependencies, scripts), which `tests/node/dist-paths.test.js` rejects.
 
 Check that nothing still carries the old version: `grep -l "<old version>" build/*.js dist/*.js`
 should print nothing.
@@ -203,13 +234,24 @@ should print nothing.
 
 ## Gotchas
 
-**Rebuild noise.** Running `build-ts` without changing any source still rewrites four `dist/`
-bundles (webpack is not byte-reproducible here) and produces line-ending churn in `types/`.
-Revert those rather than committing them; `main.yml` regenerates both on merge.
+**Rebuild noise.** The Vite build is byte-reproducible: running `build-ts` twice on the same
+sources leaves `dist/` identical, and `git status` shows nothing after a rebuild with no source
+change. A diff in `dist/` therefore means a source, dependency or Node/toolchain change; do not
+revert it as noise. `main.yml` rebuilds and commits `dist/` on `master` after a merge. If
+`types/` shows line-ending-only churn on Windows, revert that.
 
-**`npm run format-check` currently fails** on roughly 247 files, on `master`, with the
-project's own prettier version. It is not wired into CI. Do not interpret it as a regression
-caused by your change, and do not reformat the tree as a side effect of unrelated work.
+**Line endings.** `.gitattributes` forces LF for every text file, regardless of `core.autocrlf`,
+so a Windows checkout matches prettier's default and CI. A clone made before it landed keeps its
+CRLF files until git rewrites them: `git status` stays clean, but `prettier --check` still flags
+them. `git add --renormalize .` does not help here, because it only refreshes the index, which is
+already LF. To rewrite the working tree once, start from a clean tree (commit or stash first) and
+run `git rm -r --cached -q . && git reset --hard`. Do not fix it by running `prettier --write`
+over the tree.
+
+**`npm run format-check` runs in CI** (the Node.js CI job, before the tests), so a PR with
+unformatted files fails. Run `npm run format` before committing. Prettier uses its defaults:
+there is no config file (#733). Do not add one without reformatting the tree in the same PR,
+since a different `printWidth` or `tabWidth` would flag almost every file.
 
 **Node version.** `.nvmrc` pins an exact patch release. If a version manager does not have
 that precise build installed, every `node` and `npm` invocation inside the repository fails

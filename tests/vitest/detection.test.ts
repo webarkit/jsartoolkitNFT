@@ -32,7 +32,8 @@ const IMAGE_HEIGHT = 1500;
 /** Decode the demo photo to RGBA, which is what `process()` expects. */
 async function loadImageData(url: string): Promise<ImageData> {
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`could not fetch ${url}: ${response.status}`);
+  if (!response.ok)
+    throw new Error(`could not fetch ${url}: ${response.status}`);
   const bitmap = await createImageBitmap(await response.blob());
 
   const canvas = document.createElement("canvas");

@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-24.04  # Upgrade to Ubuntu 24.04
     name: Node.js CI
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Use Node.js from .nvmrc
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: ".nvmrc"
 
@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
@@ -32,6 +32,11 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      # Fails on any file prettier would change (#733). Runs before the browser
+      # install so that a formatting slip fails fast.
+      - name: Check formatting
+        run: npm run format-check
 
       - name: Install Playwright Chromium
         shell: bash
@@ -52,8 +57,24 @@ jobs:
             sleep $((attempt * 10))
           done
 
+      # `npm test` with coverage on the browser suite: the same two suites, but
+      # Vitest writes coverage/lcov.info for src/ (#580). Keep this in step with
+      # the `test` script in package.json. The Node suite tests the dist/
+      # bundles, not src/, so it adds no coverage.
       - name: Tests
-        run: npm test
+        run: |
+          npm run test:coverage
+          npm run test:node
+
+      # Report only: a failed upload does not fail the job, and codecov.yml
+      # makes Codecov's statuses informational (#580).
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          disable_search: true
+          fail_ci_if_error: false
 
       - name: Build Docs
         run: npm run docs

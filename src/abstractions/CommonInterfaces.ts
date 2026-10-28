@@ -54,6 +54,81 @@ export enum ARLogLevel {
   RelInfo = 4,
 }
 
+/**
+ * The options `init()`, `initWithDimensions()`, `initWithImage()` and `customInit()` accept
+ * (#677).
+ */
+export interface ARInitOptions {
+  /**
+   * The log level, applied to the fresh module before the core is constructed, so the native
+   * start-up lines (the constructor, the camera dump) obey it too. Per controller in JS, as
+   * every init builds its own module; `configure({ logLevel })` changes it later.
+   *
+   * The version line is logged at {@link ARLogLevel.RelInfo}, the quietest level, so it
+   * still prints at `Error`. Only a level above `RelInfo` removes it.
+   */
+  logLevel?: ARLogLevel | number;
+}
+
+/**
+ * The AR2 tracking parameters of {@link NFTRuntimeSettings}. Before runtime settings they
+ * were constants of the native setupAR2(); the defaults are those constants.
+ */
+export interface NFTAR2Settings {
+  /** Template-matching score cutoff, in (0, 100]. Default 5. */
+  trackingThresh: number;
+  /** Normalised similarity threshold, in (0, 1]. Default 0.5. Stored as float32. */
+  simThresh: number;
+  /** Features searched per frame, an integer in [3, 40], never clamped. Default 16. */
+  searchFeatureNum: number;
+  /** Template half-width in pixels, an integer in [1, 32]. Default 6. */
+  templateSize1: number;
+  /** Template half-height in pixels, an integer in [1, 32]. Default 6. */
+  templateSize2: number;
+  /**
+   * Search window, an integer in [1, 64], or 0 for the build's choice (6, or 12 on a
+   * multi-CPU threaded build). getRuntimeSettings() returns the resolved value.
+   */
+  searchSize: number;
+}
+
+/**
+ * What may change while tracking (#720): read with `getRuntimeSettings()`, changed with
+ * `configure()`. The names follow #720's TrackerConfig.
+ */
+export interface NFTRuntimeSettings {
+  /** Near plane of the projection, > 0. Default 0.1. */
+  near: number;
+  /** Far plane of the projection, > near. Default 1000. */
+  far: number;
+  /** See `setContinuousDetection()`. Default true. */
+  continuousDetection: boolean;
+  /**
+   * Milliseconds between detection passes while a marker is tracked (see
+   * `setDetectionInterval()`), >= 0, or -1 for the build's default (300, or 0 on the
+   * threaded build). getRuntimeSettings() returns the resolved value.
+   */
+  detectionInterval: number;
+  /** Pose filtering. Every build constructs its controller with filtering on. */
+  filtering: boolean;
+  /**
+   * The log level. It lives in the WASM module's globals, not in the core instance, and
+   * each controller's init() creates its own module, so in JS it is per controller.
+   */
+  logLevel: ARLogLevel;
+  ar2: NFTAR2Settings;
+}
+
+/**
+ * What `configure()` accepts: any subset of {@link NFTRuntimeSettings}; nested `ar2` fields
+ * merge one by one. An unknown key throws a TypeError.
+ */
+export type NFTRuntimeSettingsPatch = Partial<
+  Omit<NFTRuntimeSettings, "ar2">
+> & {
+  ar2?: Partial<NFTAR2Settings>;
+};
+
 export interface IImageObj extends HTMLCanvasElement {
   videoWidth: number;
   width: number;
@@ -86,6 +161,26 @@ export interface NftMarker {
 
 export type NftMarkers = NftMarker[];
 
+/**
+ * Event passed to listeners registered with ARControllerNFT.addEventListener().
+ *
+ * `name` is one of "getNFTMarker", "lostNFTMarker" or "load"; `target` is the
+ * ARControllerNFT that dispatched it (typed as unknown because the four controller
+ * classes share no common base type yet). `data` is absent for "load"; for
+ * "getNFTMarker" and "lostNFTMarker" it holds `index` (marker index), `type`
+ * (ARToolkitNFT.NFT_MARKER), `marker` (the NFTMarkerInfo struct), `matrix` and
+ * `matrixGL_RH` (the pose, for "lostNFTMarker" the last one seen). Typing `data`
+ * per event name is tracked in #730.
+ */
+export interface NFTEvent {
+  name: string;
+  target: unknown;
+  data?: object;
+}
+
+/** Callback accepted by ARControllerNFT.addEventListener() and removeEventListener(). */
+export type NFTEventListener = (event: NFTEvent) => void;
+
 // Emscripten File System interface
 // Based on Emscripten's FS API: https://emscripten.org/docs/api_reference/Filesystem-API.html
 export interface EmscriptenFS {
@@ -115,7 +210,7 @@ export interface EmscriptenStringList {
 
 // StringList constructor type
 export interface EmscriptenStringListConstructor {
-  new(): EmscriptenStringList;
+  new (): EmscriptenStringList;
 }
 
 // ARToolKitNFT WASM instance interface (the raw Emscripten class instance)
@@ -175,6 +270,10 @@ export interface IARToolKitNFTInstance {
   setContinuousDetection(enabled: boolean): void;
   setDetectionInterval(ms: number): void;
 
+  // Runtime settings: every field must be present; returns 0, or -1 with nothing changed
+  configure(settings: NFTRuntimeSettings): number;
+  getRuntimeSettings(): NFTRuntimeSettings;
+
   // ZFT decompression
   _decompressZFT(prefix: string, prefixTemp: string): number;
 
@@ -183,13 +282,15 @@ export interface IARToolKitNFTInstance {
 
 // ARToolKitNFT WASM constructor interface
 export interface IARToolKitNFTInstanceConstructor {
-  new(): IARToolKitNFTInstance;
-  new(withFiltering: boolean): IARToolKitNFTInstance;
+  new (): IARToolKitNFTInstance;
+  new (withFiltering: boolean): IARToolKitNFTInstance;
 }
 
 // Type definition for the Emscripten Module returned by ARToolkitNFT factory
 export interface ARToolkitNFTModule {
   ARToolKitNFT: IARToolKitNFTInstanceConstructor;
+  /** Sets the module's log level, also before any instance exists; negative values are ignored. */
+  setLogLevel(level: ARLogLevel | number): void;
   FS: EmscriptenFS;
   _malloc: any;
   _free: any;
@@ -231,4 +332,17 @@ export interface ARToolkitNFTModule {
 // the camera and marker files from the working directory.
 export interface ARToolkitNFTNodeModule extends ARToolkitNFTModule {
   NODEFS: any;
+}
+
+/** Options for the Promise-based NFT marker loaders. */
+export interface NFTLoadOptions {
+  /**
+   * Cancels the in-flight fetches. In Promise style, the load rejects with
+   * `signal.reason`, unwrapped (with callbacks, an abort resolves `[]` and
+   * calls `onError(-1)`): an `AbortError` by default, or a `TimeoutError` for
+   * `AbortSignal.timeout()`.
+   */
+  signal?: AbortSignal;
+  /** Probe for the optional .zft file before loading it. */
+  probeZFT?: boolean;
 }

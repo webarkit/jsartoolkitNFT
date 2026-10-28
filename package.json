@@ -1,13 +1,19 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "exports": {
     ".": {
       "node": {
-        "types": "./types/src/index_node.d.ts",
-        "default": "./dist/ARToolkitNFT_node.js"
+        "import": {
+          "types": "./types/src/index_node.d.mts",
+          "default": "./dist/ARToolkitNFT_node.mjs"
+        },
+        "require": {
+          "types": "./types/src/index_node.d.ts",
+          "default": "./dist/ARToolkitNFT_node.js"
+        }
       },
       "browser": {
         "types": "./types/src/index.d.ts",
@@ -27,8 +33,14 @@
       "default": "./dist/ARToolkitNFT_td.js"
     },
     "./node": {
-      "types": "./types/src/index_node.d.ts",
-      "default": "./dist/ARToolkitNFT_node.js"
+      "import": {
+        "types": "./types/src/index_node.d.mts",
+        "default": "./dist/ARToolkitNFT_node.mjs"
+      },
+      "require": {
+        "types": "./types/src/index_node.d.ts",
+        "default": "./dist/ARToolkitNFT_node.js"
+      }
     },
     "./dist/*": "./dist/*",
     "./package.json": "./package.json"
@@ -66,37 +78,33 @@
     "url": "https://github.com/webarkit/jsartoolkitNFT/issues"
   },
   "devDependencies": {
-    "@babel/core": "8.0.6",
-    "@babel/plugin-transform-runtime": "8.0.6",
-    "@babel/preset-env": "8.0.6",
     "@types/node": "^24.19.2",
-    "@vitest/browser": "^5.0.4",
-    "@vitest/browser-playwright": "^5.0.4",
-    "@vitest/coverage-v8": "^5.0.4",
-    "babel-loader": "10.1.1",
+    "@vitest/browser": "^5.0.5",
+    "@vitest/browser-playwright": "^5.0.5",
+    "@vitest/coverage-istanbul": "^5.0.5",
+    "@webarkit/camera-view": "^0.1.0",
+    "@webarkit/oneeurofilter-ts": "^0.2.1",
     "canvas": "^3.2.3",
     "glob": "^13.0.6",
-    "playwright": "^1.63.0",
-    "prettier": "^3.9.9",
+    "playwright": "^1.64.1",
+    "prettier": "^3.9.10",
     "sharp": "^0.35.5",
-    "ts-loader": "^9.6.2",
     "typedoc": "0.28.20",
     "typescript": "6.0.3",
-    "vitest": "^5.0.4",
-    "webpack": "5.111.1",
-    "webpack-cli": "7.2.3"
+    "vite": "8.3.5",
+    "vitest": "^5.0.5"
   },
   "scripts": {
-    "dev-ts": "webpack --mode development --progress --watch",
+    "dev-ts": "node tools/build-ts.mjs --watch",
     "docs": "typedoc",
-    "build-ts": "webpack --mode production",
+    "build-ts": "node tools/build-ts.mjs",
     "build": "node tools/makem.js && node -e \"console.log('Built at', new Date())\"",
     "build-no-libar": "node tools/makem.js --no-libar && node -e \"console.log('Built at', new Date())\"",
     "build-docker": "docker exec emscripten-jsartoolkitnft npm run build",
     "build-docker-no-libar": "docker exec emscripten-jsartoolkitnft npm run build-no-libar",
     "test": "npm run test:vitest && npm run test:node",
     "test:vitest": "vitest run",
-    "test:node": "node --test tests/node/*.test.js",
+    "test:node": "node --test tests/node/*.test.js tests/node/*.test.mjs",
     "test:vitest:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test-node-example": "cd examples/node && node example_dist.js",
@@ -107,9 +115,5 @@
     "format": "prettier --write .",
     "setup-docker": "node tools/docker-setup.js"
   },
-  "license": "LGPL-3.0",
-  "dependencies": {
-    "@babel/runtime": "8.0.5",
-    "axios": "1.20.0"
-  }
+  "license": "LGPL-3.0"
 }

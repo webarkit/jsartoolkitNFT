@@ -13,3 +13,6 @@ js/*.api.js
 *.lock
 *.md
 .github/**/*.yml
+# Minified bundles copied from @webarkit/oneeurofilter-ts: prettier would expand them (#733).
+js/OneEuroFilter.js
+js/OneEuroFilter.mjs

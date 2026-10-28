@@ -34,7 +34,11 @@ async function loadFrames() {
     .toBuffer();
   return {
     both: new Uint8Array(both.buffer, both.byteOffset, both.length),
-    pinballOnly: new Uint8Array(pinballOnly.buffer, pinballOnly.byteOffset, pinballOnly.length),
+    pinballOnly: new Uint8Array(
+      pinballOnly.buffer,
+      pinballOnly.byteOffset,
+      pinballOnly.length,
+    ),
   };
 }
 
@@ -51,7 +55,9 @@ function processUntil(ar, frame, done, maxFrames = 60) {
 }
 
 function loadMarkers(ar, urls) {
-  return new Promise((resolve, reject) => ar.loadNFTMarkers(urls, resolve, reject));
+  return new Promise((resolve, reject) =>
+    ar.loadNFTMarkers(urls, resolve, reject),
+  );
 }
 
 describe("Node build, two markers in view", () => {
@@ -61,7 +67,11 @@ describe("Node build, two markers in view", () => {
   before(async () => {
     process.chdir(EXAMPLE_DIR);
     frames = await loadFrames();
-    ar = await ARControllerNFT.initWithDimensions(WIDTH, HEIGHT, "camera_para.dat");
+    ar = await ARControllerNFT.initWithDimensions(
+      WIDTH,
+      HEIGHT,
+      "camera_para.dat",
+    );
     const ids = await loadMarkers(ar, ["DataNFT/pinball", "DataNFT/kuva"]);
     assert.deepEqual(ids, [0, 1]);
     ids.forEach((id) => ar.trackNFTMarkerId(id));
@@ -89,7 +99,11 @@ describe("Node build, two markers in view", () => {
   it("does not look for kuva while pinball is tracked, with continuous detection off", () => {
     try {
       ar.setContinuousDetection(false);
-      processUntil(ar, frames.pinballOnly, () => isFound(ar, 0) && !isFound(ar, 1));
+      processUntil(
+        ar,
+        frames.pinballOnly,
+        () => isFound(ar, 0) && !isFound(ar, 1),
+      );
 
       for (let i = 0; i < 10; i++) ar.process(frames.both);
       assert.equal(isFound(ar, 0), true);
@@ -107,7 +121,11 @@ describe("Node build, two markers in view", () => {
       // Detect on every frame while holding pinball alone, so a pass has just
       // run; then widen the interval past the length of the test.
       ar.setDetectionInterval(0);
-      processUntil(ar, frames.pinballOnly, () => isFound(ar, 0) && !isFound(ar, 1));
+      processUntil(
+        ar,
+        frames.pinballOnly,
+        () => isFound(ar, 0) && !isFound(ar, 1),
+      );
       ar.setDetectionInterval(60_000);
 
       for (let i = 0; i < 10; i++) ar.process(frames.both);
@@ -133,7 +151,11 @@ describe("Node build, markers loaded in separate calls (#612)", () => {
   before(async () => {
     process.chdir(EXAMPLE_DIR);
     frames = await loadFrames();
-    ar = await ARControllerNFT.initWithDimensions(WIDTH, HEIGHT, "camera_para.dat");
+    ar = await ARControllerNFT.initWithDimensions(
+      WIDTH,
+      HEIGHT,
+      "camera_para.dat",
+    );
   });
 
   it("continues the ids and detects both markers", async () => {
@@ -145,7 +167,11 @@ describe("Node build, markers loaded in separate calls (#612)", () => {
   });
 
   it("accepts a retry after a failed load", async () => {
-    const fresh = await ARControllerNFT.initWithDimensions(WIDTH, HEIGHT, "camera_para.dat");
+    const fresh = await ARControllerNFT.initWithDimensions(
+      WIDTH,
+      HEIGHT,
+      "camera_para.dat",
+    );
     await assert.rejects(loadMarkers(fresh, ["DataNFT/does-not-exist"]));
     assert.deepEqual(await loadMarkers(fresh, ["DataNFT/pinball"]), [0]);
   });
