@@ -179,7 +179,12 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     if (level !== undefined) instance.setLogLevel(level);
     // The version line moved here from the constructor so that it can follow the level. It
     // is a RelInfo line, so it can still be kept at any level up to RelInfo (#677).
-    logAt(ARLogLevel.RelInfo, level ?? ARLogLevel.Info, "ARToolkitNFT ", this.version);
+    logAt(
+      ARLogLevel.RelInfo,
+      level ?? ARLogLevel.Info,
+      "ARToolkitNFT ",
+      this.version,
+    );
     this.instance = new instance.ARToolKitNFT(true);
 
     this.module = instance;
@@ -493,7 +498,11 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
     if (this.videoLumaPtr && !lumaInternal) {
       this.HEAPU8.set(videoLuma, this.videoLumaPtr);
     }
-    this.instance.passVideoData(this.videoFramePtr, this.videoLumaPtr, lumaInternal);
+    this.instance.passVideoData(
+      this.videoFramePtr,
+      this.videoLumaPtr,
+      lumaInternal,
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -547,7 +556,12 @@ export class ARToolkitNFT implements IARToolkitNFT_node {
       return [];
     }
     // Follows the log level like the other JS console lines (#677).
-    logAt(ARLogLevel.Info, this.getLogLevel(), "add nft marker ids: ", markerIds);
+    logAt(
+      ARLogLevel.Info,
+      this.getLogLevel(),
+      "add nft marker ids: ",
+      markerIds,
+    );
     if (callback) callback(markerIds);
     return markerIds;
   }

@@ -209,7 +209,12 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
     if (level !== undefined) instance.setLogLevel(level);
     // The version line moved here from the constructor so that it can follow the level. It
     // is a RelInfo line, so it can still be kept at any level up to RelInfo (#677).
-    logAt(ARLogLevel.RelInfo, level ?? ARLogLevel.Info, "ARToolkitNFT ", this.version);
+    logAt(
+      ARLogLevel.RelInfo,
+      level ?? ARLogLevel.Info,
+      "ARToolkitNFT ",
+      this.version,
+    );
     // Called with exactly the arguments the build passes, none or one, as each
     // build's own copy of this file did (#734, D7).
     this.instance =
@@ -236,14 +241,12 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
     variant.AR_DEFAULT_DEBUG_MODE = instance.AR_DEFAULT_DEBUG_MODE;
 
     /* for arlabelingThresh */
-    variant.AR_DEFAULT_LABELING_THRESH =
-      instance.AR_DEFAULT_LABELING_THRESH;
+    variant.AR_DEFAULT_LABELING_THRESH = instance.AR_DEFAULT_LABELING_THRESH;
 
     /* for arImageProcMode */
     variant.AR_IMAGE_PROC_FRAME_IMAGE = instance.AR_IMAGE_PROC_FRAME_IMAGE;
     variant.AR_IMAGE_PROC_FIELD_IMAGE = instance.AR_IMAGE_PROC_FIELD_IMAGE;
-    variant.AR_DEFAULT_IMAGE_PROC_MODE =
-      instance.AR_DEFAULT_IMAGE_PROC_MODE;
+    variant.AR_DEFAULT_IMAGE_PROC_MODE = instance.AR_DEFAULT_IMAGE_PROC_MODE;
 
     /* for arGetTransMat */
     variant.AR_MAX_LOOP_COUNT = instance.AR_MAX_LOOP_COUNT;
@@ -533,7 +536,11 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
     if (this.videoLumaPtr && !lumaInternal) {
       this.HEAPU8.set(videoLuma, this.videoLumaPtr);
     }
-    this.instance.passVideoData(this.videoFramePtr, this.videoLumaPtr, lumaInternal);
+    this.instance.passVideoData(
+      this.videoFramePtr,
+      this.videoLumaPtr,
+      lumaInternal,
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -724,7 +731,10 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
       // A list missing one of the three files fails at registration, as
       // "rejected", as it does natively.
       await this.loadFiles(
-        source.map((url) => ({ url, path: prefix + "." + Utils.extensionOf(url) })),
+        source.map((url) => ({
+          url,
+          path: prefix + "." + Utils.extensionOf(url),
+        })),
         signal,
         written,
       );

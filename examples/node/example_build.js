@@ -1,76 +1,73 @@
-const Module = require('../../build/artoolkitNFT_node_wasm.js');
+const Module = require("../../build/artoolkitNFT_node_wasm.js");
 
-console.log('This is a test importing artoolkitNFT_node_wasm with Nodejs')
+console.log("This is a test importing artoolkitNFT_node_wasm with Nodejs");
 
 var scope;
-if (typeof global !== 'undefined') {
-    scope = global;
+if (typeof global !== "undefined") {
+  scope = global;
 } else {
-    scope = self;
+  scope = self;
 }
 
 // ARToolKitNFT exported JS API
 //
 var artoolkitNFT = {
-
-    UNKNOWN_MARKER: -1,
-    NFT_MARKER: 0, // 0,
-
+  UNKNOWN_MARKER: -1,
+  NFT_MARKER: 0, // 0,
 };
 
 var FUNCTIONS = [
-    'setup',
-    'teardown',
+  "setup",
+  "teardown",
 
-    'setupAR2',
+  "setupAR2",
 
-    'setLogLevel',
-    'getLogLevel',
+  "setLogLevel",
+  "getLogLevel",
 
-    'setDebugMode',
-    'getDebugMode',
+  "setDebugMode",
+  "getDebugMode",
 
-    'getProcessingImage',
+  "getProcessingImage",
 
-    'detectMarker',
-    'detectNFTMarker',
-    'getNFTMarker',
-    'getNFTData',
+  "detectMarker",
+  "detectNFTMarker",
+  "getNFTMarker",
+  "getNFTData",
 
-    'setProjectionNearPlane',
-    'getProjectionNearPlane',
+  "setProjectionNearPlane",
+  "getProjectionNearPlane",
 
-    'setProjectionFarPlane',
-    'getProjectionFarPlane',
+  "setProjectionFarPlane",
+  "getProjectionFarPlane",
 
-    'setThresholdMode',
-    'getThresholdMode',
+  "setThresholdMode",
+  "getThresholdMode",
 
-    'setThreshold',
-    'getThreshold',
+  "setThreshold",
+  "getThreshold",
 
-    'setImageProcMode',
-    'getImageProcMode',
+  "setImageProcMode",
+  "getImageProcMode",
 ];
 
 function runWhenLoaded() {
-    FUNCTIONS.forEach(function (n) {
-        artoolkitNFT[n] = Module[n];
-    });
+  FUNCTIONS.forEach(function (n) {
+    artoolkitNFT[n] = Module[n];
+  });
 
-    for (var m in Module) {
-        if (m.match(/^AR/))
-            artoolkitNFT[m] = Module[m];
-    }
+  for (var m in Module) {
+    if (m.match(/^AR/)) artoolkitNFT[m] = Module[m];
+  }
 }
 
 /* Exports */
 scope.artoolkitNFT = artoolkitNFT;
 
 Module.onRuntimeInitialized = async function () {
-    runWhenLoaded();
+  runWhenLoaded();
 
-    console.log(artoolkitNFT);
+  console.log(artoolkitNFT);
 
-    artoolkitNFT.setup(640, 480, 0);
-}
+  artoolkitNFT.setup(640, 480, 0);
+};

@@ -20,12 +20,23 @@ const EXAMPLE_DIR = path.resolve(
 
 describe("Node ESM entry", () => {
   it("resolves `import` to the .mjs wrapper and `require` to the CJS bundle", () => {
-    assert.match(import.meta.resolve("@webarkit/jsartoolkit-nft"), /ARToolkitNFT_node.mjs$/);
-    assert.match(createRequire(import.meta.url).resolve("@webarkit/jsartoolkit-nft"), /ARToolkitNFT_node.js$/);
+    assert.match(
+      import.meta.resolve("@webarkit/jsartoolkit-nft"),
+      /ARToolkitNFT_node.mjs$/,
+    );
+    assert.match(
+      createRequire(import.meta.url).resolve("@webarkit/jsartoolkit-nft"),
+      /ARToolkitNFT_node.js$/,
+    );
   });
 
   it("has named ESM exports", () => {
-    for (const k of ["ARToolkitNFT", "ARControllerNFT", "ARLogLevel", "NFTLoadError"]) {
+    for (const k of [
+      "ARToolkitNFT",
+      "ARControllerNFT",
+      "ARLogLevel",
+      "NFTLoadError",
+    ]) {
       assert.notEqual(typeof esm[k], "undefined", k);
     }
   });
@@ -49,7 +60,10 @@ describe("Node ESM entry", () => {
 
   it("exports exactly the names the CJS bundle does, so the wrapper cannot drift", () => {
     const markers = new Set(["default", "module.exports", "__esModule"]);
-    const names = (o) => Object.keys(o).filter((k) => !markers.has(k)).sort();
+    const names = (o) =>
+      Object.keys(o)
+        .filter((k) => !markers.has(k))
+        .sort();
     assert.deepEqual(names(esm), names(cjs));
   });
 
@@ -61,7 +75,11 @@ describe("Node ESM entry", () => {
     let ar;
     before(async () => {
       process.chdir(EXAMPLE_DIR);
-      ar = await esm.ARControllerNFT.initWithDimensions(640, 480, "camera_para.dat");
+      ar = await esm.ARControllerNFT.initWithDimensions(
+        640,
+        480,
+        "camera_para.dat",
+      );
     });
 
     it("works through the ESM entry", () => {

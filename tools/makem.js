@@ -776,7 +776,11 @@ if (NO_LIBAR === true) {
       "\n--no-libar cannot be used here: the preserved library objects were built",
     );
     console.error(
-      "  in '" + (preserved || "unknown") + "' mode, but '" + REQUESTED_LIBAR_MODE + "' was requested.",
+      "  in '" +
+        (preserved || "unknown") +
+        "' mode, but '" +
+        REQUESTED_LIBAR_MODE +
+        "' was requested.",
     );
     console.error(
       "\n  The debug tracing lives in libar.o, so reusing objects from the other",

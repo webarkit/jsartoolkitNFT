@@ -26,7 +26,9 @@ describe("Utils.extensionOf", () => {
   it("reads the extension of the last path segment, without query or hash", () => {
     expect(Utils.extensionOf("/x/pinball.fset?v=2")).toBe("fset");
     expect(Utils.extensionOf("pinball.zft#top")).toBe("zft");
-    expect(Utils.extensionOf("https://cdn.example/m/pinball.iset")).toBe("iset");
+    expect(Utils.extensionOf("https://cdn.example/m/pinball.iset")).toBe(
+      "iset",
+    );
     expect(Utils.extensionOf("../DataNFT/pinball")).toBe("");
     expect(Utils.extensionOf("/a.b/pinball")).toBe("");
     expect(Utils.extensionOf("/x/pinball?file=a.zft")).toBe("");
@@ -85,7 +87,11 @@ describe("Utils.fetchBinary", () => {
       ),
     );
     const err: any = await Utils.fetchBinary("/x").catch((e) => e);
-    expect(err).toMatchObject({ name: "NFTLoadError", kind: "network", url: "/x" });
+    expect(err).toMatchObject({
+      name: "NFTLoadError",
+      kind: "network",
+      url: "/x",
+    });
     expect(err.cause).toBeDefined();
   });
 

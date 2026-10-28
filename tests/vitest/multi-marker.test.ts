@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeAll, vi } from "vitest";
-import { CAMERA_PARAM, MARKER_PINBALL, MARKER_KUVA, loadMarkers } from "./helpers";
 import {
-  loadCompositeFrames,
-  isFound,
-  processUntil,
-} from "./frames";
+  CAMERA_PARAM,
+  MARKER_PINBALL,
+  MARKER_KUVA,
+  loadMarkers,
+} from "./helpers";
+import { loadCompositeFrames, isFound, processUntil } from "./frames";
 import { VARIANTS } from "./variants";
 
 /**
@@ -19,7 +20,12 @@ for (const variant of VARIANTS) {
   for (const filtering of [true, false]) {
     describe(`two markers in view (${variant.name}, filtering ${filtering ? "on" : "off"})`, () => {
       let ar: any;
-      let frames: { both: ImageData; pinballOnly: ImageData; width: number; height: number };
+      let frames: {
+        both: ImageData;
+        pinballOnly: ImageData;
+        width: number;
+        height: number;
+      };
 
       beforeAll(async () => {
         const { ARControllerNFT } = await variant.load();
@@ -37,7 +43,11 @@ for (const variant of VARIANTS) {
       }, 150_000);
 
       it("tracks both markers at once", async () => {
-        await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
+        await processUntil(
+          ar,
+          frames.both,
+          () => isFound(ar, 0) && isFound(ar, 1),
+        );
         expect(isFound(ar, 0)).toBe(true);
         expect(isFound(ar, 1)).toBe(true);
       });
@@ -65,7 +75,11 @@ for (const variant of VARIANTS) {
       });
 
       it("fires getNFTMarker exactly once for each marker per process()", async () => {
-        await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
+        await processUntil(
+          ar,
+          frames.both,
+          () => isFound(ar, 0) && isFound(ar, 1),
+        );
         const seen: number[] = [];
         const onGet = (e: any) => seen.push(e.data.index);
         ar.addEventListener("getNFTMarker", onGet);
@@ -75,16 +89,28 @@ for (const variant of VARIANTS) {
       });
 
       it("gives the two markers different poses", async () => {
-        await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
-        const pinballPose = Array.from(ar.getNFTMarker(0).pose as ArrayLike<number>);
-        const kuvaPose = Array.from(ar.getNFTMarker(1).pose as ArrayLike<number>);
+        await processUntil(
+          ar,
+          frames.both,
+          () => isFound(ar, 0) && isFound(ar, 1),
+        );
+        const pinballPose = Array.from(
+          ar.getNFTMarker(0).pose as ArrayLike<number>,
+        );
+        const kuvaPose = Array.from(
+          ar.getNFTMarker(1).pose as ArrayLike<number>,
+        );
         // pose is a row-major 3x4 [R|t]; index 3 is the x translation. Pinball
         // is on the left of the frame and kuva on the right.
         expect(pinballPose[3]).toBeLessThan(kuvaPose[3]);
       });
 
       it("keeps tracking pinball after kuva leaves the frame", async () => {
-        await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
+        await processUntil(
+          ar,
+          frames.both,
+          () => isFound(ar, 0) && isFound(ar, 1),
+        );
         await processUntil(ar, frames.pinballOnly, () => !isFound(ar, 1));
         expect(isFound(ar, 0)).toBe(true);
       });
@@ -95,10 +121,17 @@ for (const variant of VARIANTS) {
       });
 
       it("gives each getNFTMarker event its own matrix", async () => {
-        await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
+        await processUntil(
+          ar,
+          frames.both,
+          () => isFound(ar, 0) && isFound(ar, 1),
+        );
         const events: { ref: Float64Array; copy: number[] }[] = [];
         const onGet = (e: any) =>
-          events.push({ ref: e.data.matrix, copy: Array.from(e.data.matrix as Float64Array) });
+          events.push({
+            ref: e.data.matrix,
+            copy: Array.from(e.data.matrix as Float64Array),
+          });
         ar.addEventListener("getNFTMarker", onGet);
         ar.process(frames.both);
         ar.removeEventListener("getNFTMarker", onGet);
@@ -115,7 +148,11 @@ for (const variant of VARIANTS) {
         let clock = 1_000_000;
         const nowSpy = vi.spyOn(Date, "now").mockImplementation(() => clock);
         try {
-          await processUntil(ar, frames.both, () => isFound(ar, 0) && isFound(ar, 1));
+          await processUntil(
+            ar,
+            frames.both,
+            () => isFound(ar, 0) && isFound(ar, 1),
+          );
 
           const lost: number[] = [];
           const onLost = (e: any) => lost.push(e.data.index);
@@ -163,7 +200,11 @@ for (const variant of VARIANTS) {
        * less time than one worker search takes, so without it a detection that should
        * have been gated would not have finished yet either.
        */
-      const processFrames = async (frame: ImageData, count: number, minMs = 0) => {
+      const processFrames = async (
+        frame: ImageData,
+        count: number,
+        minMs = 0,
+      ) => {
         const start = performance.now();
         for (let i = 0; i < count || performance.now() - start < minMs; i++) {
           ar.process(frame);
@@ -192,7 +233,11 @@ for (const variant of VARIANTS) {
         const lost: number[] = [];
         const onLost = (e: any) => lost.push(e.data.index);
         try {
-          await processUntil(ar, frames.pinballOnly, () => isFound(ar, 0) && !isFound(ar, 1));
+          await processUntil(
+            ar,
+            frames.pinballOnly,
+            () => isFound(ar, 0) && !isFound(ar, 1),
+          );
 
           ar.addEventListener("lostNFTMarker", onLost);
           await processUntil(ar, frames.both, () => isFound(ar, 1));

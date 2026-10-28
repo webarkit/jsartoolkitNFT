@@ -27,7 +27,12 @@ for (const variant of VARIANTS) {
 
     beforeAll(async () => {
       const { ARControllerNFT } = await variant.load();
-      ar = await ARControllerNFT.initWithDimensions(VIDEO_WIDTH, VIDEO_HEIGHT, CAMERA_PARAM, true);
+      ar = await ARControllerNFT.initWithDimensions(
+        VIDEO_WIDTH,
+        VIDEO_HEIGHT,
+        CAMERA_PARAM,
+        true,
+      );
       const ids = await loadMarkers(ar, [MARKER_PINBALL, MARKER_KUVA]);
       expect(ids).toEqual([0, 1]);
     }, 150_000);

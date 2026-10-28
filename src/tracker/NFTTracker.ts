@@ -115,10 +115,15 @@ export const browserTargetLoader: TargetLoader = {
     try {
       // No callbacks: the Promise style, which rejects on a failure. The options come
       // fourth, after the deprecated callback and onError.
-      const ids: number[] = await toolkit.addNFTMarkers([url], undefined, undefined, {
-        signal,
-        probeZFT,
-      });
+      const ids: number[] = await toolkit.addNFTMarkers(
+        [url],
+        undefined,
+        undefined,
+        {
+          signal,
+          probeZFT,
+        },
+      );
       return { id: ids[0] };
     } catch (e) {
       return outcomeFromError(e);

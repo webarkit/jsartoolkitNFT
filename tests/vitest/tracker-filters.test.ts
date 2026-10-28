@@ -1,7 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { OneEuroFilter } from "@webarkit/oneeurofilter-ts";
-import { createPoseFilter, ONE_EURO_DEFAULTS } from "../../src/tracker/filters/oneEuro";
-import { loadFilter, usesNativeFiltering } from "../../src/tracker/filters/loadFilter";
+import {
+  createPoseFilter,
+  ONE_EURO_DEFAULTS,
+} from "../../src/tracker/filters/oneEuro";
+import {
+  loadFilter,
+  usesNativeFiltering,
+} from "../../src/tracker/filters/loadFilter";
 import type { PoseFilter } from "../../src/tracker/filters/PoseFilter";
 
 const abs = (p: string) => new URL(p, location.origin).href;
@@ -15,7 +21,9 @@ describe("OneEuro", () => {
   it("a constant input stays constant", () => {
     const f = createPoseFilter({ type: "oneEuro" });
     for (let i = 0; i < 10; i++) {
-      expect(Array.from(f.filter(i * 33, pose(2)))).toEqual(Array.from(pose(2)));
+      expect(Array.from(f.filter(i * 33, pose(2)))).toEqual(
+        Array.from(pose(2)),
+      );
     }
   });
   it("a step is smoothed", () => {
@@ -27,13 +35,17 @@ describe("OneEuro", () => {
   });
   it("matches the package", () => {
     const f = createPoseFilter({ type: "oneEuro" });
-    const ref = new OneEuroFilter(ONE_EURO_DEFAULTS.minCutOff, ONE_EURO_DEFAULTS.beta);
+    const ref = new OneEuroFilter(
+      ONE_EURO_DEFAULTS.minCutOff,
+      ONE_EURO_DEFAULTS.beta,
+    );
     for (let i = 0; i < 12; i++) {
       const x = pose(Math.sin(i) * 5 + i);
       const t = i * 33;
       const a = f.filter(t, x);
       const b = ref.filter(t, x);
-      for (let k = 0; k < 16; k++) expect(Math.abs(a[k] - b[k])).toBeLessThan(1e-12);
+      for (let k = 0; k < 16; k++)
+        expect(Math.abs(a[k] - b[k])).toBeLessThan(1e-12);
     }
   });
   it("warmUp samples pass through", () => {
@@ -77,12 +89,17 @@ describe("loadFilter", () => {
   });
   it("loads a module by URL", async () => {
     const make = (await loadFilter(
-      { module: abs("/examples/filters/average-filter.js"), options: { weight: 0.5 } },
+      {
+        module: abs("/examples/filters/average-filter.js"),
+        options: { weight: 0.5 },
+      },
       "thread",
     ))!;
     const f = make();
     f.filter(0, new Float64Array([0, 0]));
-    expect(Array.from(f.filter(33, new Float64Array([10, 20])))).toEqual([5, 10]);
+    expect(Array.from(f.filter(33, new Float64Array([10, 20])))).toEqual([
+      5, 10,
+    ]);
   });
   it("a missing module rejects naming the URL, with the cause", async () => {
     const url = abs("/examples/filters/nope.js");

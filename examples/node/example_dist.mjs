@@ -1,32 +1,36 @@
 // ESM twin of example_dist.js (#577): named import from the Node ESM entry.
-import { ARControllerNFT } from '../../dist/ARToolkitNFT_node.mjs'
-import sharp from 'sharp'
+import { ARControllerNFT } from "../../dist/ARToolkitNFT_node.mjs";
+import sharp from "sharp";
 
 async function init() {
-    const arControllerNFT = await new ARControllerNFT(2000, 1500, '/camera_para.dat');
-    const ar = await arControllerNFT._initialize();
+  const arControllerNFT = await new ARControllerNFT(
+    2000,
+    1500,
+    "/camera_para.dat",
+  );
+  const ar = await arControllerNFT._initialize();
 
-    // process() expects RGBA pixel data, so add the alpha channel.
-    const data = await sharp("pinball-demo.jpg").ensureAlpha().raw().toBuffer();
-    const imageData = new Uint8Array(data.buffer);
+  // process() expects RGBA pixel data, so add the alpha channel.
+  const data = await sharp("pinball-demo.jpg").ensureAlpha().raw().toBuffer();
+  const imageData = new Uint8Array(data.buffer);
 
-    ar.on('getNFTMarker', function (e) {
-        console.log("NFT marker detected: ", e.data.marker);
-    });
+  ar.on("getNFTMarker", function (e) {
+    console.log("NFT marker detected: ", e.data.marker);
+  });
 
-    const cameraMatrix = ar.getCameraMatrix();
-    ar.loadNFTMarker('DataNFT/pinball', function (id) {
-        console.log('marker id is: ', id);
-        ar.trackNFTMarkerId(id);
-        const marker = ar.getNFTData(id);
-        console.log("nftMarker data: ", marker);
-        console.log("cameraMatrix: ", cameraMatrix);
-        // process() must run after the marker is loaded; NFT tracking
-        // needs several iterations before it locks on.
-        for (let i = 0; i < 10; i++) {
-            ar.process(imageData);
-        }
-    });
+  const cameraMatrix = ar.getCameraMatrix();
+  ar.loadNFTMarker("DataNFT/pinball", function (id) {
+    console.log("marker id is: ", id);
+    ar.trackNFTMarkerId(id);
+    const marker = ar.getNFTData(id);
+    console.log("nftMarker data: ", marker);
+    console.log("cameraMatrix: ", cameraMatrix);
+    // process() must run after the marker is loaded; NFT tracking
+    // needs several iterations before it locks on.
+    for (let i = 0; i < 10; i++) {
+      ar.process(imageData);
+    }
+  });
 }
 
-init()
+init();

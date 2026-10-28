@@ -41,8 +41,10 @@ import { IARToolkitNFT } from "./IARToolkitNFT";
  * it has the same interface. Only loading differs: camera and marker paths are
  * read from the working directory through NODEFS instead of fetched over HTTP.
  */
-export interface IARToolkitNFT_node
-  extends Omit<IARToolkitNFT, "addNFTMarkers"> {
+export interface IARToolkitNFT_node extends Omit<
+  IARToolkitNFT,
+  "addNFTMarkers"
+> {
   loadCamera(cameraParam: Uint8Array | string): Promise<number>;
   /**
    * Synchronous, unlike the browser builds' Promise (#685, D9): Node reads the

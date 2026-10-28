@@ -51,7 +51,7 @@ import { ARToolkitNFT } from "./ARToolkitNFT_node";
 import { AbstractARControllerNFT } from "./abstractions/AbstractARControllerNFT";
 import { MarkerLostTracker } from "./MarkerLostTracker";
 import { errorCode } from "./NFTLoadError";
-const emitter = require('events').EventEmitter;
+const emitter = require("events").EventEmitter;
 
 export class ARControllerNFT implements AbstractARControllerNFT {
   // private declarations
@@ -317,7 +317,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     const now = Date.now();
 
     for (let i = 0; i < nftMarkerCount; i++) {
-      let nftMarkerInfo: IARToolkitNFT_node["NFTMarkerInfo"] = this.getNFTMarker(i);
+      let nftMarkerInfo: IARToolkitNFT_node["NFTMarkerInfo"] =
+        this.getNFTMarker(i);
 
       let markerType = ARToolkitNFT.NFT_MARKER;
 
@@ -328,7 +329,10 @@ export class ARControllerNFT implements AbstractARControllerNFT {
         // A fresh matrix per event: with several markers found in one frame a
         // shared buffer would be overwritten by the next marker while a
         // listener still holds it.
-        const matrix = this.transMatToGLMat(visible.matrix, new Float64Array(16));
+        const matrix = this.transMatToGLMat(
+          visible.matrix,
+          new Float64Array(16),
+        );
         const matrixGL_RH = this.arglCameraViewRHf(matrix);
         this.transform_mat = matrix;
         this.transformGL_RH = matrixGL_RH;
@@ -922,9 +926,8 @@ export class ARControllerNFT implements AbstractARControllerNFT {
    */
   private async _initialize(options?: ARInitOptions) {
     // initialize the toolkit
-    
-    this.artoolkitNFT = await new ARToolkitNFT().init(options);
 
+    this.artoolkitNFT = await new ARToolkitNFT().init(options);
 
     this.FS = this.artoolkitNFT.FS;
     this.StringList = this.artoolkitNFT.StringList;
@@ -932,10 +935,15 @@ export class ARControllerNFT implements AbstractARControllerNFT {
     // These lines follow the log level (#677), read back from the module so that the level
     // given at init and one set later are both honoured.
     const level = this.artoolkitNFT.getLogLevel();
-    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "ARToolkitNFT initialized");
+    logAt(
+      ARLogLevel.Info,
+      level,
+      "[ARControllerNFT]",
+      "ARToolkitNFT initialized",
+    );
 
     // load the camera
-    
+
     this.cameraId = await this.artoolkitNFT.loadCamera(this.cameraParam);
     logAt(
       ARLogLevel.Info,
@@ -947,14 +955,20 @@ export class ARControllerNFT implements AbstractARControllerNFT {
 
     // setup
     this.id = this.artoolkitNFT.setup(this.width, this.height, this.cameraId);
-    logAt(ARLogLevel.Info, level, "[ARControllerNFT]", "Got ID from setup", this.id);
+    logAt(
+      ARLogLevel.Info,
+      level,
+      "[ARControllerNFT]",
+      "Got ID from setup",
+      this.id,
+    );
 
     this._initNFT();
 
     this.framesize = this._width * this._height;
 
     this.videoLuma = new Uint8Array(this.framesize);
-    
+
     // The planes first, then the first lens (#720 phase 1): the matrix cached at init is
     // then built with the planes the getters report. The core's defaults are already 0.1
     // and 1000 since WebARKitLib 0.12.0 (D4); setting them keeps that true whatever the
