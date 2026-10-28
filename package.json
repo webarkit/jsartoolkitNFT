@@ -91,7 +91,7 @@
     "sharp": "^0.35.5",
     "typedoc": "0.28.20",
     "typescript": "6.0.3",
-    "vite": "8.3.4",
+    "vite": "8.3.5",
     "vitest": "^5.0.4"
   },
   "scripts": {
