@@ -7,6 +7,7 @@
 [![Tested with Vitest](https://img.shields.io/badge/tested_with-Vitest-6E9F18.svg?logo=vitest&logoColor=white)](https://vitest.dev/)
 [![CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/CI.yml)
 [![Build jsartoolkitNFT CI](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml/badge.svg)](https://github.com/webarkit/jsartoolkitNFT/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/webarkit/jsartoolkitNFT/graph/badge.svg)](https://codecov.io/gh/webarkit/jsartoolkitNFT)
 
 
 
@@ -755,6 +756,11 @@ npm run test:vitest   # the browser suite only
 npm run test:node     # the Node suite only
 npm run test:coverage # the browser suite, with an lcov report scoped to src/
 ```
+
+CI runs the browser suite with coverage and uploads `coverage/lcov.info` to
+[Codecov](https://codecov.io/gh/webarkit/jsartoolkitNFT). The report covers `src/` only: the
+WebAssembly core and the committed bundles in `build/` are not instrumented. Coverage is
+reported, not enforced, so a drop does not fail a PR.
 
 `npm run test:vitest:watch` re-runs on change while you work. To run a single file, pass its
 path:

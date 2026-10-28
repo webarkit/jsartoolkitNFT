@@ -1,0 +1,10 @@
+# Coverage is reported, not enforced (#580): Codecov's project and patch
+# statuses never fail a PR. The report covers src/ only (see vitest.config.ts).
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true

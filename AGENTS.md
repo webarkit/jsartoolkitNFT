@@ -170,6 +170,12 @@ npm run format-check
   browser's resources and hang the run.
 - **`tests/node/`**: the Node build, with `node --test`.
 
+CI does not call `npm test`. It runs `npm run test:coverage` and then `npm run test:node`, the
+same two suites, so that Vitest writes `coverage/lcov.info` for Codecov (#580). If you change
+the `test` script, change the Tests step in `.github/workflows/CI.yml` too. Coverage uses the
+istanbul provider, which instruments `src/` only: v8 slowed the legacy builds' tests until they
+timed out.
+
 A green run means every artifact loads and detects a marker in one fixed photo. It does not
 measure tracking quality: stability, jitter, or loss and recovery on a moving camera. When
 changing the detection or tracking path, still verify against a real example.

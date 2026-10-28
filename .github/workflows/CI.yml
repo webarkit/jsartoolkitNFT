@@ -57,8 +57,24 @@ jobs:
             sleep $((attempt * 10))
           done
 
+      # `npm test` with coverage on the browser suite: the same two suites, but
+      # Vitest writes coverage/lcov.info for src/ (#580). Keep this in step with
+      # the `test` script in package.json. The Node suite tests the dist/
+      # bundles, not src/, so it adds no coverage.
       - name: Tests
-        run: npm test
+        run: |
+          npm run test:coverage
+          npm run test:node
+
+      # Report only: a failed upload does not fail the job, and codecov.yml
+      # makes Codecov's statuses informational (#580).
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          disable_search: true
+          fail_ci_if_error: false
 
       - name: Build Docs
         run: npm run docs
