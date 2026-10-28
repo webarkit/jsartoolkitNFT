@@ -102,7 +102,12 @@ export default defineConfig({
     ],
 
     coverage: {
-      provider: "v8",
+      // istanbul, not v8 (#580). v8 collects coverage inside the JS engine for
+      // every script on the page, which made the legacy builds' loading tests
+      // (legacy-min, legacy-debug) 15-20x slower and time out. istanbul
+      // instruments only the files in `include`, so build/ and dist/ run at
+      // full speed.
+      provider: "istanbul",
       include: ["src/**/*.ts"],
       // Instrumenting the Emscripten glue or the legacy bundle produces a large
       // and meaningless number; only src/ is the library's own code.
