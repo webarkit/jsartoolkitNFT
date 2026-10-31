@@ -1,21 +1,26 @@
 # Claude Code instructions
 
-The full guidance for AI agents in this repository lives in **[AGENTS.md](AGENTS.md)**.
-Read it before making changes — it is the canonical source and this file is only a pointer.
+@AGENTS.md
 
-## The rules most often got wrong
+AGENTS.md (imported above) is the canonical guidance for every agent. It is imported rather
+than linked because Claude Code loads only `CLAUDE.md` on its own: a link left the rest of
+AGENTS.md out of context unless the agent chose to open it. This file adds only what is
+specific to Claude Code.
 
-- **Open pull requests against `dev`**, never `master`. `master` is reserved for stable
-  releases. See [CONTRIBUTING.md](CONTRIBUTING.md).
-- **Conventional Commits**, with types limited to
-  `feat`, `fix`, `perf`, `doc`, `refactor`, `test`, `style`, `chore`.
-  There is no `ci` type, and documentation is `doc`, not `docs`. PRs are squashed, so the PR
-  title must follow the format too.
-- **`build/` and `dist/` are committed, and CI tests the committed artifacts.** A change to
-  `emscripten/**` or `tools/makem.js` passes CI against stale WASM unless you rebuild and
-  commit on the branch. A regression shipped exactly this way in 1.10.1.
-- **Anything reached as `Module.x` must be in `EXPORTED_RUNTIME_METHODS`** in
-  `tools/makem.js`, or it is silently `undefined` at runtime.
-- **A green `npm test` proves the artifacts load and detect, not that tracking is good.** The
-  suite detects one marker in one photo per build; it does not measure stability or recovery.
-  Verify tracking changes against a real example such as `examples/node/example_dist.js`.
+## Worktrees
+
+Claude Code creates worktrees inside the checkout, under `.claude/worktrees/<name>`:
+
+- Node resolves a package missing from the worktree out of the main checkout's
+  `node_modules`, so a dropped dependency still passes locally (#664 removed the only
+  package that installed `glob`, which `tools/makem.js` requires; only CI caught it).
+- The shared `emscripten-jsartoolkitnft` container mounts the main checkout as `/src`, so a
+  build from a worktree embeds `/src/.claude/worktrees/<name>/` in the artifacts.
+
+Verify a dependency or build change in a one-off container with the worktree as `/src`, as
+`main.yml` does:
+
+```bash
+git submodule update --init
+MSYS_NO_PATHCONV=1 docker run --rm -v "<worktree>:/src" -w /src emscripten/emsdk:4.0.17 npm run build
+```
