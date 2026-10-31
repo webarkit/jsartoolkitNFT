@@ -33,6 +33,13 @@
  *  Author(s): Walter Perdan @kalwalt https://github.com/kalwalt
  *
  */
+
+/**
+ * The WASM SIMD build, for browsers.
+ *
+ * @module @webarkit/jsartoolkit-nft/simd
+ */
+
 import { ARToolkitNFT } from "./ARToolkitNFT_simd";
 import { ARControllerNFT } from "./ARControllerNFT_simd";
 
@@ -54,6 +61,8 @@ import type {
 } from "./abstractions/CommonInterfaces";
 
 import { NFTLoadError } from "./NFTLoadError";
+// The type of NFTLoadError.kind, exported so callers can name it (#763).
+import type { NFTLoadErrorKind } from "./NFTLoadError";
 import {
   createTrackerFactory,
   browserTargetLoader,
@@ -87,11 +96,15 @@ import type {
   NFTTrackerWorker,
   NFTTrackerWorkerOptions,
 } from "./tracker/worker/createNFTTrackerWorker";
+// The type of NFTTrackerWorkerOptions.build, exported so callers can name it (#763).
+import type { BuildName } from "./tracker/worker/selectBuild";
 
 /**
  * Creates an NFT tracker on this build's ARToolkitNFT (#720 D2): load targets, then
  * `process(frame, timestampMs)` each frame. The same-thread facade; the controller
  * (ARControllerNFT) is unchanged.
+ *
+ * @function
  */
 const createNFTTracker: (config: NFTTrackerConfig) => Promise<NFTTracker> =
   createTrackerFactory(ARToolkitNFT, browserTargetLoader, "thread");
@@ -115,6 +128,7 @@ export type {
   NFTRuntimeSettingsPatch,
   ARInitOptions,
   NFTAR2Settings,
+  NFTLoadErrorKind,
   NFTTracker,
   NFTTrackerConfig,
   NFTTrackerPatch,
@@ -137,4 +151,5 @@ export type {
   PoseFilterModule,
   NFTTrackerWorker,
   NFTTrackerWorkerOptions,
+  BuildName,
 };

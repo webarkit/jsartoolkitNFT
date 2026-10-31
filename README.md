@@ -506,7 +506,7 @@ or (recommended) use the **UMD** library:
 
 or you can install with npm and use as a module:
 
-```nodejs
+```bash
 npm i @webarkit/jsartoolkit-nft
 ```
 then:
@@ -574,7 +574,7 @@ or you can clone the repository with git, follow the instructions below:
 
 You can build the documentation of the library. You need node and npm installed and then run these commands in a console:
 
-```nodejs
+```bash
 npm install
 npm run docs
 ```
@@ -718,7 +718,7 @@ init();
 
 - Live camera capture (the examples process a single static image)
 
-Runnable examples live in [`examples/node`](examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
+Runnable examples live in [`examples/node`](https://github.com/webarkit/jsartoolkitNFT/tree/master/examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
 
 ```bash
 cd examples/node && node example_dist.js

@@ -303,7 +303,6 @@ export abstract class ARControllerNFTBase implements AbstractARControllerNFT {
 
   /**
    * **GetNFTData** will return the width. height and dpi of the NFT marker.
-   * @param id the internal id (this.id)
    * @param index the index of the NFT marker, in case you have multi NFT markers.
    * @returns {object}
    */
