@@ -61,6 +61,30 @@ describe("Node build, createNFTTracker", () => {
     assert.equal(results[1].reason, "network");
   });
 
+  // The Node loader throws only `argument`, `missing` and `rejected` (tryAddNFTMarkers), so
+  // the reasons it can report are network (above), unknown and capacity. `format` is a
+  // browser-only reason: Node reads the dataset in place and never parses a response.
+  it("reports an empty source as unknown", async () => {
+    const t = await make();
+    const results = await t.addNFTTargets([""]);
+    assert.equal(results.length, 1);
+    assert.equal(results[0].status, "error");
+    assert.equal(results[0].url, "");
+    assert.equal(results[0].reason, "unknown");
+  });
+
+  it("reports capacity past 20", { timeout: 180_000 }, async () => {
+    // KPM rebuilds its matcher once per source, synchronously on Node: slow.
+    const t = await make();
+    const results = await t.addNFTTargets(Array(21).fill("DataNFT/pinball"));
+    for (let i = 0; i < 20; i++) {
+      assert.equal(results[i].status, "loaded", `source ${i}`);
+      assert.equal(results[i].info.id, i);
+    }
+    assert.equal(results[20].status, "error");
+    assert.equal(results[20].reason, "capacity");
+  });
+
   it("finds pinball with a single found transition", async () => {
     const t = await make();
     const [loaded] = await t.addNFTTargets(["DataNFT/pinball"]);
@@ -84,8 +108,9 @@ describe("Node build, createNFTTracker", () => {
     // - AR2 seeds rand() with srand(time(NULL)) (WebARKitLib selectTemplate.c), so cores
     //   built in different seconds can differ by a few millimetres: Date.now() is pinned.
     const wall = mock.method(Date, "now", () => 1_700_000_000_000);
+    let ctrl;
     try {
-      const ctrl = await ARControllerNFT.initWithDimensions(
+      ctrl = await ARControllerNFT.initWithDimensions(
         width,
         height,
         "camera_para.dat",
@@ -124,6 +149,8 @@ describe("Node build, createNFTTracker", () => {
       assert.ok(compared > 20, `only ${compared} of 30 frames compared`);
     } finally {
       wall.mock.restore();
+      // The Node controller has no dispose(); its toolkit's teardown() frees the core.
+      ctrl?.artoolkitNFT.teardown();
     }
   });
 
