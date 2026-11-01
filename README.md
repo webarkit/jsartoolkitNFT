@@ -333,11 +333,14 @@ which only the worker runs. Import it from `@webarkit/jsartoolkit-nft/client` in
 (`dist/NFTTracker.client.mjs`, an ES module of a few kB with no WASM): the page then downloads only the
 worker's build. The full entry points keep exporting it.
 
-- **Loaded as it is** (a CDN, or `dist/` served as a folder, as the example does): the default `workerBase`
-  is the client's own folder, next to the worker files. Nothing to pass.
-- **Bundled** (Vite, webpack, esbuild): the bundler moves the client, so the default no longer points at
-  the worker files. In a Vite build it is `/assets/`, in the Vite dev server `node_modules/.vite/deps/`.
-  Copy the four files above to a folder your app serves, e.g. `public/nft/`, and pass that folder:
+- **Loaded as it is** (a CDN, or `dist/` served as a folder): the default `workerBase` is the client's own
+  folder, next to the worker files. Nothing to pass. (The example passes `workerBase: '../dist/'` anyway,
+  which is the same folder.)
+- **Bundled**: the bundler moves the client, so the default no longer points at the worker files. With
+  Vite it becomes `/assets/` in a build and `node_modules/.vite/deps/` in the dev server. Copy the four
+  files above to a folder your app serves, e.g. `public/nft/`, and pass that folder. Only Vite has been
+  checked so far; another bundler may also try to resolve the client's `new URL(".", import.meta.url)`
+  at build time, so please report any build error it gives.
 
   ```javascript
   import { createNFTTrackerWorker } from '@webarkit/jsartoolkit-nft/client'
