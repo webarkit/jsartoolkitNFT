@@ -195,9 +195,12 @@ const [load] = await tracker.addNFTTargets(['DataNFT/pinball'])
 const result = tracker.process(imageData, performance.now())
 ```
 
-In a worker, the same calls, each returning a Promise:
+In a worker, the same calls, each returning a Promise. Import it from `@webarkit/jsartoolkit-nft/client`
+(see [Running in a worker](#running-in-a-worker)):
 
 ```javascript
+import { createNFTTrackerWorker } from '@webarkit/jsartoolkit-nft/client'
+
 const tracker = await createNFTTrackerWorker(
   { width: 320, height: 240, cameraParam: 'Data/camera_para.dat' },
   { workerBase: '/dist/' },
@@ -324,6 +327,26 @@ re-bundles the library normally passes it. Serve these files from that folder:
 - `NFTTracker_simd.worker.js`
 - `NFTTracker_td.worker.js`
 - `NFTTracker_td.pthread.js`, which the td worker loads itself.
+
+**The light client.** Every browser build exports `createNFTTrackerWorker`, but each build embeds its WASM,
+which only the worker runs. Import it from `@webarkit/jsartoolkit-nft/client` instead
+(`dist/NFTTracker.client.mjs`, an ES module of a few kB with no WASM): the page then downloads only the
+worker's build. The full entry points keep exporting it.
+
+- **Loaded as it is** (a CDN, or `dist/` served as a folder, as the example does): the default `workerBase`
+  is the client's own folder, next to the worker files. Nothing to pass.
+- **Bundled** (Vite, webpack, esbuild): the bundler moves the client, so the default no longer points at
+  the worker files. In a Vite build it is `/assets/`, in the Vite dev server `node_modules/.vite/deps/`.
+  Copy the four files above to a folder your app serves, e.g. `public/nft/`, and pass that folder:
+
+  ```javascript
+  import { createNFTTrackerWorker } from '@webarkit/jsartoolkit-nft/client'
+
+  const tracker = await createNFTTrackerWorker(config, { workerBase: '/nft/' })
+  ```
+
+  With `build: 'auto'`, `NFTTracker_td.worker.js` and `NFTTracker_td.pthread.js` are used only when the
+  page is cross-origin isolated (COOP and COEP headers); without those headers you can leave them out.
 
 **Skipped frames.** One `process()` runs at a time. A call made while another is in flight resolves
 `{ skipped: true }` at once, and that frame is neither sent nor transferred. The frames are dropped, not

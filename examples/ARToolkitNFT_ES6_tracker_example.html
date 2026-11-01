@@ -39,9 +39,9 @@
       <canvas id="canvas"></canvas>
     </div>
     <script src="js/third_party/three.js/stats.min.js"></script>
-    <!-- The UMD bundle: createNFTTrackerWorker becomes a global. Serve it as a plain file
-         (python python-server.py), not through Vite's dev server, which rewrites it. -->
-    <script src="../dist/ARToolkitNFT.js"></script>
+    <!-- No ARToolkitNFT*.js here: tracker_worker_ES6.js imports the light client
+         (../dist/NFTTracker.client.mjs, #765), so the only WASM this page downloads is the
+         worker's. -->
 
     <script type="module">
       import start from "./tracker_worker_ES6.js";
