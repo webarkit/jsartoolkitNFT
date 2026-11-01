@@ -96,6 +96,23 @@ describe("createNFTTrackerWorker signal (#749)", () => {
     expect(workers[0].terminate).toHaveBeenCalledTimes(1);
   });
 
+  it("an abort in the same tick as the init reply still rejects", async () => {
+    // The reply settles the init first, the abort closes the wrapper right after: the call
+    // must not resolve with a tracker that is already closed.
+    const { workers } = fakeWorkers();
+    const c = new AbortController();
+    const reason = new Error("late");
+    const created = createNFTTrackerWorker(CONFIG, {
+      ...OPTS,
+      signal: c.signal,
+    });
+    await Promise.resolve();
+    workers[0].answerInit();
+    c.abort(reason);
+    await expect(created).rejects.toBe(reason);
+    expect(workers[0].terminate).toHaveBeenCalledTimes(1);
+  });
+
   it("abort after init has no effect", async () => {
     const { workers } = fakeWorkers();
     const c = new AbortController();

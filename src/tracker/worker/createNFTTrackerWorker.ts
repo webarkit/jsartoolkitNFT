@@ -325,6 +325,9 @@ export async function createNFTTrackerWorker(
       workerBase,
     });
     const res = signal ? await Promise.race([init, aborted]) : await init;
+    // An abort in the same tick as the reply: the race settled with the init, but the
+    // wrapper is closed. Do not hand out a tracker whose every call would throw.
+    if (signal?.aborted) throw signal.reason;
     matrix = res.cameraMatrix;
   } catch (e) {
     // An abort or a crash has already closed (and terminated) the worker.
