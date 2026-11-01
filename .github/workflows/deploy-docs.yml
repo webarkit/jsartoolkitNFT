@@ -15,11 +15,20 @@ on:
       # Same pattern as publish.yml: npm release tags only.
       - '[0-9]*.[0-9]*.[0-9]*'
   pull_request:
-    # Dry run: builds the docs and the website with them, opens nothing. It also
-    # catches a TypeDoc config change that breaks the docs before it is merged.
+    # Dry run: builds the docs and the website with them, opens nothing. It runs on
+    # every input TypeDoc reads, so a change that breaks the docs fails its own PR
+    # instead of the next release: the sources (a new export typed with an
+    # unexported type is a warning, as in #763), the README (the docs' front page,
+    # which gave 3 of #763's 12 warnings), the compiler options, and the TypeDoc
+    # version in the lockfile. It takes about 40 seconds.
     paths:
       - .github/workflows/deploy-docs.yml
       - typedoc.json
+      - tsconfig.json
+      - package.json
+      - package-lock.json
+      - README.md
+      - src/**
   workflow_dispatch:
     inputs:
       tag:
