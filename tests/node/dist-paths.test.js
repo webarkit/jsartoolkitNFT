@@ -41,7 +41,38 @@ describe("dist bundles", () => {
     "NFTTracker_simd.worker.js",
     "NFTTracker_td.worker.js",
     "NFTTracker_td.pthread.js",
+    // The page-side client (#765): an ES module too, so the same checks apply.
+    "NFTTracker.client.mjs",
   ];
+
+  // The client exists so that a page using createNFTTrackerWorker does not download the
+  // WASM, which only the worker runs (#765). `AGFzbQ` is the base64 of the WASM magic
+  // number `\0asm`, which every bundle that embeds a build starts its data with.
+  const CLIENT = "NFTTracker.client.mjs";
+  const WASM_BASE64 = "AGFzbQ";
+
+  it("the client embeds no WASM", () => {
+    const worker = fs.readFileSync(
+      path.join(DIST_DIR, "NFTTracker.worker.js"),
+      "utf8",
+    );
+    // The marker is right: a bundle that does embed a build contains it.
+    assert.ok(worker.includes(WASM_BASE64), "the worker embeds no WASM");
+    const client = fs.readFileSync(path.join(DIST_DIR, CLIENT), "utf8");
+    assert.ok(!client.includes(WASM_BASE64), `${CLIENT} embeds a WASM build`);
+    assert.ok(
+      !client.includes("WebAssembly.instantiate"),
+      `${CLIENT} instantiates WASM`,
+    );
+  });
+
+  it("the client stays small", () => {
+    // esbuild bundled the wrapper from source to 4,160 bytes minified (#765); 16 KiB leaves
+    // room for Vite's output and later growth, and is far below any bundle with a WASM build
+    // (about 720 kB).
+    const { size } = fs.statSync(path.join(DIST_DIR, CLIENT));
+    assert.ok(size < 16_384, `${CLIENT} is ${size} bytes`);
+  });
 
   for (const name of WORKERS) {
     it(`include the tracker worker ${name}`, () => {
