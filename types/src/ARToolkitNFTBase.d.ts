@@ -243,7 +243,7 @@ export declare abstract class ARToolkitNFTBase implements IARToolkitNFT {
     /**
      * Load the camera, this is an important and required step, Internally fill
      * the ARParam struct.
-     * @param {Uint8Array|string} urlOrData: the camera parameter, usually a path to a .dat file
+     * @param {Uint8Array|string} urlOrData the camera parameter, usually a path to a .dat file
      * @return {Promise<number>} a promise that resolves to a number, the internal id.
      * A download failure rejects with the `NFTLoadError` from the fetch (kind
      * `http` or `network`), which names the URL.

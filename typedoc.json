@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/index.ts",
+    "src/index_td.ts",
+    "src/index_simd.ts",
+    "src/index_node.ts"
+  ],
+  "intentionallyNotExported": [
+    "src/abstractions/AbstractARControllerNFT.ts:AbstractARControllerNFT",
+    "src/abstractions/IARToolkitNFT_node.ts:IARToolkitNFT_node"
+  ],
+  "out": "docs"
+}
