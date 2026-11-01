@@ -246,8 +246,9 @@ and watch the test fail, then restore it; a test that cannot fail proves nothing
    commit if there is one, and push it. `publish.yml` publishes to npm with provenance; the
    registry may answer "not found" for a few minutes afterwards.
 4. The same tag runs `deploy-docs.yml`, which opens a PR on the website
-   (`webarkit/webarkit.github.io`) against its `dev`, replacing `public/api/jsartoolkitnft/`
-   with the release's TypeDoc output (#764). Check `/jsartoolkitnft/api` on its deploy
+   (`webarkit/webarkit.github.io`) against its `dev` that updates the contents of
+   `public/api/jsartoolkitnft/` to the release's TypeDoc output (#764). The folder and the
+   page that shows it, `/jsartoolkitnft/api`, stay the same. Check `/jsartoolkitnft/api` on its deploy
    preview and merge it there. It needs the `WEBSITE_DOCS_TOKEN` secret: a token with
    Contents and Pull requests write access to the website repository only. A docs failure
    does not affect the npm release. To redo the docs of an existing tag, run the workflow by
