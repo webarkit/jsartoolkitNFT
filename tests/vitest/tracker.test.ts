@@ -633,9 +633,6 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
   }, 120_000);
 
   describe("JS filters", () => {
-    let oneEuro: any;
-    let raw: any;
-
     it("the default filter is native", async () => {
       const { ARToolkitNFT } = await variant.load();
       const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
@@ -652,6 +649,7 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
     it("a JS filter turns native filtering off and resets on lost", async () => {
       const { ARToolkitNFT } = await variant.load();
       const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
+      let oneEuro: any;
       try {
         ({ t: oneEuro } = await withPinball({ filter: { type: "oneEuro" } }));
         const flags = spy.mock.calls.map((c: any[]) => c[0]?.filtering);
@@ -661,7 +659,7 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
         spy.mockRestore();
       }
       // The raw pose, for the same frames (D18: 'none' turns native filtering off too).
-      ({ t: raw } = await withPinball({ filter: "none" }));
+      const { t: raw } = await withPinball({ filter: "none" });
 
       const next = clock();
       const wall = pinWallClock();
@@ -796,32 +794,54 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
     );
 
     it("keeps the old filter when a new module fails", async () => {
-      const next = clock(50_000);
-      await feedUntil(
-        [oneEuro, raw],
-        frames.pinballOnly,
-        next,
-        allFound,
-        120,
-        true,
-      );
-      await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
-      const missing = new URL(
-        "/examples/filters/missing-filter.js",
-        location.origin,
-      ).href;
-      await expect(
-        oneEuro.configure({ filter: { module: missing } }),
-      ).rejects.toThrow(/missing-filter/);
-      const [[o], [r]] = await feedN(
-        [oneEuro, raw],
-        frames.pinballOnly,
-        next,
-        1,
-      );
-      expect(o.targets[0].found).toBe(true);
-      expect(r.targets[0].found).toBe(true);
-      expect(maxDiff(o.targets[0].pose, r.targets[0].pose)).toBeGreaterThan(0);
+      // Its own trackers, so that this spec passes run alone (#753).
+      const { ARToolkitNFT } = await variant.load();
+      const { t: oneEuro } = await withPinball({ filter: { type: "oneEuro" } });
+      const { t: raw } = await withPinball({ filter: "none" });
+      try {
+        const next = clock(50_000);
+        await feedUntil(
+          [oneEuro, raw],
+          frames.pinballOnly,
+          next,
+          allFound,
+          120,
+          true,
+        );
+        await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
+        const missing = new URL(
+          "/examples/filters/missing-filter.js",
+          location.origin,
+        ).href;
+        // A module that fails to load changes nothing: no native filtering call either.
+        const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
+        try {
+          await expect(
+            oneEuro.configure({ filter: { module: missing } }),
+          ).rejects.toThrow(/missing-filter/);
+          expect(
+            spy.mock.calls.filter((c: any[]) => "filtering" in (c[0] ?? {})),
+          ).toEqual([]);
+        } finally {
+          spy.mockRestore();
+        }
+        const [[o], [r]] = await feedN(
+          [oneEuro, raw],
+          frames.pinballOnly,
+          next,
+          1,
+        );
+        expect(o.targets[0].found).toBe(true);
+        expect(r.targets[0].found).toBe(true);
+        expect(maxDiff(o.targets[0].pose, r.targets[0].pose)).toBeGreaterThan(
+          0,
+        );
+      } finally {
+        // Freed now rather than in afterAll: the suite keeps fewer cores alive at once.
+        // dispose() is idempotent, so the afterAll call on them is harmless.
+        oneEuro.dispose();
+        raw.dispose();
+      }
     }, 120_000);
   });
 });

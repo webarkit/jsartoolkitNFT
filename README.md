@@ -351,6 +351,19 @@ worker's build. The full entry points keep exporting it.
   With `build: 'auto'`, `NFTTracker_td.worker.js` and `NFTTracker_td.pthread.js` are used only when the
   page is cross-origin isolated (COOP and COEP headers); without those headers you can leave them out.
 
+**Bounding the start.** The worker's start, which compiles the WASM, otherwise has no time limit. Pass an
+`AbortSignal` as `signal` to bound it: on abort the worker is terminated and `createNFTTrackerWorker`
+rejects with the signal's reason.
+
+```js
+const tracker = await createNFTTrackerWorker(config, {
+  signal: AbortSignal.timeout(30_000), // rejects with a TimeoutError after 30 s
+});
+```
+
+There is no default limit, because compiling the WASM on a slow phone takes several seconds. The signal
+only covers the start: aborting it later has no effect.
+
 **Skipped frames.** One `process()` runs at a time. A call made while another is in flight resolves
 `{ skipped: true }` at once, and that frame is neither sent nor transferred. The frames are dropped, not
 queued, so feeding the tracker every camera frame never builds up latency. Ignore the skipped results.

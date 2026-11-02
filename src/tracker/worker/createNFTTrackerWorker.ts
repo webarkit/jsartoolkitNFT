@@ -37,6 +37,15 @@ export interface NFTTrackerWorkerOptions {
    * the script that loaded this library; a re-bundled app normally passes it.
    */
   workerBase?: string | URL;
+  /**
+   * Aborts the creation (#749). The worker's init otherwise waits for its answer with no
+   * limit, and a worker that loads but never answers (a stuck WASM compile, a threaded
+   * module that cannot start its pthreads) would leave the Promise pending forever. On
+   * abort the worker is terminated and the call rejects with `signal.reason`. For a
+   * timeout, pass `AbortSignal.timeout(ms)`; there is no default, because compiling the
+   * WASM on a slow phone takes several seconds. It has no effect once the call resolved.
+   */
+  signal?: AbortSignal;
 }
 
 /** NFTTracker, relayed to a worker (D13). */
@@ -207,6 +216,9 @@ export async function createNFTTrackerWorker(
   opts: NFTTrackerWorkerOptions = {},
 ): Promise<NFTTrackerWorker> {
   checkFilter(config?.filter);
+  const { signal } = opts;
+  // Already aborted: no worker is started at all.
+  signal?.throwIfAborted();
   // Captured now: projectionFor must not follow later changes to the caller's object, which
   // the worker's tracker, created with these values, does not see either (D12).
   const width = config?.width;
@@ -289,16 +301,45 @@ export async function createNFTTrackerWorker(
     });
   }
 
+  // #749: the caller's signal bounds the init. On abort the wrapper closes, which
+  // terminates the worker and rejects the pending init; the call then rejects with the
+  // signal's own reason, which is what the caller can recognise (a TimeoutError from
+  // AbortSignal.timeout, or their own value). A reply that arrives later finds no
+  // pending request and is ignored.
+  let onAbort: (() => void) | undefined;
+  const aborted = new Promise<never>((_, reject) => {
+    onAbort = () => {
+      // The reason first: close() rejects the pending init too, and the race below must
+      // settle with the reason, not with the internal error.
+      reject(signal!.reason);
+      close(new Error("NFTTracker worker: init aborted"));
+    };
+  });
+  // Rejected only on abort, and then awaited by the race below: no unhandled rejection.
+  aborted.catch(() => {});
+  signal?.addEventListener("abort", onAbort!, { once: true });
   try {
-    const res = await send({
+    // Checked again here, after the listener: an abort since the first check (from a getter
+    // on opts or from the worker factory, synchronously) fired no listener. Throwing lets the
+    // catch close the worker once; calling onAbort() instead would race two rejected
+    // Promises and settle with the internal error (found by Qodo on #771).
+    signal?.throwIfAborted();
+    const init = send({
       type: "init",
       config: withPageUrls(config),
       workerBase,
     });
+    const res = signal ? await Promise.race([init, aborted]) : await init;
+    // An abort in the same tick as the reply: the race settled with the init, but the
+    // wrapper is closed. Do not hand out a tracker whose every call would throw.
+    if (signal?.aborted) throw signal.reason;
     matrix = res.cameraMatrix;
   } catch (e) {
-    close(e instanceof Error ? e : new Error(String(e)));
+    // An abort or a crash has already closed (and terminated) the worker.
+    if (closed === null) close(e instanceof Error ? e : new Error(String(e)));
     throw e;
+  } finally {
+    signal?.removeEventListener("abort", onAbort!);
   }
 
   const check = (): void => {
