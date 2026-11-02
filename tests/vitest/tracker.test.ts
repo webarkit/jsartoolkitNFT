@@ -415,7 +415,7 @@ async function feedUntil(
   maxFrames = 120,
   settle = false,
 ): Promise<any[][]> {
-  const all: any[][] = trackers.map(() => []);
+  const all: any[][] = trackers.map((): any[] => []);
   for (let i = 0; i < maxFrames; i++) {
     const t = next();
     const step = trackers.map((tr) => tr.process(frame, t));

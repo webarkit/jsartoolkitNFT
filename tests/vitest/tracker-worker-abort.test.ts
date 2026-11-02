@@ -66,8 +66,8 @@ describe("createNFTTrackerWorker signal (#749)", () => {
     const { factory, workers } = fakeWorkers();
     const c = new AbortController();
     const reason = new Error("during start");
-    __setWorkerFactory((url: string) => {
-      const w = factory(url);
+    __setWorkerFactory(() => {
+      const w = factory();
       c.abort(reason);
       return w;
     });
