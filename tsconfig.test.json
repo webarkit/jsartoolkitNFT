@@ -1,0 +1,15 @@
+// Type-checks the browser tests with src/, without emitting (`npm run typecheck`, #752).
+// Vitest strips the tests' types without checking them.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    // How Vite resolves the tests' imports. The base config's "node" resolution cannot
+    // read the exports maps of vitest and @vitest/browser, so their types were not found.
+    "moduleResolution": "bundler",
+    // The tools' own declarations are not ours to check.
+    "skipLibCheck": true
+  },
+  // tests/node/ is plain JavaScript run on dist/: not covered here.
+  "include": ["src/**/*", "tests/vitest/**/*.ts", "vitest.config.ts"]
+}
