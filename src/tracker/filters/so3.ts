@@ -35,21 +35,22 @@ export function logSO3(m: Float64Array, out: Float64Array): Float64Array {
   } else {
     // From π/2 to π, sin θ loses the axis; the symmetric part keeps it:
     // (m + mᵀ) / 2 = c·I + (1 − c)·a·aᵀ. Take the largest component first, for precision.
+    // The axis is built in `out` itself: no array is allocated on this path either.
     const d = 1 - c;
-    const diag = [m[0], m[4], m[8]];
     let k = 0;
-    if (diag[1] > diag[k]) k = 1;
-    if (diag[2] > diag[k]) k = 2;
-    const a = [0, 0, 0];
-    a[k] = Math.sqrt(Math.max(0, (diag[k] - c) / d));
+    if (m[4] > m[0]) k = 1;
+    if (m[8] > m[k * 4]) k = 2;
+    const ak = Math.sqrt(Math.max(0, (m[k * 4] - c) / d));
     for (let j = 0; j < 3; j++) {
       // (m_jk + m_kj) / 2 = (1 − c) a_j a_k
-      if (j !== k) a[j] = (m[k * 3 + j] + m[j * 3 + k]) / (2 * d * a[k]);
+      out[j] = j === k ? ak : (m[k * 3 + j] + m[j * 3 + k]) / (2 * d * ak);
     }
     // The symmetric part fixes the axis up to its sign; sin θ · axis fixes the sign.
-    const sign = a[0] * vx + a[1] * vy + a[2] * vz < 0 ? -1 : 1;
-    const n = Math.hypot(a[0], a[1], a[2]);
-    for (let j = 0; j < 3; j++) out[j] = (sign * angle * a[j]) / n;
+    const sign = out[0] * vx + out[1] * vy + out[2] * vz < 0 ? -1 : 1;
+    const f = (sign * angle) / Math.hypot(out[0], out[1], out[2]);
+    out[0] *= f;
+    out[1] *= f;
+    out[2] *= f;
   }
   // A matrix that is not a rotation can give 0 / 0: keep the result finite.
   if (!(
