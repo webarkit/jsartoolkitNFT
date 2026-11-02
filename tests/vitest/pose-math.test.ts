@@ -53,6 +53,5 @@ describe("poseMath", () => {
     expect(Array.from(ar.arglCameraViewRHf(gl, undefined, 1.5))).toEqual(
       Array.from(arglCameraViewRHf(gl, undefined, 1.5)),
     );
-    ar?.dispose?.();
   });
 });

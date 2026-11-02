@@ -800,6 +800,7 @@ npm test              # everything: the browser suite, then the Node suite
 npm run test:vitest   # the browser suite only
 npm run test:node     # the Node suite only
 npm run test:coverage # the browser suite, with an lcov report scoped to src/
+npm run typecheck     # type-checks src/ and the browser tests, which Vitest does not
 ```
 
 CI runs the browser suite with coverage and uploads `coverage/lcov.info` to
