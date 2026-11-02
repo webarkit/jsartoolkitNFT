@@ -319,6 +319,11 @@ export async function createNFTTrackerWorker(
   aborted.catch(() => {});
   signal?.addEventListener("abort", onAbort!, { once: true });
   try {
+    // Checked again here, after the listener: an abort since the first check (from a getter
+    // on opts or from the worker factory, synchronously) fired no listener. Throwing lets the
+    // catch close the worker once; calling onAbort() instead would race two rejected
+    // Promises and settle with the internal error (found by Qodo on #771).
+    signal?.throwIfAborted();
     const init = send({
       type: "init",
       config: withPageUrls(config),

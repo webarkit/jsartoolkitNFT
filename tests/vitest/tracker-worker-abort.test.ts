@@ -59,6 +59,25 @@ describe("createNFTTrackerWorker signal (#749)", () => {
     expect(factory).not.toHaveBeenCalled();
   });
 
+  it("an abort while the worker starts rejects without sending init", async () => {
+    // Found by Qodo on #771: an abort between the first check and the listener's
+    // registration (here from the factory, synchronously) fired no listener, and a worker
+    // that never answers left the call pending.
+    const { factory, workers } = fakeWorkers();
+    const c = new AbortController();
+    const reason = new Error("during start");
+    __setWorkerFactory((url: string) => {
+      const w = factory(url);
+      c.abort(reason);
+      return w;
+    });
+    await expect(
+      createNFTTrackerWorker(CONFIG, { ...OPTS, signal: c.signal }),
+    ).rejects.toBe(reason);
+    expect(workers[0].terminate).toHaveBeenCalledTimes(1);
+    expect(workers[0].postMessage).not.toHaveBeenCalled();
+  });
+
   it("abort during init terminates the worker and rejects with the reason", async () => {
     const { workers } = fakeWorkers();
     const c = new AbortController();
