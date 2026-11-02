@@ -112,6 +112,14 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
     );
   });
 
+  it("configure rejects a non-finite core setting, naming it (#761)", async () => {
+    await expect(tracker.configure({ near: NaN })).rejects.toThrow(TypeError);
+    await expect(
+      tracker.configure({ ar2: { simThresh: Infinity } }),
+    ).rejects.toThrow(/ar2\.simThresh/);
+    expect(planesOf(tracker.cameraMatrix).near).toBeCloseTo(0.1, 6);
+  });
+
   it("configure rejects an unknown key", async () => {
     await expect(tracker.configure({ nope: 1 } as any)).rejects.toThrow(
       TypeError,

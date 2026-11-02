@@ -157,6 +157,25 @@ describe("Node build, runtime settings", () => {
     assert.deepEqual(cameraMatrix(), matrix);
   });
 
+  it("non-finite values for float settings throw TypeError naming the key", () => {
+    // The core refuses them too, but only as a RangeError for the whole patch (#761).
+    const matrix = cameraMatrix();
+    assert.throws(() => ar.configure({ near: NaN }), TypeError);
+    assert.throws(() => ar.configure({ near: NaN }), /"near".*finite/);
+    assert.throws(() => ar.configure({ far: Infinity }), TypeError);
+    assert.throws(() => ar.configure({ detectionInterval: NaN }), TypeError);
+    assert.throws(
+      () => ar.configure({ ar2: { simThresh: -Infinity } }),
+      /ar2\.simThresh/,
+    );
+    assert.throws(
+      () => ar.configure({ ar2: { trackingThresh: NaN } }),
+      TypeError,
+    );
+    assert.deepEqual(ar.getRuntimeSettings(), initial);
+    assert.deepEqual(cameraMatrix(), matrix);
+  });
+
   it("invalid values throw RangeError", () => {
     const matrix = cameraMatrix();
     assert.throws(() => ar.configure({ near: 0 }), RangeError);

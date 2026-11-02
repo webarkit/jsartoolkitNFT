@@ -170,6 +170,23 @@ describe.each(VARIANTS)("runtime settings ($name)", (variant) => {
     expect(cameraMatrix()).toEqual(matrix);
   });
 
+  it("non-finite values for float settings throw TypeError naming the key", () => {
+    // The core refuses them too, but only as a RangeError for the whole patch (#761).
+    const matrix = cameraMatrix();
+    expect(() => ar.configure({ near: NaN })).toThrow(TypeError);
+    expect(() => ar.configure({ near: NaN })).toThrow(/"near".*finite/);
+    expect(() => ar.configure({ far: Infinity })).toThrow(TypeError);
+    expect(() => ar.configure({ detectionInterval: NaN })).toThrow(TypeError);
+    expect(() => ar.configure({ ar2: { simThresh: -Infinity } })).toThrow(
+      /ar2\.simThresh/,
+    );
+    expect(() => ar.configure({ ar2: { trackingThresh: NaN } })).toThrow(
+      TypeError,
+    );
+    expect(ar.getRuntimeSettings()).toEqual(initial);
+    expect(cameraMatrix()).toEqual(matrix);
+  });
+
   it("invalid values throw RangeError", () => {
     const matrix = cameraMatrix();
     expect(() => ar.configure({ near: 0 })).toThrow(RangeError);
