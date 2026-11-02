@@ -16,14 +16,17 @@ import { pathToFileURL } from "node:url";
 
 const CONFIG = { width: 640, height: 480, cameraParam: "/camera_para.dat" };
 
-/** A fake Worker that records its URL and answers init. */
+/** A fake Worker that records its URL and answers init, unless `silent`. */
 class FakeWorker {
   static urls = [];
+  static silent = false;
+  static terminated = 0;
   constructor(url) {
     FakeWorker.urls.push(String(url));
     this.onmessage = null;
   }
   postMessage(msg) {
+    if (FakeWorker.silent) return;
     if (msg.type === "init" || msg.type === "dispose") {
       queueMicrotask(() =>
         this.onmessage?.({
@@ -37,7 +40,9 @@ class FakeWorker {
       );
     }
   }
-  terminate() {}
+  terminate() {
+    FakeWorker.terminated++;
+  }
 }
 
 describe("client entry", () => {
@@ -98,6 +103,28 @@ describe("client entry", () => {
       );
     } finally {
       rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  // The client holds its own copy of createNFTTrackerWorker, so a client built before
+  // #749 would lack `signal` with no git conflict to show it.
+  it("bounds the start with a signal (#749)", async () => {
+    const { createNFTTrackerWorker } =
+      await import("@webarkit/jsartoolkit-nft/client");
+    FakeWorker.silent = true;
+    FakeWorker.terminated = 0;
+    try {
+      const c = new AbortController();
+      const reason = new Error("too slow");
+      const created = createNFTTrackerWorker(CONFIG, {
+        build: "default",
+        signal: c.signal,
+      });
+      c.abort(reason);
+      await assert.rejects(created, (e) => e === reason);
+      assert.equal(FakeWorker.terminated, 1);
+    } finally {
+      FakeWorker.silent = false;
     }
   });
 });
