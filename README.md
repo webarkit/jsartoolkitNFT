@@ -798,7 +798,10 @@ npm run test:coverage # the browser suite, with an lcov report scoped to src/
 
 CI runs the browser suite with coverage and uploads `coverage/lcov.info` to
 [Codecov](https://codecov.io/gh/webarkit/jsartoolkitNFT). The report covers `src/` only: the
-WebAssembly core and the committed bundles in `build/` are not instrumented. Coverage is
+WebAssembly core and the committed bundles in `build/` are not instrumented. The worker entry
+files `src/tracker/worker/host_*.ts` are left out, since they run only inside the tracker's
+worker (their logic, `host.ts`, is measured). The Node classes appear at 0 %: the Node suite runs
+them through the `dist/` bundles, which the report does not cover (#762). Coverage is
 reported, not enforced, so a drop does not fail a PR.
 
 `npm run test:vitest:watch` re-runs on change while you work. To run a single file, pass its

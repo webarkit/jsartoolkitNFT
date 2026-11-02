@@ -1,7 +1,8 @@
 # Coverage is reported, not enforced (#580): Codecov's project and patch
 # statuses never fail a PR. The report covers src/ only (see vitest.config.ts),
-# without the worker entries src/tracker/worker/host_*.ts, and the Node classes
-# read 0 % because tests/node/ runs the dist/ bundles (#762, after #734).
+# without the worker entries src/tracker/worker/host_*.ts. The Node classes stay
+# in it at 0 % on purpose: tests/node/ runs them through the dist/ bundles,
+# outside istanbul, and excluding them would hide that gap (#762, after #734).
 coverage:
   status:
     project:

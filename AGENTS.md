@@ -199,10 +199,11 @@ CI does not call `npm test`. It runs `npm run test:coverage` and then `npm run t
 same two suites, so that Vitest writes `coverage/lcov.info` for Codecov (#580). If you change
 the `test` script, change the Tests step in `.github/workflows/CI.yml` too. Coverage uses the
 istanbul provider, which instruments `src/` only: v8 slowed the legacy builds' tests until they
-timed out. Two parts of `src/` are not measured: the worker entries `src/tracker/worker/host_*.ts`,
-excluded because they run only inside a Blob-URL worker (their logic, `host.ts`, is), and the
-Node classes, which `tests/node/` runs through the `dist/` bundles. #762 tracks the Node part,
-after #734.
+timed out. Two parts of `src/` are not measured. The worker entries `src/tracker/worker/host_*.ts`
+are excluded from the report, because they run only inside a Blob-URL worker (their logic,
+`host.ts`, is measured). The Node classes stay in the report at 0 % on purpose: `tests/node/`
+runs them through the `dist/` bundles, outside istanbul, and excluding them would hide that gap.
+#762 tracks the Node part, after #734.
 
 A green run means every artifact loads and detects a marker in one fixed photo. It does not
 measure tracking quality: stability, jitter, or loss and recovery on a moving camera. When
