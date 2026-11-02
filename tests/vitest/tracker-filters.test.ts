@@ -163,6 +163,19 @@ describe("OneEuro", () => {
     expect(Array.from(f.filter(33, rigid(Z, 1, [50, 0, 0])))).toEqual(second);
     expect(Array.from(f.filter(10, rigid(Z, -1, [-50, 0, 0])))).toEqual(second);
   });
+  it("a time that does not increase during warm-up returns the input", () => {
+    // Found by the final review: the refused time returned the filter's smoothed state,
+    // which warm-up had never output (a one-frame jump of about 28° here). As before #766,
+    // a warm-up sample is returned as is and counts towards warmUp.
+    const f = createPoseFilter({ type: "oneEuro", warmUp: 3 });
+    f.filter(0, rigid(Z, 0));
+    f.filter(33, rigid(Z, 0.5, [10, 0, 0]));
+    const again = rigid(Z, 0.6, [12, 0, 0]);
+    expect(Array.from(f.filter(33, again))).toEqual(Array.from(again));
+    // That was the third warm-up sample: the next one is smoothed.
+    const y = f.filter(66, rigid(Z, 0, [1000, 0, 0]));
+    expect(y[12]).toBeLessThan(1000);
+  });
   it("non-rotation input stays finite", () => {
     const f = createPoseFilter({ type: "oneEuro" });
     f.filter(0, rigid([1, 2, 3], 0.7, [10, -20, -300]));

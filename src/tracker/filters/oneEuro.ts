@@ -73,6 +73,13 @@ export function createPoseFilter(options: OneEuroConfig): PoseFilter {
     return out;
   }
 
+  /** The first `warmUp` samples return their input; later ones the filtered pose. */
+  function settle(pose: Float64Array): Float64Array {
+    const warming = seen < warmUp;
+    seen++;
+    return warming ? pose : out;
+  }
+
   return {
     filter(timeMs, pose) {
       for (let c = 0; c < 3; c++) {
@@ -86,8 +93,10 @@ export function createPoseFilter(options: OneEuroConfig): PoseFilter {
         started = true;
       } else {
         const te = timeMs - prevTime;
-        // Not `te <= 0`: a NaN time must be refused too.
-        if (!(te > 0)) return out;
+        // Not `te <= 0`: a NaN time must be refused too. A refused sample changes no state
+        // but still counts as a warm-up sample, as before #766: while warming it returns
+        // its input, never `out`, which warm-up has not output yet.
+        if (!(te > 0)) return settle(pose);
         // rel = R̂ᵀ R, the rotation from the filtered pose to the new one, in R̂'s frame.
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
@@ -115,9 +124,7 @@ export function createPoseFilter(options: OneEuroConfig): PoseFilter {
       }
       prevTime = timeMs;
       write();
-      const warming = seen < warmUp;
-      seen++;
-      return warming ? pose : out;
+      return settle(pose);
     },
     reset() {
       rot.reset();
