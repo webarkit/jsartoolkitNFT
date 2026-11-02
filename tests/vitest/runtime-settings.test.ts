@@ -177,8 +177,12 @@ describe.each(VARIANTS)("runtime settings ($name)", (variant) => {
     expect(() => ar.configure({ near: NaN })).toThrow(/"near".*finite/);
     expect(() => ar.configure({ far: Infinity })).toThrow(TypeError);
     expect(() => ar.configure({ detectionInterval: NaN })).toThrow(TypeError);
+    // The type and the key together: the core alone would throw a RangeError.
     expect(() => ar.configure({ ar2: { simThresh: -Infinity } })).toThrow(
-      /ar2\.simThresh/,
+      expect.objectContaining({
+        name: "TypeError",
+        message: expect.stringMatching(/ar2\.simThresh/),
+      }),
     );
     expect(() => ar.configure({ ar2: { trackingThresh: NaN } })).toThrow(
       TypeError,

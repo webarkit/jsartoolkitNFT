@@ -166,7 +166,8 @@ describe("Node build, runtime settings", () => {
     assert.throws(() => ar.configure({ detectionInterval: NaN }), TypeError);
     assert.throws(
       () => ar.configure({ ar2: { simThresh: -Infinity } }),
-      /ar2\.simThresh/,
+      // The type and the key together: the core alone would throw a RangeError.
+      { name: "TypeError", message: /ar2\.simThresh/ },
     );
     assert.throws(
       () => ar.configure({ ar2: { trackingThresh: NaN } }),
