@@ -12,6 +12,15 @@ export interface NFTTrackerWorkerOptions {
      * the script that loaded this library; a re-bundled app normally passes it.
      */
     workerBase?: string | URL;
+    /**
+     * Aborts the creation (#749). The worker's init otherwise waits for its answer with no
+     * limit, and a worker that loads but never answers (a stuck WASM compile, a threaded
+     * module that cannot start its pthreads) would leave the Promise pending forever. On
+     * abort the worker is terminated and the call rejects with `signal.reason`. For a
+     * timeout, pass `AbortSignal.timeout(ms)`; there is no default, because compiling the
+     * WASM on a slow phone takes several seconds. It has no effect once the call resolved.
+     */
+    signal?: AbortSignal;
 }
 /** NFTTracker, relayed to a worker (D13). */
 export interface NFTTrackerWorker {
