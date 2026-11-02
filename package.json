@@ -85,7 +85,7 @@
     "@webarkit/camera-view": "^0.1.0",
     "@webarkit/oneeurofilter-ts": "^0.3.0",
     "canvas": "^3.2.3",
-    "glob": "^13.0.6",
+    "glob": "^14.0.3",
     "playwright": "^1.64.1",
     "prettier": "^3.9.10",
     "sharp": "^0.35.5",
