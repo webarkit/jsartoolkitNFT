@@ -179,10 +179,16 @@ Elsewhere:
 
 ```bash
 npm test          # Vitest in Playwright's Chromium, then the Node suite
+npm run typecheck # tsc on src/ and tests/vitest/ (tsconfig.test.json)
 npm run format-check
 ```
 
 Before the first run, install the browser: `npx playwright install chromium`.
+
+Vitest strips the tests' types without checking them, so a spec that uses a type the
+library does not export, or builds an object that does not satisfy one, still passes.
+`npm run typecheck` catches that, and CI runs it before the tests (#752). It covers
+`tests/vitest/` only: `tests/node/` is plain JavaScript run against `dist/`.
 
 `npm test` runs two suites:
 

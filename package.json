@@ -116,6 +116,7 @@
     "python-tests": "cd python-bindings && pytest test_arcontrollerNFT.py",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
+    "typecheck": "tsc -p tsconfig.test.json",
     "format": "prettier --write .",
     "setup-docker": "node tools/docker-setup.js"
   },

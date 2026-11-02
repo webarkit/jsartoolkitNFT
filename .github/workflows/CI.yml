@@ -38,6 +38,12 @@ jobs:
       - name: Check formatting
         run: npm run format-check
 
+      # Vitest strips the tests' types without checking them, so a test could use a type
+      # the library does not export, or build an object that does not satisfy one, and
+      # still pass (#752). Also before the browser install, to fail fast.
+      - name: Type-check
+        run: npm run typecheck
+
       - name: Install Playwright Chromium
         shell: bash
         # Playwright's Chromium is the only browser the tests need. Its download,

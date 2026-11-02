@@ -30,6 +30,13 @@ export default class Utils {
      * to read the extension made such a load fail as "argument" (#736 review).
      */
     static extensionOf(url: string): string;
+    /**
+     * A marker prefix URL with `.ext` added to its path. The query and the hash
+     * stay after it: `pinball?v=2` gives `pinball.zft?v=2`, not
+     * `pinball?v=2.zft`, so a cache-busting or signed prefix URL works (#760).
+     * Read from the string, like {@link extensionOf}.
+     */
+    static withExtension(url: string, ext: string): string;
     static string2Uint8Data(string: string): Uint8Array;
     /**
      * Stores data in the Emscripten filesystem.

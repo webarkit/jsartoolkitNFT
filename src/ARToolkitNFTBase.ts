@@ -748,7 +748,7 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
     }
 
     if (probeZFT) {
-      const zftUrl = source + ".zft";
+      const zftUrl = Utils.withExtension(source, "zft");
       let res: Response;
       try {
         res = await fetch(zftUrl, { signal });
@@ -776,7 +776,7 @@ export abstract class ARToolkitNFTBase implements IARToolkitNFT {
 
     await this.loadFiles(
       ["fset", "iset", "fset3"].map((ext) => ({
-        url: source + "." + ext,
+        url: Utils.withExtension(source, ext),
         path: prefix + "." + ext,
       })),
       signal,
