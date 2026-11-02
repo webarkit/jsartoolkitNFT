@@ -410,6 +410,12 @@ aframe-nft's settings by 1000 to get the same filter here. OneEuro expects incre
 `performance.now()`. A time that does not increase returns the previous output. `warmUp` passes the first
 `warmUp` poses after a reset through unfiltered, while still feeding them to the filter.
 
+OneEuro keeps the pose rigid: it filters the rotation on its tangent space (the step `log(R̂ᵀR)`, through
+the package's `filterStep()`) and the translation as a vector, with the same `minCutOff` and `beta`. Earlier
+releases smoothed the 16 values one by one, which gave the content a small scale and shear on a moving
+camera ([#766](https://github.com/webarkit/jsartoolkitNFT/issues/766)), so filtered poses differ from those
+releases.
+
 To compare the poses of two cores frame by frame, pin `Date.now`: AR2 seeds `rand` with `time(NULL)`.
 
 ## Writing a pose filter
