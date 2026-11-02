@@ -111,7 +111,19 @@ export default defineConfig({
       include: ["src/**/*.ts"],
       // Instrumenting the Emscripten glue or the legacy bundle produces a large
       // and meaningless number; only src/ is the library's own code.
-      exclude: ["src/**/*.d.ts", "build/**", "dist/**"],
+      // The worker entries (host_default/simd/td.ts) hold one statement each,
+      // runHost(...), which runs only inside the worker bundle loaded from a Blob
+      // URL, where istanbul does not reach (#720 D15). tracker-worker.test.ts
+      // starts every build's worker, and their logic, host.ts, is measured on
+      // the page (#770). Left out so they do not read 0 % (#762). The Node
+      // classes are not measured either: tests/node/ runs the dist/ bundles
+      // (#762 waits for #734 for those).
+      exclude: [
+        "src/**/*.d.ts",
+        "src/tracker/worker/host_*.ts",
+        "build/**",
+        "dist/**",
+      ],
       reporter: ["text", "lcov"],
     },
   },
