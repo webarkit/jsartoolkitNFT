@@ -15,8 +15,10 @@ and shears with the camera's motion. 'none' and 'native' keep the pose rigid.
 
 ## Goals
 
-- Every pose the oneEuro filter returns has a rotation part that is a rotation: orthonormal
+- Every pose the oneEuro filter smooths has a rotation part that is a rotation: orthonormal
   columns and det +1, within rounding (1e-9), on a moving sequence and not only a static one.
+  The samples it returns as is (the first after a reset, the `warmUp` ones) are the input: the
+  core's raw poses are rigid to about 1e-7 (measured on the Node build, 2026-11-02).
 - Existing configurations keep working with the same meaning: one `minCutOff` / `beta` pair,
   the D19 defaults (0.0001, 0.01), `warmUp`, time in milliseconds.
 
