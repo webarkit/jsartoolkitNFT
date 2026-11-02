@@ -205,6 +205,28 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
   );
 
   it.runIf(variant.name === "wasm")(
+    "a prefix with a query string loads, with and without the probe (#760)",
+    async () => {
+      const t = await create(variant);
+      const fetchSpy = vi.spyOn(globalThis, "fetch");
+      try {
+        const versioned = MARKER_PINBALL + "?v=1";
+        expect((await t.addNFTTargets([versioned]))[0].status).toBe("loaded");
+        expect(
+          (await t.addNFTTargets([versioned], { probeZFT: false }))[0].status,
+        ).toBe("loaded");
+        const urls = fetchSpy.mock.calls.map(([u]) => String(u));
+        expect(urls).toContain(MARKER_PINBALL + ".zft?v=1");
+        expect(urls).toContain(MARKER_PINBALL + ".fset3?v=1");
+        expect(urls.every((u) => u.endsWith("?v=1"))).toBe(true);
+      } finally {
+        fetchSpy.mockRestore();
+        t.dispose();
+      }
+    },
+  );
+
+  it.runIf(variant.name === "wasm")(
     "probeZFT: false skips the .zft check, which is on by default",
     async () => {
       const t = await create(variant);

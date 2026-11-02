@@ -47,6 +47,27 @@ describe("Utils.extensionOf", () => {
   });
 });
 
+describe("Utils.withExtension", () => {
+  it("puts the extension before the query and the hash (#760)", () => {
+    expect(Utils.withExtension("DataNFT/pinball", "fset")).toBe(
+      "DataNFT/pinball.fset",
+    );
+    expect(Utils.withExtension("DataNFT/pinball?v=2", "zft")).toBe(
+      "DataNFT/pinball.zft?v=2",
+    );
+    expect(Utils.withExtension("/m/pinball#top", "iset")).toBe(
+      "/m/pinball.iset#top",
+    );
+    // Only the first ? or # ends the path: a ? inside the hash stays in it.
+    expect(
+      Utils.withExtension(
+        "https://cdn.example/m/pinball?a=1&b=x.y#h?z",
+        "fset3",
+      ),
+    ).toBe("https://cdn.example/m/pinball.fset3?a=1&b=x.y#h?z");
+  });
+});
+
 describe("Utils.fetchBinary", () => {
   it("returns the bytes", async () => {
     const bytes = await Utils.fetchBinary("/examples/DataNFT/zft/pinball.zft");
