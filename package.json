@@ -32,6 +32,10 @@
       "types": "./types/src/index_td.d.ts",
       "default": "./dist/ARToolkitNFT_td.js"
     },
+    "./client": {
+      "types": "./types/src/client.d.ts",
+      "default": "./dist/NFTTracker.client.mjs"
+    },
     "./node": {
       "import": {
         "types": "./types/src/index_node.d.mts",
