@@ -63,6 +63,12 @@ jobs:
 
     - run: npm run build-ts
 
+    # Against the files this job just built, not the committed ones CI tested: a bundle
+    # that only this build emits must not be committed or released without being listed
+    # in the Release step below.
+    - name: Check the release file list
+      run: node --test tests/node/release-assets.test.js
+
     - name: Commit changes
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
       uses: EndBug/add-and-commit@v11
