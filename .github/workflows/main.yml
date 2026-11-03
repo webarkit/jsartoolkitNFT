@@ -63,6 +63,12 @@ jobs:
 
     - run: npm run build-ts
 
+    # Against the files this job just built, not the committed ones CI tested: a bundle
+    # that only this build emits must not be committed or released without being listed
+    # in the Release step below.
+    - name: Check the release file list
+      run: node --test tests/node/release-assets.test.js
+
     - name: Commit changes
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
       uses: EndBug/add-and-commit@v11
@@ -80,7 +86,8 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/python/')
       with:
         # Fail instead of warning when an entry matches nothing, so the list can't
-        # silently drift from what the build emits.
+        # silently drift from what the build emits. A new file left out of the list
+        # is caught by tests/node/release-assets.test.js instead.
         fail_on_unmatched_files: true
         files: |
           build/artoolkitNFT.debug.js
@@ -99,6 +106,7 @@ jobs:
           dist/ARToolkitNFT_simd.js
           dist/ARToolkitNFT_td.js
           dist/ARToolkitNFT_td.worker.js
+          dist/NFTTracker.client.mjs
           dist/NFTTracker.worker.js
           dist/NFTTracker_simd.worker.js
           dist/NFTTracker_td.worker.js
