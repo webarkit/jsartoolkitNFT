@@ -445,6 +445,37 @@ describe(`addNFTMarkers outcomes (#685, ${VARIANTS[0].name})`, () => {
     expect(ids).toHaveLength(1);
   }, 120_000);
 
+  // A cache-busting or signed prefix: the extension goes before the query and
+  // the hash, which stay as they are (#760).
+  it("query string in a prefix, with the .zft probe", async () => {
+    const spy = spyFetch();
+    const ids = await tk.addNFTMarkers([MARKER_PINBALL + "?v=1#top"]);
+    expect(ids).toHaveLength(1);
+    expect(calledUrls(spy)).toEqual([
+      MARKER_PINBALL + ".zft?v=1#top",
+      ...PINBALL_FILES.map((u) => u + "?v=1#top"),
+    ]);
+  }, 120_000);
+
+  it("query string in a prefix, without the .zft probe", async () => {
+    const spy = spyFetch();
+    const ids = await tk.addNFTMarkers(
+      [MARKER_PINBALL + "?v=1"],
+      undefined,
+      undefined,
+      { probeZFT: false },
+    );
+    expect(ids).toHaveLength(1);
+    expect(calledUrls(spy)).toEqual(PINBALL_FILES.map((u) => u + "?v=1"));
+  }, 120_000);
+
+  it("query string in a prefix found as a .zft", async () => {
+    const spy = spyFetch();
+    const ids = await tk.addNFTMarkers([ZFT_PINBALL + "?v=1"]);
+    expect(ids).toHaveLength(1);
+    expect(calledUrls(spy)).toEqual([ZFT_PINBALL + ".zft?v=1"]);
+  }, 120_000);
+
   it("concurrent calls (RF2)", async () => {
     const c = await freshController(variant);
     fresh.push(c.ar);

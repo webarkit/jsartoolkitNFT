@@ -8,7 +8,7 @@ import type { NFTTracker } from "../types";
 import { PROTOCOL_VERSION, type Request, type Response } from "./protocol";
 
 /** The parts of the dedicated worker scope the host uses (tsconfig has no webworker lib). */
-interface HostScope {
+export interface HostScope {
   onmessage: ((event: MessageEvent<Request>) => void) | null;
   postMessage(message: Response): void;
 }
@@ -23,12 +23,15 @@ interface HostScope {
  * `mainScriptUrlOrBlob` (D16), so the pthreads do not depend on this file's
  * `import.meta.url`, which is a Blob URL in the tests (D15), or wherever an app copied or
  * rehosted the worker file.
+ * @param scope the worker's global scope, `self` by default. The tests pass a fake one to
+ * drive the host on the page thread (#753), where `self` is the test page's own window,
+ * whose `postMessage` and `onmessage` the test runner may use itself.
  */
 export function runHost(
   createNFTTracker: ReturnType<typeof createTrackerFactory>,
   pthreadFile?: string,
+  scope: HostScope = self as unknown as HostScope,
 ): void {
-  const scope = self as unknown as HostScope;
   /** Set by the init request; every other request waits for it. */
   let ready: Promise<NFTTracker> | null = null;
   /**

@@ -112,6 +112,19 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
     );
   });
 
+  it("configure rejects a non-finite core setting, naming it (#761)", async () => {
+    await expect(tracker.configure({ near: NaN })).rejects.toThrow(TypeError);
+    await expect(
+      tracker.configure({ ar2: { simThresh: Infinity } }),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        name: "TypeError",
+        message: expect.stringMatching(/ar2\.simThresh/),
+      }),
+    );
+    expect(planesOf(tracker.cameraMatrix).near).toBeCloseTo(0.1, 6);
+  });
+
   it("configure rejects an unknown key", async () => {
     await expect(tracker.configure({ nope: 1 } as any)).rejects.toThrow(
       TypeError,
@@ -200,6 +213,28 @@ describe.each(VARIANTS)("NFTTracker ($name)", (variant) => {
         expect(register).not.toHaveBeenCalled();
       } finally {
         register.mockRestore();
+      }
+    },
+  );
+
+  it.runIf(variant.name === "wasm")(
+    "a prefix with a query string loads, with and without the probe (#760)",
+    async () => {
+      const t = await create(variant);
+      const fetchSpy = vi.spyOn(globalThis, "fetch");
+      try {
+        const versioned = MARKER_PINBALL + "?v=1";
+        expect((await t.addNFTTargets([versioned]))[0].status).toBe("loaded");
+        expect(
+          (await t.addNFTTargets([versioned], { probeZFT: false }))[0].status,
+        ).toBe("loaded");
+        const urls = fetchSpy.mock.calls.map(([u]) => String(u));
+        expect(urls).toContain(MARKER_PINBALL + ".zft?v=1");
+        expect(urls).toContain(MARKER_PINBALL + ".fset3?v=1");
+        expect(urls.every((u) => u.endsWith("?v=1"))).toBe(true);
+      } finally {
+        fetchSpy.mockRestore();
+        t.dispose();
       }
     },
   );
@@ -393,7 +428,7 @@ async function feedUntil(
   maxFrames = 120,
   settle = false,
 ): Promise<any[][]> {
-  const all: any[][] = trackers.map(() => []);
+  const all: any[][] = trackers.map((): any[] => []);
   for (let i = 0; i < maxFrames; i++) {
     const t = next();
     const step = trackers.map((tr) => tr.process(frame, t));
@@ -633,9 +668,6 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
   }, 120_000);
 
   describe("JS filters", () => {
-    let oneEuro: any;
-    let raw: any;
-
     it("the default filter is native", async () => {
       const { ARToolkitNFT } = await variant.load();
       const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
@@ -652,6 +684,7 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
     it("a JS filter turns native filtering off and resets on lost", async () => {
       const { ARToolkitNFT } = await variant.load();
       const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
+      let oneEuro: any;
       try {
         ({ t: oneEuro } = await withPinball({ filter: { type: "oneEuro" } }));
         const flags = spy.mock.calls.map((c: any[]) => c[0]?.filtering);
@@ -661,7 +694,7 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
         spy.mockRestore();
       }
       // The raw pose, for the same frames (D18: 'none' turns native filtering off too).
-      ({ t: raw } = await withPinball({ filter: "none" }));
+      const { t: raw } = await withPinball({ filter: "none" });
 
       const next = clock();
       const wall = pinWallClock();
@@ -796,32 +829,54 @@ describe.each(VARIANTS)("NFTTracker.process ($name)", (variant) => {
     );
 
     it("keeps the old filter when a new module fails", async () => {
-      const next = clock(50_000);
-      await feedUntil(
-        [oneEuro, raw],
-        frames.pinballOnly,
-        next,
-        allFound,
-        120,
-        true,
-      );
-      await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
-      const missing = new URL(
-        "/examples/filters/missing-filter.js",
-        location.origin,
-      ).href;
-      await expect(
-        oneEuro.configure({ filter: { module: missing } }),
-      ).rejects.toThrow(/missing-filter/);
-      const [[o], [r]] = await feedN(
-        [oneEuro, raw],
-        frames.pinballOnly,
-        next,
-        1,
-      );
-      expect(o.targets[0].found).toBe(true);
-      expect(r.targets[0].found).toBe(true);
-      expect(maxDiff(o.targets[0].pose, r.targets[0].pose)).toBeGreaterThan(0);
+      // Its own trackers, so that this spec passes run alone (#753).
+      const { ARToolkitNFT } = await variant.load();
+      const { t: oneEuro } = await withPinball({ filter: { type: "oneEuro" } });
+      const { t: raw } = await withPinball({ filter: "none" });
+      try {
+        const next = clock(50_000);
+        await feedUntil(
+          [oneEuro, raw],
+          frames.pinballOnly,
+          next,
+          allFound,
+          120,
+          true,
+        );
+        await feedN([oneEuro, raw], frames.pinballOnly, next, 10);
+        const missing = new URL(
+          "/examples/filters/missing-filter.js",
+          location.origin,
+        ).href;
+        // A module that fails to load changes nothing: no native filtering call either.
+        const spy = vi.spyOn(ARToolkitNFT.prototype, "configure");
+        try {
+          await expect(
+            oneEuro.configure({ filter: { module: missing } }),
+          ).rejects.toThrow(/missing-filter/);
+          expect(
+            spy.mock.calls.filter((c: any[]) => "filtering" in (c[0] ?? {})),
+          ).toEqual([]);
+        } finally {
+          spy.mockRestore();
+        }
+        const [[o], [r]] = await feedN(
+          [oneEuro, raw],
+          frames.pinballOnly,
+          next,
+          1,
+        );
+        expect(o.targets[0].found).toBe(true);
+        expect(r.targets[0].found).toBe(true);
+        expect(maxDiff(o.targets[0].pose, r.targets[0].pose)).toBeGreaterThan(
+          0,
+        );
+      } finally {
+        // Freed now rather than in afterAll: the suite keeps fewer cores alive at once.
+        // dispose() is idempotent, so the afterAll call on them is harmless.
+        oneEuro.dispose();
+        raw.dispose();
+      }
     }, 120_000);
   });
 });

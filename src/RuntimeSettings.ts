@@ -58,14 +58,22 @@ function checkValue(key: string, value: unknown, kind: ValueKind): void {
       `configure(): "${key}" must be an integer, got ${String(value)}`,
     );
   }
+  // NaN and ±Infinity pass the typeof check. The core refuses them as well (isfinite in
+  // NFTRuntimeSettings.h), but only as a RangeError for the whole patch; here the key can
+  // be named, as for the integers above (#761).
+  if (kind === "number" && !Number.isFinite(value)) {
+    throw new TypeError(
+      `configure(): "${key}" must be a finite number, got ${String(value)}`,
+    );
+  }
 }
 
 /**
  * Applies a runtime-settings patch to a native ARToolKitNFT instance (D8), for the
  * browser and Node wrappers alike:
- * 1. rejects unknown top-level and `ar2` keys, values of the wrong type, and
- *    non-integers for the fields that are int in the core, with a TypeError naming the
- *    key;
+ * 1. rejects unknown top-level and `ar2` keys, values of the wrong type, non-integers
+ *    for the fields that are int in the core, and NaN or ±Infinity for the others, with
+ *    a TypeError naming the key;
  * 2. deep-merges the patch into `getRuntimeSettings()`, `ar2` field by field (undefined
  *    values count as absent);
  * 3. calls the native `configure()` once, which validates everything and changes nothing

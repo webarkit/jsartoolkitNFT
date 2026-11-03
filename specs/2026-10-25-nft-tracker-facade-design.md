@@ -173,6 +173,7 @@ ARnft, for example, has one shared filter that is never reset, and sends `lost` 
   - `projectionFor` runs on the main thread from the cached `cameraMatrix`, with no round trip.
   - One `process` runs at a time. A `process()` call made while one is in flight resolves with `{ skipped: true }`, without queueing, so a consumer feeding camera frames never builds up latency. This is the common pattern; the builder documents it.
   - **(amended 2026-10-27) `dispose()` waits a bounded time** (`DISPOSE_TIMEOUT_MS`, 2 s) for the worker's answer, then terminates the worker anyway and rejects every pending call with the disposed error. Why: a threaded worker that stopped answering under load (seen in the full test suite) made `dispose()` hang; terminating frees the worker's memory whether or not it answered.
+  - **(amended 2026-11-01, #749) The init is bounded by the caller's `signal`**, an `AbortSignal` in the wrapper options. On abort the worker is terminated and `createNFTTrackerWorker` rejects with `signal.reason`; a signal already aborted starts no worker. A timeout is `AbortSignal.timeout(ms)`. Why no default timeout: compiling the WASM on a slow phone takes several seconds, so any fixed value risks failing a working device. Once the call has resolved the signal has no effect; `dispose()` keeps its own bound.
 - **D14 (design). Custom filter module contract,** exported as types from `src/tracker/filters/PoseFilter.ts`:
 
 ```ts
@@ -226,6 +227,7 @@ export interface FrameGeometry {
   - **Units are the package's:** time in milliseconds, and `minCutOff` and `beta` passed to `new OneEuroFilter(minCutOff, beta)` **unchanged**, as ARnft does. The derivative cutoff is fixed inside the package at 1 Hz, so the facade has no `dCutOff`, which drops it from G3's first sketch.
   - aframe-nft divides `minCutOff` by 1000 before passing it; the README notes the difference, so its users can convert.
   - `warmUp` (default 0) is the facade's: the first `warmUp` samples after a reset pass through unfiltered while still priming the filter.
+  - **Amendment (2026-11-02, #766): the rotation is filtered on its tangent space.** Smoothing the 16 values one by one made R lose rigidity (column norms 0.989 to 1.0007, det down to 0.984 on a hand-held camera). The rotation's step `ω = log(R̂ᵀR)` now goes through the package's `filterStep()` (0.3.0), then `R̂ ← R̂ · exp(ω̂)`; the translation goes through `filter()` as a vector. One `minCutOff` / `beta` pair and the defaults are kept: for small rotations the change of R's entries is about the angle in radians, the scale of ω. Filtered poses differ from 1.15.0. Design: `specs/2026-11-02-oneeuro-tangent-space-design.md`.
 - **D20 (user, 2026-10-27). `@webarkit/camera-view` is a devDependency** (0.1.0, on npm). The `projectionFor` tests build their `FrameGeometry` with its `getProcessGeometry` and `toFrameGeometry`, instead of a copy of the rule, and the ported example uses it to letterbox. The library itself does not depend on it at run time: `FrameGeometry` stays a plain-data type declared in the facade.
 
 ## Current state

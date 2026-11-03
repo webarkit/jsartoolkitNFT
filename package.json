@@ -1,6 +1,6 @@
 {
   "name": "@webarkit/jsartoolkit-nft",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "main": "dist/ARToolkitNFT.js",
   "types": "types/src/index.d.ts",
   "exports": {
@@ -31,6 +31,10 @@
     "./td": {
       "types": "./types/src/index_td.d.ts",
       "default": "./dist/ARToolkitNFT_td.js"
+    },
+    "./client": {
+      "types": "./types/src/client.d.ts",
+      "default": "./dist/NFTTracker.client.mjs"
     },
     "./node": {
       "import": {
@@ -83,7 +87,7 @@
     "@vitest/browser-playwright": "^5.0.5",
     "@vitest/coverage-istanbul": "^5.0.5",
     "@webarkit/camera-view": "^0.1.0",
-    "@webarkit/oneeurofilter-ts": "^0.2.1",
+    "@webarkit/oneeurofilter-ts": "^0.3.0",
     "canvas": "^3.2.3",
     "glob": "^13.0.6",
     "playwright": "^1.64.1",
@@ -112,6 +116,7 @@
     "python-tests": "cd python-bindings && pytest test_arcontrollerNFT.py",
     "watch": "./node_modules/.bin/watch 'npm run build' ./js/",
     "format-check": "prettier --check .",
+    "typecheck": "tsc -p tsconfig.test.json",
     "format": "prettier --write .",
     "setup-docker": "node tools/docker-setup.js"
   },

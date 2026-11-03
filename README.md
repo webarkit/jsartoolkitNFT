@@ -79,12 +79,13 @@ ar.getRuntimeSettings().far; // 5000
 ```
 
 The patch is merged into the current settings (`ar2` field by field), checked, and applied in one
-step: if any value is wrong, nothing changes. An unknown key, a value of the wrong type or a
-non-integer for an integer setting throws a `TypeError`; this includes the square-marker keys
-`threshold`, `thresholdMode`, `imageProcMode` and `debugMode`, which do nothing on NFT. A value
-out of range throws a `RangeError`. The individual setters keep working as before.
+step: if any value is wrong, nothing changes. An unknown key, a value of the wrong type, a
+non-integer for an integer setting, or `NaN` or `±Infinity` for a numeric one throws a `TypeError`
+that names the key; this includes the square-marker keys `threshold`, `thresholdMode`,
+`imageProcMode` and `debugMode`, which do nothing on NFT. A value out of range throws a
+`RangeError`. The individual setters keep working as before.
 
-Behaviour changes in this release:
+Behaviour changes in 1.15.0:
 
 - `getCameraMatrix()` right after initialisation is built with the near plane `0.1`, the value
   `ARControllerNFT` always reported, instead of `0.0001`. `setProjectionNearPlane()` and
@@ -127,6 +128,10 @@ checked for a `.zft` with one asynchronous request, and falls back to the `.iset
 files when there is none. Any HTTP error status on that check means "no `.zft`", so storage services that
 answer 403 for a missing object still work. A marker without a `.zft` logs one 404 in the console; pass
 `probeZFT: false` to skip the check (see below).
+
+In the browser builds a query string or fragment stays at the end of each file's URL, so a versioned or
+signed prefix such as `path/to/marker?v=2` loads `marker.zft?v=2`, then `marker.iset?v=2` and so on
+(since 1.16.0; before, it loaded `marker?v=2.iset`).
 
 ## Loading NFT markers
 
@@ -195,9 +200,12 @@ const [load] = await tracker.addNFTTargets(['DataNFT/pinball'])
 const result = tracker.process(imageData, performance.now())
 ```
 
-In a worker, the same calls, each returning a Promise:
+In a worker, the same calls, each returning a Promise. Import it from `@webarkit/jsartoolkit-nft/client`
+(see [Running in a worker](#running-in-a-worker)):
 
 ```javascript
+import { createNFTTrackerWorker } from '@webarkit/jsartoolkit-nft/client'
+
 const tracker = await createNFTTrackerWorker(
   { width: 320, height: 240, cameraParam: 'Data/camera_para.dat' },
   { workerBase: '/dist/' },
@@ -325,6 +333,42 @@ re-bundles the library normally passes it. Serve these files from that folder:
 - `NFTTracker_td.worker.js`
 - `NFTTracker_td.pthread.js`, which the td worker loads itself.
 
+**The light client.** Every browser build exports `createNFTTrackerWorker`, but each build embeds its WASM,
+which only the worker runs. Import it from `@webarkit/jsartoolkit-nft/client` instead
+(`dist/NFTTracker.client.mjs`, an ES module of a few kB with no WASM): the page then downloads only the
+worker's build. The full entry points keep exporting it.
+
+- **Loaded as it is** (a CDN, or `dist/` served as a folder): the default `workerBase` is the client's own
+  folder, next to the worker files. Nothing to pass. (The example passes `workerBase: '../dist/'` anyway,
+  which is the same folder.)
+- **Bundled**: the bundler moves the client, so the default no longer points at the worker files. With
+  Vite it becomes `/assets/` in a build and `node_modules/.vite/deps/` in the dev server. Copy the four
+  files above to a folder your app serves, e.g. `public/nft/`, and pass that folder. Only Vite has been
+  checked so far; another bundler may also try to resolve the client's `new URL(".", import.meta.url)`
+  at build time, so please report any build error it gives.
+
+  ```javascript
+  import { createNFTTrackerWorker } from '@webarkit/jsartoolkit-nft/client'
+
+  const tracker = await createNFTTrackerWorker(config, { workerBase: '/nft/' })
+  ```
+
+  With `build: 'auto'`, `NFTTracker_td.worker.js` and `NFTTracker_td.pthread.js` are used only when the
+  page is cross-origin isolated (COOP and COEP headers); without those headers you can leave them out.
+
+**Bounding the start.** The worker's start, which compiles the WASM, otherwise has no time limit. Pass an
+`AbortSignal` as `signal` to bound it: on abort the worker is terminated and `createNFTTrackerWorker`
+rejects with the signal's reason.
+
+```js
+const tracker = await createNFTTrackerWorker(config, {
+  signal: AbortSignal.timeout(30_000), // rejects with a TimeoutError after 30 s
+});
+```
+
+There is no default limit, because compiling the WASM on a slow phone takes several seconds. The signal
+only covers the start: aborting it later has no effect.
+
 **Skipped frames.** One `process()` runs at a time. A call made while another is in flight resolves
 `{ skipped: true }` at once, and that frame is neither sent nor transferred. The frames are dropped, not
 queued, so feeding the tracker every camera frame never builds up latency. Ignore the skipped results.
@@ -370,6 +414,12 @@ ARnft does. aframe-nft divides `minCutOff` by 1000 before passing it, so divide 
 aframe-nft's settings by 1000 to get the same filter here. OneEuro expects increasing timestamps, so pass
 `performance.now()`. A time that does not increase returns the previous output. `warmUp` passes the first
 `warmUp` poses after a reset through unfiltered, while still feeding them to the filter.
+
+OneEuro keeps the pose rigid: it filters the rotation on its tangent space (the step `log(R̂ᵀR)`, through
+the package's `filterStep()`) and the translation as a vector, with the same `minCutOff` and `beta`. Earlier
+releases smoothed the 16 values one by one, which gave the content a small scale and shear on a moving
+camera ([#766](https://github.com/webarkit/jsartoolkitNFT/issues/766)), so filtered poses differ from those
+releases.
 
 To compare the poses of two cores frame by frame, pin `Date.now`: AR2 seeds `rand` with `time(NULL)`.
 
@@ -506,7 +556,7 @@ or (recommended) use the **UMD** library:
 
 or you can install with npm and use as a module:
 
-```nodejs
+```bash
 npm i @webarkit/jsartoolkit-nft
 ```
 then:
@@ -574,7 +624,7 @@ or you can clone the repository with git, follow the instructions below:
 
 You can build the documentation of the library. You need node and npm installed and then run these commands in a console:
 
-```nodejs
+```bash
 npm install
 npm run docs
 ```
@@ -718,7 +768,7 @@ init();
 
 - Live camera capture (the examples process a single static image)
 
-Runnable examples live in [`examples/node`](examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
+Runnable examples live in [`examples/node`](https://github.com/webarkit/jsartoolkitNFT/tree/master/examples/node): [`example_dist.js`](examples/node/example_dist.js) (sharp + the Node build) and [`example_canvas.js`](examples/node/example_canvas.js) (the [canvas](https://github.com/Automattic/node-canvas) package). Run one with:
 
 ```bash
 cd examples/node && node example_dist.js
@@ -755,11 +805,15 @@ npm test              # everything: the browser suite, then the Node suite
 npm run test:vitest   # the browser suite only
 npm run test:node     # the Node suite only
 npm run test:coverage # the browser suite, with an lcov report scoped to src/
+npm run typecheck     # type-checks src/ and the browser tests, which Vitest does not
 ```
 
 CI runs the browser suite with coverage and uploads `coverage/lcov.info` to
 [Codecov](https://codecov.io/gh/webarkit/jsartoolkitNFT). The report covers `src/` only: the
-WebAssembly core and the committed bundles in `build/` are not instrumented. Coverage is
+WebAssembly core and the committed bundles in `build/` are not instrumented. The worker entry
+files `src/tracker/worker/host_*.ts` are left out, since they run only inside the tracker's
+worker (their logic, `host.ts`, is measured). The Node classes appear at 0 %: the Node suite runs
+them through the `dist/` bundles, which the report does not cover (#762). Coverage is
 reported, not enforced, so a drop does not fail a PR.
 
 `npm run test:vitest:watch` re-runs on change while you work. To run a single file, pass its

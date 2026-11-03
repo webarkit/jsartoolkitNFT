@@ -128,6 +128,18 @@ export default class Utils {
     return dot < 0 ? "" : name.substring(dot + 1);
   }
 
+  /**
+   * A marker prefix URL with `.ext` added to its path. The query and the hash
+   * stay after it: `pinball?v=2` gives `pinball.zft?v=2`, not
+   * `pinball?v=2.zft`, so a cache-busting or signed prefix URL works (#760).
+   * Read from the string, like {@link extensionOf}.
+   */
+  static withExtension(url: string, ext: string): string {
+    const end = url.search(/[?#]/);
+    if (end < 0) return url + "." + ext;
+    return url.substring(0, end) + "." + ext + url.substring(end);
+  }
+
   static string2Uint8Data(string: string): Uint8Array {
     const data = new Uint8Array(string.length);
     for (let i = 0; i < data.length; i++) {

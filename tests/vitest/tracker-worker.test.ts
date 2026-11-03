@@ -148,8 +148,7 @@ describe.each(["default", "simd", "td"] as BuildName[])(
 
       const loads = await tracker.addNFTTargets([PINBALL]);
       expect(loads).toHaveLength(1);
-      expect(loads[0].status).toBe("loaded");
-      expect(loads[0].info.id).toBe(0);
+      expect(loads[0]).toMatchObject({ status: "loaded", info: { id: 0 } });
 
       const r = await processUntilFound(tracker);
       expect(r.transitions).toEqual([{ type: "found", id: 0 }]);
@@ -160,7 +159,8 @@ describe.each(["default", "simd", "td"] as BuildName[])(
       const tracker = await create();
       const frame = pinballFrame();
       const r = await tracker.process(frame, 0);
-      expect(r.time).toBe(0);
+      // The first frame is never skipped: a FrameResult, which carries its time.
+      expect(r).toMatchObject({ time: 0 });
       // D6: the buffer moved to the worker, it was not copied.
       expect(frame.data.buffer.byteLength).toBe(0);
     });

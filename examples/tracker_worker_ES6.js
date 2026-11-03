@@ -1,10 +1,12 @@
 // The tracker facade example (#720): createNFTTrackerWorker runs the tracker in a worker,
 // and this file does the camera side and the three.js rendering on the page.
 //
-// `createNFTTrackerWorker` is a global here: the page loads ../dist/ARToolkitNFT.js with a
-// <script> tag. The worker it starts is picked at run time (D4): td when the page is
-// cross-origin isolated (python-server.py sets COOP/COEP), otherwise simd, otherwise default.
+// `createNFTTrackerWorker` comes from the light client (#765), which holds no WASM: the page
+// downloads only the worker's build. The worker it starts is picked at run time (D4): td when
+// the page is cross-origin isolated (python-server.py sets COOP/COEP), otherwise simd,
+// otherwise default.
 import * as THREE from "three";
+import { createNFTTrackerWorker } from "../dist/NFTTracker.client.mjs";
 // D20: the letterbox rule comes from @webarkit/camera-view, served from the repository root.
 import {
   getProcessGeometry,

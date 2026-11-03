@@ -15,6 +15,24 @@ const {
   createNFTTracker,
 } = require("../../dist/ARToolkitNFT_node.js");
 
+/** Column norms, column dot products and det of a pose's R (column-major), against 1, 0, 1. */
+function rigidityError(p) {
+  const at = (row, c) => p[c * 4 + row];
+  let err = 0;
+  for (let a = 0; a < 3; a++) {
+    for (let b = a; b < 3; b++) {
+      let dot = 0;
+      for (let row = 0; row < 3; row++) dot += at(row, a) * at(row, b);
+      err = Math.max(err, Math.abs(dot - (a === b ? 1 : 0)));
+    }
+  }
+  const det =
+    at(0, 0) * (at(1, 1) * at(2, 2) - at(2, 1) * at(1, 2)) -
+    at(0, 1) * (at(1, 0) * at(2, 2) - at(2, 0) * at(1, 2)) +
+    at(0, 2) * (at(1, 0) * at(2, 1) - at(2, 0) * at(1, 1));
+  return Math.max(err, Math.abs(det - 1));
+}
+
 describe("Node build, createNFTTracker", () => {
   let rgba;
   let width;
@@ -61,6 +79,30 @@ describe("Node build, createNFTTracker", () => {
     assert.equal(results[1].reason, "network");
   });
 
+  // The Node loader throws only `argument`, `missing` and `rejected` (tryAddNFTMarkers), so
+  // the reasons it can report are network (above), unknown and capacity. `format` is a
+  // browser-only reason: Node reads the dataset in place and never parses a response.
+  it("reports an empty source as unknown", async () => {
+    const t = await make();
+    const results = await t.addNFTTargets([""]);
+    assert.equal(results.length, 1);
+    assert.equal(results[0].status, "error");
+    assert.equal(results[0].url, "");
+    assert.equal(results[0].reason, "unknown");
+  });
+
+  it("reports capacity past 20", { timeout: 180_000 }, async () => {
+    // KPM rebuilds its matcher once per source, synchronously on Node: slow.
+    const t = await make();
+    const results = await t.addNFTTargets(Array(21).fill("DataNFT/pinball"));
+    for (let i = 0; i < 20; i++) {
+      assert.equal(results[i].status, "loaded", `source ${i}`);
+      assert.equal(results[i].info.id, i);
+    }
+    assert.equal(results[20].status, "error");
+    assert.equal(results[20].reason, "capacity");
+  });
+
   it("finds pinball with a single found transition", async () => {
     const t = await make();
     const [loaded] = await t.addNFTTargets(["DataNFT/pinball"]);
@@ -84,8 +126,9 @@ describe("Node build, createNFTTracker", () => {
     // - AR2 seeds rand() with srand(time(NULL)) (WebARKitLib selectTemplate.c), so cores
     //   built in different seconds can differ by a few millimetres: Date.now() is pinned.
     const wall = mock.method(Date, "now", () => 1_700_000_000_000);
+    let ctrl;
     try {
-      const ctrl = await ARControllerNFT.initWithDimensions(
+      ctrl = await ARControllerNFT.initWithDimensions(
         width,
         height,
         "camera_para.dat",
@@ -124,7 +167,34 @@ describe("Node build, createNFTTracker", () => {
       assert.ok(compared > 20, `only ${compared} of 30 frames compared`);
     } finally {
       wall.mock.restore();
+      // The Node controller has no dispose(); its toolkit's teardown() frees the core.
+      ctrl?.artoolkitNFT.teardown();
     }
+  });
+
+  it("oneEuro poses stay rigid on the static photo", async () => {
+    // #766 measured column norms down to 0.9995 here with the per-value filter: the
+    // detection still moves a little from frame to frame on a still photo. The first found
+    // pose is skipped: the filter returns it as is, and the core's raw poses are rigid only
+    // to about 1e-7 (measured 2026-11-02); every filtered one after it stays below 1e-14.
+    const t = await createNFTTracker({
+      width,
+      height,
+      cameraParam: "camera_para.dat",
+      filter: { type: "oneEuro" },
+    });
+    trackers.push(t);
+    await t.addNFTTargets(["DataNFT/pinball"]);
+    let worst = 0;
+    let found = 0;
+    for (let i = 0; i < 32; i++) {
+      const target = t.process(rgba, i * 33).targets[0];
+      if (!target.found) continue;
+      if (found++ === 0) continue;
+      worst = Math.max(worst, rigidityError(target.pose));
+    }
+    assert.ok(found > 20, `only ${found} of 32 frames found`);
+    assert.ok(worst < 1e-9, `rigidity error ${worst}`);
   });
 
   it("dispose makes process throw", async () => {

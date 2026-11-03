@@ -24,8 +24,10 @@ git checkout -b your-branch-name
 
 Two things worth knowing before branching:
 
-- `dev` is not always current. Check `git rev-list --count origin/dev..origin/master` first;
-  it has been several commits behind in the past, including missing a critical fix.
+- `dev` is not always current. Check `git log --oneline --no-merges origin/dev..origin/master`
+  first; it should print nothing. Without `--no-merges` the release merge commits, which
+  live only on `master`, always show up. `dev` has been behind in the past, including
+  missing a critical fix.
 - Tooling may report `master` as the "main branch" because it is the repository's default
   branch on GitHub. That reflects a repository setting, not this project's workflow. Use
   `dev`.
@@ -69,6 +71,15 @@ Two independent builds produce the committed artifacts.
 docker run -dit --name emscripten-jsartoolkitnft -v $(pwd):/src emscripten/emsdk:4.0.17 bash
 docker exec emscripten-jsartoolkitnft npm run build
 ```
+
+`npm run setup-docker` runs the first command; `npm run build-docker` runs the second.
+
+**Submodules** — the native sources come from `emscripten/WebARKitLib` and `emscripten/zlib`.
+Run `git submodule update --init` after cloning and in every new worktree. A change to the
+NFT core goes to [WebARKitLib](https://github.com/webarkit/WebARKitLib) first, is released
+there, and lands here as a submodule bump; `python-bindings/` builds on the same core. Check
+`git submodule status` before committing: a pointer left at an older release shows as a
+change.
 
 `npm run build-no-libar` skips recompiling the static libraries and only relinks. That is
 sufficient — and much faster — when the change is link-time only, such as an emcc flag or
@@ -123,10 +134,11 @@ There are **two parallel implementations of the same API**, and a fix often belo
 
 | Path | Feeds | Status |
 |---|---|---|
-| `js/artoolkitNFT.api.js` | `artoolkitNFT.min.js`, `.debug.js`, `_wasm.js`, `_wasm.simd.js` | deprecated; logs a warning on load |
+| `js/artoolkitNFT.api.js` | `artoolkitNFT.min.js`, `.debug.js`, `_wasm.js`, `_wasm.simd.js`, `_thread.js` | deprecated; logs a warning on load |
+| `js/artoolkitNFT_ES6.api.js` | `artoolkitNFT_embed_ES6_wasm.js` | legacy ES6 API; no warning |
 | `src/*.ts` | `dist/*`, and `package.json` `main`/`exports` | current; what consumers install |
 
-The legacy file is injected at link time via `--pre-js`, so changing it requires a WASM
+The `js/` files are injected at link time via `--pre-js`, so changing them requires a WASM
 relink, not just `build-ts`.
 
 The three browser builds (default, `_simd`, `_td`) share one implementation per class:
@@ -150,14 +162,33 @@ differ in more than file access (EventEmitter events, no `internalLuma`, synchro
 A change to the browser classes may need applying there too. #734 stays open for folding them
 into the base classes.
 
+Elsewhere:
+
+| Path | Holds |
+|---|---|
+| `emscripten/*.cpp` | the Embind bindings, adapters over WebARKitLib's NFT core (`_td`: the threaded build) |
+| `src/tracker/` | `NFTTracker`, the data-oriented facade (#720), its pose filters, and a worker wrapper with one host per browser build |
+| `src/RuntimeSettings.ts` | `configure()`: the accepted keys and their value checks |
+| `src-esm/` | the Node ESM entry, copied unchanged to `dist/ARToolkitNFT_node.mjs`. It re-exports the CommonJS bundle on purpose (one WASM instance, one `NFTLoadError`); keep its named exports in step with `src/index_node.ts` |
+| `python-bindings/` | the `artoolkitnft` PyPI package, a C++ binding on the same core, released separately (see Releases) |
+| `specs/` | dated design and plan documents for larger changes, `YYYY-MM-DD-<topic>-design.md` and `-plan.md` |
+
 ---
 
 ## Testing
 
 ```bash
 npm test          # Vitest in Playwright's Chromium, then the Node suite
+npm run typecheck # tsc on src/ and tests/vitest/ (tsconfig.test.json)
 npm run format-check
 ```
+
+Before the first run, install the browser: `npx playwright install chromium`.
+
+Vitest strips the tests' types without checking them, so a spec that uses a type the
+library does not export, or builds an object that does not satisfy one, still passes.
+`npm run typecheck` catches that, and CI runs it before the tests (#752). It covers
+`tests/vitest/` only: `tests/node/` is plain JavaScript run against `dist/`.
 
 `npm test` runs two suites:
 
@@ -174,13 +205,22 @@ CI does not call `npm test`. It runs `npm run test:coverage` and then `npm run t
 same two suites, so that Vitest writes `coverage/lcov.info` for Codecov (#580). If you change
 the `test` script, change the Tests step in `.github/workflows/CI.yml` too. Coverage uses the
 istanbul provider, which instruments `src/` only: v8 slowed the legacy builds' tests until they
-timed out.
+timed out. Two parts of `src/` are not measured. The worker entries `src/tracker/worker/host_*.ts`
+are excluded from the report, because they run only inside a Blob-URL worker (their logic,
+`host.ts`, is measured). The Node classes stay in the report at 0 % on purpose: `tests/node/`
+runs them through the `dist/` bundles, outside istanbul, and excluding them would hide that gap.
+#762 tracks the Node part, after #734.
 
 A green run means every artifact loads and detects a marker in one fixed photo. It does not
 measure tracking quality: stability, jitter, or loss and recovery on a moving camera. When
 changing the detection or tracking path, still verify against a real example.
 `examples/node/example_dist.js` runs a full detect-and-track pass on a static image with no
 camera; the browser examples need one.
+
+To show that a change leaves tracking unchanged, compare two builds frame by frame with
+`tools/compare-builds.js`: Node bundles by default, `--browser` for the browser bundles,
+`--threaded --strict` for the threaded one. It is the check used for the binding refactor
+(#683).
 
 ### New methods need new tests
 
@@ -206,9 +246,27 @@ and watch the test fail, then restore it; a test that cannot fail proves nothing
 
 ## Releases
 
-1. Merge to `dev`, then `dev` into `master`.
-2. Wait for `main.yml` to commit rebuilt artifacts to `master`.
-3. Tag `X.Y.Z` and push the tag. `publish.yml` publishes to npm with provenance.
+1. Open a `dev` → `master` PR and merge it with a **merge commit**, not a squash. List
+   `Closes #n` in its body for every issue fixed on `dev`: a PR merged into `dev` closes
+   nothing, so issues cited only as `(#n)` stay open.
+2. Wait for `main.yml` on `master`. Since #690 its rebuild is byte-identical, so it usually
+   commits nothing. If it does commit artifacts, merge `master` back into `dev`, or the next
+   release conflicts on `dist/`.
+3. Tag `X.Y.Z` (lightweight, like every tag so far) on the merge commit, or on `main.yml`'s
+   commit if there is one, and push it. `publish.yml` publishes to npm with provenance; the
+   registry may answer "not found" for a few minutes afterwards.
+4. The same tag runs `deploy-docs.yml`, which opens a PR on the website
+   (`webarkit/webarkit.github.io`) against its `dev` that updates the contents of
+   `public/api/jsartoolkitnft/` to the release's TypeDoc output (#764). The folder and the
+   page that shows it, `/jsartoolkitnft/api`, stay the same. Check `/jsartoolkitnft/api` on its deploy
+   preview and merge it there. It needs the `WEBSITE_DOCS_TOKEN` secret: a token with
+   Contents and Pull requests write access to the website repository only. A docs failure
+   does not affect the npm release. To redo the docs of an existing tag, run the workflow by
+   hand with that tag; it updates the open PR rather than opening another.
+
+Never push a test tag to try a workflow. A numeric tag runs `publish.yml`, a real npm
+release, and any other tag outside `python/` makes `main.yml` create a GitHub Release. Test
+release workflows from their pull request and with `workflow_dispatch` instead.
 
 The version appears in **three** places and all must agree:
 
@@ -230,6 +288,11 @@ A version bump also needs **both rebuilds** committed in the same PR:
 Check that nothing still carries the old version: `grep -l "<old version>" build/*.js dist/*.js`
 should print nothing.
 
+**Python** (`artoolkitnft` on PyPI) is released separately. Its version is in
+`python-bindings/pyproject.toml` and `python-bindings/setup.py`, and both must agree. The tag
+is `python/<version>`, the only pattern `publish-python.yml` triggers on; it publishes wheels
+only.
+
 ---
 
 ## Gotchas
@@ -237,8 +300,8 @@ should print nothing.
 **Rebuild noise.** The Vite build is byte-reproducible: running `build-ts` twice on the same
 sources leaves `dist/` identical, and `git status` shows nothing after a rebuild with no source
 change. A diff in `dist/` therefore means a source, dependency or Node/toolchain change; do not
-revert it as noise. `main.yml` rebuilds and commits `dist/` on `master` after a merge. If
-`types/` shows line-ending-only churn on Windows, revert that.
+revert it as noise. `main.yml` rebuilds `dist/` on `master` after a merge and commits it only
+if it differs. If `types/` shows line-ending-only churn on Windows, revert that.
 
 **Line endings.** `.gitattributes` forces LF for every text file, regardless of `core.autocrlf`,
 so a Windows checkout matches prettier's default and CI. A clone made before it landed keeps its
@@ -253,27 +316,32 @@ unformatted files fails. Run `npm run format` before committing. Prettier uses i
 there is no config file (#733). Do not add one without reformatting the tree in the same PR,
 since a different `printWidth` or `tabWidth` would flag almost every file.
 
-**Node version.** `.nvmrc` pins an exact patch release. If a version manager does not have
-that precise build installed, every `node` and `npm` invocation inside the repository fails
-until it is installed or overridden.
+**Node version.** `.nvmrc` names the major only (`24`, since #636); the workflows read it
+through `node-version-file`. `@types/node` is held at 24.x in `dependabot.yml` to match.
+
+**Record the reason in the change.** A behaviour change, or a non-obvious value, carries its
+reason in a code comment where a reader could otherwise "fix" it back, and in the PR
+description. PRs are squashed, so commit bodies get lost; the comment and the PR are the
+durable record. Python's AR2 thresholds came from a debugging commit with no reason, and a
+year later nobody knew why they were there.
 
 ---
 
 ## Maintaining this file
 
-`AGENTS.md` is the canonical guidance. Three thin pointer files exist so that tools which look
-for a specific filename still find it:
+`AGENTS.md` is the canonical guidance. Three thin files exist so that tools which look for a
+specific filename still find it:
 
 | File | Read by |
 |---|---|
 | `AGENTS.md` | the cross-tool convention; OpenAI Codex and others |
-| `CLAUDE.md` | Claude Code |
+| `CLAUDE.md` | Claude Code. It imports this file with `@AGENTS.md`, so it repeats nothing and adds only Claude-specific notes |
 | `GEMINI.md` | Gemini CLI |
 | `.github/copilot-instructions.md` | GitHub Copilot |
 
-The pointers repeat only the handful of rules that are most often got wrong, so that a tool
-which injects the file without following links still gets the essentials. **Everything else
-belongs here.** When updating guidance, edit `AGENTS.md`; touch a pointer only if one of those
-few headline rules changes.
+The `GEMINI.md` and Copilot pointers repeat only the handful of rules that are most often got
+wrong, so that a tool which injects the file without following links still gets the
+essentials. **Everything else belongs here.** When updating guidance, edit `AGENTS.md`; touch
+a pointer only if one of those few headline rules changes.
 
 To support another tool, add a pointer file rather than copying this content.

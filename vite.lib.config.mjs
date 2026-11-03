@@ -7,7 +7,9 @@
  *   ARToolkitNFT_td.js), loaded with <script>, importScripts() or a bundler;
  * - "node": the CommonJS bundle for Node (ARToolkitNFT_node.js);
  * - "worker-default", "worker-simd", "worker-td": the tracker facade's ES module workers
- *   (NFTTracker.worker.js, NFTTracker_simd.worker.js, NFTTracker_td.worker.js, #720 D16).
+ *   (NFTTracker.worker.js, NFTTracker_simd.worker.js, NFTTracker_td.worker.js, #720 D16);
+ * - "client": the page side of the worker tracker, an ES module without WASM
+ *   (NFTTracker.client.mjs, #765).
  *
  * D-numbers refer to the decisions in specs/2026-10-24-vite-build-design.md.
  */
@@ -66,6 +68,17 @@ const WORKER = {
   },
 };
 
+/**
+ * The light client (#765): createNFTTrackerWorker alone, imported by a page that runs the
+ * tracker in a worker and so needs no WASM of its own. Built like the worker bundles (an ES
+ * module with the real `import.meta.url`), because its default `workerBase` is its own
+ * folder: the UMD bundles' mapping of `import.meta.url` to a URL global would break that.
+ * `.mjs`, so that it loads as a module wherever it is served or required from.
+ */
+const CLIENT = {
+  client: { entry: "src/client.ts", file: "NFTTracker.client.mjs" },
+};
+
 /** Settings every variant shares. */
 function common() {
   return {
@@ -97,7 +110,7 @@ function commonBuild() {
 }
 
 /**
- * @param {"default" | "simd" | "td" | "node" | "worker-default" | "worker-simd" | "worker-td"} variant
+ * @param {"default" | "simd" | "td" | "node" | "worker-default" | "worker-simd" | "worker-td" | "client"} variant
  * @param {{ watch?: boolean }} [options]
  * @returns {import("vite").InlineConfig}
  */
@@ -151,7 +164,7 @@ export function libConfig(variant, options = {}) {
     };
   }
 
-  const w = WORKER[variant];
+  const w = WORKER[variant] ?? CLIENT[variant];
   if (w) {
     return {
       ...common(),

@@ -111,7 +111,22 @@ export default defineConfig({
       include: ["src/**/*.ts"],
       // Instrumenting the Emscripten glue or the legacy bundle produces a large
       // and meaningless number; only src/ is the library's own code.
-      exclude: ["src/**/*.d.ts", "build/**", "dist/**"],
+      // The worker entries (host_default/simd/td.ts) hold one statement each,
+      // runHost(...), which runs only inside the worker bundle loaded from a Blob
+      // URL, where istanbul does not reach (#720 D15). tracker-worker.test.ts
+      // starts every build's worker, and their logic, host.ts, is measured on
+      // the page (#770). Left out so they do not read 0 % (#762).
+      // The Node classes (ARToolkitNFT_node.ts, ARControllerNFT_node.ts) stay in
+      // the report on purpose, at 0 %: tests/node/ runs them through the dist/
+      // bundles, outside istanbul. Unlike the worker entries they are real
+      // code whose logic nothing measures, so excluding them would hide that
+      // gap and raise the number. #762 measures them after #734.
+      exclude: [
+        "src/**/*.d.ts",
+        "src/tracker/worker/host_*.ts",
+        "build/**",
+        "dist/**",
+      ],
       reporter: ["text", "lcov"],
     },
   },
