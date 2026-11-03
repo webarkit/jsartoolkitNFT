@@ -79,12 +79,13 @@ ar.getRuntimeSettings().far; // 5000
 ```
 
 The patch is merged into the current settings (`ar2` field by field), checked, and applied in one
-step: if any value is wrong, nothing changes. An unknown key, a value of the wrong type or a
-non-integer for an integer setting throws a `TypeError`; this includes the square-marker keys
-`threshold`, `thresholdMode`, `imageProcMode` and `debugMode`, which do nothing on NFT. A value
-out of range throws a `RangeError`. The individual setters keep working as before.
+step: if any value is wrong, nothing changes. An unknown key, a value of the wrong type, a
+non-integer for an integer setting, or `NaN` or `±Infinity` for a numeric one throws a `TypeError`
+that names the key; this includes the square-marker keys `threshold`, `thresholdMode`,
+`imageProcMode` and `debugMode`, which do nothing on NFT. A value out of range throws a
+`RangeError`. The individual setters keep working as before.
 
-Behaviour changes in this release:
+Behaviour changes in 1.15.0:
 
 - `getCameraMatrix()` right after initialisation is built with the near plane `0.1`, the value
   `ARControllerNFT` always reported, instead of `0.0001`. `setProjectionNearPlane()` and
@@ -127,6 +128,10 @@ checked for a `.zft` with one asynchronous request, and falls back to the `.iset
 files when there is none. Any HTTP error status on that check means "no `.zft`", so storage services that
 answer 403 for a missing object still work. A marker without a `.zft` logs one 404 in the console; pass
 `probeZFT: false` to skip the check (see below).
+
+In the browser builds a query string or fragment stays at the end of each file's URL, so a versioned or
+signed prefix such as `path/to/marker?v=2` loads `marker.zft?v=2`, then `marker.iset?v=2` and so on
+(since 1.16.0; before, it loaded `marker?v=2.iset`).
 
 ## Loading NFT markers
 
